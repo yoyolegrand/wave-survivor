@@ -123,26 +123,6 @@ Examples: Void Anchor Ring (immune to Levitation), Brazier Amulet (immune to fir
 ### Renaissance
 A prestige system with an **Heritage tree** (3 branches × 5 nodes), **ranks I–V** (title, aura, extra slots) and a **shop** (16 items). **Renaissance Points (PR)** are earned by playing, and everything you spend them on counts toward your rank.
 
----|---|
-| Void Anchor Ring | immune to Levitation, −25 % fall damage |
-| Brazier Amulet | immune to fire and lava |
-| Phylactery Charm | immune to Wither and Poison |
-| Watcher's Eye | immune to Blindness/Darkness, nearby monsters glow |
-| Lead Belt | no knockback |
-| Sacred Bone | +25 % damage against undead |
-| Breach Shard | ×2 damage to Breaches, heals when one is destroyed |
-| Hunter's Mark | your targets glow |
-| Thirsty Heart | +1 HP per kill |
-| Last Breath Talisman | survive one fatal blow per wave |
-| Guardian's Seal | the Monolith takes −30 % damage while you're near |
-| Rallying Banner | nearby allies: +2 armor and regeneration |
-| Prospector's Ring | deposits: double hits, +50 % loot |
-| Keeper's Key | monsters can drop Reliquary keys |
-| Silver Tongue | −25 % merchant prices |
-
-### Renaissance
-A dedicated altar where you spend **Renaissance Points (PR)** on permanent stats and items (or on a skill tree if a compatible mod is present).
-
 ---
 
 ## 🏰 Kingdom mode
