@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "wavesurvivor:block/renaissance_altar_top",
+    "bottom": "wavesurvivor:block/renaissance_altar_bottom",
+    "side": "wavesurvivor:block/renaissance_altar_side"
+  }
+}

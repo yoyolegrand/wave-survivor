@@ -1,0 +1,75 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="wavesurvivor"
+version="1.4.0"
+displayName="Wave Survivor"
+logoFile="wave_survivor_logo.png"
+authors="yoyolegrand"
+description='''
+Defend the Monolith against hordes of monsters, wave after wave.
+
+- 10 ready-to-play hordes: a tutorial, The Necropolis, The Scorched Lands, The Eternal Void (Vanilla and Modded versions), the Horde of the Depths, The Arcane Conclave (Iron's Spells) and The Pillager Siege (Kingdom).
+- NEW Kingdom mode: defend your kingdom against Gates in Assault / Calm cycles, with towers, soldiers, walls, traps, a Town Hall and hand-drawn paths.
+- Bosses with real mechanics, Monolith Defense, Infernal Breaches, gravitational Anomalies, chaos events (totems, ore deposits, chaos merchants...).
+- Reliquaries, keys and 15 relics (Curios-compatible), merchants, leaderboard rewards, Renaissance altar.
+- Full in-game editor (/ws editor): hordes, monsters, bosses, skills and loot.
+- English and French (/ws lang en|fr).
+
+Works on its own: Curios, Iron's Spells, Cataclysm, Dungeons & Combat, Alex's Caves, Pehkui (monster sizes)... are optional.
+'''
+
+# === Dépendances ===
+
+[[dependencies.wavesurvivor]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.wavesurvivor]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
+
+# Optionnels : utilisés seulement par les variantes Moddées / l'intégration des reliques
+[[dependencies.wavesurvivor]]
+    modId="curios"
+    mandatory=false
+    versionRange="[5.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.wavesurvivor]]
+    modId="alexscaves"
+    mandatory=false
+    versionRange="[2.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.wavesurvivor]]
+    modId="dungeons_and_combat"
+    mandatory=false
+    versionRange="[0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.wavesurvivor]]
+    modId="irons_spellbooks"
+    mandatory=false
+    versionRange="[0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+# Optionnel : taille des unités et des boss (champ « Taille » de l'éditeur)
+[[dependencies.wavesurvivor]]
+    modId="pehkui"
+    mandatory=false
+    versionRange="[3.0,)"
+    ordering="AFTER"
+    side="BOTH"

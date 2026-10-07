@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "wavesurvivor:stable_sand",
+    "wavesurvivor:stable_red_sand",
+    "wavesurvivor:stable_gravel"
+  ]
+}

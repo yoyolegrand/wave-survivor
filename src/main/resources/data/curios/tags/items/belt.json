@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "wavesurvivor:ceinture_plomb",
+    "wavesurvivor:sceau_gardien",
+    "wavesurvivor:pierre_fondation",
+    "wavesurvivor:bourse_colporteur",
+    "wavesurvivor:cle_voute",
+    "wavesurvivor:ancre_colosse"
+  ]
+}

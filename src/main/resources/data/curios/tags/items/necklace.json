@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "wavesurvivor:amulette_brasier",
+    "wavesurvivor:coeur_assoiffe",
+    "wavesurvivor:langue_argent",
+    "wavesurvivor:croc_alpha",
+    "wavesurvivor:trophee_veneur",
+    "wavesurvivor:egide_fleaux"
+  ]
+}

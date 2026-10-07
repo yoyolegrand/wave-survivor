@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RRR",
+    "RBR",
+    "RRR"
+  ],
+  "key": {
+    "R": { "item": "minecraft:redstone" },
+    "B": { "item": "minecraft:bell" }
+  },
+  "result": {
+    "item": "wavesurvivor:altar_runic",
+    "count": 1
+  }
+}

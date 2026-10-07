@@ -1,0 +1,753 @@
+{
+  "chests": [
+    {
+      "name": "Reliquaire du Boss",
+      "particles": "soul_flame",
+      "pattern": "circle",
+      "color": "purple",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:diamond",
+          "minQty": 3,
+          "maxQty": 6,
+          "chance": 18.18,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:emerald",
+          "minQty": 10,
+          "maxQty": 20,
+          "chance": 16.16,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:gold_block",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 10.1,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:golden_apple",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 12.12,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:experience_bottle",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 10.1,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:strong_strength",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 6.06,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:netherite_scrap",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 8.08,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:totem_of_undying",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 5.05,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:diamond_chestplate",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 4.04,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:enchanted_golden_apple",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 4.04,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:netherite_ingot",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 3.03,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:netherite_upgrade_smithing_template",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 2.02,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:nether_star",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.01,
+          "tier": "LEGENDARY"
+        },
+        {
+          "item": "wavesurvivor:talisman_souffle",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.0,
+          "tier": "LEGENDARY"
+        },
+        {
+          "item": "wavesurvivor:langue_argent",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.5,
+          "tier": "EPIC"
+        }
+      ]
+    },
+    {
+      "name": "Reliquaire du Nether",
+      "particles": "flame",
+      "pattern": "circle",
+      "color": "orange",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:blaze_rod",
+          "minQty": 3,
+          "maxQty": 6,
+          "chance": 14.0,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "minQty": 6,
+          "maxQty": 12,
+          "chance": 14.0,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:quartz",
+          "minQty": 12,
+          "maxQty": 24,
+          "chance": 10.0,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:magma_cream",
+          "minQty": 2,
+          "maxQty": 5,
+          "chance": 6.0,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:ghast_tear",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 8.0,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:long_fire_resistance",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 10.0,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:glowstone",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 6.0,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:nether_wart",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 5.0,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:crying_obsidian",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 4.0,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:ancient_debris",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 8.0,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:wither_skeleton_skull",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 5.0,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:golden_apple",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 4.0,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:netherite_scrap",
+          "minQty": 2,
+          "maxQty": 3,
+          "chance": 3.0,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:netherite_upgrade_smithing_template",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 2.0,
+          "tier": "EPIC"
+        },
+        {
+          "item": "wavesurvivor:banniere_ralliement",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.5,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:netherite_ingot",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.0,
+          "tier": "LEGENDARY"
+        }
+      ]
+    },
+    {
+      "name": "Reliquaire des Abysses",
+      "particles": "bubble",
+      "pattern": "circle",
+      "color": "cyan",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:prismarine_shard",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 14.74,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:prismarine_crystals",
+          "minQty": 6,
+          "maxQty": 12,
+          "chance": 12.63,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:cooked_cod",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 8.42,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:nautilus_shell",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 10.53,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:sponge",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 8.42,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:long_water_breathing",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 7.37,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:sea_lantern",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 6.32,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:turtle_helmet",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 6.32,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:trident",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 8.42,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:potion#minecraft:turtle_master",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 4.21,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:heart_of_the_sea",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 6.32,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:conduit",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 3.16,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:diamond",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 3.16,
+          "tier": "LEGENDARY"
+        }
+      ]
+    },
+    {
+      "name": "Reliquaire Arcanique",
+      "particles": "enchant",
+      "pattern": "circle",
+      "color": "magenta",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:experience_bottle",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 17.2,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:lapis_lazuli",
+          "minQty": 12,
+          "maxQty": 24,
+          "chance": 15.05,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:book",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 8.6,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:amethyst_shard",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 8.6,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:ender_pearl",
+          "minQty": 3,
+          "maxQty": 6,
+          "chance": 10.75,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:long_regeneration",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 6.45,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:splash_potion#minecraft:strong_harming",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 5.38,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:glowstone_dust",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 4.3,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:enchanting_table",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 5.38,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:bookshelf",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 5.38,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:dragon_breath",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 5.38,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:end_crystal",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 3.23,
+          "tier": "EPIC"
+        },
+        {
+          "item": "wavesurvivor:sceau_gardien",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.5,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:experience_bottle",
+          "minQty": 32,
+          "maxQty": 48,
+          "chance": 3.23,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:enchanted_golden_apple",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.08,
+          "tier": "LEGENDARY"
+        }
+      ]
+    },
+    {
+      "name": "Reliquaire des Trésors",
+      "particles": "sparkle",
+      "pattern": "circle",
+      "color": "yellow",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:emerald",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 15.05,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:iron_ingot",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 12.9,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "minQty": 6,
+          "maxQty": 12,
+          "chance": 12.9,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:golden_carrot",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 6.45,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:saddle",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 6.45,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:spyglass",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 4.3,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:golden_horse_armor",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 5.38,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:iron_horse_armor",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 5.38,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:lead",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 4.3,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:diamond",
+          "minQty": 3,
+          "maxQty": 6,
+          "chance": 8.6,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:diamond_horse_armor",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 5.38,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:music_disc_pigstep",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 3.23,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:emerald_block",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 4.3,
+          "tier": "EPIC"
+        },
+        {
+          "item": "wavesurvivor:marque_chasseur",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.5,
+          "tier": "EPIC"
+        },
+        {
+          "item": "wavesurvivor:anneau_prospecteur",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.5,
+          "tier": "EPIC"
+        },
+        {
+          "item": "wavesurvivor:cle_gardien",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 0.8,
+          "tier": "LEGENDARY"
+        },
+        {
+          "item": "minecraft:totem_of_undying",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 3.23,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:elytra",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 2.15,
+          "tier": "LEGENDARY"
+        }
+      ]
+    },
+    {
+      "name": "Reliquaire de l'End",
+      "particles": "portal",
+      "pattern": "circle",
+      "color": "purple",
+      "keyMaterial": "obsidienne",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:ender_pearl",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 15.76,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:chorus_fruit",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 11.82,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:end_rod",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 7.88,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:purpur_block",
+          "minQty": 16,
+          "maxQty": 32,
+          "chance": 5.91,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:obsidian",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 5.91,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:long_slow_falling",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 9.85,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:shulker_shell",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 7.88,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:ender_eye",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 5.91,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:dragon_breath",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 5.91,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:splash_potion#minecraft:strong_healing",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 4.93,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:purple_shulker_box",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 4.93,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:end_crystal",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 3.94,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:diamond_sword",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 2.96,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:totem_of_undying",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 2.96,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:dragon_head",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.97,
+          "tier": "EPIC"
+        },
+        {
+          "item": "wavesurvivor:oeil_veilleur",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.5,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:elytra",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 1.48,
+          "tier": "LEGENDARY"
+        }
+      ]
+    }
+  ]
+}

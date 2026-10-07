@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "wavesurvivor:block/altar_runic_top",
+    "bottom": "wavesurvivor:block/altar_runic_bottom",
+    "side": "wavesurvivor:block/altar_runic_side_lower"
+  }
+}

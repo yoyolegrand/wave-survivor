@@ -1,0 +1,808 @@
+{
+  "La Nécropole": {
+    "ingredients": [
+      {
+        "item": "minecraft:skeleton_skull",
+        "count": 1
+      },
+      {
+        "item": "minecraft:bone_block",
+        "count": 4
+      }
+    ],
+    "zone": {
+      "radius": 10,
+      "floor": [
+        {
+          "block": "minecraft:soul_soil",
+          "weight": 40
+        },
+        {
+          "block": "minecraft:coarse_dirt",
+          "weight": 30
+        },
+        {
+          "block": "minecraft:podzol",
+          "weight": 20
+        },
+        {
+          "block": "minecraft:bone_block",
+          "weight": 10
+        }
+      ],
+      "autoLayout": true,
+      "maxChests": 8,
+      "excludedChests": [
+        "coffre_boss",
+        "coffre_mysterieux_accessoire",
+        "coffre_mysterieux_magic",
+        "coffre_drowned",
+        "coffre_nether",
+        "coffre_ender"
+      ],
+      "slots": []
+    },
+    "style": {
+      "color": "lime",
+      "particles": "ames"
+    },
+    "defense": {
+      "enabled": true,
+      "maxHealth": 500,
+      "repairItem": "minecraft:bone_meal",
+      "repairAmount": 10,
+      "bonusThreshold": 75,
+      "bonusItem": "roulettechest:key_custom_reliquaire_du_boss",
+      "bonusCount": 1,
+      "profanerDamageMultiplier": 0.5,
+      "upgradeMaxLevel": 5,
+      "upgradeCurrency": "minecraft:emerald",
+      "hpPerLevel": 100,
+      "hpCostBase": 8,
+      "regenPerLevel": 1.0,
+      "regenCostBase": 10,
+      "armorPerLevel": 10,
+      "armorCostBase": 12
+    },
+    "breaches": {
+      "enabled": false,
+      "everyNWaves": 3,
+      "count": 3,
+      "distance": 0.0,
+      "buffPerOpen": 0.1,
+      "types": [
+        {
+          "name": "",
+          "weight": 1.0,
+          "style": "infernale",
+          "color": -1,
+          "health": 60.0,
+          "spawnIntervalSeconds": 15,
+          "spawnPerPulse": 2,
+          "maxAlive": 6,
+          "mobs": [
+            {
+              "entity": "minecraft:zombified_piglin",
+              "weight": 2.0
+            },
+            {
+              "entity": "minecraft:hoglin",
+              "weight": 1.0
+            },
+            {
+              "entity": "minecraft:blaze",
+              "weight": 1.0
+            }
+          ],
+          "rewards": [
+            {
+              "item": "minecraft:emerald",
+              "minQty": 4,
+              "maxQty": 4,
+              "chance": 100.0
+            }
+          ]
+        }
+      ],
+      "health": 60.0,
+      "spawnIntervalSeconds": 15,
+      "spawnPerPulse": 2,
+      "spawnEntities": [
+        "minecraft:zombified_piglin",
+        "minecraft:zombified_piglin",
+        "minecraft:hoglin",
+        "minecraft:blaze"
+      ],
+      "maxAlivePerBreach": 6,
+      "rewardItem": "minecraft:emerald",
+      "rewardCount": 4,
+      "style": "infernale",
+      "color": -1
+    },
+    "anomalies": {
+      "enabled": false,
+      "fromWave": 1,
+      "intervalSeconds": 20,
+      "count": 2,
+      "zoneRadius": 12.0,
+      "types": [
+        {
+          "name": "",
+          "weight": 1.0,
+          "color": 14237951,
+          "warningTicks": 40,
+          "durationTicks": 60,
+          "radius": 3.0,
+          "effects": [
+            {
+              "effect": "minecraft:levitation",
+              "level": 2,
+              "duration": 10
+            }
+          ],
+          "damagePerSecond": 0.0,
+          "pull": 0.0,
+          "burstDamage": 0.0
+        }
+      ],
+      "warningTicks": 40,
+      "durationTicks": 60,
+      "radius": 3.0,
+      "levitationAmplifier": 1
+    },
+    "variants": [
+      {
+        "label": "Vanilla",
+        "horde": "La Nécropole"
+      },
+      {
+        "label": "Moddée",
+        "horde": "La Nécropole Moddée"
+      }
+    ]
+  },
+  "Horde des profondeurs": {
+    "ingredients": [
+      {
+        "item": "minecraft:heart_of_the_sea",
+        "count": 1
+      }
+    ],
+    "zone": {
+      "radius": 8,
+      "floor": [
+        {
+          "block": "minecraft:prismarine",
+          "weight": 30
+        },
+        {
+          "block": "minecraft:sand",
+          "weight": 70
+        }
+      ],
+      "autoLayout": true,
+      "maxChests": 8,
+      "excludedChests": [
+        "coffre_ender"
+      ],
+      "slots": []
+    },
+    "style": {
+      "color": "cyan",
+      "particles": "abysses"
+    }
+  },
+  "Tuto Vanilla": {
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1
+      },
+      {
+        "item": "minecraft:bone",
+        "count": 1
+      }
+    ],
+    "zone": {
+      "radius": 8,
+      "floor": [
+        {
+          "block": "minecraft:mossy_cobblestone",
+          "weight": 35
+        },
+        {
+          "block": "minecraft:cobblestone",
+          "weight": 35
+        },
+        {
+          "block": "minecraft:stone",
+          "weight": 30
+        }
+      ],
+      "autoLayout": true,
+      "maxChests": 8,
+      "excludedChests": [
+        "coffre_boss",
+        "coffre_mysterieux_accessoire",
+        "coffre_mysterieux_magic",
+        "coffre_drowned",
+        "coffre_nether",
+        "coffre_ender"
+      ],
+      "slots": []
+    },
+    "style": {
+      "color": "orange",
+      "particles": "flammes"
+    }
+  },
+  "Les Terres Brûlées": {
+    "ingredients": [
+      {
+        "item": "minecraft:blaze_rod",
+        "count": 1
+      },
+      {
+        "item": "minecraft:magma_block",
+        "count": 4
+      }
+    ],
+    "zone": {
+      "radius": 10,
+      "floor": [
+        {
+          "block": "minecraft:netherrack",
+          "weight": 40
+        },
+        {
+          "block": "minecraft:blackstone",
+          "weight": 25
+        },
+        {
+          "block": "minecraft:crimson_nylium",
+          "weight": 15
+        },
+        {
+          "block": "minecraft:basalt",
+          "weight": 10
+        },
+        {
+          "block": "minecraft:soul_soil",
+          "weight": 10
+        }
+      ],
+      "autoLayout": true,
+      "maxChests": 8,
+      "excludedChests": [
+        "coffre_boss",
+        "coffre_mysterieux_accessoire",
+        "coffre_mysterieux_magic",
+        "coffre_drowned",
+        "coffre_nether",
+        "coffre_ender"
+      ],
+      "slots": []
+    },
+    "style": {
+      "color": "yellow",
+      "particles": "braises"
+    },
+    "defense": {
+      "enabled": true,
+      "maxHealth": 600,
+      "repairItem": "minecraft:gold_ingot",
+      "repairAmount": 15,
+      "bonusThreshold": 75,
+      "bonusItem": "roulettechest:key_custom_reliquaire_du_boss",
+      "bonusCount": 1,
+      "profanerDamageMultiplier": 0.5,
+      "upgradeMaxLevel": 5,
+      "upgradeCurrency": "minecraft:emerald",
+      "hpPerLevel": 100,
+      "hpCostBase": 8,
+      "regenPerLevel": 1.0,
+      "regenCostBase": 10,
+      "armorPerLevel": 10,
+      "armorCostBase": 12
+    },
+    "breaches": {
+      "enabled": true,
+      "everyNWaves": 3,
+      "count": 3,
+      "distance": 0.0,
+      "buffPerOpen": 0.1,
+      "types": [],
+      "health": 60.0,
+      "spawnIntervalSeconds": 15,
+      "spawnPerPulse": 2,
+      "spawnEntities": [
+        "minecraft:zombified_piglin",
+        "minecraft:zombified_piglin",
+        "minecraft:hoglin",
+        "minecraft:blaze"
+      ],
+      "maxAlivePerBreach": 6,
+      "rewardItem": "minecraft:emerald",
+      "rewardCount": 4,
+      "style": "infernale",
+      "color": -1
+    },
+    "variants": [
+      {
+        "label": "Vanilla",
+        "horde": "Les Terres Brûlées"
+      },
+      {
+        "label": "Moddée",
+        "horde": "Les Terres Brûlées Moddée"
+      }
+    ]
+  },
+  "Les Terres Brûlées Moddée": {
+    "ingredients": [
+      {
+        "item": "minecraft:blaze_rod",
+        "count": 1
+      },
+      {
+        "item": "minecraft:magma_block",
+        "count": 4
+      }
+    ],
+    "zone": {
+      "radius": 10,
+      "floor": [
+        {
+          "block": "minecraft:netherrack",
+          "weight": 40
+        },
+        {
+          "block": "minecraft:blackstone",
+          "weight": 25
+        },
+        {
+          "block": "minecraft:crimson_nylium",
+          "weight": 15
+        },
+        {
+          "block": "minecraft:basalt",
+          "weight": 10
+        },
+        {
+          "block": "minecraft:soul_soil",
+          "weight": 10
+        }
+      ],
+      "autoLayout": true,
+      "maxChests": 8,
+      "excludedChests": [
+        "coffre_ender"
+      ],
+      "slots": []
+    },
+    "style": {
+      "color": "yellow",
+      "particles": "braises"
+    },
+    "defense": {
+      "enabled": true,
+      "maxHealth": 600,
+      "repairItem": "minecraft:gold_ingot",
+      "repairAmount": 15,
+      "bonusThreshold": 75,
+      "bonusItem": "roulettechest:key_custom_reliquaire_du_boss",
+      "bonusCount": 1,
+      "profanerDamageMultiplier": 0.5,
+      "upgradeMaxLevel": 5,
+      "upgradeCurrency": "minecraft:emerald",
+      "hpPerLevel": 100,
+      "hpCostBase": 8,
+      "regenPerLevel": 1.0,
+      "regenCostBase": 10,
+      "armorPerLevel": 10,
+      "armorCostBase": 12
+    },
+    "breaches": {
+      "enabled": true,
+      "everyNWaves": 3,
+      "count": 3,
+      "distance": 0.0,
+      "buffPerOpen": 0.1,
+      "types": [],
+      "health": 60.0,
+      "spawnIntervalSeconds": 15,
+      "spawnPerPulse": 2,
+      "spawnEntities": [
+        "minecraft:zombified_piglin",
+        "minecraft:zombified_piglin",
+        "minecraft:hoglin",
+        "minecraft:blaze"
+      ],
+      "maxAlivePerBreach": 6,
+      "rewardItem": "minecraft:emerald",
+      "rewardCount": 4,
+      "style": "infernale",
+      "color": -1
+    }
+  },
+  "Le Néant Éternel": {
+    "ingredients": [
+      {
+        "item": "minecraft:ender_pearl",
+        "count": 1
+      },
+      {
+        "item": "minecraft:end_stone",
+        "count": 4
+      }
+    ],
+    "zone": {
+      "radius": 10,
+      "floor": [
+        {
+          "block": "minecraft:end_stone",
+          "weight": 40
+        },
+        {
+          "block": "minecraft:end_stone_bricks",
+          "weight": 25
+        },
+        {
+          "block": "minecraft:purpur_block",
+          "weight": 15
+        },
+        {
+          "block": "minecraft:obsidian",
+          "weight": 12
+        },
+        {
+          "block": "minecraft:crying_obsidian",
+          "weight": 8
+        }
+      ],
+      "autoLayout": true,
+      "maxChests": 8,
+      "excludedChests": [
+        "coffre_boss",
+        "coffre_mysterieux_accessoire",
+        "coffre_mysterieux_magic",
+        "coffre_drowned",
+        "coffre_nether",
+        "coffre_ender"
+      ],
+      "slots": []
+    },
+    "style": {
+      "color": "purple",
+      "particles": "portail"
+    },
+    "defense": {
+      "enabled": true,
+      "maxHealth": 700,
+      "repairItem": "minecraft:ender_pearl",
+      "repairAmount": 20,
+      "bonusThreshold": 75,
+      "bonusItem": "roulettechest:key_custom_reliquaire_du_boss",
+      "bonusCount": 1,
+      "profanerDamageMultiplier": 0.5,
+      "upgradeMaxLevel": 5,
+      "upgradeCurrency": "minecraft:emerald",
+      "hpPerLevel": 100,
+      "hpCostBase": 8,
+      "regenPerLevel": 1.0,
+      "regenCostBase": 10,
+      "armorPerLevel": 10,
+      "armorCostBase": 12
+    },
+    "breaches": {
+      "enabled": true,
+      "everyNWaves": 3,
+      "count": 3,
+      "distance": 0.0,
+      "buffPerOpen": 0.1,
+      "types": [],
+      "health": 70.0,
+      "spawnIntervalSeconds": 15,
+      "spawnPerPulse": 2,
+      "spawnEntities": [
+        "minecraft:endermite",
+        "minecraft:endermite",
+        "minecraft:enderman",
+        "wavesurvivor:eclat_neant"
+      ],
+      "maxAlivePerBreach": 6,
+      "rewardItem": "minecraft:emerald",
+      "rewardCount": 4,
+      "style": "end",
+      "color": -1
+    },
+    "anomalies": {
+      "enabled": true,
+      "fromWave": 2,
+      "intervalSeconds": 20,
+      "count": 2,
+      "zoneRadius": 12.0,
+      "types": [],
+      "warningTicks": 40,
+      "durationTicks": 60,
+      "radius": 3.0,
+      "levitationAmplifier": 1
+    },
+    "variants": [
+      {
+        "label": "Vanilla",
+        "horde": "Le Néant Éternel"
+      },
+      {
+        "label": "Moddée",
+        "horde": "Le Néant Éternel Moddée"
+      }
+    ]
+  },
+  "Le Néant Éternel Moddée": {
+    "ingredients": [
+      {
+        "item": "minecraft:ender_pearl",
+        "count": 1
+      },
+      {
+        "item": "minecraft:end_stone",
+        "count": 4
+      }
+    ],
+    "zone": {
+      "radius": 10,
+      "floor": [
+        {
+          "block": "minecraft:end_stone",
+          "weight": 40
+        },
+        {
+          "block": "minecraft:end_stone_bricks",
+          "weight": 25
+        },
+        {
+          "block": "minecraft:purpur_block",
+          "weight": 15
+        },
+        {
+          "block": "minecraft:obsidian",
+          "weight": 12
+        },
+        {
+          "block": "minecraft:crying_obsidian",
+          "weight": 8
+        }
+      ],
+      "autoLayout": true,
+      "maxChests": 8,
+      "excludedChests": [
+        "coffre_ender"
+      ],
+      "slots": []
+    },
+    "style": {
+      "color": "purple",
+      "particles": "portail"
+    },
+    "defense": {
+      "enabled": true,
+      "maxHealth": 700,
+      "repairItem": "minecraft:ender_pearl",
+      "repairAmount": 20,
+      "bonusThreshold": 75,
+      "bonusItem": "roulettechest:key_custom_reliquaire_du_boss",
+      "bonusCount": 1,
+      "profanerDamageMultiplier": 0.5,
+      "upgradeMaxLevel": 5,
+      "upgradeCurrency": "minecraft:emerald",
+      "hpPerLevel": 100,
+      "hpCostBase": 8,
+      "regenPerLevel": 1.0,
+      "regenCostBase": 10,
+      "armorPerLevel": 10,
+      "armorCostBase": 12
+    },
+    "breaches": {
+      "enabled": true,
+      "everyNWaves": 3,
+      "count": 3,
+      "distance": 0.0,
+      "buffPerOpen": 0.1,
+      "types": [],
+      "health": 70.0,
+      "spawnIntervalSeconds": 15,
+      "spawnPerPulse": 2,
+      "spawnEntities": [
+        "minecraft:endermite",
+        "minecraft:endermite",
+        "minecraft:enderman",
+        "wavesurvivor:eclat_neant"
+      ],
+      "maxAlivePerBreach": 6,
+      "rewardItem": "minecraft:emerald",
+      "rewardCount": 4,
+      "style": "end",
+      "color": -1
+    },
+    "anomalies": {
+      "enabled": true,
+      "fromWave": 2,
+      "intervalSeconds": 20,
+      "count": 2,
+      "zoneRadius": 12.0,
+      "types": [],
+      "warningTicks": 40,
+      "durationTicks": 60,
+      "radius": 3.0,
+      "levitationAmplifier": 1
+    }
+  },
+  "La Nécropole Moddée": {
+    "ingredients": [
+      {
+        "item": "minecraft:skeleton_skull",
+        "count": 1
+      },
+      {
+        "item": "minecraft:bone_block",
+        "count": 4
+      },
+      {
+        "item": "minecraft:rotten_flesh",
+        "count": 1
+      }
+    ],
+    "zone": {
+      "radius": 10,
+      "floor": [
+        {
+          "block": "minecraft:soul_soil",
+          "weight": 40
+        },
+        {
+          "block": "minecraft:coarse_dirt",
+          "weight": 30
+        },
+        {
+          "block": "minecraft:podzol",
+          "weight": 10
+        },
+        {
+          "block": "minecraft:bone_block",
+          "weight": 10
+        },
+        {
+          "block": "minecraft:copper_ore",
+          "weight": 10
+        }
+      ],
+      "autoLayout": true,
+      "maxChests": 8,
+      "excludedChests": [
+        "coffre_nether",
+        "custom_reliquaire_arcanique",
+        "custom_reliquaire_des_abysses",
+        "custom_reliquaire_des_tresors",
+        "custom_reliquaire_du_boss",
+        "custom_reliquaire_du_nether"
+      ],
+      "slots": []
+    },
+    "style": {
+      "color": "pink",
+      "particles": "ames"
+    },
+    "defense": {
+      "enabled": true,
+      "maxHealth": 500,
+      "repairItem": "minecraft:bone_meal",
+      "repairAmount": 10,
+      "bonusThreshold": 75,
+      "bonusItem": "roulettechest:key_custom_reliquaire_du_boss",
+      "bonusCount": 1,
+      "profanerDamageMultiplier": 0.5,
+      "upgradeMaxLevel": 5,
+      "upgradeCurrency": "minecraft:emerald",
+      "hpPerLevel": 100,
+      "hpCostBase": 8,
+      "regenPerLevel": 1.0,
+      "regenCostBase": 10,
+      "armorPerLevel": 10,
+      "armorCostBase": 12
+    },
+    "variants": []
+  },
+  "Le Conclave Arcanique": {
+    "ingredients": [
+      {
+        "item": "minecraft:enchanted_book",
+        "count": 1
+      },
+      {
+        "item": "minecraft:amethyst_block",
+        "count": 4
+      }
+    ],
+    "zone": {
+      "radius": 10,
+      "floor": [
+        {
+          "block": "minecraft:deepslate_tiles",
+          "weight": 35
+        },
+        {
+          "block": "minecraft:polished_deepslate",
+          "weight": 20
+        },
+        {
+          "block": "minecraft:calcite",
+          "weight": 20
+        },
+        {
+          "block": "minecraft:amethyst_block",
+          "weight": 15
+        },
+        {
+          "block": "minecraft:purpur_block",
+          "weight": 10
+        }
+      ],
+      "autoLayout": true,
+      "maxChests": 8,
+      "excludedChests": [
+        "coffre_boss",
+        "coffre_mysterieux_accessoire",
+        "coffre_mysterieux_magic",
+        "coffre_drowned",
+        "coffre_nether",
+        "coffre_ender"
+      ],
+      "slots": []
+    },
+    "style": {
+      "color": "purple",
+      "particles": "portail"
+    },
+    "defense": {
+      "enabled": true,
+      "maxHealth": 600,
+      "repairItem": "minecraft:lapis_lazuli",
+      "repairAmount": 6,
+      "bonusThreshold": 75,
+      "bonusItem": "roulettechest:key_custom_reliquaire_arcanique",
+      "bonusCount": 1,
+      "profanerDamageMultiplier": 0.5,
+      "upgradeMaxLevel": 5,
+      "upgradeCurrency": "minecraft:emerald",
+      "hpPerLevel": 100,
+      "hpCostBase": 8,
+      "regenPerLevel": 1.0,
+      "regenCostBase": 10,
+      "armorPerLevel": 10,
+      "armorCostBase": 12
+    },
+    "breaches": {
+      "enabled": true,
+      "everyNWaves": 3,
+      "count": 2,
+      "distance": 0.0,
+      "buffPerOpen": 0.1,
+      "types": [],
+      "health": 70.0,
+      "spawnIntervalSeconds": 15,
+      "spawnPerPulse": 2,
+      "spawnEntities": [
+        "irons_spellbooks:cultist",
+        "irons_spellbooks:cultist",
+        "irons_spellbooks:catacombs_zombie",
+        "irons_spellbooks:apothecarist"
+      ],
+      "maxAlivePerBreach": 6,
+      "rewardItem": "irons_spellbooks:arcane_essence",
+      "rewardCount": 6,
+      "style": "end",
+      "color": 10181119
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "_comment": "1.4.0 : progression des hordes. Appliqué une seule fois, uniquement aux hordes sans condition de déblocage.",
+  "unlocks": {
+    "La Nécropole": [{ "horde": "Tuto Vanilla", "difficulty": "" }],
+    "Horde des profondeurs": [{ "horde": "La Nécropole", "difficulty": "" }],
+    "Les Terres Brûlées": [{ "horde": "Horde des profondeurs", "difficulty": "" }],
+    "Le Néant Éternel": [{ "horde": "Les Terres Brûlées", "difficulty": "" }],
+    "Le Conclave Arcanique": [{ "horde": "Le Néant Éternel", "difficulty": "" }],
+    "Le Siège des Pillards": [{ "horde": "La Nécropole", "difficulty": "" }]
+  }
+}

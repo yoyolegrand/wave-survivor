@@ -1,0 +1,3190 @@
+{
+  "entities": [
+    {
+      "entityName": "fossoyeur_mod",
+      "displayName": "§6§lLe Fossoyeur",
+      "baseEntityType": "dungeons_and_combat:the_grave_watcher",
+      "stats": {
+        "maxHealth": 200,
+        "attackDamage": 10,
+        "movementSpeed": 0.26,
+        "followRange": 64,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_shovel",
+        "offhand": "",
+        "head": "minecraft:iron_helmet",
+        "chest": "minecraft:leather_chestplate",
+        "legs": "minecraft:leather_leggings",
+        "feet": "minecraft:leather_boots"
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "uppercut",
+        "enterrement",
+        "sig_emprise_tombe"
+      ],
+      "id": "7b5ac84b0e8747378e0b3d44"
+    },
+    {
+      "entityName": "blaze_infernal_vanilla",
+      "displayName": "§6§lBlaze Infernal",
+      "baseEntityType": "minecraft:blaze",
+      "stats": {
+        "maxHealth": 30,
+        "attackDamage": 5,
+        "movementSpeed": 0.23,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:blaze_rod",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_du_nether",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 40
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "rafale_infernale"
+      ],
+      "id": "cd73383cb9cc4d6fa62a71ea"
+    },
+    {
+      "entityName": "harponneur_vanilla",
+      "displayName": "§3§lHarponneur des Abysses",
+      "baseEntityType": "minecraft:drowned",
+      "stats": {
+        "maxHealth": 35,
+        "attackDamage": 5,
+        "movementSpeed": 0.24,
+        "followRange": 64,
+        "knockbackResistance": 0.4
+      },
+      "equipment": {
+        "mainhand": "minecraft:trident",
+        "offhand": "",
+        "head": "minecraft:turtle_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:prismarine_shard",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_des_abysses",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:nautilus_shell",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 10
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "salve_tridents"
+      ],
+      "id": "bd4b15768113437e8128a488"
+    },
+    {
+      "entityName": "tarentule_vanilla",
+      "displayName": "Tarentule",
+      "baseEntityType": "minecraft:cave_spider",
+      "stats": {
+        "maxHealth": 20,
+        "attackDamage": 5,
+        "movementSpeed": 0.26,
+        "followRange": 3500,
+        "knockbackResistance": 0.6
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_arcanique",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:emerald",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 50
+        }
+      ],
+      "mountEntity": {
+        "enabled": false,
+        "entityType": "minecraft:spider",
+        "customName": "MotherHood Tarentule",
+        "stats": {
+          "maxHealth": 30,
+          "movementSpeed": 0.25
+        },
+        "equipment": {
+          "mainhand": "",
+          "offhand": "",
+          "head": "",
+          "chest": "",
+          "legs": "",
+          "feet": ""
+        },
+        "lootTable": [
+          {
+            "item": "minecraft:diamond",
+            "minQty": 1,
+            "maxQty": 1,
+            "chance": 50
+          },
+          {
+            "item": "roulettechest:key_coffre_mysterieux_ressource",
+            "minQty": 1,
+            "maxQty": 1,
+            "chance": 50
+          }
+        ]
+      },
+      "isBoss": false,
+      "id": "9ce6e78949a146c2bf20ebab"
+    },
+    {
+      "entityName": "goule",
+      "displayName": "§2Goule",
+      "baseEntityType": "minecraft:husk",
+      "stats": {
+        "maxHealth": 26,
+        "attackDamage": 5,
+        "movementSpeed": 0.33,
+        "followRange": 64,
+        "knockbackResistance": 0.1
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:rotten_flesh",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 10
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "venin_goule"
+      ],
+      "id": "605289687624435db37fd27e"
+    },
+    {
+      "entityName": "archer_os",
+      "displayName": "§fArcher d'Os",
+      "baseEntityType": "minecraft:skeleton",
+      "stats": {
+        "maxHealth": 28,
+        "attackDamage": 4,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.2
+      },
+      "equipment": {
+        "mainhand": "minecraft:bow",
+        "offhand": "",
+        "head": "minecraft:chainmail_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:bone",
+          "minQty": 2,
+          "maxQty": 5,
+          "chance": 70
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:arrow",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 12
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "volee_os"
+      ],
+      "id": "f25ee5b8610d475ba428ecc1"
+    },
+    {
+      "entityName": "profanateur",
+      "displayName": "§4§lProfanateur",
+      "baseEntityType": "minecraft:zombie",
+      "stats": {
+        "maxHealth": 40,
+        "attackDamage": 5,
+        "movementSpeed": 0.24,
+        "followRange": 64,
+        "knockbackResistance": 0.8
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_axe",
+        "offhand": "",
+        "head": "minecraft:iron_helmet",
+        "chest": "minecraft:leather_chestplate",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:iron_ingot",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "6d7a16f862464cccb383f4ae",
+      "targetsAltar": true
+    },
+    {
+      "entityName": "porte_peste",
+      "displayName": "§a§lPorte-Peste",
+      "baseEntityType": "minecraft:zombie",
+      "stats": {
+        "maxHealth": 38,
+        "attackDamage": 4,
+        "movementSpeed": 0.22,
+        "followRange": 64,
+        "knockbackResistance": 0.4
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "minecraft:leather_helmet",
+        "chest": "minecraft:leather_chestplate",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:spider_eye",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:fermented_spider_eye",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 25
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 18
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "miasme"
+      ],
+      "id": "0e33f03d47ac4e5a97d7cf10"
+    },
+    {
+      "entityName": "necromancien",
+      "keepDistance": 10,
+      "displayName": "§2§lNécromancien",
+      "baseEntityType": "minecraft:skeleton",
+      "stats": {
+        "maxHealth": 55,
+        "attackDamage": 4,
+        "movementSpeed": 0.23,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:bone",
+        "offhand": "",
+        "head": "minecraft:chainmail_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:bone_block",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:experience_bottle",
+          "minQty": 2,
+          "maxQty": 5,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 35
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "resurrection",
+        "drain_vie",
+        "eclats_ame"
+      ],
+      "id": "08795bf1a9fc4ef784ece45b"
+    },
+    {
+      "entityName": "chevalier_mort",
+      "displayName": "§8§lChevalier Mort",
+      "baseEntityType": "minecraft:wither_skeleton",
+      "stats": {
+        "maxHealth": 60,
+        "attackDamage": 8,
+        "movementSpeed": 0.26,
+        "followRange": 64,
+        "knockbackResistance": 0.6
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_sword",
+        "offhand": "",
+        "head": "minecraft:iron_helmet",
+        "chest": "minecraft:iron_chestplate",
+        "legs": "minecraft:chainmail_leggings",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:coal",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:iron_ingot",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_du_nether",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 20
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 20
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "dash",
+        "execution_chevalier"
+      ],
+      "id": "0db578d3fb504fc29f17a38c"
+    },
+    {
+      "entityName": "spectre",
+      "displayName": "§7§oSpectre",
+      "baseEntityType": "minecraft:zombie",
+      "stats": {
+        "maxHealth": 30,
+        "attackDamage": 6,
+        "movementSpeed": 0.28,
+        "followRange": 64,
+        "knockbackResistance": 0.2
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "minecraft:chainmail_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:phantom_membrane",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 30
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "disparition",
+        "illusions_spectre"
+      ],
+      "id": "b3fed3d82c824217b80b4777"
+    },
+    {
+      "entityName": "ame_errante",
+      "displayName": "§b§oÂme errante",
+      "baseEntityType": "minecraft:vex",
+      "stats": {
+        "maxHealth": 14,
+        "attackDamage": 3,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 50
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "0d6df933e34f4b868d44e953"
+    },
+    {
+      "entityName": "fossoyeur",
+      "displayName": "§6§lLe Fossoyeur",
+      "baseEntityType": "minecraft:zombie",
+      "stats": {
+        "maxHealth": 200,
+        "attackDamage": 10,
+        "movementSpeed": 0.26,
+        "followRange": 64,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_shovel",
+        "offhand": "",
+        "head": "minecraft:iron_helmet",
+        "chest": "minecraft:leather_chestplate",
+        "legs": "minecraft:leather_leggings",
+        "feet": "minecraft:leather_boots"
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "uppercut",
+        "enterrement",
+        "sig_emprise_tombe"
+      ],
+      "id": "bb30646974124a43ada1f403"
+    },
+    {
+      "entityName": "morvhal",
+      "keepDistance": 12,
+      "displayName": "§5§lMorvhal, la Liche",
+      "baseEntityType": "minecraft:skeleton",
+      "stats": {
+        "maxHealth": 600,
+        "attackDamage": 10,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "minecraft:bow",
+        "offhand": "",
+        "head": "minecraft:netherite_helmet",
+        "chest": "minecraft:chainmail_chestplate",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {
+        "licheMechanics": true
+      },
+      "skills": [
+        "drain_vie",
+        "volee_os",
+        "marque_funebre"
+      ],
+      "id": "54385df94f4148629b442d4f"
+    },
+    {
+      "entityName": "tisseuse",
+      "displayName": "§5Tisseuse",
+      "baseEntityType": "minecraft:cave_spider",
+      "stats": {
+        "maxHealth": 20,
+        "attackDamage": 3,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.2
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:string",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "toile"
+      ],
+      "id": "d8ba0dea1ea643e2b5658fb1"
+    },
+    {
+      "entityName": "artilleur",
+      "displayName": "§6Artilleur",
+      "baseEntityType": "minecraft:skeleton",
+      "stats": {
+        "maxHealth": 35,
+        "attackDamage": 4,
+        "movementSpeed": 0.24,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:bow",
+        "offhand": "",
+        "head": "minecraft:iron_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:arrow",
+          "minQty": 4,
+          "maxQty": 10,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:bone",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 30
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "mortier"
+      ],
+      "id": "e750f4b968a84b5b9af64ee9"
+    },
+    {
+      "entityName": "garde",
+      "displayName": "§7Garde Blindé",
+      "baseEntityType": "minecraft:zombie",
+      "stats": {
+        "maxHealth": 30,
+        "attackDamage": 4,
+        "movementSpeed": 0.2,
+        "followRange": 64,
+        "knockbackResistance": 0.6
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_sword",
+        "offhand": "minecraft:shield",
+        "head": "minecraft:iron_helmet",
+        "chest": "minecraft:iron_chestplate",
+        "legs": "minecraft:iron_leggings",
+        "feet": "minecraft:iron_boots"
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:iron_ingot",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 30
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "ba754785f2a84d23ab6f1b05"
+    },
+    {
+      "entityName": "sergent",
+      "displayName": "§c§lSergent",
+      "baseEntityType": "minecraft:zombie",
+      "stats": {
+        "maxHealth": 45,
+        "attackDamage": 6,
+        "movementSpeed": 0.23,
+        "followRange": 64,
+        "knockbackResistance": 0.6
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_sword",
+        "offhand": "",
+        "head": "minecraft:iron_helmet",
+        "chest": "minecraft:iron_chestplate",
+        "legs": "minecraft:iron_leggings",
+        "feet": "minecraft:iron_boots"
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:iron_ingot",
+          "minQty": 5,
+          "maxQty": 10,
+          "chance": 100
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 25
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "dash"
+      ],
+      "id": "e9cc03989e9f4a33b22e4ba7"
+    },
+    {
+      "entityName": "alchimiste",
+      "displayName": "§2§lAlchimiste",
+      "baseEntityType": "minecraft:witch",
+      "stats": {
+        "maxHealth": 40,
+        "attackDamage": 4,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:glass_bottle",
+          "minQty": 2,
+          "maxQty": 5,
+          "chance": 70
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:nether_wart",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 40
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "pluie_potions"
+      ],
+      "id": "93d2f82b822b4056a8cd314e"
+    },
+    {
+      "entityName": "ombre",
+      "displayName": "§8Ombre",
+      "baseEntityType": "minecraft:zombie",
+      "stats": {
+        "maxHealth": 25,
+        "attackDamage": 5,
+        "movementSpeed": 0.27,
+        "followRange": 64,
+        "knockbackResistance": 0.2
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "minecraft:leather_helmet",
+        "chest": "minecraft:leather_chestplate",
+        "legs": "minecraft:leather_leggings",
+        "feet": "minecraft:leather_boots"
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:gunpowder",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 20
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "disparition",
+        "piege_ombre"
+      ],
+      "id": "f34a627001da4f37abb695fd"
+    },
+    {
+      "entityName": "brute",
+      "displayName": "§4§lLa Brute",
+      "baseEntityType": "minecraft:vindicator",
+      "stats": {
+        "maxHealth": 80,
+        "attackDamage": 9,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.7
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_axe",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:emerald",
+          "minQty": 3,
+          "maxQty": 6,
+          "chance": 100
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 100
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "uppercut",
+        "dash"
+      ],
+      "id": "7044c577c6394e29a2d0c372"
+    },
+    {
+      "entityName": "pilleur",
+      "displayName": "§e§lPilleur de Trésor",
+      "baseEntityType": "minecraft:husk",
+      "stats": {
+        "maxHealth": 15,
+        "attackDamage": 3,
+        "movementSpeed": 0.38,
+        "followRange": 64,
+        "knockbackResistance": 0.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 1,
+          "maxQty": 4,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 50
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "498067ba809f49e7b1905397"
+    },
+    {
+      "entityName": "diablotin",
+      "displayName": "§cDiablotin",
+      "baseEntityType": "wavesurvivor:diablotin",
+      "stats": {
+        "maxHealth": 16,
+        "attackDamage": 3,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:blaze_powder",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 8
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "brulure"
+      ],
+      "id": "373ca99dfcd84783a5bb8fcd"
+    },
+    {
+      "entityName": "pyromancien",
+      "displayName": "§6§lPyromancien",
+      "baseEntityType": "minecraft:zombified_piglin",
+      "stats": {
+        "maxHealth": 40,
+        "attackDamage": 4,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:blaze_rod",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:blaze_rod",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_du_nether",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "rafale_infernale",
+        "eruption"
+      ],
+      "id": "3a91198d6c7f40539bdf229a",
+      "keepDistance": 10
+    },
+    {
+      "entityName": "brute_lave",
+      "displayName": "§4§lBrute de lave",
+      "baseEntityType": "minecraft:piglin_brute",
+      "stats": {
+        "maxHealth": 60,
+        "attackDamage": 9,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.6
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_axe",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 2,
+          "maxQty": 5,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:magma_cream",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_du_nether",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "uppercut"
+      ],
+      "id": "9ec55ee5eb6d429bb9dbdbcb"
+    },
+    {
+      "entityName": "chevaucheur",
+      "displayName": "§6Chevaucheur",
+      "baseEntityType": "minecraft:piglin",
+      "stats": {
+        "maxHealth": 30,
+        "attackDamage": 5,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_sword",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:porkchop",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 10
+        }
+      ],
+      "mountEntity": {
+        "enabled": true,
+        "entityType": "minecraft:hoglin",
+        "customName": "Hoglin de guerre",
+        "stats": {
+          "maxHealth": 40,
+          "attackDamage": 6,
+          "movementSpeed": 0.32,
+          "followRange": 64,
+          "knockbackResistance": 0.6
+        },
+        "equipment": {},
+        "lootTable": [
+          {
+            "lootType": "normal",
+            "item": "minecraft:leather",
+            "minQty": 1,
+            "maxQty": 2,
+            "chance": 50
+          }
+        ]
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "dash"
+      ],
+      "id": "b9fffdb766684d0d8c1e1734"
+    },
+    {
+      "entityName": "sorcier_wither",
+      "displayName": "§8§lSorcier Wither",
+      "baseEntityType": "minecraft:wither_skeleton",
+      "stats": {
+        "maxHealth": 45,
+        "attackDamage": 5,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:stone_sword",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:coal",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:bone",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_du_nether",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "malediction_wither"
+      ],
+      "id": "66be0f47382945d2979e18c2",
+      "keepDistance": 8
+    },
+    {
+      "entityName": "briseur",
+      "displayName": "§4§lBriseur",
+      "baseEntityType": "minecraft:piglin",
+      "stats": {
+        "maxHealth": 50,
+        "attackDamage": 6,
+        "movementSpeed": 0.26,
+        "followRange": 64,
+        "knockbackResistance": 0.8
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_axe",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 12
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "a712e22ac56242bf9f83dded",
+      "targetsAltar": true
+    },
+    {
+      "entityName": "piglin_tresorier",
+      "displayName": "§e§lPiglin trésorier",
+      "baseEntityType": "minecraft:piglin",
+      "stats": {
+        "maxHealth": 20,
+        "attackDamage": 3,
+        "movementSpeed": 0.34,
+        "followRange": 64,
+        "knockbackResistance": 0.0
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_sword",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 2,
+          "maxQty": 6,
+          "chance": 80
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_block",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_des_tresors",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 50
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "8cb1215650e84c1b85269e69"
+    },
+    {
+      "entityName": "seigneur_bastion",
+      "displayName": "§6§lLe Seigneur du Bastion",
+      "baseEntityType": "minecraft:piglin_brute",
+      "stats": {
+        "maxHealth": 260,
+        "attackDamage": 12,
+        "movementSpeed": 0.28,
+        "followRange": 64,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_axe",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "minecraft:golden_chestplate",
+        "legs": "minecraft:golden_leggings",
+        "feet": "minecraft:golden_boots"
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "dash",
+        "uppercut",
+        "sig_bannieres_guerre"
+      ],
+      "id": "31af932d5d1847bebf6f5da6"
+    },
+    {
+      "entityName": "cavalier_cendres",
+      "displayName": "§4§lLe Cavalier des Cendres",
+      "baseEntityType": "minecraft:wither_skeleton",
+      "stats": {
+        "maxHealth": 400,
+        "attackDamage": 12,
+        "movementSpeed": 0.28,
+        "followRange": 64,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "minecraft:netherite_sword",
+        "offhand": "",
+        "head": "minecraft:netherite_helmet",
+        "chest": "minecraft:chainmail_chestplate",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": true,
+        "entityType": "minecraft:hoglin",
+        "customName": "Monture des Cendres",
+        "stats": {
+          "maxHealth": 250,
+          "attackDamage": 10,
+          "movementSpeed": 0.34,
+          "followRange": 64,
+          "knockbackResistance": 1.0
+        },
+        "equipment": {},
+        "lootTable": []
+      },
+      "isBoss": true,
+      "bossConfig": {
+        "cavalierMechanics": true
+      },
+      "skills": [
+        "malediction_wither",
+        "eruption"
+      ],
+      "id": "f77101996ec3470f8ce0704f"
+    },
+    {
+      "entityName": "diablotin_mod",
+      "displayName": "§cDiablotin",
+      "baseEntityType": "wavesurvivor:diablotin",
+      "stats": {
+        "maxHealth": 16,
+        "attackDamage": 3,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:blaze_powder",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 8
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "brulure"
+      ],
+      "id": "41de3023e04c4a43b96ce459"
+    },
+    {
+      "entityName": "pyromancien_mod",
+      "displayName": "§6§lPyromancien",
+      "baseEntityType": "minecraft:zombified_piglin",
+      "stats": {
+        "maxHealth": 40,
+        "attackDamage": 4,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:blaze_rod",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:blaze_rod",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_du_nether",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "rafale_infernale",
+        "eruption"
+      ],
+      "id": "546c5d3ad183417f8e41a418",
+      "keepDistance": 10
+    },
+    {
+      "entityName": "brute_lave_mod",
+      "displayName": "§4§lBrute de lave",
+      "baseEntityType": "minecraft:piglin_brute",
+      "stats": {
+        "maxHealth": 60,
+        "attackDamage": 9,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.6
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_axe",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 2,
+          "maxQty": 5,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:magma_cream",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_du_nether",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "uppercut"
+      ],
+      "id": "97f0d9d978e54352877e40e4"
+    },
+    {
+      "entityName": "chevaucheur_mod",
+      "displayName": "§6Chevaucheur",
+      "baseEntityType": "minecraft:piglin",
+      "stats": {
+        "maxHealth": 30,
+        "attackDamage": 5,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_sword",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:porkchop",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 10
+        }
+      ],
+      "mountEntity": {
+        "enabled": true,
+        "entityType": "minecraft:hoglin",
+        "customName": "Hoglin de guerre",
+        "stats": {
+          "maxHealth": 40,
+          "attackDamage": 6,
+          "movementSpeed": 0.32,
+          "followRange": 64,
+          "knockbackResistance": 0.6
+        },
+        "equipment": {},
+        "lootTable": [
+          {
+            "lootType": "normal",
+            "item": "minecraft:leather",
+            "minQty": 1,
+            "maxQty": 2,
+            "chance": 50
+          }
+        ]
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "dash"
+      ],
+      "id": "00092bedc89e495982012fe2"
+    },
+    {
+      "entityName": "sorcier_wither_mod",
+      "displayName": "§8§lSorcier Wither",
+      "baseEntityType": "minecraft:wither_skeleton",
+      "stats": {
+        "maxHealth": 45,
+        "attackDamage": 5,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:stone_sword",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:coal",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:bone",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_du_nether",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "malediction_wither"
+      ],
+      "id": "fe9c0229ee0949dd92a2e5e8",
+      "keepDistance": 8
+    },
+    {
+      "entityName": "briseur_mod",
+      "displayName": "§4§lBriseur",
+      "baseEntityType": "minecraft:piglin",
+      "stats": {
+        "maxHealth": 50,
+        "attackDamage": 6,
+        "movementSpeed": 0.26,
+        "followRange": 64,
+        "knockbackResistance": 0.8
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_axe",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 50
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 12
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "d5fd7f62ff364f0f8132d406",
+      "targetsAltar": true
+    },
+    {
+      "entityName": "piglin_tresorier_mod",
+      "displayName": "§e§lPiglin trésorier",
+      "baseEntityType": "minecraft:piglin",
+      "stats": {
+        "maxHealth": 20,
+        "attackDamage": 3,
+        "movementSpeed": 0.34,
+        "followRange": 64,
+        "knockbackResistance": 0.0
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_sword",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_ingot",
+          "minQty": 2,
+          "maxQty": 6,
+          "chance": 80
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:gold_block",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_des_tresors",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 50
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "91dcef87afba45448c3a6669"
+    },
+    {
+      "entityName": "seigneur_bastion_mod",
+      "displayName": "§6§lLe Seigneur du Bastion",
+      "baseEntityType": "minecraft:piglin_brute",
+      "stats": {
+        "maxHealth": 260,
+        "attackDamage": 12,
+        "movementSpeed": 0.28,
+        "followRange": 64,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_axe",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "minecraft:golden_chestplate",
+        "legs": "minecraft:golden_leggings",
+        "feet": "minecraft:golden_boots"
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "dash",
+        "uppercut",
+        "sig_bannieres_guerre"
+      ],
+      "id": "564de1a931464ede91ebb603"
+    },
+    {
+      "entityName": "cavalier_cendres_mod",
+      "displayName": "§4§lLe Cavalier des Cendres",
+      "baseEntityType": "minecraft:wither_skeleton",
+      "stats": {
+        "maxHealth": 400,
+        "attackDamage": 12,
+        "movementSpeed": 0.28,
+        "followRange": 64,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "minecraft:netherite_sword",
+        "offhand": "",
+        "head": "minecraft:netherite_helmet",
+        "chest": "minecraft:chainmail_chestplate",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": true,
+        "entityType": "minecraft:hoglin",
+        "customName": "Monture des Cendres",
+        "stats": {
+          "maxHealth": 250,
+          "attackDamage": 10,
+          "movementSpeed": 0.34,
+          "followRange": 64,
+          "knockbackResistance": 1.0
+        },
+        "equipment": {},
+        "lootTable": []
+      },
+      "isBoss": true,
+      "bossConfig": {
+        "cavalierMechanics": true
+      },
+      "skills": [
+        "malediction_wither",
+        "eruption"
+      ],
+      "id": "15970967d7bd49f3964ac1e9"
+    },
+    {
+      "entityName": "rodeur_neant",
+      "displayName": "§5§lRôdeur du Néant",
+      "baseEntityType": "minecraft:enderman",
+      "stats": {
+        "maxHealth": 45,
+        "attackDamage": 8,
+        "movementSpeed": 0.32,
+        "followRange": 64,
+        "knockbackResistance": 0.4
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_de_l_end",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 12
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "clignement"
+      ],
+      "id": "1cbd62ada79a49ecb6c717e9"
+    },
+    {
+      "entityName": "sentinelle",
+      "displayName": "§dSentinelle",
+      "baseEntityType": "minecraft:shulker",
+      "stats": {
+        "maxHealth": 30,
+        "attackDamage": 4,
+        "movementSpeed": 0.0,
+        "followRange": 64,
+        "knockbackResistance": 1.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:shulker_shell",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 45
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 10
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "06dc58f11cbe4a888a036498"
+    },
+    {
+      "entityName": "tisseur_ether",
+      "displayName": "§d§lTisseur d'éther",
+      "baseEntityType": "minecraft:witch",
+      "stats": {
+        "maxHealth": 40,
+        "attackDamage": 4,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:glowstone_dust",
+          "minQty": 2,
+          "maxQty": 5,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_de_l_end",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "puits_gravitationnel"
+      ],
+      "id": "85b352c104a14f759465cd5a",
+      "keepDistance": 10
+    },
+    {
+      "entityName": "eclat",
+      "displayName": "§5Éclat du Néant",
+      "baseEntityType": "wavesurvivor:eclat_neant",
+      "stats": {
+        "maxHealth": 14,
+        "attackDamage": 4,
+        "movementSpeed": 0.32,
+        "followRange": 64,
+        "knockbackResistance": 0.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 25
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:amethyst_shard",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 6
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "62b6f596cec642aca56a4cfb"
+    },
+    {
+      "entityName": "devoreur",
+      "displayName": "§4§lDévoreur de Monolithe",
+      "baseEntityType": "minecraft:enderman",
+      "stats": {
+        "maxHealth": 55,
+        "attackDamage": 7,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.8
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 70
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 12
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "44e8ae73472d43e3b1dd28fa",
+      "targetsAltar": true
+    },
+    {
+      "entityName": "gardien_tresor_neant",
+      "displayName": "§e§lGardien du trésor",
+      "baseEntityType": "minecraft:enderman",
+      "stats": {
+        "maxHealth": 30,
+        "attackDamage": 4,
+        "movementSpeed": 0.34,
+        "followRange": 64,
+        "knockbackResistance": 0.2
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 80
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:shulker_shell",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_des_tresors",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 50
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "52a71a9e51b14aa5bfbbbc50"
+    },
+    {
+      "entityName": "gardien_shulker",
+      "displayName": "§d§lLe Gardien Shulker",
+      "baseEntityType": "minecraft:shulker",
+      "stats": {
+        "maxHealth": 260,
+        "attackDamage": 8,
+        "movementSpeed": 0.0,
+        "followRange": 64,
+        "knockbackResistance": 1.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "puits_gravitationnel",
+        "sig_orbes_traqueurs"
+      ],
+      "id": "ef3329295b9242f98a785e75"
+    },
+    {
+      "entityName": "xaltor",
+      "displayName": "§5§lXâl'Tor, l'Œil du Néant",
+      "baseEntityType": "wavesurvivor:xaltor",
+      "stats": {
+        "maxHealth": 500,
+        "attackDamage": 12,
+        "movementSpeed": 0.33,
+        "followRange": 64,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {
+        "xaltorMechanics": true
+      },
+      "skills": [
+        "clignement",
+        "puits_gravitationnel",
+        "illusions_xaltor"
+      ],
+      "id": "6c0d1a8633fe43d1b70a4681"
+    },
+    {
+      "entityName": "rodeur_neant_mod",
+      "displayName": "§5§lRôdeur du Néant",
+      "baseEntityType": "minecraft:enderman",
+      "stats": {
+        "maxHealth": 45,
+        "attackDamage": 8,
+        "movementSpeed": 0.32,
+        "followRange": 64,
+        "knockbackResistance": 0.4
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_de_l_end",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 12
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "clignement"
+      ],
+      "id": "25700ba49ca44edfa76db719"
+    },
+    {
+      "entityName": "sentinelle_mod",
+      "displayName": "§dSentinelle",
+      "baseEntityType": "minecraft:shulker",
+      "stats": {
+        "maxHealth": 30,
+        "attackDamage": 4,
+        "movementSpeed": 0.0,
+        "followRange": 64,
+        "knockbackResistance": 1.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:shulker_shell",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 45
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 10
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "fca8f7e6d96f44638d234a77"
+    },
+    {
+      "entityName": "tisseur_ether_mod",
+      "displayName": "§d§lTisseur d'éther",
+      "baseEntityType": "minecraft:witch",
+      "stats": {
+        "maxHealth": 40,
+        "attackDamage": 4,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.3
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:glowstone_dust",
+          "minQty": 2,
+          "maxQty": 5,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_de_l_end",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 15
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "puits_gravitationnel"
+      ],
+      "id": "3fb6daac33a841f1bd96419f",
+      "keepDistance": 10
+    },
+    {
+      "entityName": "eclat_mod",
+      "displayName": "§5Éclat du Néant",
+      "baseEntityType": "wavesurvivor:eclat_neant",
+      "stats": {
+        "maxHealth": 14,
+        "attackDamage": 4,
+        "movementSpeed": 0.32,
+        "followRange": 64,
+        "knockbackResistance": 0.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 25
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:amethyst_shard",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 6
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "175ee4563ebe45598182c119"
+    },
+    {
+      "entityName": "devoreur_mod",
+      "displayName": "§4§lDévoreur de Monolithe",
+      "baseEntityType": "minecraft:enderman",
+      "stats": {
+        "maxHealth": 55,
+        "attackDamage": 7,
+        "movementSpeed": 0.3,
+        "followRange": 64,
+        "knockbackResistance": 0.8
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 70
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_coffre_mysterieux",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 12
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "d86fdba44b424a41960bb24c",
+      "targetsAltar": true
+    },
+    {
+      "entityName": "gardien_tresor_neant_mod",
+      "displayName": "§e§lGardien du trésor",
+      "baseEntityType": "minecraft:enderman",
+      "stats": {
+        "maxHealth": 30,
+        "attackDamage": 4,
+        "movementSpeed": 0.34,
+        "followRange": 64,
+        "knockbackResistance": 0.2
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:ender_pearl",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 80
+        },
+        {
+          "lootType": "normal",
+          "item": "minecraft:shulker_shell",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 40
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_des_tresors",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 50
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "c46f92b417aa40e9a4e721d3"
+    },
+    {
+      "entityName": "golem_end_mod",
+      "displayName": "§5§lLe Golem de l'End",
+      "baseEntityType": "cataclysm:ender_golem",
+      "stats": {
+        "maxHealth": 350,
+        "attackDamage": 14,
+        "movementSpeed": 0.22,
+        "followRange": 64,
+        "knockbackResistance": 1.0
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "puits_gravitationnel",
+        "golem_charge",
+        "golem_frappe_tellurique",
+        "golem_cri_neant",
+        "sig_orbes_traqueurs"
+      ],
+      "id": "4826de26237c447994cc204d"
+    },
+    {
+      "entityName": "xaltor_mod",
+      "displayName": "§5§lXâl'Tor, l'Œil du Néant",
+      "baseEntityType": "wavesurvivor:xaltor",
+      "stats": {
+        "maxHealth": 500,
+        "attackDamage": 12,
+        "movementSpeed": 0.33,
+        "followRange": 64,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {
+        "xaltorMechanics": true
+      },
+      "skills": [
+        "clignement",
+        "puits_gravitationnel",
+        "illusions_xaltor"
+      ],
+      "id": "0aca95c09b204d0eb8eaa2c6"
+    },
+    {
+      "entityName": "briseur_sceaux",
+      "displayName": "§5§lBriseur de Sceaux",
+      "baseEntityType": "irons_spellbooks:magehunter_vindicator",
+      "stats": {
+        "maxHealth": 55,
+        "attackDamage": 6,
+        "movementSpeed": 0.27,
+        "followRange": 64,
+        "knockbackResistance": 0.8
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "irons_spellbooks:arcane_essence",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 60
+        },
+        {
+          "lootType": "normal",
+          "item": "roulettechest:key_custom_reliquaire_arcanique",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 10
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "00eacb8de99744519a6e0c23",
+      "targetsAltar": true
+    },
+    {
+      "entityName": "Pyro Knight",
+      "displayName": "§fPyro Knight",
+      "baseEntityType": "dungeons_and_combat:pyro_knight",
+      "stats": {
+        "maxHealth": 120.0,
+        "attackDamage": 10.0,
+        "movementSpeed": 0.25,
+        "followRange": 64,
+        "knockbackResistance": 0.2
+      },
+      "equipment": {},
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "brulure",
+        "rafale_infernale",
+        "eruption",
+        "dash",
+        "execution_chevalier",
+        "forcefield"
+      ],
+      "id": "ba05d075081145678ad87d28",
+      "skillOverrides": {
+        "forcefield": {
+          "forceFieldFireDuration": 2,
+          "forceFieldRadius": 3.0,
+          "forceFieldKnockback": 1.2
+        }
+      }
+    },
+    {
+      "entityName": "archevocateur_boss",
+      "displayName": "§d§lL'Archévocateur Suprême",
+      "baseEntityType": "irons_spellbooks:archevoker",
+      "stats": {
+        "maxHealth": 220,
+        "attackDamage": 8,
+        "movementSpeed": 0.26,
+        "followRange": 50,
+        "knockbackResistance": 0.6
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "sig_cercle_crocs"
+      ],
+      "id": "fa4cd9849f8545cf818a7806"
+    },
+    {
+      "entityName": "roi_mort_boss",
+      "displayName": "§5§lLe Roi Mort",
+      "baseEntityType": "irons_spellbooks:dead_king",
+      "stats": {
+        "maxHealth": 600,
+        "attackDamage": 14,
+        "movementSpeed": 0.27,
+        "followRange": 50,
+        "knockbackResistance": 0.9
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "sig_sentence_roi"
+      ],
+      "id": "af9081e9669a422ca93d451a"
+    }
+  ],
+  "deletedEntities": [],
+  "skills": [
+    {
+      "skillName": "golem_charge",
+      "skillType": "dash_charge",
+      "displayName": "Charge du Golem",
+      "description": "Le golem charge les joueurs qui gardent leurs distances",
+      "cooldown": 8,
+      "id": "eaee691c96774fd18ff8371f",
+      "dashDelay": 160,
+      "dashMinDistance": 4,
+      "dashPower": 2.2,
+      "dashDamageMultiplier": 1.8,
+      "dashSpeedThreshold": 0.6,
+      "dashResistanceDuration": 20,
+      "dashWarningDelay": 20
+    },
+    {
+      "skillName": "golem_frappe_tellurique",
+      "skillType": "uppercut",
+      "displayName": "Frappe tellurique",
+      "description": "Projette dans les airs les joueurs collés au golem",
+      "cooldown": 6,
+      "id": "a4d195bdb56c4222b334481e",
+      "uppercutPower": 1.6,
+      "uppercutCooldown": 120,
+      "uppercutSlownessDuration": 60,
+      "uppercutSlownessAmplifier": 1,
+      "uppercutAddNausea": false,
+      "uppercutNauseaDuration": 100,
+      "uppercutParticle": "minecraft:explosion",
+      "uppercutMessage": "§5Le Golem de l'End vous projette dans les airs !",
+      "uppercutRange": 4.5
+    },
+    {
+      "skillName": "golem_cri_neant",
+      "skillType": "void_scream",
+      "displayName": "Cri du Néant",
+      "description": "Onde de choc autour du golem : dégâts et recul",
+      "cooldown": 20,
+      "id": "2840cb90685e47d8b45f1789",
+      "voidScreamCooldown": 400,
+      "voidScreamDamage": 8,
+      "voidScreamKnockback": 1.6,
+      "voidScreamRange": 10,
+      "voidScreamParticle": "minecraft:sonic_boom",
+      "voidScreamMessage": "§5§lLe Golem de l'End pousse un cri du Néant !"
+    },
+    {
+      "skillName": "clignement",
+      "skillType": "blink",
+      "displayName": "clignement",
+      "description": "Se téléporte dans le dos de la cible et frappe",
+      "cooldown": 6,
+      "id": "b2f1c0de00000000000000e4",
+      "blinkCooldown": 120,
+      "blinkRange": 24,
+      "blinkDistance": 1.8,
+      "blinkStrike": true,
+      "blinkBonusDamage": 2,
+      "blinkSound": "minecraft:entity.enderman.teleport",
+      "blinkMessage": "§5§lQuelque chose surgit dans votre dos !"
+    },
+    {
+      "skillName": "puits_gravitationnel",
+      "skillType": "gravity_well",
+      "displayName": "puits_gravitationnel",
+      "description": "Vortex qui attire les joueurs puis implose",
+      "cooldown": 12,
+      "id": "b2f1c0de00000000000000e5",
+      "gravityWellCooldown": 240,
+      "gravityWellRange": 18,
+      "gravityWellRadius": 5,
+      "gravityWellDuration": 60,
+      "gravityWellStrength": 0.1,
+      "gravityWellDamage": 2,
+      "gravityWellImplosion": true,
+      "gravityWellSound": "minecraft:block.portal.trigger",
+      "gravityWellMessage": "§5§lUn puits de néant vous attire !"
+    },
+    {
+      "skillName": "eruption",
+      "skillType": "eruption",
+      "displayName": "eruption",
+      "description": "Cercles de lave sous les joueurs puis geyser de flammes",
+      "cooldown": 10,
+      "id": "b2f1c0de00000000000000e1",
+      "eruptionCooldown": 200,
+      "eruptionRange": 20,
+      "eruptionTargets": 3,
+      "eruptionDelay": 30,
+      "eruptionRadius": 2.0,
+      "eruptionDamage": 6,
+      "eruptionFireSeconds": 4,
+      "eruptionKnockup": 0.9,
+      "eruptionSound": "minecraft:entity.blaze.shoot",
+      "eruptionMessage": "§6§lLe sol se fissure sous vos pieds !"
+    },
+    {
+      "skillName": "malediction_wither",
+      "skillType": "wither_curse",
+      "displayName": "malediction_wither",
+      "description": "Wither II sur la cible",
+      "cooldown": 8,
+      "id": "b2f1c0de00000000000000e2",
+      "witherCurseCooldown": 160,
+      "witherCurseRange": 16,
+      "witherCurseDuration": 100,
+      "witherCurseAmplifier": 1,
+      "witherCurseRadius": 0,
+      "witherCurseSound": "minecraft:entity.wither.shoot",
+      "witherCurseMessage": "§8§l☠ La Malédiction du Wither vous ronge !"
+    },
+    {
+      "skillName": "brulure",
+      "skillType": "burning_touch",
+      "displayName": "brulure",
+      "description": "Aura brûlante : enflamme les joueurs au contact",
+      "cooldown": 1,
+      "id": "b2f1c0de00000000000000e3",
+      "burningTouchInterval": 20,
+      "burningTouchRadius": 2.0,
+      "burningTouchFireSeconds": 3,
+      "burningTouchDamage": 1
+    },
+    {
+      "id": "25d953bf2fca4ceeb901c9c1",
+      "skillName": "toile",
+      "skillType": "web_trap",
+      "description": "Pose une toile sous les joueurs proches",
+      "cooldown": 8,
+      "displayName": "toile",
+      "webTrapInterval": 200,
+      "webTrapDuration": 40,
+      "webTrapRange": 12,
+      "webTrapSound": "minecraft:entity.spider.step",
+      "webTrapMessage": "§7§lUne toile gluante vous entrave !"
+    },
+    {
+      "id": "7d804379e0b14f76aa09a138",
+      "skillName": "piege_ombre",
+      "skillType": "shadow_trap",
+      "description": "Piège le joueur puis le téléporte aléatoirement",
+      "cooldown": 10,
+      "displayName": "piege_ombre",
+      "shadowTrapCooldown": 150,
+      "shadowTrapDelay": 100,
+      "shadowTrapTeleportRadius": 8,
+      "shadowTrapExplosionMode": "none",
+      "shadowTrapParticle": "minecraft:sculk_soul",
+      "shadowTrapSound": "minecraft:entity.warden.heartbeat",
+      "shadowTrapMessage": "§8§lCe n'était qu'une ombre..."
+    },
+    {
+      "id": "b8e2d1af6c9f4b32a0e15f22",
+      "skillName": "salve_tridents",
+      "skillType": "gatling",
+      "description": "Salve de 3 tridents lancés depuis les abysses",
+      "cooldown": 8,
+      "displayName": "salve_tridents",
+      "gatlingCooldown": 160,
+      "gatlingBulletCount": 3,
+      "gatlingShotInterval": 8,
+      "gatlingSpeed": 2.2,
+      "gatlingDispersion": 1.0,
+      "gatlingProjectileType": "minecraft:trident",
+      "gatlingSound": "minecraft:item.trident.throw",
+      "gatlingMessage": "§3§lUne salve de tridents jaillit des abysses !"
+    },
+    {
+      "id": "e1a0c0de00000000000000b4",
+      "skillName": "enterrement",
+      "skillType": "burial",
+      "description": "Immobilise la cible et fait surgir 2 morts du sol",
+      "displayName": "enterrement",
+      "burialCooldown": 240,
+      "burialRange": 16,
+      "burialDuration": 60,
+      "burialSlowAmplifier": 4,
+      "burialMinionCount": 2,
+      "burialMinionEntity": "minecraft:zombie",
+      "burialMinionHealth": 16,
+      "burialSound": "minecraft:block.rooted_dirt.break",
+      "burialMessage": "§6§lLa terre vous agrippe !"
+    },
+    {
+      "id": "2a4427c6cbcf454e8cda6b04",
+      "skillName": "miasme",
+      "skillType": "potion_rain",
+      "description": "Nuage de peste : faim, poison, faiblesse",
+      "cooldown": 12,
+      "displayName": "miasme",
+      "potionRainCooldown": 220,
+      "potionRainPotionCount": 12,
+      "potionRainBurstInterval": 3,
+      "potionRainDispersion": 7.0,
+      "potionRainProjectileSpeed": 1.0,
+      "potionRainArcHeight": 0.6,
+      "potionRainEffects": [
+        "minecraft:hunger",
+        "minecraft:poison",
+        "minecraft:weakness"
+      ],
+      "potionRainEffectDuration": 80,
+      "potionRainEffectAmplifier": 0,
+      "potionRainSound": "minecraft:entity.zombie_villager.ambient"
+    },
+    {
+      "id": "06d9428371024f49952c17c1",
+      "skillName": "volee_os",
+      "displayName": "volee_os",
+      "skillType": "gatling",
+      "description": "Volée de 5 flèches d'os",
+      "gatlingCooldown": 160,
+      "gatlingBulletCount": 5,
+      "gatlingShotInterval": 4,
+      "gatlingSpeed": 1.8,
+      "gatlingDispersion": 1.5,
+      "gatlingProjectileType": "minecraft:bone",
+      "gatlingSound": "minecraft:entity.skeleton.shoot",
+      "gatlingMessage": "§7§lUne volée d'os s'abat !"
+    },
+    {
+      "id": "46665b84688d4869804bfd78",
+      "skillName": "pluie_potions",
+      "skillType": "potion_rain",
+      "description": "Rafale de potions (lenteur, poison...) en zone",
+      "cooldown": 12,
+      "displayName": "pluie_potions",
+      "potionRainCooldown": 200,
+      "potionRainPotionCount": 20,
+      "potionRainBurstInterval": 3,
+      "potionRainDispersion": 7.0,
+      "potionRainProjectileSpeed": 1.0,
+      "potionRainArcHeight": 0.6,
+      "potionRainEffects": [
+        "minecraft:poison",
+        "minecraft:slowness",
+        "minecraft:weakness",
+        "minecraft:blindness",
+        "minecraft:levitation",
+        "minecraft:mining_fatigue"
+      ],
+      "potionRainEffectDuration": 80,
+      "potionRainEffectAmplifier": 0,
+      "potionRainSound": "minecraft:entity.witch.celebrate"
+    },
+    {
+      "id": "f0a1c0de00000000000000d1",
+      "skillName": "eclats_ame",
+      "displayName": "eclats_ame",
+      "skillType": "gatling",
+      "description": "Salve de 3 éclats d'âme en ligne droite (armure appliquée)",
+      "gatlingCooldown": 60,
+      "gatlingBulletCount": 3,
+      "gatlingShotInterval": 6,
+      "gatlingSpeed": 1.2,
+      "gatlingDispersion": 0.6,
+      "gatlingProjectileType": "wavesurvivor:magic_bolt",
+      "gatlingSound": "",
+      "gatlingMessage": ""
+    },
+    {
+      "id": "205ffaa4d52d4aca9f59f9e7",
+      "skillName": "execution_chevalier",
+      "skillType": "execution",
+      "description": "Achève les joueurs affaiblis",
+      "cooldown": 5,
+      "displayName": "execution_chevalier",
+      "executionCooldown": 100,
+      "executionBackDistance": 1.5,
+      "executionStrengthDuration": 60,
+      "executionStrengthAmplifier": 2,
+      "executionSound": "minecraft:entity.enderman.scream",
+      "executionMessage": "§4§lDERRIÈRE TOI !"
+    },
+    {
+      "id": "e1a0c0de00000000000000b2",
+      "skillName": "marque_funebre",
+      "skillType": "death_mark",
+      "description": "Marque un joueur : tous les morts le traquent, +20% dégâts subis",
+      "displayName": "marque_funebre",
+      "deathMarkCooldown": 300,
+      "deathMarkDuration": 160,
+      "deathMarkDamageBonus": 20,
+      "deathMarkRadius": 32,
+      "deathMarkSound": "minecraft:entity.wither.ambient",
+      "deathMarkMessage": "§8§l☠ Vous portez la Marque funèbre ! Les morts vous traquent..."
+    },
+    {
+      "id": "e1a0c0de00000000000000b1",
+      "skillName": "drain_vie",
+      "skillType": "life_drain",
+      "description": "Rayon d'âmes : blesse la cible et soigne le lanceur",
+      "displayName": "drain_vie",
+      "lifeDrainCooldown": 200,
+      "lifeDrainRange": 12,
+      "lifeDrainDuration": 60,
+      "lifeDrainDamage": 2.0,
+      "lifeDrainHealRatio": 1.0,
+      "lifeDrainSound": "minecraft:entity.vex.charge",
+      "lifeDrainMessage": "§5§lVotre vie est aspirée !"
+    },
+    {
+      "id": "a3f1c0de5b7e4a21b9d04e11",
+      "skillName": "rafale_infernale",
+      "skillType": "gatling",
+      "description": "Rafale de boules de feu qui enflamment la cible",
+      "cooldown": 9,
+      "displayName": "rafale_infernale",
+      "gatlingCooldown": 180,
+      "gatlingBulletCount": 6,
+      "gatlingShotInterval": 5,
+      "gatlingSpeed": 1.6,
+      "gatlingDispersion": 1.2,
+      "gatlingProjectileType": "minecraft:small_fireball",
+      "gatlingSound": "minecraft:entity.blaze.shoot",
+      "gatlingMessage": "§6§lLe Blaze déchaîne une rafale infernale !"
+    },
+    {
+      "id": "cdae01c398904691989ad2a8",
+      "skillName": "illusions_spectre",
+      "skillType": "illusions",
+      "description": "Le Spectre se dédouble",
+      "cooldown": 5,
+      "displayName": "illusions_spectre",
+      "illusionsCooldown": 200,
+      "illusionsCloneCount": 3,
+      "illusionsCloneType": "minecraft:zombie",
+      "illusionsCloneHealth": 1,
+      "illusionsSpawnRadius": 4,
+      "illusionsSound": "minecraft:entity.phantom.ambient",
+      "illusionsMessage": "§7§oLe Spectre se dédouble..."
+    },
+    {
+      "id": "b7e2c41f0a9d4e6c8f3a1d27",
+      "skillName": "illusions_xaltor",
+      "skillType": "illusions",
+      "description": "Xâl'Tor se dédouble : copies conformes à 1 PV",
+      "cooldown": 5,
+      "displayName": "Illusions de Xâl'Tor",
+      "illusionsCooldown": 300,
+      "illusionsCloneCount": 3,
+      "illusionsCloneType": "self",
+      "illusionsCloneHealth": 1,
+      "illusionsSpawnRadius": 5,
+      "illusionsSound": "minecraft:entity.enderman.teleport",
+      "illusionsMessage": "§5§lXâl'Tor se dédouble… trouvez le vrai !"
+    },
+    {
+      "id": "5358b34f9cc64c09887aaab4",
+      "skillName": "venin_goule",
+      "skillType": "venom",
+      "description": "Morsure : poison + nausée autour de la Goule",
+      "cooldown": 5,
+      "displayName": "venin_goule",
+      "venomCooldown": 160,
+      "venomRange": 4,
+      "venomPoisonDuration": 100,
+      "venomPoisonAmplifier": 1,
+      "venomNauseaDuration": 80,
+      "venomNauseaAmplifier": 0,
+      "venomBlindnessDuration": 40,
+      "venomParticle": "minecraft:squid_ink",
+      "venomSound": "minecraft:entity.witch.throw",
+      "venomMessage": "§2§lLa Goule vous mord !"
+    },
+    {
+      "id": "e1a0c0de00000000000000b3",
+      "skillName": "resurrection",
+      "skillType": "resurrection",
+      "description": "Aura : les morts-vivants tués à proximité peuvent se relever",
+      "displayName": "resurrection",
+      "resurrectionRadius": 12,
+      "resurrectionChance": 25,
+      "resurrectionHealth": 10,
+      "resurrectionEntity": "minecraft:skeleton",
+      "resurrectionMessage": "§7§oUn mort se relève..."
+    },
+    {
+      "skillName": "sig_emprise_tombe",
+      "skillType": "grave_grip",
+      "displayName": "Emprise de la tombe",
+      "description": "",
+      "id": "356ad160c67e4c72be352ca2"
+    },
+    {
+      "skillName": "sig_bannieres_guerre",
+      "skillType": "war_banner",
+      "displayName": "Bannières de guerre",
+      "description": "",
+      "id": "b0757e84822b498eafb7d8be"
+    },
+    {
+      "skillName": "sig_orbes_traqueurs",
+      "skillType": "homing_orbs",
+      "displayName": "Orbes traqueurs",
+      "description": "",
+      "id": "16d2254bf62746efb0e5c809",
+      "homingOrbsMessage": "§d§lDes orbes traqueurs vous prennent en chasse !"
+    },
+    {
+      "skillName": "sig_sentence_roi",
+      "skillType": "doom_mark",
+      "displayName": "Sentence du Roi",
+      "description": "",
+      "id": "349f323dfd574b8c8443e3c2"
+    },
+    {
+      "skillName": "sig_raz_de_maree",
+      "skillType": "telegraph",
+      "displayName": "Raz-de-marée",
+      "description": "",
+      "id": "0bc46caa9677412d9983ef23",
+      "telegraphStyle": "geyser",
+      "telegraphCount": 4,
+      "telegraphRadius": 3.0,
+      "telegraphDamage": 8,
+      "telegraphKnockUp": 1.0,
+      "telegraphEffect": "minecraft:slowness",
+      "telegraphEffectLevel": 2,
+      "telegraphEffectDuration": 60,
+      "telegraphCooldown": 180,
+      "telegraphMessage": "§b§lLe sol tremble… un raz-de-marée arrive !"
+    },
+    {
+      "skillName": "sig_cercle_crocs",
+      "skillType": "telegraph",
+      "displayName": "Cercle de crocs",
+      "description": "",
+      "id": "4bc5a327a948426c8a1e67e5",
+      "telegraphStyle": "fangs",
+      "telegraphCount": 3,
+      "telegraphRadius": 2.5,
+      "telegraphKnockUp": 0,
+      "telegraphEffect": "",
+      "telegraphCooldown": 140,
+      "telegraphMessage": "§5§lDes crocs surgissent du sol !"
+    }
+  ],
+  "deletedSkills": []
+}

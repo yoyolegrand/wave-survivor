@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wavesurvivor:item/roulette_key",
+    "layer1": "wavesurvivor:item/roulette_key_gem"
+  }
+}

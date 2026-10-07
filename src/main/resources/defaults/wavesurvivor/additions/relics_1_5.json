@@ -1,0 +1,21 @@
+{
+  "_comment": "1.5.0 : nouvelles reliques ajoutées aux Reliquaires (une seule fois, sans doublon, coffres absents ignorés).",
+  "chestRewards": {
+    "Reliquaire Arcanique": [
+      { "item": "wavesurvivor:pierre_fondation", "minQty": 1, "maxQty": 1, "chance": 1.5, "tier": "EPIC" }
+    ],
+    "Reliquaire du Boss": [
+      { "item": "wavesurvivor:croc_alpha", "minQty": 1, "maxQty": 1, "chance": 1.5, "tier": "EPIC" }
+    ],
+    "Reliquaire de l'End": [
+      { "item": "wavesurvivor:prisme_catalyseur", "minQty": 1, "maxQty": 1, "chance": 1.5, "tier": "EPIC" }
+    ],
+    "Reliquaire des Abysses": [
+      { "item": "wavesurvivor:fragment_porte", "minQty": 1, "maxQty": 1, "chance": 1.5, "tier": "EPIC" },
+      { "item": "wavesurvivor:cristal_givre", "minQty": 1, "maxQty": 1, "chance": 1.5, "tier": "EPIC" }
+    ],
+    "Reliquaire des Trésors": [
+      { "item": "wavesurvivor:bourse_colporteur", "minQty": 1, "maxQty": 1, "chance": 1.5, "tier": "EPIC" }
+    ]
+  }
+}

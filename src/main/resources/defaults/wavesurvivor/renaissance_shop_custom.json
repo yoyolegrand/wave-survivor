@@ -1,0 +1,173 @@
+{
+  "items": [
+    {
+      "id": "lame_phenix",
+      "item": "minecraft:netherite_sword",
+      "count": 1,
+      "cost": 40,
+      "maxPerPlayer": 1,
+      "displayName": "§6§lLame du Phénix",
+      "lore": [
+        "§7Forgée dans les cendres d'une vie passée.",
+        "§8Relique de Renaissance"
+      ],
+      "nbt": "{Enchantments:[{id:\"minecraft:sharpness\",lvl:6s},{id:\"minecraft:fire_aspect\",lvl:3s},{id:\"minecraft:unbreaking\",lvl:3s}]}"
+    },
+    {
+      "id": "ailes_ancestrales",
+      "item": "minecraft:elytra",
+      "count": 1,
+      "cost": 35,
+      "maxPerPlayer": 1,
+      "displayName": "§dAiles Ancestrales",
+      "lore": [
+        "§8Relique de Renaissance"
+      ],
+      "nbt": "{Enchantments:[{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:mending\",lvl:1s}]}"
+    },
+    {
+      "id": "totem_renouveau",
+      "item": "minecraft:totem_of_undying",
+      "count": 1,
+      "cost": 14,
+      "maxPerPlayer": 0,
+      "displayName": "§eTotem du Renouveau",
+      "lore": [
+        "§8Relique de Renaissance"
+      ]
+    },
+    {
+      "id": "pomme_divine",
+      "item": "minecraft:enchanted_golden_apple",
+      "count": 1,
+      "cost": 10,
+      "maxPerPlayer": 0,
+      "lore": [
+        "§8Relique de Renaissance"
+      ]
+    },
+    {
+      "id": "custom_minecraft_netherite_helmet_mup8af63",
+      "item": "minecraft:netherite_helmet",
+      "count": 1,
+      "cost": 45,
+      "maxPerPlayer": 0,
+      "nbt": "{Damage:0,Enchantments:[{id:\"minecraft:mending\",lvl:1s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:protection\",lvl:4s}]}"
+    },
+    {
+      "id": "custom_minecraft_netherite_chestplate_mup8albd",
+      "item": "minecraft:netherite_chestplate",
+      "count": 1,
+      "cost": 45,
+      "maxPerPlayer": 0,
+      "nbt": "{Damage:0,Enchantments:[{id:\"minecraft:mending\",lvl:1s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:protection\",lvl:4s}]}"
+    },
+    {
+      "id": "custom_minecraft_netherite_leggings_mup8apzd",
+      "item": "minecraft:netherite_leggings",
+      "count": 1,
+      "cost": 45,
+      "maxPerPlayer": 0,
+      "nbt": "{Damage:0,Enchantments:[{id:\"minecraft:mending\",lvl:1s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:protection\",lvl:4s}]}"
+    },
+    {
+      "id": "custom_minecraft_netherite_boots_mup8au4y",
+      "item": "minecraft:netherite_boots",
+      "count": 1,
+      "cost": 45,
+      "maxPerPlayer": 0,
+      "nbt": "{Damage:0,Enchantments:[{id:\"minecraft:mending\",lvl:1s},{id:\"minecraft:unbreaking\",lvl:3s},{id:\"minecraft:protection\",lvl:4s}]}"
+    },
+    {
+      "id": "reliquaire_scelle",
+      "item": "wavesurvivor:reliquaire_scelle",
+      "count": 1,
+      "cost": 40,
+      "maxPerPlayer": 0,
+      "lore": [
+        "§7Clic droit : une relique au hasard.",
+        "§8Relique de Renaissance"
+      ]
+    },
+    {
+      "id": "lingot_netherite",
+      "item": "minecraft:netherite_ingot",
+      "count": 1,
+      "cost": 25,
+      "maxPerPlayer": 0,
+      "lore": [
+        "§8Relique de Renaissance"
+      ]
+    },
+    {
+      "id": "livre_raccommodage",
+      "item": "minecraft:enchanted_book",
+      "count": 1,
+      "cost": 35,
+      "maxPerPlayer": 0,
+      "lore": [
+        "§8Relique de Renaissance"
+      ],
+      "nbt": "{StoredEnchantments:[{id:\"minecraft:mending\",lvl:1s}]}"
+    },
+    {
+      "id": "potion_force",
+      "item": "minecraft:potion",
+      "count": 1,
+      "cost": 3,
+      "maxPerPlayer": 0,
+      "displayName": "§cPotion de Force II",
+      "lore": [
+        "§8Relique de Renaissance"
+      ],
+      "nbt": "{Potion:\"minecraft:strong_strength\"}"
+    },
+    {
+      "id": "potion_rapidite",
+      "item": "minecraft:potion",
+      "count": 1,
+      "cost": 3,
+      "maxPerPlayer": 0,
+      "displayName": "§bPotion de Rapidité II",
+      "lore": [
+        "§8Relique de Renaissance"
+      ],
+      "nbt": "{Potion:\"minecraft:strong_swiftness\"}"
+    },
+    {
+      "id": "fusees_elytres",
+      "item": "minecraft:firework_rocket",
+      "count": 64,
+      "cost": 6,
+      "maxPerPlayer": 0,
+      "lore": [
+        "§8Relique de Renaissance"
+      ],
+      "nbt": "{Fireworks:{Flight:3b}}"
+    },
+    {
+      "id": "boite_shulker",
+      "item": "minecraft:shulker_box",
+      "count": 1,
+      "cost": 15,
+      "maxPerPlayer": 0,
+      "lore": [
+        "§8Relique de Renaissance"
+      ]
+    },
+    {
+      "id": "fioles_experience",
+      "item": "minecraft:experience_bottle",
+      "count": 16,
+      "cost": 8,
+      "maxPerPlayer": 0,
+      "lore": [
+        "§8Relique de Renaissance"
+      ]
+    }
+  ],
+  "disabled": [
+    "custom_cataclysm_khopesh_mug44rnr",
+    "custom_dungeons_and_combat_dark_metal_leggings_mug467tq"
+  ]
+}

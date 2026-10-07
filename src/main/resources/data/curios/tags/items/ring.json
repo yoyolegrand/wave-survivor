@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "wavesurvivor:anneau_ancrage",
+    "wavesurvivor:eclat_breche",
+    "wavesurvivor:anneau_prospecteur",
+    "wavesurvivor:cristal_givre",
+    "wavesurvivor:sceau_marchand_roi"
+  ]
+}

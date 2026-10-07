@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CAC",
+    "ARA",
+    "CAC"
+  ],
+  "key": {
+    "C": { "item": "minecraft:crying_obsidian" },
+    "A": { "item": "minecraft:amethyst_shard" },
+    "R": { "item": "minecraft:respawn_anchor" }
+  },
+  "result": {
+    "item": "wavesurvivor:renaissance_altar",
+    "count": 1
+  }
+}

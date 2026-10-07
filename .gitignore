@@ -1,0 +1,38 @@
+# Gradle / build
+build/
+.gradle/
+run/
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.log
+erreurs.txt
+
+# IDE
+.idea/
+*.ipr
+*.iws
+*.iml
+out/
+bin/
+.classpath
+.project
+.settings/
+.metadata/
+*.launch
+eclipse/
+
+# Secrets / local config (never commit)
+.env*
+*.pem
+*.key
+*.jks
+*.keystore
+*.p12
+local.properties
+*.b64
+
+# Local tooling and personal scripts
+.claude/
+CLAUDE.md
+preparer_*.bat
+roulette_key_gold_backup.png
