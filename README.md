@@ -202,4 +202,4 @@ The mod jar is produced in `build/libs/`. To run a dev client: `./gradlew runCli
 
 - **License**: [MIT](LICENSE)
 - **Author**: yoyolegrand
-- Also on [CurseForge](https://www.curseforge.com/projects/1721292) and [Modrinth](https://modrinth.com/mod/wave-survivor).
+- Also on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/wave-survivor) and [Modrinth](https://modrinth.com/mod/wave-survivor).
