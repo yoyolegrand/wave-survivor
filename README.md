@@ -198,8 +198,21 @@ The mod jar is produced in `build/libs/`. To run a dev client: `./gradlew runCli
 
 ---
 
+## 🚀 Releasing (maintainer)
+
+Releases are published automatically to GitHub, Modrinth and CurseForge by `.github/workflows/release.yml`.
+
+1. Set `mod_version` in `gradle.properties`.
+2. Add a `## <version>` section at the top of `CHANGELOG.md`.
+3. Commit and push, then tag: `git tag v<version>` and `git push origin v<version>`.
+   (use a `-beta` suffix, e.g. `v1.6.0-beta`, for a beta release).
+
+Required repository secrets: `MODRINTH_TOKEN` and `CURSEFORGE_TOKEN`.
+
+---
+
 ## 📜 License & credits
 
-- **License**: [MIT](LICENSE)
+- **License**: source code under [MIT](LICENSE); art assets (textures, logo) are **all rights reserved**, see [LICENSE-ASSETS](LICENSE-ASSETS)
 - **Author**: yoyolegrand
 - Also on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/wave-survivor) and [Modrinth](https://modrinth.com/mod/wave-survivor).

@@ -188,5 +188,5 @@ Toute la configuration se trouve dans `config/wavesurvivor/`.
 
 ## 📜 Licence et crédits
 
-- **Licence** : MIT
+- **Licence** : code source sous [MIT](LICENSE) ; les ressources graphiques (textures, logo) sont **tous droits réservés**, voir [LICENSE-ASSETS](LICENSE-ASSETS)
 - **Auteur** : yoyolegrand

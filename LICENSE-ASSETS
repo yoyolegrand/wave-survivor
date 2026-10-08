@@ -1,0 +1,34 @@
+Wave Survivor — Art Assets License
+
+Copyright (c) 2026 yoyolegrand. All rights reserved.
+
+This license applies ONLY to the artwork of the Wave Survivor project, namely:
+
+  - everything under src/main/resources/assets/wavesurvivor/textures/
+  - src/main/resources/wave_survivor_logo.png
+  - everything under docs/textures_pixellab/
+  - any other image, icon, logo or texture added to the project later, unless
+    a file states otherwise
+
+These files are NOT covered by the MIT License that applies to the source code
+(see the LICENSE file).
+
+You MAY:
+  - view these files and use them as they are shipped inside the official
+    Wave Survivor mod, including in modpacks that include the unmodified mod
+    and in videos, screenshots, streams and reviews of the mod;
+  - build the mod from this repository for your own personal use.
+
+You MAY NOT, without prior written permission from the author:
+  - copy, extract, modify, redistribute or republish these files, alone or as
+    part of another project, mod, resource pack or modpack;
+  - sell them or use them commercially;
+  - use them to train or fine-tune machine-learning models;
+  - present them as your own work.
+
+Forks and contributions: if you fork this repository or send a pull request,
+the code remains under the MIT License, but the art assets above remain the
+property of the author and may not be reused outside of the Wave Survivor mod.
+
+To ask for permission, open an issue on
+https://github.com/yoyolegrand/wave-survivor/issues

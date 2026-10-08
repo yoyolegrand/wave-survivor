@@ -1,10 +1,10 @@
 modLoader="javafml"
 loaderVersion="[47,)"
-license="MIT"
+license="MIT (code), All Rights Reserved (art assets)"
 
 [[mods]]
 modId="wavesurvivor"
-version="1.4.0"
+version="${mod_version}"
 displayName="Wave Survivor"
 logoFile="wave_survivor_logo.png"
 authors="yoyolegrand"
@@ -12,9 +12,10 @@ description='''
 Defend the Monolith against hordes of monsters, wave after wave.
 
 - 10 ready-to-play hordes: a tutorial, The Necropolis, The Scorched Lands, The Eternal Void (Vanilla and Modded versions), the Horde of the Depths, The Arcane Conclave (Iron's Spells) and The Pillager Siege (Kingdom).
-- NEW Kingdom mode: defend your kingdom against Gates in Assault / Calm cycles, with towers, soldiers, walls, traps, a Town Hall and hand-drawn paths.
+- Kingdom mode: defend your kingdom against Gates in Assault / Calm cycles, with towers, soldiers, walls, traps, a Town Hall, a Repair Workshop, Barracks orders and a kingdom map.
 - Bosses with real mechanics, Monolith Defense, Infernal Breaches, gravitational Anomalies, chaos events (totems, ore deposits, chaos merchants...).
-- Reliquaries, keys and 15 relics (Curios-compatible), merchants, leaderboard rewards, Renaissance altar.
+- Reliquaries, keys and relics in 6 families with set bonuses (Curios-compatible), a relic Forge with legendary fusions, merchants, leaderboard rewards.
+- Renaissance prestige: Heritage tree, ranks I-V and a shop.
 - Full in-game editor (/ws editor): hordes, monsters, bosses, skills and loot.
 - English and French (/ws lang en|fr).
 

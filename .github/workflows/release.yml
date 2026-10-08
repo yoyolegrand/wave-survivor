@@ -1,0 +1,83 @@
+name: Release
+
+# Se déclenche quand on pousse un tag de version, ex. : v1.5.0 (ou v1.6.0-beta pour une bêta)
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Read version from tag
+        id: ver
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          case "$VERSION" in
+            *beta*)  echo "type=beta"    >> "$GITHUB_OUTPUT" ;;
+            *alpha*) echo "type=alpha"   >> "$GITHUB_OUTPUT" ;;
+            *)       echo "type=release" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Check tag matches gradle.properties
+        run: |
+          BASE="${{ steps.ver.outputs.version }}"
+          BASE="${BASE%%-*}"
+          PROP=$(grep '^mod_version=' gradle.properties | cut -d= -f2 | tr -d '\r')
+          if [ "$BASE" != "$PROP" ]; then
+            echo "Le tag ($BASE) ne correspond pas à mod_version ($PROP) dans gradle.properties" >&2
+            exit 1
+          fi
+
+      - name: Extract changelog section
+        run: |
+          VERSION="${{ steps.ver.outputs.version }}"
+          BASE="${VERSION%%-*}"
+          awk -v v="$BASE" '
+            $0 ~ "^## " v "([[:space:]]|$)" { found=1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md > release_changelog.md
+          if [ ! -s release_changelog.md ]; then
+            echo "Aucune section '## $BASE' trouvée dans CHANGELOG.md" >&2
+            exit 1
+          fi
+          cat release_changelog.md
+
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew build --no-daemon
+
+      - name: Publish (GitHub + Modrinth + CurseForge)
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          name: Wave Survivor ${{ steps.ver.outputs.version }}
+          version: ${{ steps.ver.outputs.version }}
+          version-type: ${{ steps.ver.outputs.type }}
+          changelog-file: release_changelog.md
+          files: build/libs/wavesurvivor-*.jar
+          loaders: forge
+          game-versions: 1.20.1
+          java: 17
+
+          modrinth-id: wave-survivor
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          curseforge-id: 1721292
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          github-token: ${{ secrets.GITHUB_TOKEN }}
