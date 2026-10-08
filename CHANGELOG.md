@@ -23,7 +23,7 @@
 - **Repair all** button, with a price quote before you confirm.
 - **Barracks orders**, plus exclusive options for the Commander.
 - **Defense sheet**: right-click any defense to see its stats.
-- **Kingdom map** (3 zoom levels) and the **Kingdom Compass**.
+- **Kingdom map** (3 zoom levels) and the **Kingdom Compass**. Corruption Hearths from the Purification objective show on the map for everyone and can be targeted with the Compass.
 - New **Scout** unit and an **Assault report** after every Assault.
 - **All towers rebalanced.**
 - **Foundations are now required** — unsupported structures collapse.

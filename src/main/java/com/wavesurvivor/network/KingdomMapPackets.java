@@ -19,7 +19,7 @@ public final class KingdomMapPackets {
 
     /** Types de marqueurs. */
     public static final byte MONOLITH = 0, DEFENSE = 1, RAMPART = 2, TRAP = 3, GATE = 4, CATALYST = 5,
-            DEPOSIT = 6, TREE = 7, PLAYER = 8, SELF = 9;
+            DEPOSIT = 6, TREE = 7, PLAYER = 8, SELF = 9, FOYER = 10;
 
     /** Un marqueur : type, position relative au Monolithe, information en plus (type de défense…). */
     public record Marker(byte type, short dx, short dz, byte extra) {}

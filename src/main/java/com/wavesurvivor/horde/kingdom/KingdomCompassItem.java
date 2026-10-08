@@ -76,13 +76,13 @@ public class KingdomCompassItem extends Item {
     public void inventoryTick(ItemStack st, Level level, net.minecraft.world.entity.Entity holder, int slot, boolean selected) {
         if (level.isClientSide || level.getGameTime() % 40 != 0 || !hasTarget(st)) return;
         int type = st.getTag().getInt(TARGET_TYPE);
-        if (type != 5 && type != 6 && type != 7) return;              // Catalyseur, gisement, arbre
+        if (type != 5 && type != 6 && type != 7 && type != 10) return; // Catalyseur, gisement, arbre, foyer de corruption
         GlobalPos gp = target(st);
         if (gp == null || !gp.dimension().equals(level.dimension()) || !level.isLoaded(gp.pos())) return;
         var box = new net.minecraft.world.phys.AABB(gp.pos()).inflate(4, 12, 4);
         boolean alive = type == 5
                 ? !level.getEntitiesOfClass(com.wavesurvivor.entity.BrecheEntity.class, box, b -> b.isAlive() && b.isCatalyst()).isEmpty()
-                : !level.getEntitiesOfClass(com.wavesurvivor.entity.GisementEntity.class, box, g -> g.isAlive() && !g.isFoyer()).isEmpty();
+                : !level.getEntitiesOfClass(com.wavesurvivor.entity.GisementEntity.class, box, g -> g.isAlive() && g.isFoyer() == (type == 10)).isEmpty();
         if (alive) return;
         clearTarget(st);
         if (holder instanceof net.minecraft.world.entity.player.Player p) p.displayClientMessage(WSLang.c("compass.gone"), true);

@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * CARTE DU ROYAUME — rassemble ce qu'il faut afficher autour du Monolithe (128 blocs de rayon) :
- * Monolithe, défenses, remparts, pièges, Portes ennemies, Catalyseurs, gisements, arbres, joueurs.
+ * Monolithe, défenses, remparts, pièges, Portes ennemies, Catalyseurs, gisements, arbres, foyers de corruption, joueurs.
  * (Pas le trésor enfoui : il doit se chercher.)
  */
 public final class KingdomMap {
@@ -42,10 +42,11 @@ public final class KingdomMap {
         for (BlockPos g : KingdomManager.objGates()) add(out, c, g.getX(), g.getZ(), KingdomMapPackets.GATE, (byte) 0);
         // Catalyseurs
         for (Entity e : KingdomManager.catalysts()) add(out, c, e.getBlockX(), e.getBlockZ(), KingdomMapPackets.CATALYST, (byte) 0);
-        // Gisements et arbres (pas les foyers de corruption)
+        // Gisements, arbres et foyers de corruption (objectif Purification : visibles par tous, cliquables pour la Boussole)
         AABB box = new AABB(c).inflate(RANGE, 64, RANGE);
-        for (GisementEntity g : lvl.getEntitiesOfClass(GisementEntity.class, box, g -> g.isAlive() && !g.isFoyer())) {
-            add(out, c, g.getBlockX(), g.getBlockZ(), g.isTree() ? KingdomMapPackets.TREE : KingdomMapPackets.DEPOSIT, (byte) 0);
+        for (GisementEntity g : lvl.getEntitiesOfClass(GisementEntity.class, box, g -> g.isAlive())) {
+            byte type = g.isFoyer() ? KingdomMapPackets.FOYER : g.isTree() ? KingdomMapPackets.TREE : KingdomMapPackets.DEPOSIT;
+            add(out, c, g.getBlockX(), g.getBlockZ(), type, (byte) 0);
         }
         // Joueurs (soi-même à part)
         for (ServerPlayer p : lvl.players()) {

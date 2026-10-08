@@ -85,6 +85,7 @@ public class MonolithShopScreen extends Screen {
             case 5 -> 0xFFFF40FF;                                  // Catalyseur
             case 6 -> 0xFFF0D040;                                  // gisement
             case 7 -> 0xFF40C040;                                  // arbre
+            case 10 -> 0xFFC03CE6;                                 // foyer de corruption
             case 9 -> 0xFF40FFFF;                                  // soi
             default -> 0xFFFFFFFF;                                 // joueurs
         };
@@ -130,10 +131,11 @@ public class MonolithShopScreen extends Screen {
                 int layer = m.type() == 2 || m.type() == 3 ? 0 : (m.type() == 8 || m.type() == 9) ? 2 : 1;
                 if (layer != pass || Math.abs(m.dx()) > half || Math.abs(m.dz()) > half) continue;
                 int px = cx + Math.round(m.dx() * sc), py = cy + Math.round(m.dz() * sc);
-                int r = switch (m.type()) { case 0 -> 3; case 4 -> 3; case 2, 3 -> 1; default -> 2; };
+                int r = switch (m.type()) { case 0 -> 3; case 4 -> 3; case 10 -> 3; case 2, 3 -> 1; default -> 2; };
                 int col = markerColor(m);
                 if (m.type() == 4) g.fill(px - r - 1, py - r - 1, px + r + 2, py + r + 2, 0xFFFF5050);
                 if (m.type() == 5 && (System.currentTimeMillis() / 400) % 2 == 0) g.fill(px - r - 1, py - r - 1, px + r + 2, py + r + 2, 0x88FFFFFF);
+                if (m.type() == 10 && (System.currentTimeMillis() / 500) % 2 == 0) g.fill(px - r - 1, py - r - 1, px + r + 2, py + r + 2, 0x88E070FF); // foyer : clignote
                 g.fill(px - r, py - r, px + r + 1, py + r + 1, col);
                 // Repère visé par la boussole : entouré de doré
                 if (compassPick != null && compassPick.type() == m.type() && compassPick.dx() == m.dx() && compassPick.dz() == m.dz()) {
@@ -145,7 +147,7 @@ public class MonolithShopScreen extends Screen {
         }
         // Légende
         int lx = left + 200, ly = yTop;
-        byte[] legend = {0, 9, 8, 1, 2, 3, 4, 5, 6, 7};
+        byte[] legend = {0, 9, 8, 1, 2, 3, 4, 5, 10, 6, 7};
         for (byte t : legend) {
             var dummy = new com.wavesurvivor.network.KingdomMapPackets.Marker(t, (short) 0, (short) 0, (byte) 0);
             g.fill(lx, ly + 2, lx + 6, ly + 8, markerColor(dummy));
