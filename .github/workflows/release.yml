@@ -36,16 +36,20 @@ jobs:
         run: |
           BASE="${{ steps.ver.outputs.version }}"
           BASE="${BASE%%-*}"
-          PROP=$(grep '^mod_version=' gradle.properties | cut -d= -f2 | tr -d '\r')
+          PROP=$(grep '^mod_version=' gradle.properties | cut -d= -f2 | tr -d '\015')
           if [ "$BASE" != "$PROP" ]; then
             echo "Le tag ($BASE) ne correspond pas à mod_version ($PROP) dans gradle.properties" >&2
             exit 1
           fi
 
       - name: Extract changelog section
+        id: log
         run: |
           VERSION="${{ steps.ver.outputs.version }}"
           BASE="${VERSION%%-*}"
+          # Sous-titre : texte après « ## 1.5.0 — » dans CHANGELOG.md (optionnel)
+          SUBTITLE=$(grep -m1 -E "^## ${BASE}( |$)" CHANGELOG.md | sed -E 's/^## [^ ]+[ ]*(—[ ]*)?//' | tr -d '\015')
+          echo "subtitle=${SUBTITLE}" >> "$GITHUB_OUTPUT"
           awk -v v="$BASE" '
             $0 ~ "^## " v "([[:space:]]|$)" { found=1; next }
             found && /^## / { exit }
@@ -65,7 +69,7 @@ jobs:
       - name: Publish (GitHub + Modrinth + CurseForge)
         uses: Kir-Antipov/mc-publish@v3.3
         with:
-          name: Wave Survivor ${{ steps.ver.outputs.version }}
+          name: Wave Survivor ${{ steps.ver.outputs.version }}${{ steps.log.outputs.subtitle != '' && format(' — {0}', steps.log.outputs.subtitle) || '' }}
           version: ${{ steps.ver.outputs.version }}
           version-type: ${{ steps.ver.outputs.type }}
           changelog-file: release_changelog.md

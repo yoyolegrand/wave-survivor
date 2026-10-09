@@ -203,7 +203,7 @@ The mod jar is produced in `build/libs/`. To run a dev client: `./gradlew runCli
 Releases are published automatically to GitHub, Modrinth and CurseForge by `.github/workflows/release.yml`.
 
 1. Set `mod_version` in `gradle.properties`.
-2. Add a `## <version>` section at the top of `CHANGELOG.md`.
+2. Add a `## <version> — <subtitle>` section at the top of `CHANGELOG.md` (the subtitle becomes part of the release name).
 3. Commit and push, then tag: `git tag v<version>` and `git push origin v<version>`.
    (use a `-beta` suffix, e.g. `v1.6.0-beta`, for a beta release).
 

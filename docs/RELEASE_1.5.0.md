@@ -7,7 +7,7 @@ Ready-to-paste texts for the CurseForge and Modrinth 1.5.0 upload. Nothing here 
 | Field | Value |
 |---|---|
 | File | `build/libs/wavesurvivor-1.5.0.jar` |
-| Version name | `Wave Survivor 1.5.0` |
+| Version name | `Wave Survivor 1.5.0 — Relics, Renaissance & Kingdom Tools` (built from the CHANGELOG heading) |
 | Version number | `1.5.0` |
 | Release type | Release (switch to Beta if you want more testing first) |
 | Game version | **1.20.1 only** |

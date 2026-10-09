@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.5.0
+## 1.5.0 — Relics, Renaissance & Kingdom Tools
 
 **Minecraft 1.20.1 · Forge 47+** — the biggest update so far: relics are reworked, Renaissance becomes a full prestige system, and Kingdom mode gets repair, command and map tools.
 
