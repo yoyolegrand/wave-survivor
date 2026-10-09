@@ -106,6 +106,8 @@ public class HordeCommand {
         // Seule /ws info est accessible aux joueurs sans permission.
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal("wavesurvivor")
                 .then(Commands.literal("info").executes(HordeCommand::info))
+                // Défi du jour : difficulté, mutateurs, récompense et série (ouvert à tous)
+                .then(Commands.literal("daily").executes(ctx -> com.wavesurvivor.horde.daily.DailyServer.show(ctx.getSource())))
                 // Codex : guide des mécaniques, ouvert à tous
                 .then(Commands.literal("codex").executes(ctx -> {
                     com.wavesurvivor.network.CodexPacket.openFor(ctx.getSource().getPlayerOrException());

@@ -93,6 +93,9 @@ public class RenaissanceRewards {
             }
             double personal = Heritage.prMultiplier(p) * com.wavesurvivor.item.RelicSets.prMultiplier(p);
             int total = (int) Math.round((base + bonusWin) * diff * muta * personal) + first;
+            // 1.6 — Défi du jour : première victoire du jour avec la difficulté et les 3 mutateurs imposés
+            int daily = victory ? com.wavesurvivor.horde.daily.DailyServer.claim(p, kingdom) : 0;
+            if (daily > 0) RenaissanceStore.addPoints(p, daily);
             if (total <= 0) continue;
             RenaissanceStore.addPoints(p, total);
             p.sendSystemMessage(Component.literal(WSLang.t("pr.earned", total, base, bonusWin,

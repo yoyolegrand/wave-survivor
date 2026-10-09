@@ -54,8 +54,8 @@
 | Gantelet | chaque boss +15 % plus fort que le précédent |
 
 - Chronomètre + classement des meilleurs temps par serveur.
-- Médailles bronze / argent / or selon le temps.
-- Récompenses : clé du Reliquaire du Boss par boss, trophées décoratifs, objet exclusif pour l'or.
+- Récompenses : clé du Reliquaire du Boss par boss + PR de Renaissance.
+- **Décision du 09/10/2026 : pas de médailles, pas de trophées décoratifs, pas d'objet exclusif** (donc aucune nouvelle texture pour le Boss Rush).
 - Compatible avec les mutateurs.
 - Réutilise les boss et contrôleurs existants : surtout un nouveau déroulement dans le gestionnaire de hordes.
 

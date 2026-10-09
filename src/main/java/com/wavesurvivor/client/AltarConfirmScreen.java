@@ -36,6 +36,22 @@ public class AltarConfirmScreen extends Screen {
                 + com.wavesurvivor.i18n.WSLang.t("difficulty." + d.id + ".desc") + "\n§8" + com.wavesurvivor.i18n.WSLang.t("difficulty.click");
     }
 
+    /** Infobulle du bouton « Défi du jour » : difficulté imposée, mutateurs et récompense. */
+    private static String dailyTooltip(com.wavesurvivor.horde.daily.DailyChallenge.Plan plan) {
+        StringBuilder names = new StringBuilder();
+        for (com.wavesurvivor.horde.mutator.Mutator m : plan.mutators()) {
+            names.append(names.length() > 0 ? "§7, " : "").append("§f").append(m.icon).append(" ")
+                    .append(com.wavesurvivor.i18n.WSLang.t("mutator." + m.id));
+        }
+        var d = plan.difficulty();
+        return "§6§l" + com.wavesurvivor.i18n.WSLang.t("daily.title") + " §7(" + plan.date() + ")\n§7"
+                + com.wavesurvivor.i18n.WSLang.t("daily.tip.diff", d.color + com.wavesurvivor.i18n.WSLang.t("difficulty." + d.id)) + "\n§7"
+                + com.wavesurvivor.i18n.WSLang.t("daily.tip.muta", names.toString()) + "\n§7"
+                + com.wavesurvivor.i18n.WSLang.t("daily.tip.reward", com.wavesurvivor.horde.daily.DailyChallenge.reward(1, d, false),
+                        com.wavesurvivor.horde.daily.DailyChallenge.reward(1, d, true)) + "\n§8"
+                + com.wavesurvivor.i18n.WSLang.t("daily.tip.click");
+    }
+
     public AltarConfirmScreen(OpenAltarConfirmScreenPacket data) {
         super(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.autel_runique")));
         this.data = data;
@@ -121,6 +137,26 @@ public class AltarConfirmScreen extends Screen {
                         btn -> NetworkHandler.CHANNEL.sendToServer(
                                 new com.wavesurvivor.network.AltarCustomPackets.Request(data.altarPos)))
                 .bounds(width - 90, 10, 80, 18).build());
+
+        // Bouton « Défi du jour » (haut gauche, sous le Codex) : coche d'un clic les 3 mutateurs et la difficulté du jour
+        var daily = com.wavesurvivor.horde.daily.DailyChallenge.today();
+        Button dailyBtn = Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("daily.button")),
+                        btn -> {
+                            java.util.Set<com.wavesurvivor.horde.difficulty.Difficulty> okDiffs =
+                                    com.wavesurvivor.horde.difficulty.Difficulty.allowed(current().difficulties());
+                            if (!okDiffs.contains(daily.difficulty())) {
+                                if (minecraft != null && minecraft.player != null) minecraft.player.displayClientMessage(
+                                        com.wavesurvivor.i18n.WSLang.c("daily.not_allowed", com.wavesurvivor.i18n.WSLang.t("difficulty." + daily.difficulty().id)), true);
+                                return;
+                            }
+                            SELECTED.clear();
+                            SELECTED.addAll(daily.mutators());
+                            DIFF = daily.difficulty();
+                            init();
+                        })
+                .bounds(10, 32, 110, 18).build();
+        dailyBtn.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(dailyTooltip(daily))));
+        addRenderableWidget(dailyBtn);
 
         // Bouton "Codex" (haut gauche) : guide des mécaniques
         addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("codex.button")),

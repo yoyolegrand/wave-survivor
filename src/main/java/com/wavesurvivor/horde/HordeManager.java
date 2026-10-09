@@ -101,6 +101,8 @@ public class HordeManager {
             HordeSession.discard(srv);
             // Mutateurs cochés sur l'écran de l'autel : activés pour cette horde (« Une seule vie » exclue en Kingdom)
             com.wavesurvivor.horde.mutator.HordeMutators.begin(srv, horde.configData != null && horde.configData.isKingdom());
+            // 1.6 — Défi du jour : la horde lancée correspond-elle au défi (difficulté + 3 mutateurs) ?
+            com.wavesurvivor.horde.daily.DailyServer.onHordeStart(srv, horde.configData != null && horde.configData.isKingdom());
             // 1.5 — Héritage : émeraudes et clé de départ (Marchand), coup fatal évité rechargé (Survivant)
             com.wavesurvivor.horde.renaissance.Heritage.onHordeStart(srv);
             // 1.5 — PR gagnés en jouant : compteurs de la partie
@@ -872,6 +874,7 @@ public class HordeManager {
         HordeSession.discard(server);
         com.wavesurvivor.horde.mutator.HordeMutators.clear();
         com.wavesurvivor.horde.difficulty.HordeDifficulty.clear();
+        com.wavesurvivor.horde.daily.DailyServer.clear();
         this.state = State.IDLE;
         this.activeHorde = null;
         this.currentWave = 0;

@@ -22,11 +22,11 @@ import java.util.List;
 public class CodexScreen extends Screen {
 
     private static final String[] PAGES = {
-            "start", "classic", "breaches", "blessings", "difficulty", "boss",
+            "start", "classic", "breaches", "blessings", "difficulty", "daily", "boss",
             "kingdom", "objectives", "treasury", "monolith", "defenses", "workshop", "tools",
             "roles", "alchemy", "omens", "relics", "renaissance", "interface", "editor"
     };
-    private static final String[] ICONS = {"📖", "⚔", "☄", "✚", "🎲", "☠",
+    private static final String[] ICONS = {"📖", "⚔", "☄", "✚", "🎲", "◷", "☠",
             "♛", "⚑", "◆", "🏛", "🛡", "⚒", "➤",
             "♟", "⚗", "👁", "✦", "☼", "⌨", "✎"};
     private static final String[] WORKSHOP_SPECS = {"forge", "armory", "mechanic", "foundry"};
@@ -123,6 +123,15 @@ public class CodexScreen extends Screen {
                 section(out, "codex.sec.mutators");
                 out.add("§7" + WSLang.t("mutator.subtitle"));
                 for (String m : MUTATORS) entry(out, "§d" + WSLang.t("mutator." + m), WSLang.t("mutator." + m + ".desc"));
+            }
+            case "daily" -> {
+                var plan = com.wavesurvivor.horde.daily.DailyChallenge.today();
+                section(out, "codex.sec.today");
+                out.add("§7" + plan.date() + " (UTC)");
+                out.add("§e• " + WSLang.t("daily.tip.diff", plan.difficulty().color + WSLang.t("difficulty." + plan.difficulty().id)));
+                for (com.wavesurvivor.horde.mutator.Mutator m : plan.mutators()) {
+                    entry(out, "§d" + m.icon + " " + WSLang.t("mutator." + m.id), WSLang.t("mutator." + m.id + ".desc"));
+                }
             }
             case "boss" -> {
                 section(out, "codex.sec.affixes");
