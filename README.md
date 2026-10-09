@@ -209,6 +209,8 @@ Releases are published automatically to GitHub, Modrinth and CurseForge by `.git
 
 Required repository secrets: `MODRINTH_TOKEN` and `CURSEFORGE_TOKEN`.
 
+Modrinth is skipped unless the repository variable `PUBLISH_MODRINTH` is set to `true`.
+
 ---
 
 ## 📜 License & credits
