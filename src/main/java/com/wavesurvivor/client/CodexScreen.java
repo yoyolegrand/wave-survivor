@@ -22,10 +22,15 @@ import java.util.List;
 public class CodexScreen extends Screen {
 
     private static final String[] PAGES = {
-            "start", "classic", "difficulty", "boss", "kingdom", "treasury",
-            "monolith", "defenses", "roles", "alchemy", "omens", "editor"
+            "start", "classic", "breaches", "blessings", "difficulty", "boss",
+            "kingdom", "objectives", "treasury", "monolith", "defenses", "workshop", "tools",
+            "roles", "alchemy", "omens", "relics", "renaissance", "interface", "editor"
     };
-    private static final String[] ICONS = {"📖", "⚔", "🎲", "☠", "♛", "◆", "🏛", "🛡", "♟", "⚗", "👁", "✎"};
+    private static final String[] ICONS = {"📖", "⚔", "☄", "✚", "🎲", "☠",
+            "♛", "⚑", "◆", "🏛", "🛡", "⚒", "➤",
+            "♟", "⚗", "👁", "✦", "☼", "⌨", "✎"};
+    private static final String[] WORKSHOP_SPECS = {"forge", "armory", "mechanic", "foundry"};
+    private static final String[] HERITAGE_BRANCHES = {"survivor", "merchant", "lord"};
 
     private static final String[] DIFFICULTIES = {"easy", "normal", "hard", "nightmare"};
     private static final String[] MUTATORS = {"frenzy", "armored", "swarm", "volatile", "venomous", "fragile", "hungry",
@@ -50,6 +55,8 @@ public class CodexScreen extends Screen {
     private final Screen parent;
     private int page;
     private int scroll = 0;
+    /** Première page visible dans le sommaire (le sommaire défile quand il y a plus de pages que de place). */
+    private int sideScroll = 0;
     private int left, top, panelW, panelH;
     private static final int SIDE_W = 128, ROW_H = 16, LINE_H = 10;
     private List<FormattedCharSequence> lines = new ArrayList<>();
@@ -73,6 +80,7 @@ public class CodexScreen extends Screen {
         top = (height - panelH) / 2;
         addRenderableWidget(Button.builder(Component.literal(WSLang.t("ui.fermer")), b -> onClose())
                 .bounds(left + panelW - 66, top + 5, 60, 16).build());
+        ensureVisible();
         rebuild();
     }
 
@@ -80,6 +88,15 @@ public class CodexScreen extends Screen {
     private int textW() { return panelW - SIDE_W - 24; }
     private int textTop() { return top + 42; }
     private int visibleLines() { return Math.max(1, (top + panelH - 10 - textTop()) / LINE_H); }
+    private int sideRows() { return Math.max(1, (panelH - 28 - 8) / ROW_H); }
+
+    /** Garde la page choisie visible dans le sommaire. */
+    private void ensureVisible() {
+        int rows = sideRows();
+        if (page < sideScroll) sideScroll = page;
+        else if (page >= sideScroll + rows) sideScroll = page - rows + 1;
+        sideScroll = Math.max(0, Math.min(sideScroll, Math.max(0, PAGES.length - rows)));
+    }
 
     // ─── Contenu ───
 
@@ -122,6 +139,35 @@ public class CodexScreen extends Screen {
                 section(out, "codex.sec.traps");
                 for (String[] t : TRAPS) entry(out, "§f" + block(t[0]), WSLang.t("kingdom.trap.desc." + t[1]));
                 out.add("§8" + strip(WSLang.t("kingdom.trap.hint")));
+            }
+            case "relics" -> {
+                section(out, "codex.sec.sets");
+                body(out, "codex.sets.hint");
+                for (com.wavesurvivor.item.RelicSets.Family f : com.wavesurvivor.item.RelicSets.Family.values()) {
+                    StringBuilder names = new StringBuilder();
+                    for (net.minecraft.world.item.Item it : f.items()) {
+                        if (names.length() > 0) names.append(", ");
+                        names.append(Component.translatable(it.getDescriptionId()).getString());
+                    }
+                    out.add("");
+                    out.add("§e• " + WSLang.t("set." + f.id));
+                    out.add("§8" + names);
+                    for (int t = 2; t <= f.max; t++) out.add("§7  " + t + " : " + WSLang.t("set." + f.id + "." + t));
+                }
+            }
+            case "renaissance" -> {
+                for (String b : HERITAGE_BRANCHES) {
+                    out.add("");
+                    out.add("§e• " + WSLang.t("heritage." + b));
+                    for (int n = 1; n <= 5; n++) out.add("§7  " + n + ". " + WSLang.t("heritage." + b + "." + n));
+                }
+                out.add("");
+                body(out, "codex.renaissance.tail");
+                for (int r = 1; r <= 5; r++) out.add("§7  " + r + " · §f" + WSLang.t("heritage.title." + r));
+            }
+            case "workshop" -> {
+                section(out, "codex.sec.specs");
+                for (String v : WORKSHOP_SPECS) entry(out, "§f" + WSLang.t("kingdom.variant." + v), WSLang.t("kingdom.variant.desc." + v));
             }
             case "roles" -> { for (String r : ROLES) multi(out, WSLang.t("kingdom.role." + r + ".desc")); }
             case "alchemy" -> { for (String f : FLASKS) multi(out, WSLang.t("kingdom.alchemy.desc." + f)); }
@@ -166,8 +212,9 @@ public class CodexScreen extends Screen {
     private int pageAt(double mx, double my) {
         int y0 = top + 28;
         if (mx < left + 6 || mx >= left + SIDE_W) return -1;
-        int i = (int) Math.floor((my - y0) / ROW_H);
-        return my >= y0 && i >= 0 && i < PAGES.length ? i : -1;
+        int row = (int) Math.floor((my - y0) / ROW_H);
+        int i = row + sideScroll;
+        return my >= y0 && row >= 0 && row < sideRows() && i >= 0 && i < PAGES.length ? i : -1;
     }
 
     @Override
@@ -186,6 +233,10 @@ public class CodexScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mx, double my, double delta) {
+        if (mx < left + SIDE_W) { // sur le sommaire : il défile
+            sideScroll = Math.max(0, Math.min(Math.max(0, PAGES.length - sideRows()), sideScroll - (int) Math.signum(delta)));
+            return true;
+        }
         scroll = Math.max(0, Math.min(maxScroll(), scroll - (int) Math.signum(delta) * 3));
         return true;
     }
@@ -197,6 +248,7 @@ public class CodexScreen extends Screen {
             int d = key == 265 ? -1 : 1;
             page = lastPage = (page + d + PAGES.length) % PAGES.length;
             scroll = 0;
+            ensureVisible();
             rebuild();
             return true;
         }
@@ -213,14 +265,18 @@ public class CodexScreen extends Screen {
 
         // Sommaire
         int hover = pageAt(mx, my);
-        for (int i = 0; i < PAGES.length; i++) {
-            int y = top + 28 + i * ROW_H;
+        for (int i = sideScroll; i < Math.min(PAGES.length, sideScroll + sideRows()); i++) {
+            int y = top + 28 + (i - sideScroll) * ROW_H;
             if (i == page) g.fill(left + 6, y, left + SIDE_W, y + ROW_H - 2, 0x66F59E0B);
             else if (i == hover) g.fill(left + 6, y, left + SIDE_W, y + ROW_H - 2, 0x33FFFFFF);
             String label = ICONS[i] + " " + WSLang.t("codex." + PAGES[i]);
             if (font.width(label) > SIDE_W - 14) label = font.plainSubstrByWidth(label, SIDE_W - 18) + "…";
             g.drawString(font, (i == page ? "§f" : "§7") + label, left + 10, y + 4, 0xFFFFFFFF);
         }
+
+        // Flèches : d'autres pages au-dessus / en dessous
+        if (sideScroll > 0) g.drawString(font, "§8▲", left + SIDE_W - 12, top + 12, 0xFFFFFFFF);
+        if (sideScroll + sideRows() < PAGES.length) g.drawString(font, "§8▼", left + SIDE_W - 12, top + panelH - 11, 0xFFFFFFFF);
 
         // Page
         g.drawString(font, "§e§l" + ICONS[page] + " " + WSLang.t("codex." + PAGES[page]), textX(), top + 28, 0xFFFFFFFF);
