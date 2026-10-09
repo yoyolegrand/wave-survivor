@@ -42,7 +42,7 @@ Wave Survivor turns Minecraft into a wave-defense game you can play solo or with
 - Alternate between **Calm** (gather, build, complete objectives) and **Assaults**
 - Buildings with levels and specializations: Archer Tower, Mage Tower, Shrine, Barracks, Gleaner Tower
 - Walls, gates, traps and siege units (Rams, Sappers, Climbers, Standard-bearers)
-- **New in 1.5:** Repair Workshop (Ember Forge, Armory, Recycling Foundry) with a quoted "Repair all", Barracks orders, defense sheets, a Kingdom map and Compass, a Scout, post-Assault reports, rebalanced towers, smarter archers, mandatory foundations and saved Kingdom progress
+- **New in 1.5:** Repair Workshop (specializations: Blazing Forge, Field Armory, Mechanic's Workshop, Recycling Foundry) with a quoted "Repair all", Barracks orders, defense sheets, a Kingdom map and Compass, a Scout, post-Assault reports, rebalanced towers, smarter archers, mandatory foundations and saved Kingdom progress
 
 ## 🔮 Relics & Renaissance
 - **Relics in 6 families with set bonuses**, a dedicated Curios slot, tiers I–III

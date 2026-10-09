@@ -19,7 +19,7 @@
 - Shop expanded to **16 items**.
 
 ### Kingdom mode
-- **Repair Workshop** with three stations: Ember Forge, Armory and Recycling Foundry.
+- **Repair Workshop** with four specializations: Blazing Forge, Field Armory, Mechanic's Workshop and Recycling Foundry.
 - **Repair all** button, with a price quote before you confirm.
 - **Barracks orders**, plus exclusive options for the Commander.
 - **Defense sheet**: right-click any defense to see its stats.
