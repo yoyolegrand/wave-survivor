@@ -13,17 +13,18 @@
 - 📖 **In-game Codex** — a guide to every mechanic (`/ws codex`)
 - 🗺 **The Pillager Siege** — a Kingdom horde
 
-## 🔜 Next: 1.6
-- ❄ **Frozen Peaks horde** — a new themed campaign with its own monsters, boss and Reliquary
-- 👑 **Boss Rush mode** — fight the bosses of a campaign back to back, with a timer, medals and a best-time leaderboard
-- 📅 **Daily Challenge** — 3 mutators drawn each day, the same for the whole server, with a special reward
+## 🔜 Next: 1.6 *(in testing)*
+- ❄ **Frozen Peaks horde** — a new themed campaign: frost creatures, special waves, three bosses with their own mechanics
+- 🌨 **Storm chaos event** — a blizzard where a lit campfire gives shelter, reusable in any horde
+- 👑 **Boss Rush mode** — fight the bosses of a horde or a Kingdom back to back, with shared lives and a leaderboard
+- 📅 **Daily Challenge** — a daily difficulty and 3 mutators, the same for the whole server, with bonus Renaissance Points
 
 ## 🧭 Planned
 - ♾ **Endless mode** — infinite waves with growing difficulty and a best-score leaderboard
 - 🏅 **Advancements** — "First horde survived", "Morvhal defeated", "All relics found"…
 - 📊 **Player statistics screen** — hordes won, monsters killed, bosses defeated, best rank
 - 🗺 **More hordes** — Jungle Temple, Deep Dark Abyss (Warden), Sky Horde
-- ⚡ **New chaos events** — meteor shower, Blood Moon, storm, earthquake
+- ⚡ **New chaos events** — meteor shower, Blood Moon, earthquake
 - 🎨 **Final textures** for the legendary relics and the first relics
 
 ## 🔭 Later
