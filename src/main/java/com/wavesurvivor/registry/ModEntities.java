@@ -96,6 +96,13 @@ public class ModEntities {
                     .clientTrackingRange(8)
                     .build("snow_sorcerer"));
 
+    /** Horde des Pics Gelés : Ravageur de givre (base d'Aurvang, l'Ancien du Glacier). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.FrostRavager>> FROST_RAVAGER = ENTITIES.register("frost_ravager",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.FrostRavager>of(com.wavesurvivor.entity.FrostRavager::new, MobCategory.MONSTER)
+                    .sized(1.95f, 2.2f)
+                    .clientTrackingRange(10)
+                    .build("frost_ravager"));
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
     }
@@ -111,5 +118,6 @@ public class ModEntities {
         event.put(KINGDOM_SOLDIER.get(), com.wavesurvivor.entity.KingdomSoldier.createAttributes().build());
         event.put(FROST_GOLEM.get(), com.wavesurvivor.entity.FrostGolem.createAttributes().build());
         event.put(SNOW_SORCERER.get(), com.wavesurvivor.entity.SnowSorcerer.createAttributes().build());
+        event.put(FROST_RAVAGER.get(), net.minecraft.world.entity.monster.Ravager.createAttributes().build());
     }
 }

@@ -940,7 +940,7 @@ public final class KingdomManager {
         SCOUT.add(WSLang.c("kingdom.scout.head", next));
         SCOUT.add(WSLang.c("kingdom.scout.gates", per * dirs.size(), dirs.size(), String.join(", ", dirs), per));
         // Assaut spécial : tiré maintenant, appliqué tel quel à l'Assaut
-        pendingSpecial = HordeManager.get().kingdomPickSpecial();
+        pendingSpecial = HordeManager.get().kingdomPickSpecial(next);
         specialRolled = true;
         if (pendingSpecial != null && pendingSpecial.entities != null && !pendingSpecial.entities.isEmpty()) {
             SCOUT.add(WSLang.c("kingdom.scout.special", WSLang.t(pendingSpecial.name).trim()));
@@ -981,7 +981,7 @@ public final class KingdomManager {
             specialRolled = false;
             pendingSpecial = null;
         } else {
-            special = HordeManager.get().kingdomPickSpecial();
+            special = HordeManager.get().kingdomPickSpecial(cycle);
         }
         specialUnits.clear();
         if (special == null || special.entities == null) { special = null; return; }

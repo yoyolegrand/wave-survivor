@@ -8,7 +8,6 @@
         "totalWaves": 10,
         "delayBetweenWaves": 45,
         "spawnType": "fixed",
-        "spawnCoords": null,
         "spawnRadius": 30,
         "gameOverRadius": 2000,
         "playerScaling": {
@@ -482,6 +481,39 @@
             },
             "min_wave": 7,
             "max_wave": 0
+          },
+          {
+            "entity_type": "profanateur_givre",
+            "custom_name": "§4§lProfanateur du Givre",
+            "base_count": 2,
+            "count_increment": 0,
+            "max_health": 44,
+            "attack_damage": 5,
+            "movement_speed": 0.24,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:iron_nugget",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 40
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 8
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
           }
         ],
         "useSpecialWaves": true,
@@ -510,9 +542,10 @@
                 ]
               },
               {
-                "entity_type": "loup_neiges",
-                "custom_name": "§b§lLoup Alpha",
+                "entity_type": "loup_alpha",
+                "custom_name": "§3§lLoup Alpha",
                 "count": 1,
+                "scale": 1.4,
                 "max_health": 90,
                 "attack_damage": 9,
                 "movement_speed": 0.42,
@@ -520,10 +553,16 @@
                 "equipment": {},
                 "loot_table": [
                   {
+                    "item": "minecraft:emerald",
+                    "minQty": 2,
+                    "maxQty": 5,
+                    "chance": 80
+                  },
+                  {
                     "item": "roulettechest:key_coffre_mysterieux",
                     "minQty": 1,
                     "maxQty": 1,
-                    "chance": 4
+                    "chance": 40
                   }
                 ]
               }
@@ -706,6 +745,24 @@
                     "chance": 4
                   }
                 ]
+              },
+              {
+                "entity_type": "profanateur_givre",
+                "custom_name": "§4§lProfanateur du Givre",
+                "count": 3,
+                "max_health": 46,
+                "attack_damage": 5,
+                "movement_speed": 0.25,
+                "follow_range": 64,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 4
+                  }
+                ]
               }
             ]
           }
@@ -752,10 +809,16 @@
                 "chance": 50
               },
               {
-                "item": "wavesurvivor:os_sacre",
+                "item": "wavesurvivor:cristal_givre",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 30
+                "chance": 35
+              },
+              {
+                "item": "minecraft:blue_ice",
+                "minQty": 4,
+                "maxQty": 8,
+                "chance": 100
               }
             ],
             "spawnMessage": "§b§l❄ [BOSS] ❄ §3Krag le Brise-Glace §b§lsurgit du glacier !",
@@ -813,15 +876,27 @@
               },
               {
                 "item": "minecraft:diamond",
-                "minQty": 1,
-                "maxQty": 3,
-                "chance": 50
+                "minQty": 2,
+                "maxQty": 4,
+                "chance": 60
               },
               {
-                "item": "wavesurvivor:os_sacre",
+                "item": "wavesurvivor:reliquaire_scelle",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 30
+                "chance": 40
+              },
+              {
+                "item": "wavesurvivor:cristal_givre",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 25
+              },
+              {
+                "item": "minecraft:pearlescent_froglight",
+                "minQty": 2,
+                "maxQty": 4,
+                "chance": 70
               }
             ],
             "spawnMessage": "§b§l❄ [BOSS] ❄ §3Syllis, Reine du Blizzard §b§ldéchaîne la tempête !",
@@ -831,7 +906,7 @@
           {
             "waveNumber": 10,
             "bossName": "§b§lAurvang, l'Ancien du Glacier",
-            "entityType": "minecraft:ravager",
+            "entityType": "wavesurvivor:frost_ravager",
             "useCustomEntity": true,
             "customEntityName": "aurvang_ancien",
             "maxHealth": 900,
@@ -863,15 +938,33 @@
               },
               {
                 "item": "minecraft:diamond",
+                "minQty": 3,
+                "maxQty": 6,
+                "chance": 100
+              },
+              {
+                "item": "wavesurvivor:reliquaire_scelle",
                 "minQty": 1,
-                "maxQty": 3,
+                "maxQty": 1,
+                "chance": 100
+              },
+              {
+                "item": "wavesurvivor:cristal_givre",
+                "minQty": 1,
+                "maxQty": 1,
                 "chance": 50
               },
               {
-                "item": "wavesurvivor:os_sacre",
+                "item": "wavesurvivor:coeur_saisons",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 30
+                "chance": 10
+              },
+              {
+                "item": "minecraft:blue_ice",
+                "minQty": 8,
+                "maxQty": 16,
+                "chance": 100
               }
             ],
             "spawnMessage": "§b§l❄ [BOSS] ❄ §3Aurvang, l'Ancien du Glacier §b§lse réveille !",
@@ -880,8 +973,8 @@
           }
         ],
         "chaosEnabled": true,
-        "chaosMinInterval": 60,
-        "chaosMaxInterval": 120,
+        "chaosMinInterval": 20,
+        "chaosMaxInterval": 40,
         "chaosEvents": [
           {
             "type": "gisement",
@@ -895,7 +988,8 @@
             "blocks": [
               "minecraft:blue_ice",
               "minecraft:packed_ice",
-              "minecraft:lapis_ore"
+              "minecraft:lapis_ore",
+              "minecraft:snow_block"
             ],
             "drops": [
               {
@@ -922,25 +1016,25 @@
             "hits": 24,
             "hitDrops": [
               {
-                "item": "minecraft:prismarine_crystals",
-                "minQty": 1,
-                "maxQty": 1,
-                "chance": 40.0
-              },
-              {
-                "item": "minecraft:prismarine_shard",
-                "minQty": 1,
-                "maxQty": 1,
-                "chance": 40.0
-              },
-              {
-                "item": "minecraft:raw_copper",
+                "item": "minecraft:raw_gold",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 20
               },
               {
-                "item": "minecraft:raw_gold",
+                "item": "minecraft:packed_ice",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 20
+              },
+              {
+                "item": "minecraft:blue_ice",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 20
+              },
+              {
+                "item": "minecraft:ice",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 20
@@ -1021,9 +1115,95 @@
               "minecraft:stone"
             ],
             "drops": []
+          },
+          {
+            "type": "tempete",
+            "message": "§b§l❄ UN BLIZZARD S'ABAT SUR LES PICS ! ❄",
+            "sound": "minecraft:entity.polar_bear.warning",
+            "radius": 45,
+            "stormDuration": 40,
+            "stormWarning": 6,
+            "stormDamage": 1.5,
+            "stormFreeze": true,
+            "stormWind": 0.012,
+            "stormParticle": "minecraft:snowflake",
+            "stormShelter": [],
+            "stormShelterRadius": 4,
+            "effects": [
+              {
+                "effect": "minecraft:slowness",
+                "level": 1,
+                "target": "joueurs"
+              },
+              {
+                "effect": "minecraft:speed",
+                "level": 1,
+                "target": "monstres"
+              }
+            ]
+          },
+          {
+            "type": "arbre",
+            "message": "§b§l❄ Un arbre de givre perce la neige ! ❄",
+            "sound": "minecraft:block.amethyst_cluster.break",
+            "entityType": "minecraft:ravager",
+            "isCustomEntity": false,
+            "count": 1,
+            "trades": [],
+            "effects": [],
+            "blocks": [],
+            "drops": [
+              {
+                "item": "minecraft:stripped_birch_log",
+                "minQty": 4,
+                "maxQty": 6,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:blue_ice",
+                "minQty": 2,
+                "maxQty": 4,
+                "chance": 60
+              },
+              {
+                "item": "minecraft:pearlescent_froglight",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 30
+              }
+            ],
+            "minTier": 0,
+            "trunkBlocks": [
+              "minecraft:stripped_birch_wood"
+            ],
+            "leafBlocks": [
+              "minecraft:blue_ice",
+              "minecraft:ice",
+              "minecraft:packed_ice",
+              "minecraft:snow_block"
+            ],
+            "fruitBlocks": [
+              "minecraft:pearlescent_froglight"
+            ],
+            "size": "aleatoire",
+            "hitDrops": [
+              {
+                "item": "minecraft:stripped_birch_log",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 20
+              }
+            ]
           }
         ],
-        "stars": 3
+        "stars": 3,
+        "unlockRequires": [
+          {
+            "horde": "La Nécropole",
+            "difficulty": ""
+          }
+        ],
+        "forceEndBonus": {}
       },
       "rewards": {
         "enabled": false,
@@ -1263,9 +1443,9 @@
       "isBoss": false,
       "bossConfig": {},
       "skills": [
-        "fp_charge_yeti",
-        "fp_frappe_yeti",
-        "fp_souffle_glacial"
+        "fp_rocher_yeti",
+        "fp_rugissement_yeti",
+        "fp_avalanche_yeti"
       ],
       "id": "4716b865e9e4c3a778faa076"
     },
@@ -1326,7 +1506,8 @@
         "fp_zone_gel",
         "fp_charge_krag",
         "fp_fracas_krag",
-        "fp_souffle_krag"
+        "fp_souffle_krag",
+        "fp_pointes_glace"
       ],
       "id": "40ef80ab81ebc44763639df5"
     },
@@ -1359,14 +1540,16 @@
         "fp_orbes_givre",
         "fp_clignement_reine",
         "fp_pluie_glace",
-        "fp_souffle_reine"
+        "fp_souffle_reine",
+        "fp_onde_givre",
+        "fp_blizzard"
       ],
       "id": "fa02e9a20916ce97249977cb"
     },
     {
       "entityName": "aurvang_ancien",
       "displayName": "§b§lAurvang, l'Ancien du Glacier",
-      "baseEntityType": "minecraft:ravager",
+      "baseEntityType": "wavesurvivor:frost_ravager",
       "stats": {
         "followRange": 64,
         "knockbackResistance": 1.0,
@@ -1393,10 +1576,69 @@
         "fp_gravite_glaciale",
         "fp_supernova_gel",
         "fp_fracas_ancien",
-        "fp_charge_ancien",
-        "fp_gel_sol"
+        "fp_piliers_glace",
+        "fp_prise_glace"
       ],
       "id": "f1c55b23f4f476b7f540afec"
+    },
+    {
+      "entityName": "profanateur_givre",
+      "displayName": "§4§lProfanateur du Givre",
+      "baseEntityType": "minecraft:husk",
+      "stats": {
+        "followRange": 64,
+        "knockbackResistance": 0.6,
+        "maxHealth": 44,
+        "attackDamage": 5,
+        "movementSpeed": 0.24
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_axe",
+        "offhand": "",
+        "head": "minecraft:chainmail_helmet",
+        "chest": "minecraft:leather_chestplate",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "6d6b7e819cd592c898ea788b",
+      "targetsAltar": true
+    },
+    {
+      "entityName": "loup_alpha",
+      "displayName": "§3§lLoup Alpha",
+      "baseEntityType": "minecraft:wolf",
+      "stats": {
+        "followRange": 56,
+        "knockbackResistance": 0.5,
+        "maxHealth": 90,
+        "attackDamage": 9,
+        "movementSpeed": 0.42
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "fp_bond_alpha"
+      ],
+      "id": "a1f0c3e9b2d4471c8e5a9f20"
     }
   ],
   "skills": [
@@ -1432,50 +1674,68 @@
       "blinkMessage": "§b❄ Une ombre glacée surgit dans votre dos !"
     },
     {
-      "skillName": "fp_charge_yeti",
+      "skillName": "fp_bond_alpha",
       "skillType": "dash_charge",
-      "displayName": "Charge du Yéti",
-      "description": "Le Yéti charge les joueurs qui gardent leurs distances",
-      "id": "860d97ab41b1571da5f0fc25",
-      "cooldown": 8,
-      "dashDelay": 140,
-      "dashMinDistance": 5,
-      "dashPower": 2.0,
-      "dashDamageMultiplier": 1.6,
-      "dashSpeedThreshold": 0.6,
-      "dashResistanceDuration": 20,
-      "dashWarningDelay": 20,
-      "dashSound": "minecraft:entity.polar_bear.warning"
-    },
-    {
-      "skillName": "fp_frappe_yeti",
-      "skillType": "uppercut",
-      "displayName": "Poing du Yéti",
-      "description": "Projette dans les airs les joueurs collés au Yéti",
-      "id": "3a80fbe32f69ba9bf711abf5",
+      "displayName": "Bond de l'Alpha",
+      "description": "Le Loup Alpha bondit sur les joueurs qui gardent leurs distances",
+      "id": "b7e2d4f1a9c3456e8d0f1a22",
       "cooldown": 6,
-      "uppercutPower": 1.4,
-      "uppercutCooldown": 110,
-      "uppercutSlownessDuration": 60,
-      "uppercutSlownessAmplifier": 1,
-      "uppercutParticle": "minecraft:snowflake",
-      "uppercutRange": 4.0,
-      "uppercutMessage": "§bLe Yéti vous projette dans les airs !"
+      "dashDelay": 110,
+      "dashMinDistance": 4,
+      "dashPower": 2.2,
+      "dashDamageMultiplier": 1.5,
+      "dashSpeedThreshold": 0.6,
+      "dashResistanceDuration": 10,
+      "dashWarningDelay": 12,
+      "dashSound": "minecraft:entity.wolf.howl"
     },
     {
-      "skillName": "fp_souffle_glacial",
-      "skillType": "chill",
-      "displayName": "Souffle glacial",
-      "description": "Ralentit et aveugle les joueurs proches",
-      "id": "6d5f4ffb6e6df949ef316752",
-      "cooldown": 10,
-      "chillCooldown": 260,
-      "chillRange": 9,
-      "chillSlownessDuration": 50,
-      "chillSlownessAmplifier": 1,
-      "chillBlindnessDuration": 30,
-      "chillParticle": "minecraft:snowflake",
-      "chillMessage": "§b❄ Un souffle glacial vous fige !"
+      "skillName": "fp_rocher_yeti",
+      "skillType": "telegraph",
+      "displayName": "Rocher de glace",
+      "description": "Le Yéti lance des blocs de glace qui s'écrasent sur les zones averties",
+      "id": "c3d9e1f2a4b5467890ab1c33",
+      "cooldown": 8,
+      "telegraphStyle": "boulder",
+      "telegraphCount": 2,
+      "telegraphRadius": 2.5,
+      "telegraphWarning": 30,
+      "telegraphDamage": 8,
+      "telegraphKnockUp": 0.5,
+      "telegraphEffect": "minecraft:slowness",
+      "telegraphEffectLevel": 1,
+      "telegraphEffectDuration": 60,
+      "telegraphCooldown": 160,
+      "telegraphMessage": "§b§lLe Yéti arrache un bloc de glace !"
+    },
+    {
+      "skillName": "fp_rugissement_yeti",
+      "skillType": "void_scream",
+      "displayName": "Rugissement",
+      "description": "Un rugissement qui repousse et blesse les joueurs proches",
+      "id": "d4e0f2a3b5c6478901bc2d44",
+      "cooldown": 12,
+      "voidScreamCooldown": 280,
+      "voidScreamDamage": 4,
+      "voidScreamKnockback": 1.8,
+      "voidScreamRange": 8,
+      "voidScreamSound": "minecraft:entity.polar_bear.warning",
+      "voidScreamParticle": "minecraft:snowflake",
+      "voidScreamMessage": "§b§lLe Yéti pousse un rugissement glacé !"
+    },
+    {
+      "skillName": "fp_avalanche_yeti",
+      "skillType": "grave_grip",
+      "displayName": "Avalanche",
+      "description": "Un joueur qui reste immobile est enseveli sous la neige",
+      "id": "e5f1a3b4c6d7489012cd3e55",
+      "cooldown": 16,
+      "graveGripCooldown": 320,
+      "graveGripStillSeconds": 3,
+      "graveGripRadius": 14,
+      "graveGripDuration": 50,
+      "graveGripDamage": 2,
+      "graveGripMessage": "§b§l❄ L'avalanche vous ensevelit ! Bougez ! ❄"
     },
     {
       "skillName": "fp_zone_gel",
@@ -1484,7 +1744,7 @@
       "description": "Le sol se fissure, puis la glace éclate",
       "id": "11d47a1986c897da86308251",
       "cooldown": 9,
-      "telegraphStyle": "slam",
+      "telegraphStyle": "ice",
       "telegraphCount": 4,
       "telegraphRadius": 3.0,
       "telegraphWarning": 30,
@@ -1667,33 +1927,75 @@
       "uppercutMessage": "§b§lAurvang vous projette dans les airs !"
     },
     {
-      "skillName": "fp_charge_ancien",
-      "skillType": "dash_charge",
-      "displayName": "Charge de l'Ancien",
-      "description": "Aurvang charge les joueurs à distance",
-      "id": "d41b073624a54869f4ea82e8",
+      "skillName": "fp_pointes_glace",
+      "skillType": "ice_spikes",
+      "displayName": "Pointes de glace",
+      "description": "Des lignes de pointes de glace jaillissent vers la cible",
+      "id": "01fb71dff795b26a7895277a",
       "cooldown": 9,
-      "dashDelay": 170,
-      "dashMinDistance": 6,
-      "dashPower": 2.4,
-      "dashDamageMultiplier": 1.8,
-      "dashSpeedThreshold": 0.6,
-      "dashResistanceDuration": 20,
-      "dashWarningDelay": 25,
-      "dashSound": "minecraft:entity.ravager.roar"
+      "iceSpikesCooldown": 170,
+      "iceSpikesRange": 22,
+      "iceSpikesLines": 3,
+      "iceSpikesLength": 10,
+      "iceSpikesWidth": 1.6,
+      "iceSpikesDelay": 25,
+      "iceSpikesDamage": 9,
+      "iceSpikesSlowSeconds": 3
     },
     {
-      "skillName": "fp_gel_sol",
-      "skillType": "web_trap",
-      "displayName": "Gel du sol",
-      "description": "Le sol gèle sous les joueurs et les entrave",
-      "id": "6f5fa809c24c70d18398c494",
-      "cooldown": 8,
-      "webTrapInterval": 220,
-      "webTrapDuration": 50,
-      "webTrapRange": 14,
-      "webTrapSound": "minecraft:block.glass.break",
-      "webTrapMessage": "§b❄ Le sol gèle et vous entrave !"
+      "skillName": "fp_onde_givre",
+      "skillType": "frost_nova",
+      "displayName": "Onde de givre",
+      "description": "Un anneau de gel s'étend ; sauter par-dessus l'évite",
+      "id": "31926134b8fa292cb58df811",
+      "cooldown": 10,
+      "frostNovaCooldown": 200,
+      "frostNovaRadius": 16,
+      "frostNovaSpeed": 0.7,
+      "frostNovaDamage": 9,
+      "frostNovaRootSeconds": 2
+    },
+    {
+      "skillName": "fp_blizzard",
+      "skillType": "blizzard_storm",
+      "displayName": "Blizzard",
+      "description": "Une tempête locale suit le boss ; un feu de camp donne un abri",
+      "id": "0fd95a068f1970aa6256d119",
+      "cooldown": 20,
+      "blizzardCooldown": 420,
+      "blizzardRadius": 10,
+      "blizzardDuration": 12,
+      "blizzardDamage": 1.0,
+      "blizzardPull": 0.05,
+      "blizzardFreeze": true,
+      "blizzardSlowAmplifier": 1,
+      "blizzardShelterRadius": 4
+    },
+    {
+      "skillName": "fp_piliers_glace",
+      "skillType": "glacier_pillars",
+      "displayName": "Piliers de glace",
+      "description": "Des colonnes de glace temporaires coupent les lignes de vue",
+      "id": "225fdd0256de6bc1579b5521",
+      "cooldown": 16,
+      "pillarsCooldown": 320,
+      "pillarsCount": 6,
+      "pillarsHeight": 4,
+      "pillarsRange": 14,
+      "pillarsDuration": 200
+    },
+    {
+      "skillName": "fp_prise_glace",
+      "skillType": "shatter",
+      "displayName": "Prise dans la glace",
+      "description": "Un joueur est pris dans la glace ; ses alliés doivent la briser",
+      "id": "1eb3e9daebf2cc39e530edcc",
+      "cooldown": 18,
+      "shatterCooldown": 360,
+      "shatterRange": 24,
+      "shatterDuration": 100,
+      "shatterDamage": 1.0,
+      "shatterBurst": 6
     }
   ],
   "altarRecipes": {

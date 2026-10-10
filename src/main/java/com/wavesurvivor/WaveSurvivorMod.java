@@ -106,9 +106,11 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RelicEquip()); // 1.5 : reliques équipées (sans Curios)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.Heritage()); // 1.5 : Héritage et Renaissance
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.bossrush.BossRush()); // 1.6 : Boss Rush (vies, barre d'action)
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.frost.StormManager()); // 1.6 : tempêtes (chaos et boss)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.RenaissanceRewards()); // 1.5 : PR gagnés en jouant (boss)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BenedictionEvents()); // bénédictions conservées à la mort
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.KingdomReport()); // bilan de fin d'Assaut (Kingdom)
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.skill.IceFx()); // effets de glace en blocs (nettoyage)
         // Iron's Spells (optionnel) : fait avancer les sorts chargés / canalisés des créatures
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.compat.IronsSpells());
         // Difficulté des boss (phases, anti-exploitation, bouclier, plafond de dégâts)

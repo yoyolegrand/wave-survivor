@@ -209,6 +209,13 @@ public class SnowSorcerer extends SpellcasterIllager {
                 s.finalizeSpawn(sl, diff, MobSpawnType.MOB_SUMMONED, null, null);
                 if (getTarget() != null) s.setTarget(getTarget());
                 sl.addFreshEntityWithPassengers(s);
+                // Partie en cours : le Vagabond fait partie de la horde (compte dans la vague, difficulté, mutateurs, nettoyage)
+                if (com.wavesurvivor.horde.HordeManager.get().isRunning()) {
+                    com.wavesurvivor.horde.model.HordeEntity t = new com.wavesurvivor.horde.model.HordeEntity();
+                    t.entityType = "minecraft:stray";
+                    t.customName = null;
+                    com.wavesurvivor.horde.spawn.MobRegistry.register(s, t);
+                }
                 sl.sendParticles(ParticleTypes.SNOWFLAKE, s.getX(), s.getY() + 1, s.getZ(), 30, 0.3, 0.8, 0.3, 0.05);
             }
         }

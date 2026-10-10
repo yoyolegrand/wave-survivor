@@ -86,6 +86,38 @@ public class ChaosEvent {
     @SerializedName("summonMax")
     public int summonMax = 6;
 
+    // ─── Type "tempete" (1.6) : zone de tempête réglable, réutilisable pour d'autres thèmes (sable, cendres…) ───
+
+    /** Durée de la tempête (secondes) et avertissement avant son début (secondes). */
+    @SerializedName("stormDuration")
+    public int stormDuration = 40;
+
+    @SerializedName("stormWarning")
+    public int stormWarning = 5;
+
+    /** Dégâts de gel par seconde aux joueurs exposés (0 = aucun). */
+    @SerializedName("stormDamage")
+    public double stormDamage = 1.0;
+
+    /** Gel visuel (cristaux sur l'écran) des joueurs exposés. */
+    @SerializedName("stormFreeze")
+    public boolean stormFreeze = true;
+
+    /** Vent : poussée par tick dans une direction fixe (0 = aucun, 0.01 = léger). */
+    @SerializedName("stormWind")
+    public double stormWind = 0.0;
+
+    /** Particules de la tempête (ex. minecraft:snowflake, minecraft:ash, minecraft:cloud). */
+    @SerializedName("stormParticle")
+    public String stormParticle = "minecraft:snowflake";
+
+    /** Abris : blocs de chaleur qui protègent (vide = feu de camp, feu, lave) et leur rayon de protection. */
+    @SerializedName("stormShelter")
+    public List<String> stormShelter;
+
+    @SerializedName("stormShelterRadius")
+    public double stormShelterRadius = 4;
+
     public static class AuraEffect {
         /** Ex : minecraft:blindness */
         @SerializedName("effect") public String effect;

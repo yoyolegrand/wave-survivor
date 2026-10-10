@@ -715,4 +715,70 @@ public class CustomSkillData {
     @SerializedName("gravityWellImplosion") public boolean gravityWellImplosion = true;
     @SerializedName("gravityWellSound")     public String gravityWellSound = "minecraft:block.portal.trigger";
     @SerializedName("gravityWellMessage")   public String gravityWellMessage = "§5§lUn puits de néant vous attire !";
+
+    // ─── ice_spikes : lignes de pointes de glace vers la cible (avertissement puis frappe) ───
+    @SerializedName("iceSpikesCooldown")    public int iceSpikesCooldown = 180;
+    @SerializedName("iceSpikesRange")       public double iceSpikesRange = 22;
+    /** Nombre de lignes (en éventail). */
+    @SerializedName("iceSpikesLines")       public int iceSpikesLines = 3;
+    @SerializedName("iceSpikesLength")      public double iceSpikesLength = 10;
+    @SerializedName("iceSpikesWidth")       public double iceSpikesWidth = 1.6;
+    /** Ticks d'avertissement avant la frappe. */
+    @SerializedName("iceSpikesDelay")       public int iceSpikesDelay = 25;
+    @SerializedName("iceSpikesDamage")      public double iceSpikesDamage = 8;
+    @SerializedName("iceSpikesSlowSeconds") public int iceSpikesSlowSeconds = 3;
+    @SerializedName("iceSpikesSound")       public String iceSpikesSound = "minecraft:block.glass.break";
+    @SerializedName("iceSpikesMessage")     public String iceSpikesMessage = "§b§lDes pointes de glace jaillissent !";
+
+    // ─── frost_nova : anneau de gel qui s'étend ; sauter par-dessus l'évite ───
+    @SerializedName("frostNovaCooldown")    public int frostNovaCooldown = 200;
+    @SerializedName("frostNovaRadius")      public double frostNovaRadius = 16;
+    /** Vitesse de l'anneau (blocs par tick). */
+    @SerializedName("frostNovaSpeed")       public double frostNovaSpeed = 0.7;
+    @SerializedName("frostNovaDamage")      public double frostNovaDamage = 8;
+    @SerializedName("frostNovaRootSeconds") public int frostNovaRootSeconds = 2;
+    @SerializedName("frostNovaSound")       public String frostNovaSound = "minecraft:block.glass.break";
+    @SerializedName("frostNovaMessage")     public String frostNovaMessage = "§b§lUne onde de gel se propage — saute !";
+
+    // ─── blizzard_storm : tempête locale qui suit le boss (même moteur que l'événement de chaos « tempete ») ───
+    @SerializedName("blizzardCooldown")     public int blizzardCooldown = 400;
+    @SerializedName("blizzardRadius")       public double blizzardRadius = 10;
+    /** Durée en secondes. */
+    @SerializedName("blizzardDuration")     public int blizzardDuration = 12;
+    /** Dégâts de gel par seconde aux joueurs exposés. */
+    @SerializedName("blizzardDamage")       public double blizzardDamage = 1.0;
+    /** Attraction vers le boss, par tick. */
+    @SerializedName("blizzardPull")         public double blizzardPull = 0.05;
+    @SerializedName("blizzardWind")         public double blizzardWind = 0.0;
+    @SerializedName("blizzardFreeze")       public boolean blizzardFreeze = true;
+    /** Lenteur (niveau, 0 = aucune). */
+    @SerializedName("blizzardSlowAmplifier") public int blizzardSlowAmplifier = 1;
+    /** Rayon d'abri : un feu de camp / feu / lave à cette distance protège (0 = pas d'abri). */
+    @SerializedName("blizzardShelterRadius") public double blizzardShelterRadius = 4;
+    @SerializedName("blizzardSound")        public String blizzardSound = "minecraft:entity.polar_bear.warning";
+    @SerializedName("blizzardMessage")      public String blizzardMessage = "§b§lUn blizzard vous enveloppe — trouvez un feu !";
+
+    // ─── glacier_pillars : colonnes de glace temporaires (lignes de vue coupées) ───
+    @SerializedName("pillarsCooldown")      public int pillarsCooldown = 320;
+    @SerializedName("pillarsCount")         public int pillarsCount = 6;
+    @SerializedName("pillarsHeight")        public int pillarsHeight = 4;
+    @SerializedName("pillarsRange")         public double pillarsRange = 14;
+    /** Durée de vie des piliers, en ticks. */
+    @SerializedName("pillarsDuration")      public int pillarsDuration = 200;
+    @SerializedName("pillarsBlock")         public String pillarsBlock = "minecraft:packed_ice";
+    @SerializedName("pillarsSound")         public String pillarsSound = "minecraft:block.glass.break";
+    @SerializedName("pillarsMessage")       public String pillarsMessage = "§b§lDes piliers de glace surgissent !";
+
+    // ─── shatter : un joueur est pris dans la glace ; ses alliés doivent la briser ───
+    @SerializedName("shatterCooldown")      public int shatterCooldown = 360;
+    @SerializedName("shatterRange")         public double shatterRange = 24;
+    /** Ticks avant l'éclatement de la glace. */
+    @SerializedName("shatterDuration")      public int shatterDuration = 100;
+    @SerializedName("shatterDamage")        public double shatterDamage = 1.0;
+    /** Dégâts à l'éclatement si la glace n'a pas été brisée. */
+    @SerializedName("shatterBurst")         public double shatterBurst = 6;
+    @SerializedName("shatterBlock")         public String shatterBlock = "minecraft:packed_ice";
+    @SerializedName("shatterSound")         public String shatterSound = "minecraft:block.glass.break";
+    /** Message personnalisé (vide = message par défaut avec le nom du joueur). */
+    @SerializedName("shatterMessage")       public String shatterMessage = "";
 }

@@ -58,8 +58,40 @@ public class ChaosApplier {
             case "totem"    -> applyTotem(event, level, center);
             case "gisement" -> applyGisement(event, level, center, server, false);
             case "arbre"    -> applyGisement(event, level, center, server, true);
+            case "tempete"  -> applyStorm(event, level, center);
             default -> WaveSurvivorMod.LOGGER.warn("[Chaos] Type inconnu : {}", event.type);
         }
+    }
+
+    /**
+     * Tempête (1.6) : zone fixe autour du centre, avec avertissement. Effets listés (joueurs ou monstres), gel, vent,
+     * dégâts et abris réglables ; sans effet listé : Lenteur I sur les joueurs exposés.
+     */
+    private static void applyStorm(ChaosEvent event, ServerLevel level, BlockPos center) {
+        var p = new com.wavesurvivor.horde.frost.StormManager.Params();
+        p.radius = Math.max(4, event.radius);
+        p.warningTicks = Math.max(0, event.stormWarning) * 20;
+        p.durationTicks = Math.max(3, event.stormDuration) * 20;
+        p.damagePerSecond = Math.max(0, event.stormDamage);
+        p.freeze = event.stormFreeze;
+        p.wind = Math.max(0, event.stormWind);
+        p.particle = event.stormParticle;
+        p.shelterRadius = Math.max(0, event.stormShelterRadius);
+        if (event.stormShelter != null && !event.stormShelter.isEmpty()) p.shelter = event.stormShelter;
+        if (event.effects != null) {
+            for (var a : event.effects) {
+                if (a == null || a.effect == null) continue;
+                try {
+                    var eff = net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT.get(new net.minecraft.resources.ResourceLocation(a.effect.trim()));
+                    if (eff == null) continue;
+                    p.effects.add(new com.wavesurvivor.horde.frost.StormManager.Fx(eff, Math.max(0, a.level - 1), !"monstres".equalsIgnoreCase(a.target)));
+                } catch (Exception ignored) {}
+            }
+        }
+        if (p.effects.isEmpty()) {
+            p.effects.add(new com.wavesurvivor.horde.frost.StormManager.Fx(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 0, true));
+        }
+        com.wavesurvivor.horde.frost.StormManager.start(level, net.minecraft.world.phys.Vec3.atBottomCenterOf(center), null, p);
     }
 
     /** Gisements de minerai (pioche) ou arbres (hache) à exploiter (bénéfique) : placés entre distanceMin et distanceMax du centre. */

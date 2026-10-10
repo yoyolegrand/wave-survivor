@@ -17,6 +17,33 @@ public class SpecialWave {
     @SerializedName("chance")
     public int chance = 50;
 
+    /**
+     * Vagues (ou Assauts en Kingdom) où cette vague spéciale ne peut PAS tomber, ex. « 1 » ou « 1,2,10 ».
+     * Par défaut « 1 » : jamais de vague spéciale dès la première vague.
+     */
+    @SerializedName("excludedWaves")
+    public String excludedWaves = "1";
+
+    /** Vrai si cette vague spéciale est autorisée à la vague (ou à l'Assaut) donné(e). */
+    public boolean allowedAt(int wave) {
+        if (excludedWaves == null || excludedWaves.isBlank()) return true;
+        for (String part : excludedWaves.split("[,;\\s]+")) {
+            part = part.trim();
+            if (part.isEmpty()) continue;
+            try {
+                // Accepte aussi des plages : « 1-3 »
+                int dash = part.indexOf('-', 1);
+                if (dash > 0) {
+                    int a = Integer.parseInt(part.substring(0, dash).trim()), b = Integer.parseInt(part.substring(dash + 1).trim());
+                    if (wave >= Math.min(a, b) && wave <= Math.max(a, b)) return false;
+                } else if (Integer.parseInt(part) == wave) {
+                    return false;
+                }
+            } catch (NumberFormatException ignored) {}
+        }
+        return true;
+    }
+
     @SerializedName("entities")
     public List<SpecialWaveEntity> entities;
 

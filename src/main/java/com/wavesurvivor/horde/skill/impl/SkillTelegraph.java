@@ -69,13 +69,48 @@ public class SkillTelegraph extends BossSkill {
         DustParticleOptions dust = new DustParticleOptions(switch (style) {
             case "geyser" -> new Vector3f(0.2f, 0.6f, 1.0f);
             case "fangs" -> new Vector3f(0.7f, 0.2f, 0.9f);
+            case "ice", "boulder" -> new Vector3f(0.45f, 0.85f, 1.0f);
             default -> new Vector3f(1.0f, 0.45f, 0.1f);
         }, 1.8f);
         DustParticleOptions red = new DustParticleOptions(new Vector3f(1f, 0.1f, 0.1f), 2.0f);
 
+        // Style glace : des fissures lumineuses partent du centre de chaque zone et s'allongent pendant l'alerte
+        List<net.minecraft.world.entity.Display.BlockDisplay> cracks = new ArrayList<>();
+        if ("ice".equals(style)) {
+            for (Vec3 z : zones) {
+                int rays = 6;
+                double base = RNG.nextDouble() * Math.PI * 2;
+                for (int i = 0; i < rays; i++) {
+                    float ang = (float) (base + Math.PI * 2 * i / rays + (RNG.nextDouble() - 0.5) * 0.5);
+                    float len = (float) (r * (0.75 + RNG.nextDouble() * 0.3));
+                    float thick = 0.12f + RNG.nextFloat() * 0.06f;
+                    var c = com.wavesurvivor.horde.skill.IceFx.crack(level, z.x, z.y, z.z, ang, 0.05f, thick);
+                    cracks.add(c);
+                    DelayedActionScheduler.schedule(level.getServer(), 1, () ->
+                            com.wavesurvivor.horde.skill.IceFx.growCrack(c, ang, len, thick, Math.max(5, warn - 4)), "telegraph crack");
+                }
+                level.sendParticles(ParticleTypes.SNOWFLAKE, z.x, z.y + 0.3, z.z, 20, r * 0.4, 0.1, r * 0.4, 0.01);
+            }
+            level.playSound(null, boss.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.0f, 0.5f);
+        }
+        // Style rocher : un gros bloc de glace apparaît au-dessus de chaque zone, puis s'écrase au moment de la frappe
+        if ("boulder".equals(style)) {
+            for (Vec3 z : zones) {
+                float size = (float) Math.max(1.0, Math.min(2.4, r * 0.7));
+                org.joml.Quaternionf rot = new org.joml.Quaternionf().rotateY(RNG.nextFloat() * 6.28f); // tourné sur lui-même : tombe à la verticale
+                var b = com.wavesurvivor.horde.skill.IceFx.spawn(level, z.x, z.y, z.z, com.wavesurvivor.horde.skill.IceFx.PACKED,
+                        rot, size, size, size, 9f);
+                cracks.add(b);
+                // Chute pendant les 6 derniers ticks de l'alerte
+                DelayedActionScheduler.schedule(level.getServer(), Math.max(1, warn - 6), () ->
+                        com.wavesurvivor.horde.skill.IceFx.animate(b, rot, size, size, size, 0f, 6), "telegraph boulder fall");
+            }
+            level.playSound(null, boss.blockPosition(), SoundEvents.POLAR_BEAR_WARNING, SoundSource.HOSTILE, 1.5f, 0.6f);
+        }
+
         // Avertissement : cercles qui clignotent (rouges juste avant la frappe)
         for (int t = 0; t < warn; t += 3) {
-            final boolean urgent = warn - t <= 10;
+            final boolean urgent = warn - t <= 10 && !"ice".equals(style) && !"boulder".equals(style); // styles glace : restent bleus
             DelayedActionScheduler.schedule(level.getServer(), t, () -> {
                 for (Vec3 z : zones) ring(level, z, r, urgent ? red : dust);
             }, "telegraph warn");
@@ -88,6 +123,7 @@ public class SkillTelegraph extends BossSkill {
 
         // Frappe
         DelayedActionScheduler.schedule(level.getServer(), warn, () -> {
+            for (var c : cracks) com.wavesurvivor.horde.skill.IceFx.remove(c);
             if (!boss.isAlive()) return;
             for (Vec3 z : zones) strike(boss, level, z, r, style);
         }, "telegraph strike");
@@ -95,6 +131,41 @@ public class SkillTelegraph extends BossSkill {
 
     private void strike(LivingEntity boss, ServerLevel level, Vec3 z, double r, String style) {
         switch (style) {
+            case "boulder" -> {
+                // Impact : le rocher vole en éclats, quelques pics de glace jaillissent autour
+                var srv = level.getServer();
+                level.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK,
+                        net.minecraft.world.level.block.Blocks.PACKED_ICE.defaultBlockState()), z.x, z.y + 0.8, z.z, 90, r * 0.5, 0.6, r * 0.5, 0.35);
+                level.sendParticles(ParticleTypes.SNOWFLAKE, z.x, z.y + 0.6, z.z, 40, r * 0.6, 0.4, r * 0.6, 0.08);
+                level.sendParticles(ParticleTypes.EXPLOSION, z.x, z.y + 0.4, z.z, 1, 0, 0, 0, 0);
+                for (int i = 0; i < 4; i++) {
+                    double a = RNG.nextDouble() * Math.PI * 2, d = r * (0.3 + RNG.nextDouble() * 0.4);
+                    com.wavesurvivor.horde.skill.IceFx.spike(level, srv, z.x + Math.cos(a) * d, z.y, z.z + Math.sin(a) * d,
+                            0.8f + RNG.nextFloat() * 0.5f, 0.55f, 0.5f, (float) a, 0, 10);
+                }
+                level.playSound(null, net.minecraft.core.BlockPos.containing(z), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.8f, 0.45f);
+                level.playSound(null, net.minecraft.core.BlockPos.containing(z), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 0.6f, 1.2f);
+            }
+            case "ice" -> {
+                // Éruption : une grosse stalagmite au centre, une couronne de pics penchés vers l'extérieur
+                var srv = level.getServer();
+                com.wavesurvivor.horde.skill.IceFx.spike(level, srv, z.x, z.y, z.z,
+                        (float) (2.2 + r * 0.25), (float) Math.min(1.6, 0.9 + r * 0.15), 0f, 0f, 0, 16);
+                int n = 7;
+                double base = RNG.nextDouble() * Math.PI * 2;
+                for (int i = 0; i < n; i++) {
+                    double a = base + Math.PI * 2 * i / n + (RNG.nextDouble() - 0.5) * 0.4;
+                    double d = r * (0.45 + RNG.nextDouble() * 0.35);
+                    com.wavesurvivor.horde.skill.IceFx.spike(level, srv, z.x + Math.cos(a) * d, z.y, z.z + Math.sin(a) * d,
+                            1.2f + RNG.nextFloat() * 0.9f, 0.7f + RNG.nextFloat() * 0.2f,
+                            0.35f + RNG.nextFloat() * 0.25f, (float) a, 1 + RNG.nextInt(3), 13);
+                }
+                level.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK,
+                        net.minecraft.world.level.block.Blocks.PACKED_ICE.defaultBlockState()), z.x, z.y + 0.5, z.z, 60, r * 0.5, 0.4, r * 0.5, 0.25);
+                level.sendParticles(ParticleTypes.SNOWFLAKE, z.x, z.y + 1.0, z.z, 40, r * 0.5, 0.8, r * 0.5, 0.05);
+                level.playSound(null, net.minecraft.core.BlockPos.containing(z), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.6f, 0.6f);
+                level.playSound(null, net.minecraft.core.BlockPos.containing(z), SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.HOSTILE, 1.2f, 0.5f);
+            }
             case "geyser" -> {
                 level.sendParticles(ParticleTypes.SPLASH, z.x, z.y + 0.2, z.z, 80, r * 0.5, 0.2, r * 0.5, 0.3);
                 level.sendParticles(ParticleTypes.BUBBLE_COLUMN_UP, z.x, z.y + 0.5, z.z, 60, r * 0.4, 1.5, r * 0.4, 0.4);

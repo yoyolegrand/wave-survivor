@@ -113,6 +113,10 @@ public class ModItems {
     public static final RegistryObject<Item> SNOW_SORCERER_SPAWN_EGG = ITEMS.register("snow_sorcerer_spawn_egg",
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.SNOW_SORCERER, 0xDDEEFA, 0x1E3A6E, new Item.Properties()));
 
+    /** Œuf d'apparition du Ravageur de givre (base d'Aurvang). */
+    public static final RegistryObject<Item> FROST_RAVAGER_SPAWN_EGG = ITEMS.register("frost_ravager_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.FROST_RAVAGER, 0xB0CCE4, 0x3492C4, new Item.Properties()));
+
     /** Relique : Anneau d'Ancrage du Néant (immunité à la Lévitation, compatible Curios « bague »). */
     public static final RegistryObject<Item> ANNEAU_ANCRAGE = ITEMS.register("anneau_ancrage",
             com.wavesurvivor.item.AnneauAncrageItem::new);
@@ -250,6 +254,7 @@ public class ModItems {
                         output.accept(DIABLOTIN_SPAWN_EGG.get());
                         output.accept(FROST_GOLEM_SPAWN_EGG.get());
                         output.accept(SNOW_SORCERER_SPAWN_EGG.get());
+                        output.accept(FROST_RAVAGER_SPAWN_EGG.get());
                         output.accept(ECLAT_NEANT_SPAWN_EGG.get());
                         output.accept(ANNEAU_ANCRAGE.get());
                         output.accept(AMULETTE_BRASIER.get());

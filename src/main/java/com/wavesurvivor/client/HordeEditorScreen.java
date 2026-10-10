@@ -40,7 +40,7 @@ public class HordeEditorScreen extends Screen {
     private static final int T_GENERAL = 0, T_MOBS = 1, T_SPECIAL = 2, T_BOSS = 3, T_MERCH = 4, T_CHAOS = 5, T_ALTAR = 6, T_PREVIEW = 7;
     private static final String[] PROFESSIONS = {"armorer", "butcher", "cartographer", "cleric", "farmer", "fisherman",
             "fletcher", "leatherworker", "librarian", "mason", "shepherd", "toolsmith", "weaponsmith", "nitwit", "none"};
-    private static final String[] CHAOS_TYPES = {"spawn", "merchant", "lightning", "totem", "gisement", "arbre"};
+    private static final String[] CHAOS_TYPES = {"spawn", "merchant", "lightning", "totem", "gisement", "arbre", "tempete"};
     private static final String[] PICKAXE_TIERS = {"bois", "pierre", "fer", "diamant", "netherite"};
     private static final String[] TOTEM_AURAS = {"fureur", "soin", "malediction", "invocation"};
     private static final String[] VANILLA_TYPES = {
@@ -177,7 +177,7 @@ public class HordeEditorScreen extends Screen {
             for (JsonElement e : chaosEvents()) if (e.isJsonObject()) {
                 JsonObject c = e.getAsJsonObject();
                 String t = HordeJson.str(c, "type", "spawn");
-                String icon = switch (t) { case "merchant" -> "§a🛒"; case "lightning" -> "§e⚡"; case "spawn" -> "§c☠"; case "totem" -> "§6⚜"; case "gisement" -> "§e⛏"; case "arbre" -> "§a🪓"; default -> "§8?"; };
+                String icon = switch (t) { case "merchant" -> "§a🛒"; case "lightning" -> "§e⚡"; case "spawn" -> "§c☠"; case "totem" -> "§6⚜"; case "gisement" -> "§e⛏"; case "arbre" -> "§a🪓"; case "tempete" -> "§b❄"; default -> "§8?"; };
                 l.add(icon + " §f" + HordeJson.str(c, "message", t).replaceAll("§.", "").trim());
             }
             return l;
@@ -1422,6 +1422,7 @@ public class HordeEditorScreen extends Screen {
             JsonObject w = new JsonObject();
             w.addProperty("name", com.wavesurvivor.i18n.WSLang.t("ui.nouvelle_vague"));
             w.addProperty("chance", 10);
+            w.addProperty("excludedWaves", "1");
             w.add("entities", new JsonArray());
             specials().add(w);
             selSpecial = specials().size() - 1;
@@ -1465,8 +1466,12 @@ public class HordeEditorScreen extends Screen {
             text(x + 34, ly, 140, HordeJson.str(s, "name", ""), v -> s.addProperty("name", v));
             label(x + 180, ly + 3, com.wavesurvivor.i18n.WSLang.t("ui.poids_ae90"));
             intBox(x + 212, ly, 26, HordeJson.num(s, "chance", 10), v -> s.addProperty("chance", Math.max(0, v)));
-            label(x, ly + 22, com.wavesurvivor.i18n.WSLang.t("ui.composition_clic_editer_une_entite"));
-            int ey = ly + 34;
+            // Vagues où cette vague spéciale ne peut pas tomber (par défaut la 1re)
+            label(x, ly + 23, com.wavesurvivor.i18n.WSLang.t("ui.special_excluded"));
+            text(x + 92, ly + 20, 70, HordeJson.str(s, "excludedWaves", "1"), v -> s.addProperty("excludedWaves", v.trim()));
+            label(x + 168, ly + 23, com.wavesurvivor.i18n.WSLang.t("ui.special_excluded_hint"));
+            label(x, ly + 42, com.wavesurvivor.i18n.WSLang.t("ui.composition_clic_editer_une_entite"));
+            int ey = ly + 54;
             specialEntList.place(x, ey, 200, Math.max(3, (top + H - 30 - ey) / 12));
             int eb = specialEntList.bottom() + 4;
             button(x, eb, 60, com.wavesurvivor.i18n.WSLang.t("ui.entite_950b"), () -> {
@@ -1502,6 +1507,80 @@ public class HordeEditorScreen extends Screen {
     }
 
     // ─── Onglet Boss ───
+
+    // ─── Onglet Chaos › ❄ Tempête (zone de tempête réglable : durée, dégâts, vent, abris, effets) ───
+
+    private void buildStormForm(JsonObject ev, int x, int fy) {
+        flow(x, fy);
+        fl(t("ui.storm.radius"));
+        fInt(26, (int) HordeJson.dbl(ev, "radius", 40), v -> ev.addProperty("radius", Math.max(4, v)));
+        fl(t("ui.storm.duration"));
+        fInt(26, HordeJson.num(ev, "stormDuration", 40), v -> ev.addProperty("stormDuration", Math.max(3, v)));
+        fl(t("ui.storm.warning"));
+        fInt(22, HordeJson.num(ev, "stormWarning", 5), v -> ev.addProperty("stormWarning", Math.max(0, v)));
+        fy += 18;
+        flow(x, fy);
+        fl(t("ui.storm.damage"));
+        fDbl(28, HordeJson.dbl(ev, "stormDamage", 1.0), v -> ev.addProperty("stormDamage", Math.max(0, v)));
+        fl(t("ui.storm.wind"));
+        fDbl(30, HordeJson.dbl(ev, "stormWind", 0.0), v -> ev.addProperty("stormWind", Math.max(0, Math.min(0.2, v))));
+        fl(t("ui.storm.shelter"));
+        fDbl(24, HordeJson.dbl(ev, "stormShelterRadius", 4), v -> ev.addProperty("stormShelterRadius", Math.max(0, v)));
+        fy += 18;
+        toggle(x, fy, 120, t("ui.storm.freeze"), ev, "stormFreeze", true);
+        label(x + 126, fy + 4, t("ui.storm.particle"));
+        text(x + 176, fy, 130, HordeJson.str(ev, "stormParticle", "minecraft:snowflake"), v -> ev.addProperty("stormParticle", v.trim()));
+        fy += 22;
+        label(x, fy + 3, t("ui.storm.shelters"));
+        JsonArray sh = HordeJson.arr(ev, "stormShelter");
+        StringBuilder csv = new StringBuilder();
+        for (JsonElement e : sh) csv.append(csv.length() > 0 ? "," : "").append(e.getAsString());
+        text(x + 112, fy, 194, csv.toString(), v -> {
+            JsonArray na = new JsonArray();
+            for (String s : v.split(",")) if (!s.isBlank()) na.add(s.trim());
+            ev.add("stormShelter", na);
+        });
+        fy += 22;
+        // Effets : joueurs exposés ou monstres de la horde
+        JsonArray fxs = HordeJson.arr(ev, "effects");
+        label(x, fy + 3, fxs.isEmpty() ? t("ui.storm.fx_default") : t("ui.storm.fx"));
+        button(x + 230, fy - 1, 58, t("ui.effet"), () -> {
+            JsonObject o = new JsonObject();
+            o.addProperty("effect", "minecraft:slowness");
+            o.addProperty("level", 1);
+            o.addProperty("target", "joueurs");
+            HordeJson.arr(ev, "effects").add(o);
+            totemFxScroll = Math.max(0, HordeJson.arr(ev, "effects").size() - 1);
+            changed();
+            init();
+        });
+        int fy0 = fy + 18;
+        int frows = Math.max(1, (top + H - 8 - fy0) / 18);
+        totemFxScroll = Math.max(0, Math.min(totemFxScroll, Math.max(0, fxs.size() - frows)));
+        for (int i = 0; i < frows && i + totemFxScroll < fxs.size(); i++) {
+            final int idx = i + totemFxScroll;
+            JsonObject o = at(fxs, idx);
+            if (o == null) continue;
+            int ry = fy0 + i * 18;
+            text(x, ry, 118, HordeJson.str(o, "effect", ""), v -> o.addProperty("effect", v.trim()));
+            button(x + 120, ry - 1, 14, "◀", () -> { o.addProperty("effect", cycle(List.of(EFFECTS), HordeJson.str(o, "effect", ""), -1)); changed(); init(); });
+            button(x + 136, ry - 1, 14, "▶", () -> { o.addProperty("effect", cycle(List.of(EFFECTS), HordeJson.str(o, "effect", ""), 1)); changed(); init(); });
+            label(x + 154, ry + 3, t("ui.niv_2bc6"));
+            intBox(x + 176, ry, 20, HordeJson.num(o, "level", 1), v -> o.addProperty("level", Math.max(1, Math.min(10, v))));
+            boolean onPlayers = !"monstres".equalsIgnoreCase(HordeJson.str(o, "target", "joueurs"));
+            button(x + 200, ry - 1, 62, onPlayers ? t("ui.joueurs") : t("ui.monstres_70a5"), () -> {
+                o.addProperty("target", "monstres".equalsIgnoreCase(HordeJson.str(o, "target", "joueurs")) ? "joueurs" : "monstres");
+                changed();
+                init();
+            });
+            button(x + 264, ry - 1, 16, "§c✖", () -> { fxs.remove(idx); changed(); init(); });
+        }
+        if (fxs.size() > frows) {
+            button(x + 284, fy0 - 1, 14, "▲", () -> { totemFxScroll--; init(); }).active = totemFxScroll > 0;
+            button(x + 284, fy0 + Math.max(0, frows - 1) * 18 - 1, 14, "▼", () -> { totemFxScroll++; init(); })
+                    .active = totemFxScroll + frows < fxs.size();
+        }
+    }
 
     // ─── Onglet Boss › 👑 Boss Rush (réglages de la horde : vies, pause, boss retenus, Gantelet, récompenses…) ───
 
@@ -3048,10 +3127,13 @@ public class HordeEditorScreen extends Screen {
             case "totem" -> com.wavesurvivor.i18n.WSLang.t("§6⚜ Totems");
             case "gisement" -> com.wavesurvivor.i18n.WSLang.t("§e⛏ Gisement");
             case "arbre" -> com.wavesurvivor.i18n.WSLang.t("chaos.type.arbre");
+            case "tempete" -> com.wavesurvivor.i18n.WSLang.t("chaos.type.tempete");
             default -> "§8" + type + com.wavesurvivor.i18n.WSLang.t("ui.non_gere");
         }, () -> {
             String next = cycle(List.of(CHAOS_TYPES), HordeJson.str(ev, "type", "spawn"), 1);
             ev.addProperty("type", next);
+            // Passage en Tempête : rayon large par défaut (celui du totem est trop petit)
+            if ("tempete".equals(next) && HordeJson.dbl(ev, "radius", 8) <= 8) ev.addProperty("radius", 40);
             // Passage en Arbre : blocs et butin par défaut (chêne) si rien de personnalisé
             if ("arbre".equals(next)) {
                 JsonArray bl = HordeJson.arr(ev, "blocks");
@@ -3113,6 +3195,7 @@ public class HordeEditorScreen extends Screen {
                 fy += 18;
                 buildTrades(HordeJson.arr(ev, "trades"), x, fy);
             }
+            case "tempete" -> buildStormForm(ev, x, fy);
             case "totem" -> {
                 String aura = HordeJson.str(ev, "aura", "fureur");
                 flow(x, fy);

@@ -75,5 +75,7 @@
   "item.wavesurvivor.frost_golem_spawn_egg": "Frost Golem Spawn Egg",
   "entity.wavesurvivor.snow_sorcerer": "Snow Sorcerer",
   "item.wavesurvivor.snow_sorcerer_spawn_egg": "Snow Sorcerer Spawn Egg",
+  "entity.wavesurvivor.frost_ravager": "Frost Ravager",
+  "item.wavesurvivor.frost_ravager_spawn_egg": "Frost Ravager Spawn Egg",
   "itemGroup.wavesurvivor": "Wave Survivor"
 }

@@ -74,6 +74,12 @@ public class SkillFactory {
             case "homing_orbs"       -> new com.wavesurvivor.horde.skill.impl.SkillHomingOrbs(config);
             case "doom_mark"         -> new com.wavesurvivor.horde.skill.impl.SkillDoomMark(config);
             case "telegraph"         -> new com.wavesurvivor.horde.skill.impl.SkillTelegraph(config);
+            // 1.6 — Pics Gelés
+            case "ice_spikes"        -> new com.wavesurvivor.horde.skill.impl.SkillIceSpikes(config);
+            case "frost_nova"        -> new com.wavesurvivor.horde.skill.impl.SkillFrostNova(config);
+            case "blizzard_storm"    -> new com.wavesurvivor.horde.skill.impl.SkillBlizzardStorm(config);
+            case "glacier_pillars"   -> new com.wavesurvivor.horde.skill.impl.SkillGlacierPillars(config);
+            case "shatter"           -> new com.wavesurvivor.horde.skill.impl.SkillShatter(config);
             default -> {
                 WaveSurvivorMod.LOGGER.warn("[SkillFactory] Type non implémenté : {} (skill '{}')",
                         config.skillType, config.skillName);

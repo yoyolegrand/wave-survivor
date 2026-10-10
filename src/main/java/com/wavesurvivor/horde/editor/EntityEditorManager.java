@@ -70,6 +70,12 @@ public final class EntityEditorManager {
         TYPE_PREFIXES.put("homing_orbs", List.of("homingOrbs"));
         TYPE_PREFIXES.put("doom_mark", List.of("doomMark"));
         TYPE_PREFIXES.put("telegraph", List.of("telegraph"));
+        // 1.6 — Pics Gelés
+        TYPE_PREFIXES.put("ice_spikes", List.of("iceSpikes"));
+        TYPE_PREFIXES.put("frost_nova", List.of("frostNova"));
+        TYPE_PREFIXES.put("blizzard_storm", List.of("blizzard"));
+        TYPE_PREFIXES.put("glacier_pillars", List.of("pillars"));
+        TYPE_PREFIXES.put("shatter", List.of("shatter"));
     }
 
     private EntityEditorManager() {}

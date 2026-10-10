@@ -413,8 +413,8 @@ public class HordeManager {
     }
 
     /** Mode Kingdom — tirage d'un « assaut spécial » (même chance et mêmes poids que les vagues spéciales). */
-    public SpecialWave kingdomPickSpecial() {
-        return activeHorde == null || activeHorde.configData == null ? null : pickSpecialWave(activeHorde.configData);
+    public SpecialWave kingdomPickSpecial(int assault) {
+        return activeHorde == null || activeHorde.configData == null ? null : pickSpecialWave(activeHorde.configData, assault);
     }
 
     /**
@@ -593,7 +593,7 @@ public class HordeManager {
             if (com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.bossrush.BossRush.onStageStart(srv, currentWave); // Boss Rush : pas de monstres, seulement le boss
             else spawnWave(currentWave, cfg);
             com.wavesurvivor.horde.renaissance.Heritage.onWaveStart(srv); // Héritage : Survivant 2
-            SpecialWave chosenSpecial = com.wavesurvivor.horde.bossrush.BossRush.active() ? null : pickSpecialWave(cfg);
+            SpecialWave chosenSpecial = com.wavesurvivor.horde.bossrush.BossRush.active() ? null : pickSpecialWave(cfg, currentWave);
             if (chosenSpecial != null) {
                 spawnSpecialWave(currentWave, cfg, chosenSpecial);
                 broadcastWaveMessage(cfg, currentWave, chosenSpecial.name, true);
@@ -710,23 +710,26 @@ public class HordeManager {
         }
     }
 
-    private SpecialWave pickSpecialWave(HordeConfigMultiData.ConfigDataInner cfg) {
-        // Vague forcée par /ws special <nom> (tests) : prioritaire sur le tirage
+    private SpecialWave pickSpecialWave(HordeConfigMultiData.ConfigDataInner cfg, int wave) {
+        // Vague forcée par /ws special <nom> (tests) : prioritaire sur le tirage (et sur les vagues exclues)
         if (forcedSpecialWave != null && cfg.specialWaves != null) {
             String want = forcedSpecialWave;
             forcedSpecialWave = null;
             for (SpecialWave sw : cfg.specialWaves) if (want.equalsIgnoreCase(sw.name)) return sw;
         }
         if (!cfg.useSpecialWaves || cfg.specialWaves == null || cfg.specialWaves.isEmpty()) return null;
+        // Seules les vagues spéciales autorisées à cette vague participent au tirage (« Vagues exclues »)
+        java.util.List<SpecialWave> pool = new java.util.ArrayList<>();
+        for (SpecialWave sw : cfg.specialWaves) if (sw.chance > 0 && sw.allowedAt(wave)) pool.add(sw);
+        if (pool.isEmpty()) return null;
         if (cfg.specialWaveChance > 0 && RNG.nextInt(100) >= cfg.specialWaveChance) return null;
         int totalWeight = 0;
         // chance = poids relatif ; 0 = vague désactivée (jamais tirée)
-        for (SpecialWave sw : cfg.specialWaves) totalWeight += Math.max(0, sw.chance);
+        for (SpecialWave sw : pool) totalWeight += sw.chance;
         if (totalWeight <= 0) return null;
         int r = RNG.nextInt(totalWeight);
         int cum = 0;
-        for (SpecialWave sw : cfg.specialWaves) {
-            if (sw.chance <= 0) continue;
+        for (SpecialWave sw : pool) {
             cum += sw.chance;
             if (r < cum) return sw;
         }
@@ -895,6 +898,7 @@ public class HordeManager {
         com.wavesurvivor.horde.difficulty.HordeDifficulty.clear();
         com.wavesurvivor.horde.daily.DailyServer.clear();
         com.wavesurvivor.horde.bossrush.BossRush.clear();
+        com.wavesurvivor.horde.frost.StormManager.clearAll();
         this.state = State.IDLE;
         this.activeHorde = null;
         this.currentWave = 0;

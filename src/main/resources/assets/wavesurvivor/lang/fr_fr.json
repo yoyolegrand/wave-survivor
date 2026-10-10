@@ -75,5 +75,7 @@
   "item.wavesurvivor.frost_golem_spawn_egg": "Œuf d'apparition de Golem de Givre",
   "entity.wavesurvivor.snow_sorcerer": "Sorcier des Neiges",
   "item.wavesurvivor.snow_sorcerer_spawn_egg": "Œuf d'apparition de Sorcier des Neiges",
+  "entity.wavesurvivor.frost_ravager": "Ravageur de givre",
+  "item.wavesurvivor.frost_ravager_spawn_egg": "Œuf d'apparition de Ravageur de givre",
   "itemGroup.wavesurvivor": "Wave Survivor"
 }
