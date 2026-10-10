@@ -65,7 +65,8 @@ public class AltarManager {
                     horde.configData != null && horde.configData.difficulties != null ? horde.configData.difficulties : "",
                     com.wavesurvivor.horde.difficulty.HordeProgress.encode(player, horde),
                     horde.configData != null && horde.configData.isKingdom(),
-                    com.wavesurvivor.horde.kingdom.KingdomRoles.encodeAvailable(horde)));
+                    com.wavesurvivor.horde.kingdom.KingdomRoles.encodeAvailable(horde),
+                    com.wavesurvivor.horde.bossrush.BossRush.encodeFor(player, horde)));
         }
         if (variants.isEmpty()) {
             player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.autel_horde_inconnue") + entry.hordeName));
@@ -95,6 +96,11 @@ public class AltarManager {
 
     /** @param role rôle choisi sur l'écran de l'autel (mode Kingdom ; vide = aucun). */
     public static void confirmTrigger(ServerPlayer player, ServerLevel level, BlockPos pos, String variantHorde, String mutators, String difficulty, String role) {
+        confirmTrigger(player, level, pos, variantHorde, mutators, difficulty, role, "");
+    }
+
+    /** @param mode mode Boss Rush choisi sur l'écran de l'autel (« rush », « gauntlet » ; vide = horde normale). */
+    public static void confirmTrigger(ServerPlayer player, ServerLevel level, BlockPos pos, String variantHorde, String mutators, String difficulty, String role, String mode) {
         String dim = level.dimension().location().toString();
         AltarStore.AltarEntry entry = AltarStore.get(dim, pos);
         if (entry == null || entry.hordeName == null) {
@@ -158,6 +164,17 @@ public class AltarManager {
         if (horde.configData != null && horde.configData.isKingdom()) {
             com.wavesurvivor.horde.kingdom.KingdomRoles.setPending(player, role);
         }
+        // 1.6 — Boss Rush : seulement si la horde le propose et que le joueur l'a débloqué
+        com.wavesurvivor.horde.bossrush.BossRush.Mode brMode = com.wavesurvivor.horde.bossrush.BossRush.Mode.byId(mode);
+        if (brMode != com.wavesurvivor.horde.bossrush.BossRush.Mode.OFF) {
+            if (!com.wavesurvivor.horde.bossrush.BossRush.available(horde)) {
+                brMode = com.wavesurvivor.horde.bossrush.BossRush.Mode.OFF;
+            } else if (!com.wavesurvivor.horde.bossrush.BossRush.unlockedFor(player, horde)) {
+                player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("bossrush.locked")));
+                return;
+            }
+        }
+        com.wavesurvivor.horde.bossrush.BossRush.setPending(brMode);
         launchWithCountdown(player, level, pos, horde);
     }
 

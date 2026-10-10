@@ -81,15 +81,16 @@ public class RenaissanceRewards {
         var progress = com.wavesurvivor.horde.difficulty.HordeProgress.get(server);
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
             if (p.isSpectator() && !victory) continue;
-            int base = waves * perWave + bosses;
-            int bonusWin = victory ? 5 : 0;
+            boolean rush = com.wavesurvivor.horde.bossrush.BossRush.active(); // Boss Rush : PR par boss + bonus de victoire réglés dans l'éditeur
+            int base = rush ? bosses * com.wavesurvivor.horde.bossrush.BossRush.prPerBoss() : waves * perWave + bosses;
+            int bonusWin = victory ? (rush ? com.wavesurvivor.horde.bossrush.BossRush.prVictory() : 5) : 0;
             int first = 0;
             if (victory) {
                 boolean done = false;
                 for (String fam : com.wavesurvivor.altar.AltarRecipes.familyOf(horde.hordeName)) {
                     if (progress.best(p.getUUID(), fam) >= 0) { done = true; break; }
                 }
-                if (!done) first = 15;
+                if (!done && !rush) first = 15;
             }
             double personal = Heritage.prMultiplier(p) * com.wavesurvivor.item.RelicSets.prMultiplier(p);
             int total = (int) Math.round((base + bonusWin) * diff * muta * personal) + first;

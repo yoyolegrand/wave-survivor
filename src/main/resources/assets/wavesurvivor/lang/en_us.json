@@ -71,5 +71,9 @@
   "block.wavesurvivor.kingdom_workshop": "Repair Workshop",
   "item.wavesurvivor.kingdom_compass": "Kingdom Compass",
   "item.wavesurvivor.reliquaire_scelle": "Sealed Reliquary",
+  "entity.wavesurvivor.frost_golem": "Frost Golem",
+  "item.wavesurvivor.frost_golem_spawn_egg": "Frost Golem Spawn Egg",
+  "entity.wavesurvivor.snow_sorcerer": "Snow Sorcerer",
+  "item.wavesurvivor.snow_sorcerer_spawn_egg": "Snow Sorcerer Spawn Egg",
   "itemGroup.wavesurvivor": "Wave Survivor"
 }

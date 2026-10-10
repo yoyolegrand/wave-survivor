@@ -108,6 +108,8 @@ public class HordeCommand {
                 .then(Commands.literal("info").executes(HordeCommand::info))
                 // Défi du jour : difficulté, mutateurs, récompense et série (ouvert à tous)
                 .then(Commands.literal("daily").executes(ctx -> com.wavesurvivor.horde.daily.DailyServer.show(ctx.getSource())))
+                // Boss Rush : meilleurs temps (ouvert à tous)
+                .then(Commands.literal("bossrush").executes(ctx -> com.wavesurvivor.horde.bossrush.BossRush.showTop(ctx.getSource())))
                 // Codex : guide des mécaniques, ouvert à tous
                 .then(Commands.literal("codex").executes(ctx -> {
                     com.wavesurvivor.network.CodexPacket.openFor(ctx.getSource().getPlayerOrException());

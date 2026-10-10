@@ -110,6 +110,8 @@ public class HordeEditorScreen extends Screen {
     private int eventsSub = 0, breachMobScroll = 0, breachRewardScroll = 0, anomalyFxScroll = 0;
     /** Onglet Boss : 0 = le boss, 1 = ses sbires (équipement, butin, stats). */
     private int bossSub = 0;
+    /** 1.6 — Onglet Boss : affiche les réglages du Boss Rush à la place du détail d'un boss. */
+    private boolean bossRushView = false;
     private final int[] breachTypeIdx = {0}, anomalyTypeIdx = {0};
     /** Effets proposés par ◀ ▶ (saisie libre possible, effets moddés compris). */
     private static final String[] EFFECTS = {"minecraft:speed", "minecraft:slowness", "minecraft:haste", "minecraft:mining_fatigue",
@@ -1501,11 +1503,56 @@ public class HordeEditorScreen extends Screen {
 
     // ─── Onglet Boss ───
 
+    // ─── Onglet Boss › 👑 Boss Rush (réglages de la horde : vies, pause, boss retenus, Gantelet, récompenses…) ───
+
+    private void buildBossRushSettings(int x, int y) {
+        JsonObject br = HordeJson.obj(cd(), "bossRush");
+        int half = 150;
+        toggle(x, y, half, t("ui.br.enabled"), br, "enabled", true);
+        toggle(x + half + 4, y, half, t("ui.br.gauntlet"), br, "gauntlet", true);
+        y += 22;
+        flow(x, y);
+        fl(t("ui.br.lives"));
+        fInt(26, HordeJson.num(br, "lives", 3), v -> br.addProperty("lives", Math.max(1, Math.min(20, v))));
+        fl(t("ui.br.pause"));
+        fInt(30, HordeJson.num(br, "pauseSeconds", 20), v -> br.addProperty("pauseSeconds", Math.max(5, Math.min(600, v))));
+        fl(t("ui.br.limit"));
+        fInt(30, HordeJson.num(br, "maxMinutes", 0), v -> br.addProperty("maxMinutes", Math.max(0, Math.min(600, v))));
+        y += 22;
+        toggle(x, y, half, t("ui.br.heal"), br, "healBetween", true);
+        toggle(x + half + 4, y, half, t("ui.br.blessings"), br, "blessings", true);
+        y += 22;
+        toggle(x, y, half, t("ui.br.merchants"), br, "merchants", true);
+        toggle(x + half + 4, y, half, t("ui.br.chests"), br, "supplyChests", true);
+        y += 22;
+        flow(x, y);
+        fl(t("ui.br.gpct"));
+        fDbl(30, HordeJson.dbl(br, "gauntletPercent", 15), v -> br.addProperty("gauntletPercent", Math.max(0, Math.min(200, v))));
+        fl("%");
+        fl(t("ui.br.top"));
+        fInt(26, HordeJson.num(br, "topSize", 10), v -> br.addProperty("topSize", Math.max(1, Math.min(50, v))));
+        y += 22;
+        flow(x, y);
+        fl(t("ui.br.prboss"));
+        fInt(26, HordeJson.num(br, "prPerBoss", 3), v -> br.addProperty("prPerBoss", Math.max(0, Math.min(1000, v))));
+        fl(t("ui.br.prwin"));
+        fInt(30, HordeJson.num(br, "prVictory", 10), v -> br.addProperty("prVictory", Math.max(0, Math.min(10000, v))));
+        y += 22;
+        toggle(x, y, half, t("ui.br.unlock"), br, "requiresCompletion", true);
+        toggle(x + half + 4, y, half, t("ui.br.leaderboard"), br, "leaderboardRewards", false);
+        y += 24;
+        label(x, y + 3, t("ui.br.waves"));
+        text(x, y + 14, 200, HordeJson.str(br, "waves", ""), v -> br.addProperty("waves", v.trim()));
+        y += 40;
+        label(x, y, t("ui.br.hint"));
+    }
+
     private void buildBosses() {
         JsonObject cd = cd();
         int y0 = top + 46;
         toggle(listX(), y0, 134, com.wavesurvivor.i18n.WSLang.t("ui.boss_d908"), cd, "useBossWaves", false);
-        if (kingdom()) label(detailX(), y0 + 4, com.wavesurvivor.i18n.WSLang.t("ui.kgd.boss_hint"));
+        button(detailX(), y0, 150, bossRushView ? t("ui.br.back") : t("ui.br.btn"), () -> { bossRushView = !bossRushView; init(); });
+        if (kingdom()) label(detailX() + 156, y0 + 4, com.wavesurvivor.i18n.WSLang.t("ui.kgd.boss_hint"));
         int ly = y0 + 22;
         bossList.place(listX(), ly, 134, rowsFrom(ly));
         int by = bossList.bottom() + 4, bx = listX();
@@ -1550,6 +1597,10 @@ public class HordeEditorScreen extends Screen {
             init();
         }).active = b != null;
 
+        if (bossRushView) {
+            buildBossRushSettings(detailX(), ly);
+            return;
+        }
         if (b == null) {
             label(detailX(), ly + 20, com.wavesurvivor.i18n.WSLang.t("ui.selectionne_un_boss_ou_crees_en_un"));
             return;

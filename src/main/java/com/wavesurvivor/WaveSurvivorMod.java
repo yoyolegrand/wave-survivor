@@ -105,6 +105,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RelicSets()); // 1.5 : bonus de set des reliques
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RelicEquip()); // 1.5 : reliques équipées (sans Curios)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.Heritage()); // 1.5 : Héritage et Renaissance
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.bossrush.BossRush()); // 1.6 : Boss Rush (vies, barre d'action)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.RenaissanceRewards()); // 1.5 : PR gagnés en jouant (boss)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BenedictionEvents()); // bénédictions conservées à la mort
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.KingdomReport()); // bilan de fin d'Assaut (Kingdom)

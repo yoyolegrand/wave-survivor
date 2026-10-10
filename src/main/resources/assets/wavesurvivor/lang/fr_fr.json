@@ -71,5 +71,9 @@
   "block.wavesurvivor.kingdom_workshop": "Atelier de Réparation",
   "item.wavesurvivor.kingdom_compass": "Boussole du Royaume",
   "item.wavesurvivor.reliquaire_scelle": "Reliquaire scellé",
+  "entity.wavesurvivor.frost_golem": "Golem de Givre",
+  "item.wavesurvivor.frost_golem_spawn_egg": "Œuf d'apparition de Golem de Givre",
+  "entity.wavesurvivor.snow_sorcerer": "Sorcier des Neiges",
+  "item.wavesurvivor.snow_sorcerer_spawn_egg": "Œuf d'apparition de Sorcier des Neiges",
   "itemGroup.wavesurvivor": "Wave Survivor"
 }

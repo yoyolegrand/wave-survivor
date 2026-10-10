@@ -93,7 +93,7 @@ public final class KingdomLives {
             if (server == null || p.isCreative() || p.isSpectator()) return;
             long others = server.getPlayerList().getPlayers().stream()
                     .filter(o -> o != p && !o.isCreative() && !(o.isSpectator() && !DOWN.containsKey(o.getUUID()))).count();
-            if (others == 0) {
+            if (others == 0 && !com.wavesurvivor.horde.bossrush.BossRush.active()) { // Boss Rush : les vies partagées décident, pas la mort solo
                 defeat(server, "kingdom.death.solo");
                 return;
             }
@@ -155,7 +155,7 @@ public final class KingdomLives {
                     anyUp = true;
                     break;
                 }
-                if (!anyUp) defeat(server, "kingdom.death.wiped");
+                if (!anyUp && !com.wavesurvivor.horde.bossrush.BossRush.active()) defeat(server, "kingdom.death.wiped");
             }
         }
 

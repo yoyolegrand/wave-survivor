@@ -152,6 +152,10 @@ public class HordeConfigMultiData {
         @SerializedName("useBossWaves")
         public boolean useBossWaves;
 
+        /** 1.6 — Boss Rush : réglages du mode (vies, pause, boss retenus, Gantelet, récompenses…). */
+        @SerializedName("bossRush")
+        public BossRushSettings bossRush = new BossRushSettings();
+
         @SerializedName("bossWaves")
         public List<BossWave> bossWaves;
 
@@ -254,6 +258,38 @@ public class HordeConfigMultiData {
         @SerializedName("seconds") public int seconds = 150;
         @SerializedName("reward") public Reward reward = new Reward(20, 0, 0, 0, 1);
         @SerializedName("drops") public java.util.List<com.wavesurvivor.horde.model.ChaosEvent.Drop> drops;
+    }
+
+    /** Boss Rush (1.6) : la horde jouée avec ses seuls boss, à la suite. Réglages par horde (éditeur › Boss Rush). */
+    public static class BossRushSettings {
+        @SerializedName("enabled") public boolean enabled = true;
+        /** Vies partagées par l'équipe (chaque mort d'un joueur en consomme une). */
+        @SerializedName("lives") public int lives = 3;
+        /** Pause entre deux boss, en secondes. */
+        @SerializedName("pauseSeconds") public int pauseSeconds = 20;
+        /** Les joueurs en vie récupèrent leur santé entre deux boss. */
+        @SerializedName("healBetween") public boolean healBetween = true;
+        /** Bénédictions proposées entre deux boss. */
+        @SerializedName("blessings") public boolean blessings = true;
+        /** Marchands et coffres roulette (ravitaillement) pendant les pauses. */
+        @SerializedName("merchants") public boolean merchants = true;
+        @SerializedName("supplyChests") public boolean supplyChests = true;
+        /** Mode Gantelet autorisé, et hausse cumulée de PV / dégâts à chaque boss (en %). */
+        @SerializedName("gauntlet") public boolean gauntlet = true;
+        @SerializedName("gauntletPercent") public double gauntletPercent = 15;
+        /** Débloqué seulement après avoir terminé la horde une fois. */
+        @SerializedName("requiresCompletion") public boolean requiresCompletion = true;
+        /** PR de Renaissance par boss vaincu, et bonus de victoire (pas de bonus de première victoire). */
+        @SerializedName("prPerBoss") public int prPerBoss = 3;
+        @SerializedName("prVictory") public int prVictory = 10;
+        /** Récompenses du classement de fin de horde (top 3 + tueur du boss) aussi en Boss Rush. */
+        @SerializedName("leaderboardRewards") public boolean leaderboardRewards = false;
+        /** Nombre de temps gardés au classement. */
+        @SerializedName("topSize") public int topSize = 10;
+        /** Limite de temps en minutes (0 = aucune) : au-delà, c'est la défaite. */
+        @SerializedName("maxMinutes") public int maxMinutes = 0;
+        /** Boss retenus : numéros de vague séparés par des virgules (vide = tous les boss de la horde). */
+        @SerializedName("waves") public String waves = "";
     }
 
     /** Purification : des foyers de corruption à casser ; aucun = Assaut suivant plus fort, tous = plus faible. */

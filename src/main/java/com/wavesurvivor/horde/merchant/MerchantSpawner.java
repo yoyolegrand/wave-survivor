@@ -63,6 +63,7 @@ public class MerchantSpawner {
      * {@code lookAt} : les marchands se tournent vers ce point (l'autel / le Monolithe).
      */
     public static void spawnAll(HordeConfigMultiData horde, ServerLevel level, List<BlockPos> overridePositions, BlockPos lookAt) {
+        if (com.wavesurvivor.horde.bossrush.BossRush.active() && !com.wavesurvivor.horde.bossrush.BossRush.merchants()) return; // Boss Rush : marchands désactivés dans l'éditeur
         HordeConfigMultiData.ConfigDataInner cfg = horde.configData;
         if (cfg == null || !cfg.useMerchants || cfg.merchants == null || cfg.merchants.isEmpty()) {
             WaveSurvivorMod.LOGGER.info("[Merchant] Aucun marchand configuré pour '{}'", horde.hordeName);

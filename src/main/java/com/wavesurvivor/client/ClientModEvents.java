@@ -58,6 +58,8 @@ public class ClientModEvents {
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.GISEMENT.get(), GisementRenderer::new);
         // Soldat du royaume : humanoïde propre au mod (corps humain + armure + arme)
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.KINGDOM_SOLDIER.get(), KingdomSoldierRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.FROST_GOLEM.get(), FrostGolemRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.SNOW_SORCERER.get(), SnowSorcererRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.XALTOR_CRYSTAL.get(),
                 net.minecraft.client.renderer.entity.EndCrystalRenderer::new);
     }

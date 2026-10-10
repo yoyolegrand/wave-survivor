@@ -82,6 +82,20 @@ public class ModEntities {
                     .clientTrackingRange(8)
                     .build("kingdom_soldier"));
 
+    /** Horde des Pics Gelés : Golem de Givre, Golem de fer corrompu par le froid (hostile). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.FrostGolem>> FROST_GOLEM = ENTITIES.register("frost_golem",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.FrostGolem>of(com.wavesurvivor.entity.FrostGolem::new, MobCategory.MONSTER)
+                    .sized(1.4f, 2.7f)
+                    .clientTrackingRange(10)
+                    .build("frost_golem"));
+
+    /** Horde des Pics Gelés : Sorcier des Neiges, Évocateur du froid (pics de glace, blizzard, Vagabonds). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.SnowSorcerer>> SNOW_SORCERER = ENTITIES.register("snow_sorcerer",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.SnowSorcerer>of(com.wavesurvivor.entity.SnowSorcerer::new, MobCategory.MONSTER)
+                    .sized(0.6f, 1.95f)
+                    .clientTrackingRange(8)
+                    .build("snow_sorcerer"));
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
     }
@@ -95,5 +109,7 @@ public class ModEntities {
         event.put(TOTEM.get(), com.wavesurvivor.entity.TotemEntity.createAttributes().build());
         event.put(GISEMENT.get(), com.wavesurvivor.entity.GisementEntity.createAttributes().build());
         event.put(KINGDOM_SOLDIER.get(), com.wavesurvivor.entity.KingdomSoldier.createAttributes().build());
+        event.put(FROST_GOLEM.get(), com.wavesurvivor.entity.FrostGolem.createAttributes().build());
+        event.put(SNOW_SORCERER.get(), com.wavesurvivor.entity.SnowSorcerer.createAttributes().build());
     }
 }

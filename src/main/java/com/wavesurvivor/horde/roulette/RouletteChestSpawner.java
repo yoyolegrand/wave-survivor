@@ -38,6 +38,7 @@ public class RouletteChestSpawner {
 
     /** Spawn tous les coffres configurés pour cette horde. */
     public static void spawnAll(String hordeName, MinecraftServer server) {
+        if (com.wavesurvivor.horde.bossrush.BossRush.active() && !com.wavesurvivor.horde.bossrush.BossRush.supplyChests()) return; // Boss Rush : coffres de ravitaillement désactivés
         List<RouletteChestSpawnStore.SpawnPoint> spawns = RouletteChestSpawnStore.getSpawns(hordeName);
         if (spawns == null || spawns.isEmpty()) return;
 
@@ -66,6 +67,7 @@ public class RouletteChestSpawner {
 
     /** Spawn des coffres à des positions calculées (zone d'autel), un par config. */
     public static void spawnAtSpots(ServerLevel level, List<com.wavesurvivor.altar.AltarLayout.ChestSpot> spots) {
+        if (com.wavesurvivor.horde.bossrush.BossRush.active() && !com.wavesurvivor.horde.bossrush.BossRush.supplyChests()) return;
         if (spots == null || spots.isEmpty()) return;
         int spawned = 0;
         for (var s : spots) {

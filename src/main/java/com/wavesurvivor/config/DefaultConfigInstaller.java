@@ -75,7 +75,8 @@ public final class DefaultConfigInstaller {
     private static final String[] ADDITIONS = {
             "additions/kingdom_pillagers.json",  // 1.2.1 : « Le Siège des Pillards » (horde Kingdom prête à jouer)
             "additions/progression_1_4.json",    // 1.4.0 : conditions de déblocage (progression des hordes)
-            "additions/relics_1_5.json"          // 1.5.0 : nouvelles reliques dans les Reliquaires
+            "additions/relics_1_5.json",         // 1.5.0 : nouvelles reliques dans les Reliquaires
+            "additions/frozen_peaks.json"        // 1.6.0 : « Les Pics Gelés » (horde Vanilla : monstres, élites, vagues spéciales, 3 boss)
     };
 
     private static final com.google.gson.Gson GSON = new com.google.gson.GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

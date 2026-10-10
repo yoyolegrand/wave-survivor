@@ -63,6 +63,7 @@ public class HordeSession extends SavedData {
     public static void capture(MinecraftServer server) {
         HordeManager hm = HordeManager.get();
         if (server == null || !hm.isRunning() || hm.getActiveHorde() == null || hm.getActiveHorde().configData == null) return;
+        if (com.wavesurvivor.horde.bossrush.BossRush.active()) return; // Boss Rush : pas de sauvegarde / reprise
         HordeConfigMultiData h = hm.getActiveHorde();
         boolean isKingdom = h.configData.isKingdom();
         if (isKingdom && !com.wavesurvivor.horde.kingdom.KingdomManager.isCalmPhase()) return;

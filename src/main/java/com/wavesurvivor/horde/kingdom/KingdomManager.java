@@ -577,21 +577,23 @@ public final class KingdomManager {
     }
 
     private static void startAssault(long now) {
-        cycle++;
+        boolean rush = com.wavesurvivor.horde.bossrush.BossRush.active(); // Boss Rush : chaque Assaut est un boss (pas de monstres)
+        cycle = rush ? com.wavesurvivor.horde.bossrush.BossRush.nextWave(cycle, 1_000_000) : cycle + 1;
+        if (rush) com.wavesurvivor.horde.bossrush.BossRush.onStageStart(level.getServer(), cycle);
         targetTime = 18000; // l'Assaut tombe à la nuit
         // Boss final en attente / vivant / dans son arène : la limite de sécurité ne coupe pas le dernier combat
         boolean finalPending = cfg.finalBoss && hasFinalBoss() && !bossDefeated;
-        if (cfg.maxCycles > 0 && cycle > cfg.maxCycles && !finalPending) {
+        if (!rush && cfg.maxCycles > 0 && cycle > cfg.maxCycles && !finalPending) {
             broadcast(WSLang.c("kingdom.safety_end", cfg.maxCycles));
             HordeManager.get().endKingdom(false);
             return;
         }
         // Assaut du boss final atteint sans Porte du Roi (aucune Porte détruite) : le Roi choisit la Porte la plus abîmée
-        if (cfg.finalBoss && hasFinalBoss() && !finalMarked && cycle >= finalBossWave()) markFinalForced();
+        if (!rush && cfg.finalBoss && hasFinalBoss() && !finalMarked && cycle >= finalBossWave()) markFinalForced();
         phase = Phase.ASSAULT;
         KingdomReport.start(cycle); // bilan de fin d'Assaut : compteurs remis à zéro
         KingdomRoles.sync(level.getServer());
-        int budget = budgetFor(cycle);
+        int budget = rush ? 0 : budgetFor(cycle);
         for (Portal p : PORTALS) { p.budget = p.destroyed ? 0 : budget; p.spawned = 0; }
         // Augure : le présage choisi pendant le Calme modifie les effectifs de cet Assaut
         applyOmen(KingdomOmens.startAssault(level.getServer()));
@@ -606,14 +608,14 @@ public final class KingdomManager {
         // Le Catalyseur du Calme précédent disparaît ; les Gardiens se reforment (sauf présage « Gardiens assoupis ») ;
         // la Porte du Roi libère son boss
         clearCatalyst();
-        if (!KingdomOmens.is(KingdomOmens.Omen.DROWSY)) {
+        if (!rush && !KingdomOmens.is(KingdomOmens.Omen.DROWSY)) {
             for (Portal p : PORTALS) if (!p.destroyed) spawnGuardians(p);
         }
         // Porte du Roi : son boss surgit à l'Assaut de sa vague de boss (~10), ou dès l'Assaut qui suit sa chute à 35 % PV
-        if (finalMarked && !finalBossSpawned && (cycle >= finalBossWave() || kingLow)) spawnFinalBoss();
+        if (!rush && finalMarked && !finalBossSpawned && (cycle >= finalBossWave() || kingLow)) spawnFinalBoss();
         // Fin du Calme : marchands et coffres repartent ; tirage d'un éventuel assaut spécial ; boss d'assaut
         HordeManager.get().kingdomCalmEnd(level.getServer());
-        pickSpecial();
+        if (!rush) pickSpecial();
         spawnAssaultBosses();
         nextSpawnTick = now + 20;
         nextBloodBreachTick = now + 15 * 20L; // Lune de sang : première brèche 15 s après le début de l'Assaut
@@ -643,7 +645,7 @@ public final class KingdomManager {
         KingdomRoleExtras.onCalm(level.getServer(), cycle);
         // Augure : fin du présage de l'Assaut, nouveaux présages proposés
         KingdomOmens.onCalm(level.getServer());
-        phaseEndTick = now + Math.max(10, cfg.calmSeconds) * 20L;
+        phaseEndTick = now + (com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.pauseSeconds() : Math.max(10, cfg.calmSeconds)) * 20L;
         // Arène du Roi : l'Assaut final est repoussé → la Porte du Roi s'ouvre sur l'arène du boss
         if (raidAwait && !RaidManager.isOpen()) {
             raidAwait = false;
@@ -655,11 +657,11 @@ public final class KingdomManager {
         calmStartTick = now; // l'aube commence
         targetTime = 6000; // le Calme se lève avec le jour
         int calmBudget = (int) Math.max(1, Math.round(budgetFor(cycle) * Math.max(0, cfg.calmPercent) / 100.0));
-        for (Portal p : PORTALS) { p.budget = p.destroyed ? 0 : calmBudget; p.spawned = 0; }
-        // Objectif du Calme : un Catalyseur apparaît près d'une Porte
-        spawnCatalyst();
+        for (Portal p : PORTALS) { p.budget = p.destroyed ? 0 : (com.wavesurvivor.horde.bossrush.BossRush.active() ? 0 : calmBudget); p.spawned = 0; }
+        // Objectif du Calme : un Catalyseur apparaît près d'une Porte (pas en Boss Rush : les Portes ne sont plus l'objectif)
+        if (!com.wavesurvivor.horde.bossrush.BossRush.active()) spawnCatalyst();
         // Objectif facultatif du Calme (convoi, champion, trésor, purification), tiré au hasard
-        KingdomObjectives.onCalm(level, now, cycle, cfg.calmObjectives);
+        if (!com.wavesurvivor.horde.bossrush.BossRush.active()) KingdomObjectives.onCalm(level, now, cycle, cfg.calmObjectives);
         // Calme : Bénédictions, marchands et coffres roulette (comme la pause entre deux vagues)
         special = null;
         specialUnits.clear();
@@ -668,7 +670,7 @@ public final class KingdomManager {
         scoutReport();
         nextSpawnTick = now + 40;
         nextSmallBreachTick = cfg.smallBreachSeconds > 0 ? now + cfg.smallBreachSeconds * 20L : Long.MAX_VALUE;
-        com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), WSLang.c("kingdom.calm", cycle, Math.max(10, cfg.calmSeconds)),
+        com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), WSLang.c("kingdom.calm", cycle, com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.pauseSeconds() : Math.max(10, cfg.calmSeconds)),
                 "minecraft:feather", com.wavesurvivor.network.EventFeedPacket.RESOURCE, false);
         for (ServerPlayer p : level.players()) {
             level.playSound(null, p.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.MASTER, 2f, 0.8f);
@@ -718,7 +720,7 @@ public final class KingdomManager {
             return;
         }
         // Dernière Porte : elle devient la Porte du Roi
-        if (remaining == 1 && cfg.finalBoss && !finalMarked) markFinal();
+        if (remaining == 1 && cfg.finalBoss && !finalMarked && !com.wavesurvivor.horde.bossrush.BossRush.active()) markFinal();
         // Gardiens, Catalyseur, vulnérabilité des Portes, boss final
         if (now % 10 == 0) {
             checkCatalyst();
@@ -766,7 +768,15 @@ public final class KingdomManager {
             }
             // Fin de vague forcée : ≤ 10 % de l'Assaut en vie → compte à rebours, puis les survivantes disparaissent
             if (com.wavesurvivor.horde.WaveCleanup.tick(level.getServer(), now, spent, horde.configData.forceEndSeconds)) alive = 0;
-            if (spent && alive == 0) startCalm(now);
+            // Boss Rush : l'Assaut dure tant que son boss vit ; le dernier boss vaincu = victoire
+            boolean rushBossAlive = com.wavesurvivor.horde.bossrush.BossRush.active() && com.wavesurvivor.horde.boss.BossManager.activeBossCount() > 0;
+            if (spent && alive == 0 && !rushBossAlive) {
+                if (com.wavesurvivor.horde.bossrush.BossRush.isLastStage(cycle)) {
+                    HordeManager.get().endKingdom(true);
+                    return;
+                }
+                startCalm(now);
+            }
         } else {
             // Calme : seuls les événements de ressources (gisements, arbres) peuvent survenir
             HordeManager.get().kingdomChaosTick(server, true);
@@ -780,7 +790,7 @@ public final class KingdomManager {
                     p.spawned++;
                 }
             }
-            if (now >= nextSmallBreachTick) {
+            if (now >= nextSmallBreachTick && !com.wavesurvivor.horde.bossrush.BossRush.active()) {
                 nextSmallBreachTick = now + Math.max(5, cfg.smallBreachSeconds) * 20L;
                 smallBreach(now);
             }
@@ -793,7 +803,7 @@ public final class KingdomManager {
         if (now % 10 == 0) KingdomMarch.tick();
         KingdomClaim.tick(now);
         KingdomDefenses.tick(now);
-        KingdomSiege.tick(now, cycle);
+        if (!com.wavesurvivor.horde.bossrush.BossRush.active()) KingdomSiege.tick(now, cycle);
         if (now % 20 == 0) retarget();
         if (now % 10 == 0) updateBar(now, alive);
         if (now % 10 == 0) shieldParticles();
@@ -991,7 +1001,7 @@ public final class KingdomManager {
         if (open.isEmpty()) return;
         for (var w : waves) {
             if (w.waveNumber != cycle || BOSS_DONE.contains(w.waveNumber)) continue;
-            if (cfg.finalBoss && w == finalWave) continue;
+            if (cfg.finalBoss && w == finalWave && !com.wavesurvivor.horde.bossrush.BossRush.active()) continue;
             Portal from = open.get(RNG.nextInt(open.size()));
             // Porte choisie dans l'éditeur (si elle est encore debout), sinon au hasard
             if (w.gate > 0) for (Portal p : open) if (p.num == w.gate) { from = p; break; }

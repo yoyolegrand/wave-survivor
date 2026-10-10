@@ -105,6 +105,14 @@ public class ModItems {
     public static final RegistryObject<Item> ECLAT_NEANT_SPAWN_EGG = ITEMS.register("eclat_neant_spawn_egg",
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.ECLAT_NEANT, 0x160A24, 0xB04DFF, new Item.Properties()));
 
+    /** Œuf d'apparition du Golem de Givre (horde des Pics Gelés). */
+    public static final RegistryObject<Item> FROST_GOLEM_SPAWN_EGG = ITEMS.register("frost_golem_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.FROST_GOLEM, 0x4F8FC8, 0xE6F8FF, new Item.Properties()));
+
+    /** Œuf d'apparition du Sorcier des Neiges (horde des Pics Gelés). */
+    public static final RegistryObject<Item> SNOW_SORCERER_SPAWN_EGG = ITEMS.register("snow_sorcerer_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.SNOW_SORCERER, 0xDDEEFA, 0x1E3A6E, new Item.Properties()));
+
     /** Relique : Anneau d'Ancrage du Néant (immunité à la Lévitation, compatible Curios « bague »). */
     public static final RegistryObject<Item> ANNEAU_ANCRAGE = ITEMS.register("anneau_ancrage",
             com.wavesurvivor.item.AnneauAncrageItem::new);
@@ -240,6 +248,8 @@ public class ModItems {
                         output.accept(ALTAR_RUNIC_ITEM.get());
                         output.accept(RENAISSANCE_ALTAR_ITEM.get());
                         output.accept(DIABLOTIN_SPAWN_EGG.get());
+                        output.accept(FROST_GOLEM_SPAWN_EGG.get());
+                        output.accept(SNOW_SORCERER_SPAWN_EGG.get());
                         output.accept(ECLAT_NEANT_SPAWN_EGG.get());
                         output.accept(ANNEAU_ANCRAGE.get());
                         output.accept(AMULETTE_BRASIER.get());

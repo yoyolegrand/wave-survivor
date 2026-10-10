@@ -99,13 +99,16 @@ public final class HordeDifficulty {
     /** Boss : PV et dégâts de boss (en tenant compte du multiplicateur d'unité déjà appliqué s'il a été enregistré comme unité). */
     public static void applyToBoss(LivingEntity boss) {
         Mult x = m();
-        if (x == null) return;
+        double g = com.wavesurvivor.horde.bossrush.BossRush.gauntletMultiplier(); // 1.6 — Gantelet : chaque boss plus fort que le précédent
+        if (x == null && g == 1.0) return;
         var tag = boss.getPersistentData();
         if (tag.getBoolean("ws_diff_boss")) return;
         tag.putBoolean("ws_diff_boss", true);
         boolean asUnit = tag.getBoolean("ws_diff");
-        double hp = asUnit ? x.bossHealth / Math.max(0.01, x.monsterHealth) : x.bossHealth;
-        double dmg = asUnit ? x.bossDamage / Math.max(0.01, x.monsterDamage) : x.bossDamage;
+        double bh = x == null ? 1.0 : x.bossHealth, bd = x == null ? 1.0 : x.bossDamage;
+        double mh = x == null ? 1.0 : x.monsterHealth, md = x == null ? 1.0 : x.monsterDamage;
+        double hp = (asUnit ? bh / Math.max(0.01, mh) : bh) * g;
+        double dmg = (asUnit ? bd / Math.max(0.01, md) : bd) * g;
         scale(boss, Attributes.MAX_HEALTH, hp);
         scale(boss, Attributes.ATTACK_DAMAGE, dmg);
         boss.setHealth(boss.getMaxHealth());

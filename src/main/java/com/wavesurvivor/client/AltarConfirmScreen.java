@@ -29,6 +29,8 @@ public class AltarConfirmScreen extends Screen {
     static com.wavesurvivor.horde.difficulty.Difficulty DIFF = com.wavesurvivor.horde.difficulty.Difficulty.NORMAL;
     /** Mode Kingdom : rôle choisi (« » = aucun), gardé d'un lancement à l'autre pendant la session. */
     static String ROLE = "";
+    /** Mode Boss Rush choisi (« », « rush », « gauntlet »), gardé d'un lancement à l'autre pendant la session. */
+    static String MODE = "";
 
     /** Infobulle du bouton de difficulté : nom du niveau + description. */
     private static String diffTooltip(com.wavesurvivor.horde.difficulty.Difficulty d) {
@@ -80,7 +82,7 @@ public class AltarConfirmScreen extends Screen {
                         btn -> {
                             NetworkHandler.CHANNEL.sendToServer(new TriggerAltarPacket(data.altarPos, current().hordeName(),
                                     com.wavesurvivor.horde.mutator.Mutator.join(SELECTED), DIFF.id,
-                                    current().kingdom() ? ROLE : ""));
+                                    current().kingdom() ? ROLE : "", MODE));
                             this.onClose();
                         })
                 .bounds(centerX - 110, height - 60, 100, 22)
@@ -157,6 +159,34 @@ public class AltarConfirmScreen extends Screen {
                 .bounds(10, 32, 110, 18).build();
         dailyBtn.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(dailyTooltip(daily))));
         addRenderableWidget(dailyBtn);
+
+        // Bouton « Boss Rush » (haut gauche, sous le Défi du jour) : Désactivé → Boss Rush → Gantelet
+        String rushInfo = current().rush() == null ? "" : current().rush();
+        if (!rushInfo.isEmpty()) {
+            String[] ri = rushInfo.split(";");
+            boolean gauntletOk = ri.length > 2 && ri[2].equals("1");
+            boolean rushLocked = ri.length > 3 && ri[3].equals("1");
+            if (!MODE.equals("rush") && !(MODE.equals("gauntlet") && gauntletOk)) MODE = "";
+            if (rushLocked) MODE = "";
+            String rushLabel = MODE.equals("gauntlet") ? com.wavesurvivor.i18n.WSLang.t("bossrush.btn_gauntlet")
+                    : MODE.equals("rush") ? com.wavesurvivor.i18n.WSLang.t("bossrush.btn_on") : com.wavesurvivor.i18n.WSLang.t("bossrush.btn_off");
+            Button rushBtn = Button.builder(Component.literal(rushLabel), btn -> {
+                        if (MODE.isEmpty()) MODE = "rush";
+                        else if (MODE.equals("rush") && gauntletOk) MODE = "gauntlet";
+                        else MODE = "";
+                        init();
+                    })
+                    .bounds(10, 54, 110, 18).build();
+            rushBtn.active = !rushLocked;
+            String rushTip = "§6§l" + com.wavesurvivor.i18n.WSLang.t("bossrush.title") + "\n§7"
+                    + com.wavesurvivor.i18n.WSLang.t("bossrush.tip", ri.length > 1 ? ri[1] : "?", ri.length > 0 ? ri[0] : "?")
+                    + (gauntletOk ? "\n§7" + com.wavesurvivor.i18n.WSLang.t("bossrush.tip_gauntlet") : "")
+                    + (rushLocked ? "\n§c" + com.wavesurvivor.i18n.WSLang.t("bossrush.tip_locked") : "\n§8" + com.wavesurvivor.i18n.WSLang.t("bossrush.tip_click"));
+            rushBtn.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(rushTip)));
+            addRenderableWidget(rushBtn);
+        } else {
+            MODE = "";
+        }
 
         // Bouton "Codex" (haut gauche) : guide des mécaniques
         addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("codex.button")),

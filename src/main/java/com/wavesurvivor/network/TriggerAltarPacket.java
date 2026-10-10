@@ -23,6 +23,8 @@ public class TriggerAltarPacket {
     public final String difficulty;
     /** Mode Kingdom : rôle choisi par celui qui lance (vide = aucun). */
     public final String role;
+    /** 1.6 — Mode Boss Rush (« rush », « gauntlet » ; vide = horde normale). */
+    public final String mode;
 
     public TriggerAltarPacket(BlockPos pos, String variantHorde) {
         this(pos, variantHorde, "", "");
@@ -37,11 +39,16 @@ public class TriggerAltarPacket {
     }
 
     public TriggerAltarPacket(BlockPos pos, String variantHorde, String mutators, String difficulty, String role) {
+        this(pos, variantHorde, mutators, difficulty, role, "");
+    }
+
+    public TriggerAltarPacket(BlockPos pos, String variantHorde, String mutators, String difficulty, String role, String mode) {
         this.altarPos = pos;
         this.variantHorde = variantHorde != null ? variantHorde : "";
         this.mutators = mutators != null ? mutators : "";
         this.difficulty = difficulty != null ? difficulty : "";
         this.role = role != null ? role : "";
+        this.mode = mode != null ? mode : "";
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -50,10 +57,11 @@ public class TriggerAltarPacket {
         buf.writeUtf(mutators);
         buf.writeUtf(difficulty);
         buf.writeUtf(role);
+        buf.writeUtf(mode);
     }
 
     public static TriggerAltarPacket decode(FriendlyByteBuf buf) {
-        return new TriggerAltarPacket(buf.readBlockPos(), buf.readUtf(), buf.readUtf(), buf.readUtf(), buf.readUtf());
+        return new TriggerAltarPacket(buf.readBlockPos(), buf.readUtf(), buf.readUtf(), buf.readUtf(), buf.readUtf(), buf.readUtf());
     }
 
     public static void handle(TriggerAltarPacket pkt, Supplier<NetworkEvent.Context> ctx) {
@@ -61,7 +69,7 @@ public class TriggerAltarPacket {
             ServerPlayer sender = ctx.get().getSender();
             if (sender == null) return;
             if (!(sender.level() instanceof ServerLevel level)) return;
-            AltarManager.confirmTrigger(sender, level, pkt.altarPos, pkt.variantHorde, pkt.mutators, pkt.difficulty, pkt.role);
+            AltarManager.confirmTrigger(sender, level, pkt.altarPos, pkt.variantHorde, pkt.mutators, pkt.difficulty, pkt.role, pkt.mode);
         });
         ctx.get().setPacketHandled(true);
     }

@@ -22,7 +22,7 @@ public class OpenAltarConfirmScreenPacket {
 
     public record Variant(String label, String hordeName, int totalWaves, int totalBosses,
                           String specialInfo, List<Mod> mods, int stars, String difficulties, String lock,
-                          boolean kingdom, String roles) {
+                          boolean kingdom, String roles, String rush) {
         public boolean launchable() {
             for (Mod m : mods) if (!m.installed()) return false;
             return !locked();
@@ -63,6 +63,7 @@ public class OpenAltarConfirmScreenPacket {
             buf.writeUtf(v.lock() != null ? v.lock() : "", 8192);
             buf.writeBoolean(v.kingdom());
             buf.writeUtf(v.roles() != null ? v.roles() : "");
+            buf.writeUtf(v.rush() != null ? v.rush() : "");
         }
     }
 
@@ -83,7 +84,8 @@ public class OpenAltarConfirmScreenPacket {
             String lock = buf.readUtf(8192);
             boolean kingdom = buf.readBoolean();
             String roles = buf.readUtf();
-            list.add(new Variant(label, horde, waves, bosses, info, mods, stars, diffs, lock, kingdom, roles));
+            String rush = buf.readUtf();
+            list.add(new Variant(label, horde, waves, bosses, info, mods, stars, diffs, lock, kingdom, roles, rush));
         }
         return new OpenAltarConfirmScreenPacket(pos, family, list);
     }
