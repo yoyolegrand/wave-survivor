@@ -48,6 +48,7 @@ public class ColliderBlock extends Block {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         BlockPos parent = KingdomDefenses.parentOf(pos);
+        if (parent == null) parent = OfferingBrazier.parentOf(pos); // partie du Brasier des Offrandes
         if (parent == null) return InteractionResult.PASS;
         BlockState ps = level.getBlockState(parent);
         return ps.use(level, player, hand, hit.withPosition(parent));
@@ -57,7 +58,10 @@ public class ColliderBlock extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.is(newState.getBlock()) && !level.isClientSide) KingdomDefenses.colliderBroken(pos);
+        if (!state.is(newState.getBlock()) && !level.isClientSide) {
+            KingdomDefenses.colliderBroken(pos);
+            if (level instanceof net.minecraft.server.level.ServerLevel sl) OfferingBrazier.colliderBroken(sl, pos);
+        }
         super.onRemove(state, level, pos, newState, moved);
     }
 

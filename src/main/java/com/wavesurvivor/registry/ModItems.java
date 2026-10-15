@@ -57,6 +57,9 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.KINGDOM_COLLECTOR.get(), new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> KINGDOM_WORKSHOP_ITEM = ITEMS.register("kingdom_workshop",
             () -> new BlockItem(ModBlocks.KINGDOM_WORKSHOP.get(), new Item.Properties().stacksTo(16)));
+    /** Kingdom : Brasier des Offrandes. */
+    public static final RegistryObject<Item> OFFERING_BRAZIER_ITEM = ITEMS.register("offering_brazier",
+            () -> new BlockItem(ModBlocks.OFFERING_BRAZIER.get(), new Item.Properties().stacksTo(16)));
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
     public static final RegistryObject<Item> RELIQUAIRE_SCELLE = ITEMS.register("reliquaire_scelle",
             () -> new com.wavesurvivor.item.RelicCacheItem(new Item.Properties()));
@@ -296,6 +299,7 @@ public class ModItems {
                         output.accept(KINGDOM_BARRACKS_ITEM.get());
                         output.accept(KINGDOM_COLLECTOR_ITEM.get());
                         output.accept(KINGDOM_WORKSHOP_ITEM.get());
+                        output.accept(OFFERING_BRAZIER_ITEM.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());

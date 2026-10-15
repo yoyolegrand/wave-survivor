@@ -70,6 +70,18 @@ public class DefenseBlockEntity extends BlockEntity {
 
     public net.minecraft.world.SimpleContainer getStorage() { return storage; }
 
+    /**
+     * Tour du Glaneur : catégories d'objets qu'il ramasse (bits de GleanerSort.Category). 0 = aucun filtre : il garde tout.
+     */
+    private int filter = 0;
+
+    public int getFilter() { return filter; }
+
+    public void setFilter(int f) {
+        this.filter = f & GleanerSort.ALL;
+        setChanged();
+    }
+
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
@@ -78,6 +90,7 @@ public class DefenseBlockEntity extends BlockEntity {
         hp = tag.getFloat("DefHp");
         maxHp = tag.getFloat("DefMaxHp");
         if (tag.contains("Storage")) storage.fromTag(tag.getList("Storage", net.minecraft.nbt.Tag.TAG_COMPOUND));
+        filter = tag.getInt("GleanFilter");
     }
 
     @Override
@@ -88,6 +101,7 @@ public class DefenseBlockEntity extends BlockEntity {
         tag.putFloat("DefHp", hp);
         tag.putFloat("DefMaxHp", maxHp);
         tag.put("Storage", storage.createTag());
+        tag.putInt("GleanFilter", filter);
     }
 
     /** Le client n'a pas besoin du contenu du stockage : paquet de mise à jour allégé. */

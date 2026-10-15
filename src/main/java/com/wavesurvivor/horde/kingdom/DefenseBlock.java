@@ -121,19 +121,9 @@ public class DefenseBlock extends Block implements net.minecraft.world.level.blo
             return;
         }
         if (db.kind == Kind.COLLECTOR) {
-            {
-                // Tour du Glaneur : clic droit (sans monnaie en main) = ouvrir son stockage ; le titre rappelle niveau, rayon et amélioration
-                int lvl = be.getDefLevel();
-                net.minecraft.network.chat.Component title = net.minecraft.network.chat.Component.translatable("block.wavesurvivor.kingdom_collector")
-                        .append(net.minecraft.network.chat.Component.literal(com.wavesurvivor.i18n.WSLang.t("kingdom.collector_title", lvl, KingdomDefenses.collectRadius(lvl))));
-                int rows = KingdomDefenses.storageRows(lvl);
-                sp.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> rows >= 6
-                        ? net.minecraft.world.inventory.ChestMenu.sixRows(id, inv, be.getStorage())
-                        : rows == 4
-                        ? new net.minecraft.world.inventory.ChestMenu(net.minecraft.world.inventory.MenuType.GENERIC_9x4, id, inv, be.getStorage(), 4)
-                        : net.minecraft.world.inventory.ChestMenu.threeRows(id, inv, be.getStorage()), title));
-                sp.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.collector_hint"), true);
-            }
+            // Tour du Glaneur : stockage avec filtre de tri et onglets vers les Glaneurs proches
+            GleanerMenu.open(sp, pos);
+            sp.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.collector_hint"), true);
         }
     }
 

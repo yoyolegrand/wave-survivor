@@ -324,6 +324,15 @@ public final class KingdomClaim {
         return center != null && Math.abs(p.getX() - center.getX()) <= radius && Math.abs(p.getZ() - center.getZ()) <= radius;
     }
 
+    /** Portée de pose des PIÈGES : ils peuvent sortir du claim, jusqu'à 64 blocs du Monolithe. */
+    public static final int TRAP_RANGE = 64;
+
+    /** Un piège peut-il être posé ici ? (dans le claim, ou hors du claim jusqu'à TRAP_RANGE blocs du Monolithe) */
+    public static boolean trapAllowed(BlockPos p) {
+        if (!buildOnlyInClaim || inside(p)) return true;
+        return center != null && Math.abs(p.getX() - center.getX()) <= TRAP_RANGE && Math.abs(p.getZ() - center.getZ()) <= TRAP_RANGE;
+    }
+
     /**
      * Construction autorisée à cette position ? Même règle pour TOUT ce qui se pose (tours, pièges, remparts, portes) :
      * « Claim obligatoire : NON » → partout ; sinon uniquement dans le claim.
@@ -600,11 +609,16 @@ public final class KingdomClaim {
             if ((e.getPlacedBlock().getBlock() instanceof DefenseBlock || e.getPlacedBlock().getBlock() instanceof TrapBlock)
                     && e.getEntity() instanceof ServerPlayer dp) {
                 // Claim désactivé : défenses et pièges posables partout (toujours seulement pendant une partie Kingdom)
-                if (level == null || e.getLevel() != level || (buildOnlyInClaim && !inside(e.getPos()))) {
+                // Pièges : autorisés aussi hors du claim, jusqu'à TRAP_RANGE blocs du Monolithe
+                boolean isTrap = e.getPlacedBlock().getBlock() instanceof TrapBlock;
+                boolean allowedHere = isTrap ? trapAllowed(e.getPos()) : (!buildOnlyInClaim || inside(e.getPos()));
+                if (level == null || e.getLevel() != level || !allowedHere) {
                     e.setCanceled(true);
-                    dp.displayClientMessage(WSLang.c(level == null ? "kingdom.defense_only_kingdom" : "kingdom.claim_outside"), true);
+                    dp.displayClientMessage(WSLang.c(level == null ? "kingdom.defense_only_kingdom"
+                            : isTrap ? "kingdom.trap_too_far" : "kingdom.claim_outside"), true);
                     return;
                 }
+                if (isTrap && !inside(e.getPos())) return; // piège hors du claim : posé, sans les règles de construction du claim
                 // (Emprise et espace libre : gérés par les blocs de collision des défenses, voir KingdomDefenses.register)
             }
             if (level == null || e.getLevel() != level || !(e.getEntity() instanceof ServerPlayer p)) return;
@@ -630,7 +644,8 @@ public final class KingdomClaim {
             }
             if (level == null || e.getLevel() != level) return;
             BlockPos pos = e.getPos();
-            if (!inside(pos) && buildOnlyInClaim && e.getPlayer() != null && !e.getPlayer().isCreative()) {
+            if (!inside(pos) && buildOnlyInClaim && e.getPlayer() != null && !e.getPlayer().isCreative()
+                    && !(e.getState().getBlock() instanceof TrapBlock && trapAllowed(pos))) { // un piège posé hors du claim peut être repris
                 e.setCanceled(true);
                 e.getPlayer().displayClientMessage(WSLang.c("kingdom.claim_outside"), true);
                 return;

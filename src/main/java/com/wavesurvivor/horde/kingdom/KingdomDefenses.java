@@ -66,6 +66,8 @@ public final class KingdomDefenses {
 
     /** Prix d'achat (ARCHER, MAGE, SHRINE, BARRACKS) et prix pour passer au niveau 2 puis 3. */
     public static final int[] BUY = {32, 40, 48, 56, 36, 44};
+    /** Brasier des Offrandes : 40 ◆ + 20 Bois + 20 Pierre du trésor. */
+    public static final int BRAZIER_COST = 40, BRAZIER_WOOD = 20, BRAZIER_STONE = 20;
     private static final int[] UPGRADE = {0, 48, 64};
 
     private static final Map<BlockPos, Def> DEFS = new HashMap<>();
@@ -167,9 +169,35 @@ public final class KingdomDefenses {
 
     private KingdomDefenses() {}
 
-    static void register(ServerLevel l, BlockPos pos, DefenseBlock.Kind kind, net.minecraft.world.entity.LivingEntity placer) {
-        if (!KingdomManager.isActive()) return;
+    /** Nombre maximum de tours d'archers : 4 au niveau 1 de la Mairie, +2 par niveau. */
+    public static int archerLimit() {
+        return 4 + 2 * Math.max(0, KingdomTownHall.tier() - 1);
+    }
+
+    /**
+     * Monde des défenses = TOUJOURS le monde du royaume. Une construction posée ailleurs (ex : dans l'arène du boss final,
+     * une autre dimension) ne doit jamais remplacer ce monde, sinon le nettoyage de fin de partie chercherait les tours
+     * au mauvais endroit et les laisserait en place.
+     */
+    private static boolean bind(ServerLevel l) {
+        ServerLevel home = KingdomManager.level();
+        if (home != null && l != home) return false;
         level = l;
+        return true;
+    }
+
+    static void register(ServerLevel l, BlockPos pos, DefenseBlock.Kind kind, net.minecraft.world.entity.LivingEntity placer) {
+        if (!KingdomManager.isActive() || !bind(l)) return;
+        // Limite de tours d'archers : 4 au niveau 1 de la Mairie (Monolithe), +2 par niveau (poses des joueurs uniquement, jamais à la reprise)
+        if (kind == DefenseBlock.Kind.ARCHER && placer != null) {
+            int max = archerLimit();
+            long have = DEFS.values().stream().filter(o -> o.kind == DefenseBlock.Kind.ARCHER).count();
+            if (have >= max) {
+                if (placer instanceof ServerPlayer sp) sp.displayClientMessage(WSLang.c("kingdom.archer_limit", max), true);
+                l.destroyBlock(pos, true); // limite atteinte : la tour est rendue
+                return;
+            }
+        }
         // Corps physique : il faut de la place (au-dessus de la tour, ou 3×3×3 pour le baraquement)
         List<BlockPos> cols = colliderPositions(kind, pos);
         for (BlockPos c : cols) {
@@ -366,6 +394,8 @@ public final class KingdomDefenses {
 
     static void clear() {
         // Fin de partie : soldats renvoyés et défenses retirées du monde (rien ne reste après la horde)
+        // Toujours dans le monde du royaume, même si les joueurs sont ailleurs (arène du boss final…)
+        if (KingdomManager.level() != null) level = KingdomManager.level();
         if (level != null) {
             for (Def d : new ArrayList<>(DEFS.values())) {
                 discardSoldiers(d);
@@ -470,6 +500,9 @@ public final class KingdomDefenses {
         } else if (type == 23) {                              // Boussole du Royaume (réglable depuis la carte)
             cost = COMPASS_COST;
             item = new ItemStack(ModItems.KINGDOM_COMPASS.get());
+        } else if (type == 24) {                              // Brasier des Offrandes (+ bois et pierre du trésor)
+            cost = BRAZIER_COST;
+            item = new ItemStack(ModItems.OFFERING_BRAZIER_ITEM.get());
         } else {
             return;
         }
@@ -479,7 +512,16 @@ public final class KingdomDefenses {
         if (type != 22 && type != 23 && com.wavesurvivor.horde.renaissance.Heritage.anyone(p.server, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 2)) {
             cost = Math.max(1, (int) Math.round(cost * 0.85));
         }
+        if (type == 24 && KingdomTreasury.active() && (!KingdomTreasury.has(KingdomTreasury.Res.WOOD, BRAZIER_WOOD)
+                || !KingdomTreasury.has(KingdomTreasury.Res.STONE, BRAZIER_STONE))) {
+            p.displayClientMessage(WSLang.c("kingdom.brazier.need_res", BRAZIER_WOOD, BRAZIER_STONE), true);
+            return;
+        }
         if (!AltarDefense.trySpend(p, cost)) return;
+        if (type == 24 && KingdomTreasury.active()) {
+            KingdomTreasury.spend(KingdomTreasury.Res.WOOD, BRAZIER_WOOD);
+            KingdomTreasury.spend(KingdomTreasury.Res.STONE, BRAZIER_STONE);
+        }
         if (type == 22) KingdomDemolition.markBought();
         String name = item.getHoverName().getString();
         if (!p.getInventory().add(item)) p.drop(item, false);
@@ -524,7 +566,7 @@ public final class KingdomDefenses {
     private static final java.util.Set<BlockPos> TRAPS = new java.util.HashSet<>();
 
     static void registerGate(ServerLevel l, BlockPos base, List<BlockPos> parts) {
-        level = l;
+        if (!bind(l)) return;
         List<BlockPos> copy = new ArrayList<>();
         for (BlockPos q : parts) copy.add(q.immutable());
         GATES.add(new Gate(base.immutable(), copy));
@@ -586,8 +628,7 @@ public final class KingdomDefenses {
     // ─── Pièges ───
 
     static void registerTrap(ServerLevel l, BlockPos pos) {
-        if (!KingdomManager.isActive()) return;
-        level = l;
+        if (!KingdomManager.isActive() || !bind(l)) return;
         TRAPS.add(pos.immutable());
         KingdomLeftovers.track(l, pos.immutable());
     }
@@ -1029,8 +1070,8 @@ public final class KingdomDefenses {
             arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
             if (d.level >= 2) arrow.setSecondsOnFire(100);
             arrow.getPersistentData().putBoolean("ws_tower_arrow", true);
-            // Spécialisations : Feu (dégâts + brûlure longue) ; Givre / Explosif gérés à l'impact (ArrowEvents)
-            if ("fire".equals(d.variant)) { arrow.setBaseDamage(4.0); arrow.setSecondsOnFire(100); }
+            // Spécialisations : Feu (+25 % de dégâts, la cible brûle 5 s à l'impact) ; Givre / Explosif gérés à l'impact (ArrowEvents)
+            if ("fire".equals(d.variant)) { arrow.setBaseDamage(5.0); arrow.setSecondsOnFire(100); }
             if (!d.variant.isEmpty()) arrow.getPersistentData().putString("ws_tower_variant", d.variant);
             level.addFreshEntity(arrow);
         }
@@ -1228,7 +1269,7 @@ public final class KingdomDefenses {
             if (level == null || e.getEntity().level().isClientSide) return;
             var pd = e.getEntity().getPersistentData();
             long gt = level.getGameTime();
-            if (pd.getLong("ws_frozen_until") > gt) e.setAmount(e.getAmount() * 1.5f);
+            if (pd.getLong("ws_frozen_until") > gt) e.setAmount(e.getAmount() * 1.6f);
             if (pd.getLong("ws_cursed_until") > gt) e.setAmount(e.getAmount() * 1.2f);
         }
         /**
@@ -1290,20 +1331,25 @@ public final class KingdomDefenses {
             String variant = e.getProjectile().getPersistentData().getString("ws_tower_variant");
             if (variant.isEmpty() || level == null) return;
             Vec3 at = e.getRayTraceResult().getLocation();
+            // Feu : la cible touchée brûle 5 s
+            if ("fire".equals(variant) && e.getRayTraceResult() instanceof net.minecraft.world.phys.EntityHitResult fi
+                    && fi.getEntity() instanceof Mob fm2 && TrapBlock.isHostile(fm2)) {
+                fm2.setSecondsOnFire(5);
+            }
             if ("frost".equals(variant) && e.getRayTraceResult() instanceof net.minecraft.world.phys.EntityHitResult fh
                     && fh.getEntity() instanceof Mob fm && TrapBlock.isHostile(fm)) {
                 fm.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2, false, true));
                 fm.setTicksFrozen(Math.max(fm.getTicksFrozen(), 140));
                 level.sendParticles(ParticleTypes.SNOWFLAKE, at.x, at.y, at.z, 12, 0.3, 0.3, 0.3, 0.02);
-                // Marques de givre : au 3e coup en moins de 4 s, la cible gèle (immobile 2 s, +50 % de dégâts subis)
+                // Marques de givre : au 2e coup en moins de 4 s, la cible gèle (immobile 3 s, +60 % de dégâts subis)
                 var pd = fm.getPersistentData();
                 long gt = level.getGameTime();
                 int marks = gt - pd.getLong("ws_frost_t") <= 80 ? pd.getInt("ws_frost_marks") + 1 : 1;
                 pd.putLong("ws_frost_t", gt);
-                if (marks >= 3) {
+                if (marks >= 2) {
                     marks = 0;
-                    pd.putLong("ws_frozen_until", gt + 40);
-                    fm.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 9, false, true));
+                    pd.putLong("ws_frozen_until", gt + 60);
+                    fm.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 9, false, true));
                     fm.setTicksFrozen(Math.max(fm.getTicksFrozen(), 300));
                     level.sendParticles(ParticleTypes.ITEM_SNOWBALL, fm.getX(), fm.getY() + 1, fm.getZ(), 30, 0.4, 0.6, 0.4, 0.1);
                     level.playSound(null, fm.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 0.7f, 1.6f);
@@ -1417,8 +1463,8 @@ public final class KingdomDefenses {
     private static void collector(Def d) {
         if (!(level.getBlockEntity(d.pos) instanceof DefenseBlockEntity be)) return;
         int cap = storageRows(d.level) * 9;
-        // Trésorerie : 2 pièces de monnaie toutes les 20 s
-        if ("treasury".equals(d.variant) && level.getGameTime() % 400 < 20) {
+        // Trésorerie : 2 pièces de monnaie toutes les 10 s
+        if ("treasury".equals(d.variant) && level.getGameTime() % 200 < 20) {
             // Partie Kingdom : les pièces vont directement dans le trésor commun
             if (KingdomTreasury.active()) KingdomTreasury.add(KingdomTreasury.Res.MONEY, 2);
             else insert(be.getStorage(), new ItemStack(AltarDefense.currencyItem(), 2), cap);
@@ -1449,6 +1495,10 @@ public final class KingdomDefenses {
                 if (++taken >= 16) break;
                 continue;
             }
+            // Tri : ce Glaneur ne prend que les catégories cochées ; sans filtre, il laisse aux Glaneurs filtrés ce qu'ils acceptent
+            int filter = be.getFilter();
+            if (!GleanerSort.accepts(filter, before)) continue;
+            if (filter == 0 && claimedByFiltered(d, ie, before)) continue;
             // Fonderie : ce qui se fond (minerais, nourriture…) est rangé déjà cuit
             ItemStack toStore = "smelter".equals(d.variant) ? smelted(before) : before;
             // Fonderie : 50 % de chance de doubler ce qui a été fondu
@@ -1464,6 +1514,33 @@ public final class KingdomDefenses {
             if (++taken >= 16) break;
         }
         if (taken > 0) level.playSound(null, d.pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.6f, 0.8f);
+    }
+
+    /**
+     * Un Glaneur FILTRÉ qui accepte cet objet peut-il l'atteindre ? (Alors un Glaneur sans filtre le lui laisse.)
+     */
+    private static boolean claimedByFiltered(Def self, net.minecraft.world.entity.item.ItemEntity ie, ItemStack s) {
+        for (Def o : DEFS.values()) {
+            if (o == self || o.kind != DefenseBlock.Kind.COLLECTOR) continue;
+            if (!(level.getBlockEntity(o.pos) instanceof DefenseBlockEntity obe) || obe.getFilter() == 0) continue;
+            if (!GleanerSort.accepts(obe.getFilter(), s)) continue;
+            double r = "magnet".equals(o.variant) ? 96 : COLLECT_RADIUS[Math.min(2, Math.max(0, o.level - 1))];
+            if (new AABB(o.pos).inflate(r, Math.min(r, 12), r).contains(ie.position())) return true;
+        }
+        return false;
+    }
+
+    /** Onglets des Glaneurs : ce Glaneur et les autres à moins de r blocs (8 au plus), dans un ordre stable. */
+    public static List<BlockPos> nearbyCollectors(BlockPos from, int r) {
+        List<BlockPos> l = new ArrayList<>();
+        DEFS.values().stream()
+                .filter(o -> o.kind == DefenseBlock.Kind.COLLECTOR && !o.pos.equals(from) && o.pos.distSqr(from) <= (double) r * r)
+                .sorted(java.util.Comparator.comparingDouble(o -> o.pos.distSqr(from)))
+                .limit(7)
+                .forEach(o -> l.add(o.pos));
+        l.add(from);
+        l.sort(java.util.Comparator.<BlockPos>comparingInt(BlockPos::getX).thenComparingInt(BlockPos::getZ).thenComparingInt(BlockPos::getY));
+        return l;
     }
 
     /** Fonderie du Glaneur : résultat de cuisson au four (ou l'objet tel quel s'il ne se cuit pas). */

@@ -24,6 +24,9 @@ public class ClientModEvents {
     public static void onClientSetupMenus(net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.WORKSHOP.get(), WorkshopScreen::new);
+            net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.OFFERING_BRAZIER.get(), OfferingBrazierScreen::new);
+            net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.RAMPART.get(), RampartScreen::new);
+            net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.GLEANER.get(), GleanerScreen::new);
             // Boussole du Royaume : aiguille native des boussoles liées, vers la cible choisie sur la carte (sinon elle tourne)
             net.minecraft.client.renderer.item.ItemProperties.register(com.wavesurvivor.registry.ModItems.KINGDOM_COMPASS.get(),
                     new net.minecraft.resources.ResourceLocation("angle"),

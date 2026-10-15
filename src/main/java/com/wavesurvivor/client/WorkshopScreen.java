@@ -30,12 +30,11 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
         g.fill(x, y, x + imageWidth, y + imageHeight, 0xFF2B2420);
         g.fill(x + 2, y + 2, x + imageWidth - 2, y + imageHeight - 2, 0xFF3A302A);
         g.fill(x, y, x + imageWidth, y + 2, 0xFFE07B39); // liseré de forge
-        // Cases de l'atelier (Fonderie : la dernière est un creuset, couleur lave)
-        boolean foundry = "foundry".equals(menu.variant);
+        // Cases de l'atelier (la dernière est un creuset, couleur lave : commun à toutes les spécialisations)
         for (int i = 0; i < menu.workshopSlots(); i++) {
             Slot s = menu.slots.get(i);
             int sx = x + s.x - 1, sy = y + s.y - 1;
-            boolean crucible = foundry && i == menu.workshopSlots() - 1;
+            boolean crucible = i == menu.workshopSlots() - 1;
             g.fill(sx, sy, sx + 18, sy + 18, crucible ? 0xFFFF6A00 : 0xFF8A5A2B);
             g.fill(sx + 1, sy + 1, sx + 17, sy + 17, crucible ? 0xFF3A1206 : 0xFF1C1612);
             if (crucible) g.drawCenteredString(font, WSLang.t("workshop.crucible"), sx + 9, sy - 9, 0xFFFF9A40);

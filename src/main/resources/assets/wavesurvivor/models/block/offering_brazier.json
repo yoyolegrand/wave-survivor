@@ -1,0 +1,128 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "minecraft:block/polished_blackstone_bricks",
+    "bricks": "minecraft:block/polished_blackstone_bricks",
+    "stone": "minecraft:block/polished_blackstone",
+    "gold": "minecraft:block/gold_block",
+    "embers": "minecraft:block/soul_soil",
+    "fire": "minecraft:block/soul_fire_0"
+  },
+  "elements": [
+    {
+      "__comment": "Socle 2x2",
+      "from": [0, 0, 0], "to": [32, 9, 32],
+      "faces": {
+        "down":  {"uv": [0, 0, 16, 16], "texture": "#bricks", "cullface": "down"},
+        "up":    {"uv": [0, 0, 16, 16], "texture": "#bricks"},
+        "north": {"uv": [0, 7, 16, 16], "texture": "#bricks"},
+        "south": {"uv": [0, 7, 16, 16], "texture": "#bricks"},
+        "west":  {"uv": [0, 7, 16, 16], "texture": "#bricks"},
+        "east":  {"uv": [0, 7, 16, 16], "texture": "#bricks"}
+      }
+    },
+    {
+      "__comment": "Colonne d'or (nord-ouest)",
+      "from": [0, 9, 0], "to": [4, 15, 4],
+      "faces": {
+        "up":    {"uv": [0, 0, 4, 4], "texture": "#gold"},
+        "north": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "south": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 4, 6], "texture": "#gold"}
+      }
+    },
+    {
+      "__comment": "Colonne d'or (nord-est)",
+      "from": [28, 9, 0], "to": [32, 15, 4],
+      "faces": {
+        "up":    {"uv": [0, 0, 4, 4], "texture": "#gold"},
+        "north": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "south": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 4, 6], "texture": "#gold"}
+      }
+    },
+    {
+      "__comment": "Colonne d'or (sud-ouest)",
+      "from": [0, 9, 28], "to": [4, 15, 32],
+      "faces": {
+        "up":    {"uv": [0, 0, 4, 4], "texture": "#gold"},
+        "north": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "south": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 4, 6], "texture": "#gold"}
+      }
+    },
+    {
+      "__comment": "Colonne d'or (sud-est)",
+      "from": [28, 9, 28], "to": [32, 15, 32],
+      "faces": {
+        "up":    {"uv": [0, 0, 4, 4], "texture": "#gold"},
+        "north": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "south": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 4, 6], "texture": "#gold"}
+      }
+    },
+    {
+      "__comment": "Pied de la vasque",
+      "from": [10, 9, 10], "to": [22, 13, 22],
+      "faces": {
+        "north": {"uv": [0, 0, 12, 4], "texture": "#stone"},
+        "south": {"uv": [0, 0, 12, 4], "texture": "#stone"},
+        "west":  {"uv": [0, 0, 12, 4], "texture": "#stone"},
+        "east":  {"uv": [0, 0, 12, 4], "texture": "#stone"}
+      }
+    },
+    {
+      "__comment": "Vasque",
+      "from": [5, 13, 5], "to": [27, 19, 27],
+      "faces": {
+        "down":  {"uv": [0, 0, 16, 16], "texture": "#stone"},
+        "up":    {"uv": [0, 0, 16, 16], "texture": "#embers"},
+        "north": {"uv": [0, 0, 16, 6], "texture": "#bricks"},
+        "south": {"uv": [0, 0, 16, 6], "texture": "#bricks"},
+        "west":  {"uv": [0, 0, 16, 6], "texture": "#bricks"},
+        "east":  {"uv": [0, 0, 16, 6], "texture": "#bricks"}
+      }
+    },
+    {
+      "__comment": "Liseré d'or de la vasque",
+      "from": [4.5, 18, 4.5], "to": [27.5, 19.5, 27.5],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 1.5], "texture": "#gold"},
+        "south": {"uv": [0, 0, 16, 1.5], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 16, 1.5], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 16, 1.5], "texture": "#gold"}
+      }
+    },
+    {
+      "__comment": "Flammes des âmes (plan nord-sud)",
+      "from": [7, 19, 16], "to": [25, 32, 16],
+      "shade": false,
+      "faces": {
+        "north": {"uv": [0, 3, 16, 16], "texture": "#fire"},
+        "south": {"uv": [0, 3, 16, 16], "texture": "#fire"}
+      }
+    },
+    {
+      "__comment": "Flammes des âmes (plan est-ouest)",
+      "from": [16, 19, 7], "to": [16, 32, 25],
+      "shade": false,
+      "faces": {
+        "west": {"uv": [0, 3, 16, 16], "texture": "#fire"},
+        "east": {"uv": [0, 3, 16, 16], "texture": "#fire"}
+      }
+    }
+  ],
+  "display": {
+    "gui":                  {"rotation": [30, 225, 0], "translation": [-2.5, -2.5, 0], "scale": [0.32, 0.32, 0.32]},
+    "ground":               {"rotation": [0, 0, 0], "translation": [-2, 1, -2], "scale": [0.15, 0.15, 0.15]},
+    "fixed":                {"rotation": [0, 0, 0], "translation": [-4, -4, 0], "scale": [0.3, 0.3, 0.3]},
+    "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [-1, 1, -1], "scale": [0.2, 0.2, 0.2]},
+    "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [-1, 1, -1], "scale": [0.2, 0.2, 0.2]}
+  }
+}

@@ -39,4 +39,11 @@ public class ModBlockEntities {
                             ModBlocks.KINGDOM_ARCHER_TOWER.get(), ModBlocks.KINGDOM_MAGE_TOWER.get(),
                             ModBlocks.KINGDOM_REPAIR_SHRINE.get(), ModBlocks.KINGDOM_BARRACKS.get(), ModBlocks.KINGDOM_COLLECTOR.get(),
                             ModBlocks.KINGDOM_WORKSHOP.get()).build(null));
+
+    /** Kingdom : Brasier des Offrandes (grille d'offrandes, total, jauge, spécialisation). */
+    @SuppressWarnings("DataFlowIssue")
+    public static final RegistryObject<BlockEntityType<com.wavesurvivor.horde.kingdom.OfferingBrazierBlockEntity>> OFFERING_BRAZIER =
+            BLOCK_ENTITIES.register("offering_brazier",
+                    () -> BlockEntityType.Builder.of(com.wavesurvivor.horde.kingdom.OfferingBrazierBlockEntity::new,
+                            ModBlocks.OFFERING_BRAZIER.get()).build(null));
 }

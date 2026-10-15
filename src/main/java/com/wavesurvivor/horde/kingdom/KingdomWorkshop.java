@@ -70,6 +70,40 @@ public final class KingdomWorkshop {
         }
     }
 
+    /** Forge d'Enchantement : nouvel enchantement (niveau I, compatible) ou +1 niveau à un enchantement existant. */
+    private static boolean enchantOnce(ServerLevel level, BlockPos pos, ItemStack st) {
+        var ench = new java.util.HashMap<>(net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantments(st));
+        java.util.List<net.minecraft.world.item.enchantment.Enchantment> up = new java.util.ArrayList<>();
+        ench.forEach((e, lv) -> { if (lv < e.getMaxLevel()) up.add(e); });
+        java.util.List<net.minecraft.world.item.enchantment.Enchantment> add = new java.util.ArrayList<>();
+        for (var e : net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS.getValues()) {
+            if (e.isCurse() || !e.isDiscoverable() || ench.containsKey(e) || !e.canEnchant(st)) continue;
+            if (!net.minecraft.world.item.enchantment.EnchantmentHelper.isEnchantmentCompatible(ench.keySet(), e)) continue;
+            add.add(e);
+        }
+        if (up.isEmpty() && add.isEmpty()) return false;
+        boolean upgrade = !up.isEmpty() && (add.isEmpty() || level.random.nextBoolean());
+        String what;
+        if (upgrade) {
+            var e = up.get(level.random.nextInt(up.size()));
+            ench.put(e, ench.get(e) + 1);
+            what = e.getFullname(ench.get(e)).getString();
+        } else {
+            var e = add.get(level.random.nextInt(add.size()));
+            ench.put(e, 1);
+            what = e.getFullname(1).getString();
+        }
+        net.minecraft.world.item.enchantment.EnchantmentHelper.setEnchantments(ench, st);
+        level.sendParticles(ParticleTypes.ENCHANT, pos.getX() + 0.5, pos.getY() + 1.4, pos.getZ() + 0.5, 40, 0.5, 0.6, 0.5, 0.6);
+        level.playSound(null, pos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1f, 1f);
+        for (net.minecraft.server.level.ServerPlayer p : level.players()) {
+            if (p.distanceToSqr(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5) <= 24 * 24) {
+                p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("workshop.enchanted", st.getHoverName().getString(), what), false);
+            }
+        }
+        return true;
+    }
+
     /** Emplacements selon le niveau (1 → 2, 2 → 4, 3 → 6). */
     public static int slots(int level) {
         return Math.max(2, Math.min(6, level * 2));
@@ -95,7 +129,7 @@ public final class KingdomWorkshop {
         boolean worked = false;
         var storage = be.getStorage();
         for (int i = 0; i < slots(defLevel) && i < storage.getContainerSize(); i++) {
-            if ("foundry".equals(variant) && i == slots(defLevel) - 1) continue; // le creuset fond, il ne répare pas
+            if (i == slots(defLevel) - 1) continue; // le creuset (dernière case) fond, il ne répare pas
             ItemStack st = storage.getItem(i);
             if (st.isEmpty() || !st.isDamageableItem() || st.getDamageValue() <= 0) continue;
             int amount = Math.max(1, (int) Math.round(st.getMaxDamage() * pct / 100.0));
@@ -125,8 +159,8 @@ public final class KingdomWorkshop {
             }
         }
 
-        // Fonderie de Recyclage : la DERNIÈRE case est un creuset — l'objet y fond en 5 s et rapporte des ressources
-        if ("foundry".equals(variant)) {
+        // Creuset (TOUTES les spécialisations) : la DERNIÈRE case fond l'objet en 5 s et rapporte des ressources
+        {
             int last = slots(defLevel) - 1;
             ItemStack cru = last >= 0 && last < storage.getContainerSize() ? storage.getItem(last) : ItemStack.EMPTY;
             if (cru.isEmpty() || !cru.isDamageableItem()) {
@@ -140,6 +174,22 @@ public final class KingdomWorkshop {
                     storage.setItem(last, ItemStack.EMPTY);
                     be.setChanged();
                 }
+            }
+        }
+
+        // Forge d'Enchantement : un objet entièrement réparé a 35 % de chance (une fois par Calme) d'être enchanté
+        if ("enchant".equals(variant) && now % 200 == 0) {
+            int tag = KingdomManager.cycle() + 1;
+            for (int i = 0; i < slots(defLevel) - 1 && i < storage.getContainerSize(); i++) {
+                ItemStack st = storage.getItem(i);
+                if (st.isEmpty() || !st.isDamageableItem() || st.getDamageValue() > 0) continue;
+                net.minecraft.nbt.CompoundTag t = st.getOrCreateTag();
+                if (t.getInt("ws_ench_cycle") == tag) continue; // déjà tenté pendant ce Calme
+                t.putInt("ws_ench_cycle", tag);
+                if (level.random.nextFloat() < 0.35f && enchantOnce(level, pos, st)) be.setChanged();
+            }
+            if (now % 40 == 0) {
+                level.sendParticles(ParticleTypes.ENCHANT, pos.getX() + 0.5, pos.getY() + 1.4, pos.getZ() + 0.5, 6, 0.4, 0.4, 0.4, 0.3);
             }
         }
 

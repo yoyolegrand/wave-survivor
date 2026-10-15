@@ -525,6 +525,7 @@ public final class KingdomManager {
         t.putBoolean("kingLow", kingLow);
         t.put("roles", KingdomRoles.saveRoles());
         t.put("defs", KingdomDefenses.saveState());
+        t.put("braziers", OfferingBrazier.saveState(level));
         return t;
     }
 
@@ -560,6 +561,7 @@ public final class KingdomManager {
         finalBossSpawned = false; // un boss final vivant au moment de l'arrêt réapparaîtra à son Assaut
         KingdomRoles.restoreRoles(server, t.getCompound("roles"));
         KingdomDefenses.restoreState(level, t.getCompound("defs"));
+        OfferingBrazier.restoreState(level, t.getCompound("braziers"));
         cycle = Math.max(0, t.getInt("cycle"));
         resuming = true;
         try {
@@ -1711,6 +1713,7 @@ public final class KingdomManager {
         specialUnits.clear();
         KingdomMarch.clear();
         KingdomClaim.stop();
+        OfferingBrazier.clear(level); // Brasiers des Offrandes retirés (avant les défenses : même registre des restes)
         KingdomDefenses.clear();
         KingdomSiege.clear();
         KingdomObjectives.clear();

@@ -111,6 +111,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BenedictionEvents()); // bénédictions conservées à la mort
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.KingdomReport()); // bilan de fin d'Assaut (Kingdom)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.skill.IceFx()); // effets de glace en blocs (nettoyage)
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.OfferingBrazier()); // Brasier des Offrandes (Ferveur du royaume)
         // Iron's Spells (optionnel) : fait avancer les sorts chargés / canalisés des créatures
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.compat.IronsSpells());
         // Difficulté des boss (phases, anti-exploitation, bouclier, plafond de dégâts)

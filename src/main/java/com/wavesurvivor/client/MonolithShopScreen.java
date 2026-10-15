@@ -37,6 +37,8 @@ public class MonolithShopScreen extends Screen {
     private static final String[] DEF_IDS = {"archer", "mage", "shrine", "barracks", "collector", "workshop"};
     /** Hauteur d'une ligne de l'onglet Défense. */
     private static final int DEF_ROW = 30;
+    /** Onglet Tours : 7 lignes (dont le Brasier des Offrandes) dans la même hauteur que 6 lignes classiques. */
+    private static final int TOWER_ROW = 26;
     /** Onglet Défense : 0 = Tours, 1 = Murs, 2 = Pièges (mémorisé). */
     private static int defSub = 0;
     /** Onglet Town Hall : 0 = Mairie, 1 = Carte du royaume (mémorisé). */
@@ -271,9 +273,12 @@ public class MonolithShopScreen extends Screen {
             int yd = y0 + 20;
             if (defSub == 0) {
                 for (int i = 0; i < DEF_IDS.length; i++) {
-                    buyButton(left + PANEL_W - 92, yd + i * DEF_ROW + 4, 82, KingdomDefenses.BUY[i], 10 + i,
+                    buyButton(left + PANEL_W - 92, yd + i * TOWER_ROW + 2, 82, KingdomDefenses.BUY[i], 10 + i,
                             WSLang.c("kingdom.defense.desc." + DEF_IDS[i]), have);
                 }
+                // Brasier des Offrandes (+ 20 Bois et 20 Pierre du trésor)
+                buyButton(left + PANEL_W - 92, yd + DEF_IDS.length * TOWER_ROW + 2, 82, KingdomDefenses.BRAZIER_COST, 24,
+                        WSLang.c("kingdom.brazier.shop_tip", KingdomDefenses.BRAZIER_WOOD, KingdomDefenses.BRAZIER_STONE), have);
             } else if (defSub == 1) {
                 buyButton(left + PANEL_W - 92, yd + 4, 82, KingdomDefenses.RAMPART_COST, 20, WSLang.c("kingdom.rampart.desc"), have);
                 buyButton(left + PANEL_W - 92, yd + DEF_ROW + 4, 82, KingdomDefenses.GATE_COST, 21, WSLang.c("kingdom.gate.desc"), have);
@@ -390,8 +395,9 @@ public class MonolithShopScreen extends Screen {
         if (desc == null) {
             g.drawString(font, name, left + 36, y + (h - 4) / 2 - 4, 0xFFFFFFFF);
         } else {
-            g.drawString(font, name, left + 36, y + 6, 0xFFFFFFFF);
-            g.drawString(font, "§7" + font.plainSubstrByWidth(desc.replaceAll("§.", ""), textW), left + 36, y + 20, 0xFFFFFFFF);
+            boolean tight = h < 30; // lignes resserrées (onglet Tours)
+            g.drawString(font, name, left + 36, y + (tight ? 3 : 6), 0xFFFFFFFF);
+            g.drawString(font, "§7" + font.plainSubstrByWidth(desc.replaceAll("§.", ""), textW), left + 36, y + (tight ? 13 : 20), 0xFFFFFFFF);
         }
     }
 
@@ -431,8 +437,10 @@ public class MonolithShopScreen extends Screen {
             if (defSub == 0) {
                 for (int i = 0; i < DEF_IDS.length; i++) {
                     ItemStack it = defItem(i);
-                    itemRow(g, yd + i * DEF_ROW, DEF_ROW, it, "§f§l" + it.getHoverName().getString(), WSLang.t("kingdom.defense.desc." + DEF_IDS[i]));
+                    itemRow(g, yd + i * TOWER_ROW, TOWER_ROW, it, "§f§l" + it.getHoverName().getString(), WSLang.t("kingdom.defense.desc." + DEF_IDS[i]));
                 }
+                ItemStack br = new ItemStack(ModItems.OFFERING_BRAZIER_ITEM.get());
+                itemRow(g, yd + DEF_IDS.length * TOWER_ROW, TOWER_ROW, br, "§f§l" + br.getHoverName().getString(), WSLang.t("kingdom.defense.desc.brazier"));
             } else if (defSub == 1) {
                 ItemStack ramp = new ItemStack(ModItems.KINGDOM_RAMPART_ITEM.get());
                 itemRow(g, yd, DEF_ROW, ramp, "§f§l" + ramp.getHoverName().getString() + " §7×" + KingdomDefenses.RAMPART_COUNT,

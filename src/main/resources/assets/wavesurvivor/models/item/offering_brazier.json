@@ -1,0 +1,121 @@
+{
+  "__comment": "Brasier des Offrandes (objet) : même modèle que le bloc, recentré (décalé de -8 sur chaque axe) pour l'inventaire et la main",
+  "render_type": "minecraft:cutout",
+  "gui_light": "side",
+  "textures": {
+    "particle": "minecraft:block/polished_blackstone_bricks",
+    "bricks": "minecraft:block/polished_blackstone_bricks",
+    "stone": "minecraft:block/polished_blackstone",
+    "gold": "minecraft:block/gold_block",
+    "embers": "minecraft:block/soul_soil",
+    "fire": "minecraft:block/soul_fire_0"
+  },
+  "elements": [
+    {
+      "from": [-8, -8, -8], "to": [24, 1, 24],
+      "faces": {
+        "down":  {"uv": [0, 0, 16, 16], "texture": "#bricks"},
+        "up":    {"uv": [0, 0, 16, 16], "texture": "#bricks"},
+        "north": {"uv": [0, 7, 16, 16], "texture": "#bricks"},
+        "south": {"uv": [0, 7, 16, 16], "texture": "#bricks"},
+        "west":  {"uv": [0, 7, 16, 16], "texture": "#bricks"},
+        "east":  {"uv": [0, 7, 16, 16], "texture": "#bricks"}
+      }
+    },
+    {
+      "from": [-8, 1, -8], "to": [-4, 7, -4],
+      "faces": {
+        "up":    {"uv": [0, 0, 4, 4], "texture": "#gold"},
+        "north": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "south": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 4, 6], "texture": "#gold"}
+      }
+    },
+    {
+      "from": [20, 1, -8], "to": [24, 7, -4],
+      "faces": {
+        "up":    {"uv": [0, 0, 4, 4], "texture": "#gold"},
+        "north": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "south": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 4, 6], "texture": "#gold"}
+      }
+    },
+    {
+      "from": [-8, 1, 20], "to": [-4, 7, 24],
+      "faces": {
+        "up":    {"uv": [0, 0, 4, 4], "texture": "#gold"},
+        "north": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "south": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 4, 6], "texture": "#gold"}
+      }
+    },
+    {
+      "from": [20, 1, 20], "to": [24, 7, 24],
+      "faces": {
+        "up":    {"uv": [0, 0, 4, 4], "texture": "#gold"},
+        "north": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "south": {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 4, 6], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 4, 6], "texture": "#gold"}
+      }
+    },
+    {
+      "from": [2, 1, 2], "to": [14, 5, 14],
+      "faces": {
+        "north": {"uv": [0, 0, 12, 4], "texture": "#stone"},
+        "south": {"uv": [0, 0, 12, 4], "texture": "#stone"},
+        "west":  {"uv": [0, 0, 12, 4], "texture": "#stone"},
+        "east":  {"uv": [0, 0, 12, 4], "texture": "#stone"}
+      }
+    },
+    {
+      "from": [-3, 5, -3], "to": [19, 11, 19],
+      "faces": {
+        "down":  {"uv": [0, 0, 16, 16], "texture": "#stone"},
+        "up":    {"uv": [0, 0, 16, 16], "texture": "#embers"},
+        "north": {"uv": [0, 0, 16, 6], "texture": "#bricks"},
+        "south": {"uv": [0, 0, 16, 6], "texture": "#bricks"},
+        "west":  {"uv": [0, 0, 16, 6], "texture": "#bricks"},
+        "east":  {"uv": [0, 0, 16, 6], "texture": "#bricks"}
+      }
+    },
+    {
+      "from": [-3.5, 10, -3.5], "to": [19.5, 11.5, 19.5],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 1.5], "texture": "#gold"},
+        "south": {"uv": [0, 0, 16, 1.5], "texture": "#gold"},
+        "west":  {"uv": [0, 0, 16, 1.5], "texture": "#gold"},
+        "east":  {"uv": [0, 0, 16, 1.5], "texture": "#gold"}
+      }
+    },
+    {
+      "from": [-1, 11, 8], "to": [17, 24, 8],
+      "shade": false,
+      "faces": {
+        "north": {"uv": [0, 3, 16, 16], "texture": "#fire"},
+        "south": {"uv": [0, 3, 16, 16], "texture": "#fire"}
+      }
+    },
+    {
+      "from": [8, 11, -1], "to": [8, 24, 17],
+      "shade": false,
+      "faces": {
+        "west": {"uv": [0, 3, 16, 16], "texture": "#fire"},
+        "east": {"uv": [0, 3, 16, 16], "texture": "#fire"}
+      }
+    }
+  ],
+  "display": {
+    "gui":                   {"rotation": [30, 225, 0], "translation": [0, 0, 0], "scale": [0.31, 0.31, 0.31]},
+    "ground":                {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.12, 0.12, 0.12]},
+    "fixed":                 {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [0.25, 0.25, 0.25]},
+    "head":                  {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [0.25, 0.25, 0.25]},
+    "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.14, 0.14, 0.14]},
+    "thirdperson_lefthand":  {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.14, 0.14, 0.14]},
+    "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 1, 0], "scale": [0.13, 0.13, 0.13]},
+    "firstperson_lefthand":  {"rotation": [0, 225, 0], "translation": [0, 1, 0], "scale": [0.13, 0.13, 0.13]}
+  }
+}

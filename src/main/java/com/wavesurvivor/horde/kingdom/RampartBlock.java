@@ -66,42 +66,52 @@ public class RampartBlock extends Block {
         return pos.below(st.getValue(PART).ordinal());
     }
 
-    // ─── Amélioration (clic droit) ───
+    // ─── Fiche (clic droit) et amélioration ───
 
     @Override
     @SuppressWarnings("deprecation")
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        // Un rempart en main : on construit à côté, on n'améliore pas
+        // Un rempart en main : on construit à côté, on n'ouvre pas la fiche
         if (player.getItemInHand(hand).getItem() instanceof RampartItem) return InteractionResult.PASS;
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer sp) || hand != InteractionHand.MAIN_HAND) return InteractionResult.CONSUME;
-        if (state.getValue(REINFORCED)) {
-            sp.displayClientMessage(WSLang.c("kingdom.rampart.already"), true);
-            return InteractionResult.CONSUME;
-        }
         if (!KingdomManager.isActive()) {
             sp.displayClientMessage(WSLang.c("kingdom.rampart.only_kingdom"), true);
             return InteractionResult.CONSUME;
         }
         KingdomClaim.trackRampartAt(pos); // rempart posé avant la partie / monde rechargé : suivi dès maintenant
-        if (!KingdomClaim.isPlaced(pos)) {
-            sp.displayClientMessage(WSLang.c("kingdom.rampart.only_kingdom"), true);
-            return InteractionResult.CONSUME;
-        }
-        if (!com.wavesurvivor.altar.AltarDefense.trySpend(sp, UPGRADE_COST)) return InteractionResult.CONSUME;
         BlockPos base = baseOf(pos, state);
+        net.minecraftforge.network.NetworkHooks.openScreen(sp, new net.minecraft.world.SimpleMenuProvider(
+                (id, inv, pl) -> new RampartMenu(id, inv, base, RampartMenu.serverData(sp, base)),
+                net.minecraft.network.chat.Component.translatable("block.wavesurvivor.kingdom_rampart")), buf -> buf.writeBlockPos(base));
+        return InteractionResult.CONSUME;
+    }
+
+    /** « ▲ Renforcer » (bouton de la fiche) : +400 PV et habillage de fer, pour UPGRADE_COST pièces. */
+    public static void reinforce(ServerPlayer sp, BlockPos base) {
+        Level level = sp.level();
+        BlockState state = level.getBlockState(base);
+        if (!(state.getBlock() instanceof RampartBlock self)) return;
+        if (state.getValue(REINFORCED)) {
+            sp.displayClientMessage(WSLang.c("kingdom.rampart.already"), true);
+            return;
+        }
+        if (!KingdomManager.isActive() || !KingdomClaim.isPlaced(base)) {
+            sp.displayClientMessage(WSLang.c("kingdom.rampart.only_kingdom"), true);
+            return;
+        }
+        if (!com.wavesurvivor.altar.AltarDefense.trySpend(sp, UPGRADE_COST)) return;
         for (int i = 0; i < 3; i++) {
             BlockPos q = base.above(i);
             BlockState s = level.getBlockState(q);
-            if (s.is(this)) level.setBlock(q, s.setValue(REINFORCED, true), Block.UPDATE_ALL);
+            if (s.is(self)) level.setBlock(q, s.setValue(REINFORCED, true), Block.UPDATE_ALL);
         }
         KingdomClaim.addDefenseMaxHp(base, UPGRADE_HP);
-        level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.8f, 1.2f);
+        level.playSound(null, base, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.8f, 1.2f);
         if (level instanceof ServerLevel sl) {
             sl.sendParticles(ParticleTypes.WAX_ON, base.getX() + 0.5, base.getY() + 1.5, base.getZ() + 0.5, 30, 0.4, 1.0, 0.4, 0.05);
         }
         sp.displayClientMessage(WSLang.c("kingdom.rampart.reinforced"), true);
-        return InteractionResult.CONSUME;
     }
 
     // ─── Casse : tout le segment tombe ───

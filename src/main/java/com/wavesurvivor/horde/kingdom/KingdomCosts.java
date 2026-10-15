@@ -57,7 +57,7 @@ public final class KingdomCosts {
             case SHRINE -> new String[]{"life", "bulwark", "blessing"};
             case BARRACKS -> new String[]{"guards", "berserkers", "paladins"};
             case COLLECTOR -> new String[]{"magnet", "smelter", "treasury"};
-            case WORKSHOP -> new String[]{"forge", "armory", "foundry"};
+            case WORKSHOP -> new String[]{"forge", "armory", "enchant"}; // le creuset (ex-Fonderie) est commun à toutes
         };
     }
 

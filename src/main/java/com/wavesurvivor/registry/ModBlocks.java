@@ -77,6 +77,11 @@ public class ModBlocks {
                     .mapColor(MapColor.METAL).strength(3.0f, 1200.0f).sound(SoundType.ANVIL).noOcclusion().lightLevel(s -> 8),
                     com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.WORKSHOP));
 
+    /** Brasier des Offrandes (Kingdom) : on y sacrifie des objets contre des récompenses (emprise 2×2×2). */
+    public static final RegistryObject<Block> OFFERING_BRAZIER = BLOCKS.register("offering_brazier",
+            () -> new com.wavesurvivor.horde.kingdom.OfferingBrazierBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).strength(3.0f, 1200.0f).sound(SoundType.STONE).noOcclusion().lightLevel(s -> 12)));
+
     /** Mode Kingdom : bloc de collision invisible des défenses (corps physique des tours et du baraquement). */
     public static final RegistryObject<Block> KINGDOM_COLLIDER = BLOCKS.register("kingdom_collider",
             () -> new com.wavesurvivor.horde.kingdom.ColliderBlock(BlockBehaviour.Properties.of()

@@ -76,6 +76,7 @@
   "entity.wavesurvivor.snow_sorcerer": "Sorcier des Neiges",
   "item.wavesurvivor.snow_sorcerer_spawn_egg": "Œuf d'apparition de Sorcier des Neiges",
   "entity.wavesurvivor.frost_ravager": "Ravageur de givre",
+  "block.wavesurvivor.offering_brazier": "Brasier des Offrandes",
   "item.wavesurvivor.frost_ravager_spawn_egg": "Œuf d'apparition de Ravageur de givre",
   "itemGroup.wavesurvivor": "Wave Survivor"
 }
