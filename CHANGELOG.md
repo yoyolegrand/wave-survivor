@@ -4,7 +4,7 @@
 
 ![Version](https://img.shields.io/badge/version-1.6.0-blue) ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-green) ![Forge](https://img.shields.io/badge/Forge-47%2B-orange)
 
-> ❄ **A frozen horde, a race against the bosses, and a new challenge every day.** Brave the blizzard of the Frozen Peaks and its three bosses, fight them all back to back in **Boss Rush**, and take on the **Daily Challenge** for bonus Renaissance Points.
+> ❄ **A frozen horde, a race against the bosses, and a new challenge every day.** Brave the blizzard of the Frozen Peaks and its three bosses, fight them all back to back in **Boss Rush**, and take on the **Daily Challenge** for bonus Renaissance Points. Kingdom mode gets a new **Offering Brazier**, smarter **Gleaners** and a lot of quality-of-life.
 
 ---
 
@@ -13,6 +13,7 @@
 - 🔓 Unlocks after the **Necropolis** — bind it at the altar with **blue ice and snow blocks**.
 - 🧊 New **Frost Golem**, **Snow Sorcerer** and **Frost Ravager** creatures, each with its own look and spawn egg.
 - 🗿 **Frost Desecrators** ignore players and rush the **Monolith** — protect it!
+- 🐺 A **Wolf Alpha** leads the wolf pack, the **Yeti** hurls ice boulders and buries players who stand still, and the bosses drop **frost-themed loot** (Frost Crystal, Sealed Reliquary, and a rare Heart of the Seasons from the final boss).
 - 🐢 Slowness is frequent here, on purpose: it is the identity of the horde.
 
 ### 🌨️ Storms — new chaos event
@@ -35,10 +36,24 @@
 - 💎 **Bonus Renaissance Points** for the first victory of the day, growing with your streak.
 - 🏰 Works in hordes and in Kingdom (higher reward in Kingdom). Check today's challenge with `/ws daily` or in the Codex.
 
+### 🏰 Kingdom
+- 🔥 **New building — Offering Brazier** (2×2, 2 high): sacrifice **any items**, only the **quantity** counts. Every full gauge rolls a reward: wood, stone, coins, iron, Breach Essence, and rarely a **Sealed Reliquary**, a **blessing choice** or Renaissance Points.
+  - Levels up as you feed it (**1,000** and **3,000** items), then pick a specialization: **Abundance** (resources ×1.5), **Relics** (Reliquary and blessing chances ×2) or **War** (Repair Wave and Kingdom's Fervor: +10% tower and soldier damage for the next Assault).
+  - Offerings during the **Calm** only, up to **1,500 items per Calm**. Enchanted items, mod items, keys and treasury resources are refused.
+- 🧺 **Gleaners**: their storage now has **tabs** to jump between nearby Gleaners, and a **sorting filter** (Resources, Equipment, Keys, Food, Blocks, Other). Filtered Gleaners get their categories first; unfiltered ones keep the rest.
+- 🧱 **Ramparts**: right-click opens a **rampart sheet** with HP, the upgrade and its **cost**, and a Reinforce button.
+- 🔧 **Repair Workshop**: the **crucible** (melt gear into resources) is now available with **every specialization**. The Recycling Foundry is replaced by the **Enchanting Forge**: fully repaired gear can gain or improve an **enchantment** once per Calm.
+- 🪤 **Traps** can now be placed **outside the claim**, up to 64 blocks from the Monolith.
+- 🏹 **Archer towers** are limited to **4 at Town Hall level 1, +2 per level**.
+- ⚖ Balance: **Fire** archers +25% damage and the target burns for 5 s; **Frost** archers freeze on the **2nd** hit for **3 s** (+60% damage taken); the **Treasury** Gleaner produces coins every **10 s** (was 20 s).
+
 ### 🛠️ Editor & Codex
 - 🚫 Special waves can now **exclude chosen waves** — never on wave 1 by default.
 - 📝 New editor forms for the new skill types, the Storm event and Boss Rush settings.
 - 📖 The **Codex** has a new Frozen Peaks page and updated Boss and Editor pages.
+
+### 🐛 Fixes
+- Defenses, soldiers, gates and traps are now always removed at the end of a Kingdom game — including a victory won in the final boss arena.
 
 ### 📝 Notes
 - Existing config files are never overwritten on update. The Frozen Peaks horde is added to your config automatically **once**; to reset a horde to its defaults, delete the file and restart the game.
