@@ -2,8 +2,6 @@
 
 ## 1.6.0 — Frozen Peaks, Boss Rush & Daily Challenge
 
-![Version](https://img.shields.io/badge/version-1.6.0-blue) ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-green) ![Forge](https://img.shields.io/badge/Forge-47%2B-orange)
-
 > ❄ **A frozen horde, a race against the bosses, and a new challenge every day.** Brave the blizzard of the Frozen Peaks and its three bosses, fight them all back to back in **Boss Rush**, and take on the **Daily Challenge** for bonus Renaissance Points. Kingdom mode gets a new **Offering Brazier**, smarter **Gleaners** and a lot of quality-of-life.
 
 ---
