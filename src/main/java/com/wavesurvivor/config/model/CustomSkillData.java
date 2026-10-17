@@ -781,4 +781,73 @@ public class CustomSkillData {
     @SerializedName("shatterSound")         public String shatterSound = "minecraft:block.glass.break";
     /** Message personnalisé (vide = message par défaut avec le nom du joueur). */
     @SerializedName("shatterMessage")       public String shatterMessage = "";
+
+    // ─── sandstorm : tempête de sable qui suit le boss (à couvert = sous un toit ou dans l'eau ; la relique immunise) ───
+    @SerializedName("sandstormCooldown")    public int sandstormCooldown = 420;
+    @SerializedName("sandstormRadius")      public double sandstormRadius = 14;
+    /** Durée de la tempête, en secondes. */
+    @SerializedName("sandstormDuration")    public int sandstormDuration = 14;
+    @SerializedName("sandstormDamage")      public double sandstormDamage = 1.0;
+    @SerializedName("sandstormPull")        public double sandstormPull = 0.03;
+    @SerializedName("sandstormWind")        public double sandstormWind = 0.0;
+    /** Faim (soif) infligée aux joueurs exposés : niveau (0 = aucune). */
+    @SerializedName("sandstormHungerAmplifier") public int sandstormHungerAmplifier = 1;
+    /** Lenteur des joueurs exposés : niveau (0 = aucune). */
+    @SerializedName("sandstormSlowAmplifier") public int sandstormSlowAmplifier = 1;
+    /** Relique qui immunise son porteur (id d'objet, vide = aucune). */
+    @SerializedName("sandstormImmuneItem")  public String sandstormImmuneItem = "wavesurvivor:voile_desert";
+    @SerializedName("sandstormSound")       public String sandstormSound = "minecraft:entity.ravager.roar";
+    @SerializedName("sandstormMessage")     public String sandstormMessage = "§6§lLe sable se lève — mettez-vous à couvert !";
+
+    // ─── quicksand : sables mouvants sous les joueurs (ralentis, attirés au centre, ne sautent plus) ───
+    @SerializedName("quicksandCooldown")    public int quicksandCooldown = 300;
+    @SerializedName("quicksandRange")       public double quicksandRange = 22;
+    @SerializedName("quicksandCount")       public int quicksandCount = 2;
+    @SerializedName("quicksandRadius")      public double quicksandRadius = 3.5;
+    /** Durée des sables mouvants, en ticks. */
+    @SerializedName("quicksandDuration")    public int quicksandDuration = 100;
+    @SerializedName("quicksandDamage")      public double quicksandDamage = 1.0;
+    @SerializedName("quicksandPull")        public double quicksandPull = 0.06;
+    @SerializedName("quicksandSlowAmplifier") public int quicksandSlowAmplifier = 3;
+    /** Relique qui immunise son porteur (id d'objet, vide = aucune). */
+    @SerializedName("quicksandImmuneItem")  public String quicksandImmuneItem = "wavesurvivor:voile_desert";
+    @SerializedName("quicksandSound")       public String quicksandSound = "minecraft:block.sand.break";
+    @SerializedName("quicksandMessage")     public String quicksandMessage = "§6§lLe sable se dérobe sous vos pieds !";
+
+    // ─── dust_devil : un tourbillon de sable traque les joueurs, les attire, les soulève et les blesse ───
+    @SerializedName("dustDevilCooldown")    public int dustDevilCooldown = 360;
+    @SerializedName("dustDevilRange")       public double dustDevilRange = 22;
+    @SerializedName("dustDevilRadius")      public double dustDevilRadius = 5;
+    /** Durée du tourbillon, en ticks. */
+    @SerializedName("dustDevilDuration")    public int dustDevilDuration = 120;
+    /** Vitesse de déplacement du tourbillon (blocs par tick). */
+    @SerializedName("dustDevilSpeed")       public double dustDevilSpeed = 0.12;
+    @SerializedName("dustDevilPull")        public double dustDevilPull = 0.10;
+    @SerializedName("dustDevilLift")        public double dustDevilLift = 0.12;
+    /** Dégâts par seconde dans le tourbillon. */
+    @SerializedName("dustDevilDamage")      public double dustDevilDamage = 2.0;
+    @SerializedName("dustDevilSound")       public String dustDevilSound = "minecraft:entity.phantom.flap";
+    @SerializedName("dustDevilMessage")     public String dustDevilMessage = "§6§lUn tourbillon de sable fonce sur vous !";
+
+    // ─── tremor : le boss frappe le sol, des fissures partent en étoile (entre deux fissures, on est à l'abri) ───
+    @SerializedName("tremorCooldown")       public int tremorCooldown = 300;
+    @SerializedName("tremorLines")          public int tremorLines = 8;
+    @SerializedName("tremorLength")         public int tremorLength = 14;
+    /** Ticks d'avertissement (poussière sur le tracé des fissures) avant l'ouverture. */
+    @SerializedName("tremorWarning")        public int tremorWarning = 30;
+    @SerializedName("tremorDamage")         public double tremorDamage = 8;
+    @SerializedName("tremorSound")          public String tremorSound = "minecraft:entity.iron_golem.damage";
+    @SerializedName("tremorMessage")        public String tremorMessage = "§6§lLe sol se fend en étoile !";
+
+    // ─── earthquake : séisme local autour du boss (secousses, fissures, éboulis, caméra) ───
+    @SerializedName("earthquakeCooldown")   public int earthquakeCooldown = 500;
+    @SerializedName("earthquakeRadius")     public double earthquakeRadius = 24;
+    /** Durée du séisme, en secondes (le séisme commence tout de suite). */
+    @SerializedName("earthquakeDuration")   public int earthquakeDuration = 6;
+    @SerializedName("earthquakeDamage")     public double earthquakeDamage = 3.0;
+    @SerializedName("earthquakeJolt")       public double earthquakeJolt = 0.3;
+    @SerializedName("earthquakeCracks")     public int earthquakeCracks = 4;
+    @SerializedName("earthquakeRubble")     public int earthquakeRubble = 5;
+    @SerializedName("earthquakeShake")      public double earthquakeShake = 1.0;
+    @SerializedName("earthquakeMessage")    public String earthquakeMessage = "";
 }

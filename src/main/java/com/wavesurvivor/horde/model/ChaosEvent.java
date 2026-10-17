@@ -86,6 +86,33 @@ public class ChaosEvent {
     @SerializedName("summonMax")
     public int summonMax = 6;
 
+    // ─── Type "seisme" (1.7) : le sol gronde puis tremble (secousses, fissures, éboulis), réglable ───
+
+    @SerializedName("quakeDuration")
+    public int quakeDuration = 8;
+
+    @SerializedName("quakeWarning")
+    public int quakeWarning = 4;
+
+    /** Dégâts d'un éboulis (une fissure inflige 60 % de cette valeur). */
+    @SerializedName("quakeDamage")
+    public double quakeDamage = 3.0;
+
+    /** Force des secousses qui font vaciller les joueurs. */
+    @SerializedName("quakeJolt")
+    public double quakeJolt = 0.35;
+
+    /** Fissures sur la durée du séisme, et éboulis par seconde. */
+    @SerializedName("quakeCracks")
+    public int quakeCracks = 5;
+
+    @SerializedName("quakeRubble")
+    public int quakeRubble = 6;
+
+    /** Intensité de la secousse de caméra (0 = aucune). */
+    @SerializedName("quakeShake")
+    public double quakeShake = 1.0;
+
     // ─── Type "tempete" (1.6) : zone de tempête réglable, réutilisable pour d'autres thèmes (sable, cendres…) ───
 
     /** Durée de la tempête (secondes) et avertissement avant son début (secondes). */
@@ -110,6 +137,18 @@ public class ChaosEvent {
     /** Particules de la tempête (ex. minecraft:snowflake, minecraft:ash, minecraft:cloud). */
     @SerializedName("stormParticle")
     public String stormParticle = "minecraft:snowflake";
+
+    /** Abri : « heat » (blocs de chaleur) ou « cover » (à couvert : toit ou eau). */
+    @SerializedName("stormShelterMode")
+    public String stormShelterMode = "heat";
+
+    /** Ambiance : « frost » (neige) ou « sand » (sable). */
+    @SerializedName("stormLook")
+    public String stormLook = "frost";
+
+    /** Relique (id d'objet) qui immunise son porteur contre cette tempête (vide = aucune). */
+    @SerializedName("stormImmuneItem")
+    public String stormImmuneItem = "";
 
     /** Abris : blocs de chaleur qui protègent (vide = feu de camp, feu, lave) et leur rayon de protection. */
     @SerializedName("stormShelter")

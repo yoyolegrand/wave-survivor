@@ -76,6 +76,11 @@ public final class EntityEditorManager {
         TYPE_PREFIXES.put("blizzard_storm", List.of("blizzard"));
         TYPE_PREFIXES.put("glacier_pillars", List.of("pillars"));
         TYPE_PREFIXES.put("shatter", List.of("shatter"));
+        TYPE_PREFIXES.put("sandstorm", List.of("sandstorm"));
+        TYPE_PREFIXES.put("quicksand", List.of("quicksand"));
+        TYPE_PREFIXES.put("dust_devil", List.of("dustDevil"));
+        TYPE_PREFIXES.put("tremor", List.of("tremor"));
+        TYPE_PREFIXES.put("earthquake", List.of("earthquake"));
     }
 
     private EntityEditorManager() {}

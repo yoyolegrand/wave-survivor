@@ -6,6 +6,19 @@
 
 ---
 
+### 🏜️ Burning Sands — new horde
+- 🏜 A new **desert horde**: mummies, scarabs, scorpions, jackals, desert riders, pharaoh guards, sandstone golems and djinns, with special waves and **three bosses** — **Anubis**, **Sekhmet** and **Ra-Atum**, each with 7 to 9 skills.
+- 🔓 Unlocks after the **Necropolis** — bind it at the altar with **chiseled sandstone and red sand**.
+- 🗿 **Sand Desecrators** ignore players and rush the **Monolith** — protect it!
+- 🧣 New **Desert Veil** relic (Elements family, now 4 pieces): immune to sandstorms and quicksand, **faster** (even more on sand). It drops from the bosses and a nomad merchant sells it.
+
+### 🌪️ Sandstorms & 🌋 Earthquakes — new chaos events
+- 🌪 The **Storm** event now has a **sand look**, and a new **shelter rule**: get **under cover** (a roof, or in water) instead of near a heat source. An **immunity relic** can be set per storm. All configurable in the editor.
+- 🌋 New **Earthquake** event: the ground rumbles, then **shakes** — cracks run across the floor, rubble falls from the sky and the camera trembles. No shelter helps: dodge them. Duration, damage, jolts, cracks, rubble and shake are all configurable.
+
+### 👑 New boss skills
+- ✨ Five more skill types, configurable in the editor: **Sandstorm**, **Quicksand**, **Dust Devil**, **Star Fracture** and **Earthquake**.
+
 ### ♾️ Endless mode
 - ♾ New button at the altar: after the horde's **last wave**, it **keeps going** — more monsters, more HP and more damage every wave — until your team falls.
 - 👑 A **boss from the horde returns every few waves**, stronger each time.

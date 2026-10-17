@@ -40,7 +40,7 @@ public class HordeEditorScreen extends Screen {
     private static final int T_GENERAL = 0, T_MOBS = 1, T_SPECIAL = 2, T_BOSS = 3, T_MERCH = 4, T_CHAOS = 5, T_ALTAR = 6, T_PREVIEW = 7;
     private static final String[] PROFESSIONS = {"armorer", "butcher", "cartographer", "cleric", "farmer", "fisherman",
             "fletcher", "leatherworker", "librarian", "mason", "shepherd", "toolsmith", "weaponsmith", "nitwit", "none"};
-    private static final String[] CHAOS_TYPES = {"spawn", "merchant", "lightning", "totem", "gisement", "arbre", "tempete"};
+    private static final String[] CHAOS_TYPES = {"spawn", "merchant", "lightning", "totem", "gisement", "arbre", "tempete", "seisme"};
     private static final String[] PICKAXE_TIERS = {"bois", "pierre", "fer", "diamant", "netherite"};
     private static final String[] TOTEM_AURAS = {"fureur", "soin", "malediction", "invocation"};
     private static final String[] VANILLA_TYPES = {
@@ -179,7 +179,7 @@ public class HordeEditorScreen extends Screen {
             for (JsonElement e : chaosEvents()) if (e.isJsonObject()) {
                 JsonObject c = e.getAsJsonObject();
                 String t = HordeJson.str(c, "type", "spawn");
-                String icon = switch (t) { case "merchant" -> "§a🛒"; case "lightning" -> "§e⚡"; case "spawn" -> "§c☠"; case "totem" -> "§6⚜"; case "gisement" -> "§e⛏"; case "arbre" -> "§a🪓"; case "tempete" -> "§b❄"; default -> "§8?"; };
+                String icon = switch (t) { case "merchant" -> "§a🛒"; case "lightning" -> "§e⚡"; case "spawn" -> "§c☠"; case "totem" -> "§6⚜"; case "gisement" -> "§e⛏"; case "arbre" -> "§a🪓"; case "tempete" -> "§b❄"; case "seisme" -> "§6🌋"; default -> "§8?"; };
                 l.add(icon + " §f" + HordeJson.str(c, "message", t).replaceAll("§.", "").trim());
             }
             return l;
@@ -1512,6 +1512,33 @@ public class HordeEditorScreen extends Screen {
 
     // ─── Onglet Chaos › ❄ Tempête (zone de tempête réglable : durée, dégâts, vent, abris, effets) ───
 
+    /** 1.7 — Séisme : rayon, durée, alerte, dégâts, secousses, fissures, éboulis, secousse de caméra. */
+    private void buildQuakeForm(JsonObject ev, int x, int fy) {
+        flow(x, fy);
+        fl(t("ui.storm.radius"));
+        fInt(26, (int) HordeJson.dbl(ev, "radius", 40), v -> ev.addProperty("radius", Math.max(4, v)));
+        fl(t("ui.storm.duration"));
+        fInt(26, HordeJson.num(ev, "quakeDuration", 8), v -> ev.addProperty("quakeDuration", Math.max(3, v)));
+        fl(t("ui.storm.warning"));
+        fInt(22, HordeJson.num(ev, "quakeWarning", 4), v -> ev.addProperty("quakeWarning", Math.max(0, v)));
+        fy += 18;
+        flow(x, fy);
+        fl(t("ui.quake.damage"));
+        fDbl(28, HordeJson.dbl(ev, "quakeDamage", 3.0), v -> ev.addProperty("quakeDamage", Math.max(0, v)));
+        fl(t("ui.quake.jolt"));
+        fDbl(28, HordeJson.dbl(ev, "quakeJolt", 0.35), v -> ev.addProperty("quakeJolt", Math.max(0, Math.min(2, v))));
+        fl(t("ui.quake.shake"));
+        fDbl(24, HordeJson.dbl(ev, "quakeShake", 1.0), v -> ev.addProperty("quakeShake", Math.max(0, Math.min(5, v))));
+        fy += 18;
+        flow(x, fy);
+        fl(t("ui.quake.cracks"));
+        fInt(22, HordeJson.num(ev, "quakeCracks", 5), v -> ev.addProperty("quakeCracks", Math.max(0, Math.min(50, v))));
+        fl(t("ui.quake.rubble"));
+        fInt(22, HordeJson.num(ev, "quakeRubble", 6), v -> ev.addProperty("quakeRubble", Math.max(0, Math.min(40, v))));
+        fy += 24;
+        label(x, fy, t("ui.quake.hint"));
+    }
+
     private void buildStormForm(JsonObject ev, int x, int fy) {
         flow(x, fy);
         fl(t("ui.storm.radius"));
@@ -1532,6 +1559,22 @@ public class HordeEditorScreen extends Screen {
         toggle(x, fy, 120, t("ui.storm.freeze"), ev, "stormFreeze", true);
         label(x + 126, fy + 4, t("ui.storm.particle"));
         text(x + 176, fy, 130, HordeJson.str(ev, "stormParticle", "minecraft:snowflake"), v -> ev.addProperty("stormParticle", v.trim()));
+        fy += 22;
+        boolean coverMode = "cover".equalsIgnoreCase(HordeJson.str(ev, "stormShelterMode", "heat"));
+        button(x, fy, 150, t(coverMode ? "ui.storm.mode_cover" : "ui.storm.mode_heat"), () -> {
+            ev.addProperty("stormShelterMode", "cover".equalsIgnoreCase(HordeJson.str(ev, "stormShelterMode", "heat")) ? "heat" : "cover");
+            changed();
+            init();
+        });
+        boolean sandLook = "sand".equalsIgnoreCase(HordeJson.str(ev, "stormLook", "frost"));
+        button(x + 154, fy, 74, t(sandLook ? "ui.storm.look_sand" : "ui.storm.look_frost"), () -> {
+            ev.addProperty("stormLook", "sand".equalsIgnoreCase(HordeJson.str(ev, "stormLook", "frost")) ? "frost" : "sand");
+            changed();
+            init();
+        });
+        fy += 22;
+        label(x, fy + 3, t("ui.storm.immune"));
+        text(x + 112, fy, 194, HordeJson.str(ev, "stormImmuneItem", ""), v -> ev.addProperty("stormImmuneItem", v.trim()));
         fy += 22;
         label(x, fy + 3, t("ui.storm.shelters"));
         JsonArray sh = HordeJson.arr(ev, "stormShelter");
@@ -3174,12 +3217,13 @@ public class HordeEditorScreen extends Screen {
             case "gisement" -> com.wavesurvivor.i18n.WSLang.t("§e⛏ Gisement");
             case "arbre" -> com.wavesurvivor.i18n.WSLang.t("chaos.type.arbre");
             case "tempete" -> com.wavesurvivor.i18n.WSLang.t("chaos.type.tempete");
+            case "seisme" -> com.wavesurvivor.i18n.WSLang.t("chaos.type.seisme");
             default -> "§8" + type + com.wavesurvivor.i18n.WSLang.t("ui.non_gere");
         }, () -> {
             String next = cycle(List.of(CHAOS_TYPES), HordeJson.str(ev, "type", "spawn"), 1);
             ev.addProperty("type", next);
             // Passage en Tempête : rayon large par défaut (celui du totem est trop petit)
-            if ("tempete".equals(next) && HordeJson.dbl(ev, "radius", 8) <= 8) ev.addProperty("radius", 40);
+            if (("tempete".equals(next) || "seisme".equals(next)) && HordeJson.dbl(ev, "radius", 8) <= 8) ev.addProperty("radius", 40);
             // Passage en Arbre : blocs et butin par défaut (chêne) si rien de personnalisé
             if ("arbre".equals(next)) {
                 JsonArray bl = HordeJson.arr(ev, "blocks");
@@ -3242,6 +3286,7 @@ public class HordeEditorScreen extends Screen {
                 buildTrades(HordeJson.arr(ev, "trades"), x, fy);
             }
             case "tempete" -> buildStormForm(ev, x, fy);
+            case "seisme" -> buildQuakeForm(ev, x, fy);
             case "totem" -> {
                 String aura = HordeJson.str(ev, "aura", "fureur");
                 flow(x, fy);

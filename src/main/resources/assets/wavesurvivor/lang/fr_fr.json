@@ -122,5 +122,6 @@
   "advancement.wavesurvivor.endless_60.title": "Éternel",
   "advancement.wavesurvivor.endless_60.desc": "Atteins la vague 60 en mode sans fin.",
   "advancement.wavesurvivor.marathon.title": "Marathonien",
-  "advancement.wavesurvivor.marathon.desc": "Passe 10 heures en horde."
+  "advancement.wavesurvivor.marathon.desc": "Passe 10 heures en horde.",
+  "item.wavesurvivor.voile_desert": "Voile du Désert"
 }

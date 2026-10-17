@@ -122,5 +122,6 @@
   "advancement.wavesurvivor.endless_60.title": "Eternal",
   "advancement.wavesurvivor.endless_60.desc": "Reach wave 60 in Endless mode.",
   "advancement.wavesurvivor.marathon.title": "Marathoner",
-  "advancement.wavesurvivor.marathon.desc": "Spend 10 hours in hordes."
+  "advancement.wavesurvivor.marathon.desc": "Spend 10 hours in hordes.",
+  "item.wavesurvivor.voile_desert": "Desert Veil"
 }

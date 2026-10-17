@@ -198,6 +198,10 @@ public class ModItems {
     public static final RegistryObject<Item> CRISTAL_GIVRE = ITEMS.register("cristal_givre",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique des Éléments", "Bague",
                     "Le froid ne mord pas celui qui le porte.", "Immunité à la Lenteur et au gel"));
+    public static final RegistryObject<Item> VOILE_DESERT = ITEMS.register("voile_desert",
+            () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique des Éléments", "Tête",
+                    "Le sable glisse sur celui qui sait le lire.", "Immunité à la tempête de sable et aux sables mouvants",
+                    "+6 % de vitesse, +14 % de plus sur le sable"));
     public static final RegistryObject<Item> BOURSE_COLPORTEUR = ITEMS.register("bourse_colporteur",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique de la Fortune", "Ceinture",
                     "Une pièce de plus, toujours.", "+15 % de monnaie lâchée par tes victimes",
@@ -279,6 +283,7 @@ public class ModItems {
                         output.accept(PRISME_CATALYSEUR.get());
                         output.accept(FRAGMENT_PORTE.get());
                         output.accept(CRISTAL_GIVRE.get());
+                        output.accept(VOILE_DESERT.get());
                         output.accept(BOURSE_COLPORTEUR.get());
                         output.accept(CLE_VOUTE.get());
                         output.accept(ETENDARD_BASTION.get());

@@ -102,12 +102,14 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.chaos.GisementManager());
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.spawn.HordeAggro());
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RelicEffects());
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.DesertRelicEvents()); // 1.7 : Voile du Désert (vitesse)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RelicSets()); // 1.5 : bonus de set des reliques
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RelicEquip()); // 1.5 : reliques équipées (sans Curios)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.Heritage()); // 1.5 : Héritage et Renaissance
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.bossrush.BossRush()); // 1.6 : Boss Rush (vies, barre d'action)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.endless.Endless()); // 1.7 : mode sans fin (vies, barre d'action)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.stats.StatsEvents()); // 1.7 : statistiques (morts, temps de jeu)
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.quake.QuakeManager()); // 1.7 : séismes (chaos)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.frost.StormManager()); // 1.6 : tempêtes (chaos et boss)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.RenaissanceRewards()); // 1.5 : PR gagnés en jouant (boss)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BenedictionEvents()); // bénédictions conservées à la mort

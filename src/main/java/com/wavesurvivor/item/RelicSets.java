@@ -45,7 +45,7 @@ public class RelicSets {
         RAMPART("rampart", 3, ModItems.SCEAU_GARDIEN, ModItems.BANNIERE_RALLIEMENT, ModItems.PIERRE_FONDATION),
         HUNT("hunt", 4, ModItems.MARQUE_CHASSEUR, ModItems.OS_SACRE, ModItems.COEUR_ASSOIFFE, ModItems.CROC_ALPHA),
         ABYSS("abyss", 3, ModItems.ECLAT_BRECHE, ModItems.PRISME_CATALYSEUR, ModItems.FRAGMENT_PORTE),
-        ELEMENTS("elements", 3, ModItems.AMULETTE_BRASIER, ModItems.CHARME_PHYLACTERE, ModItems.CRISTAL_GIVRE),
+        ELEMENTS("elements", 4, ModItems.AMULETTE_BRASIER, ModItems.CHARME_PHYLACTERE, ModItems.CRISTAL_GIVRE, ModItems.VOILE_DESERT),
         STEADFAST("steadfast", 4, ModItems.ANNEAU_ANCRAGE, ModItems.CEINTURE_PLOMB, ModItems.OEIL_VEILLEUR, ModItems.TALISMAN_SOUFFLE),
         FORTUNE("fortune", 4, ModItems.LANGUE_ARGENT, ModItems.CLE_GARDIEN, ModItems.ANNEAU_PROSPECTEUR, ModItems.BOURSE_COLPORTEUR);
 
@@ -239,10 +239,12 @@ public class RelicSets {
             }
             // 🔥 Éléments 3 : aura élémentaire — 20 % de chance de punir l'attaquant
             if (has(p, Family.ELEMENTS, 3) && e.getSource().getEntity() instanceof LivingEntity att && att instanceof Enemy
-                    && p.getRandom().nextFloat() < 0.20f) {
-                switch (p.getRandom().nextInt(3)) {
+                    && p.getRandom().nextFloat() < (has(p, Family.ELEMENTS, 4) ? 0.35f : 0.20f)) {
+                // 4 pièces (1.7) : 35 % de chance, et le sable peut aussi aveugler l'attaquant
+                switch (p.getRandom().nextInt(has(p, Family.ELEMENTS, 4) ? 4 : 3)) {
                     case 0 -> att.setSecondsOnFire(4);
                     case 1 -> att.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 0));
+                    case 3 -> att.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0));
                     default -> att.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 1));
                 }
             }

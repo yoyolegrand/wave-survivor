@@ -1,0 +1,2288 @@
+{
+  "_comment": "Wave Survivor 1.7.0 : horde « Les Sables Ardents » (Vanilla ; entités provisoires sur bases vanilla). Fusionné une seule fois dans les configs existantes.",
+  "hordes": [
+    {
+      "hordeName": "Les Sables Ardents",
+      "hordeDescription": "Un soleil de plomb, des dunes sans fin : momies, scarabées, scorpions et chacals rôdent entre les ruines. Trois seigneurs des sables règnent sur ce désert.",
+      "configData": {
+        "totalWaves": 10,
+        "delayBetweenWaves": 45,
+        "spawnType": "fixed",
+        "spawnRadius": 30,
+        "gameOverRadius": 2000,
+        "playerScaling": {
+          "enabled": true,
+          "countMultiplier": 0.5,
+          "statsMultiplier": 0.1
+        },
+        "multiSpawns": [],
+        "dynamicSpawns": [],
+        "spawnConditions": {
+          "useTickInterval": false,
+          "tickInterval": 60000,
+          "useKillCount": false,
+          "requiredKills": [
+            {
+              "entity": "minecraft:zombie",
+              "count": 10
+            }
+          ],
+          "killCountdownDelay": 10
+        },
+        "spawnMessages": {
+          "normalWave": "§6§l[SABLES ARDENTS] §eVague {wave}/{total} §6- §7Le sable se soulève...",
+          "specialWave": "§6§l🏜 [SABLES ARDENTS] 🏜 §eVague {wave}/{total} §6- {name} !",
+          "useSound": true,
+          "normalSound": "minecraft:entity.husk.ambient",
+          "specialSound": "minecraft:entity.ravager.roar"
+        },
+        "useWavePauses": true,
+        "wavePauses": [
+          {
+            "interval": 5,
+            "pauseDuration": 90
+          }
+        ],
+        "useMerchants": true,
+        "merchantDebug": false,
+        "merchants": [
+          {
+            "name": "Nomade du désert",
+            "entityType": "minecraft:villager",
+            "profession": "cartographer",
+            "offset": {
+              "x": 3,
+              "y": 0,
+              "z": 2
+            },
+            "spawnChance": 1.0,
+            "trades": [
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 2,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:cooked_mutton",
+                "outputCount": 6,
+                "maxUses": 10
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 5,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:golden_carrot",
+                "outputCount": 8,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 6,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:chainmail_chestplate",
+                "outputCount": 1,
+                "maxUses": 3
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 24,
+                "input2": "minecraft:diamond",
+                "input2Count": 3,
+                "output": "wavesurvivor:voile_desert",
+                "outputCount": 1,
+                "maxUses": 1
+              }
+            ]
+          }
+        ],
+        "hordeEntities": [
+          {
+            "entity_type": "momie",
+            "custom_name": "§6Momie",
+            "base_count": 5,
+            "count_increment": 1,
+            "max_health": 42,
+            "attack_damage": 6,
+            "movement_speed": 0.23,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:rotten_flesh",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 60
+              },
+              {
+                "item": "minecraft:bone",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 30
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 5
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 0,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "pilleur_tombes",
+            "custom_name": "§6Pilleur de tombes",
+            "base_count": 4,
+            "count_increment": 1,
+            "max_health": 30,
+            "attack_damage": 6,
+            "movement_speed": 0.27,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:gold_nugget",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 40
+              },
+              {
+                "item": "minecraft:bone",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 40
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 5
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 0,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "scarabee",
+            "custom_name": "§6Scarabée",
+            "base_count": 8,
+            "count_increment": 2,
+            "max_health": 8,
+            "attack_damage": 3,
+            "movement_speed": 0.36,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:string",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 25
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 2
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "chacal",
+            "custom_name": "§6Chacal des dunes",
+            "base_count": 4,
+            "count_increment": 1,
+            "max_health": 22,
+            "attack_damage": 5,
+            "movement_speed": 0.4,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:bone",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 50
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 4
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "archer_dunes",
+            "custom_name": "§6Archer des dunes",
+            "base_count": 2,
+            "count_increment": 0,
+            "max_health": 34,
+            "attack_damage": 6,
+            "movement_speed": 0.26,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:arrow",
+                "minQty": 2,
+                "maxQty": 5,
+                "chance": 60
+              },
+              {
+                "item": "minecraft:gold_nugget",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 40
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 6
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 3,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "scorpion",
+            "custom_name": "§6Scorpion des sables",
+            "base_count": 2,
+            "count_increment": 1,
+            "max_health": 34,
+            "attack_damage": 5,
+            "movement_speed": 0.3,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:spider_eye",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 50
+              },
+              {
+                "item": "minecraft:string",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 40
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 6
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 3,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "cavalier_dunes",
+            "custom_name": "§6§lCavalier des dunes",
+            "base_count": 1,
+            "count_increment": 0,
+            "max_health": 70,
+            "attack_damage": 9,
+            "movement_speed": 0.3,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:emerald",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 60
+              },
+              {
+                "item": "minecraft:saddle",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 8
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 10
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 4,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "garde_pharaon",
+            "custom_name": "§6§lGarde du Pharaon",
+            "base_count": 1,
+            "count_increment": 0,
+            "max_health": 100,
+            "attack_damage": 12,
+            "movement_speed": 0.26,
+            "follow_range": 48,
+            "knockback_resistance": 0.5,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:gold_ingot",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 60
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 12
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 5,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "golem_gres",
+            "custom_name": "§6§lGolem de grès",
+            "base_count": 1,
+            "count_increment": 0,
+            "max_health": 150,
+            "attack_damage": 13,
+            "movement_speed": 0.21,
+            "follow_range": 48,
+            "knockback_resistance": 1.0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:sandstone",
+                "minQty": 4,
+                "maxQty": 8,
+                "chance": 70
+              },
+              {
+                "item": "minecraft:emerald",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 50
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 14
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 6,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "djinn",
+            "custom_name": "§6§lDjinn",
+            "base_count": 1,
+            "count_increment": 0,
+            "max_health": 52,
+            "attack_damage": 4,
+            "movement_speed": 0.5,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:blaze_powder",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 50
+              },
+              {
+                "item": "minecraft:emerald",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 50
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 14
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 7,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "profanateur_sables",
+            "custom_name": "§4§lProfanateur des Sables",
+            "base_count": 2,
+            "count_increment": 0,
+            "max_health": 46,
+            "attack_damage": 5,
+            "movement_speed": 0.24,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:iron_nugget",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 40
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 8
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          }
+        ],
+        "useSpecialWaves": true,
+        "specialWaveChance": 30,
+        "specialWaves": [
+          {
+            "name": "Ruée de Scarabées",
+            "chance": 50,
+            "entities": [
+              {
+                "entity_type": "scarabee",
+                "custom_name": "§6Scarabée",
+                "count": 24,
+                "max_health": 8,
+                "attack_damage": 3,
+                "movement_speed": 0.38,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 2
+                  }
+                ]
+              },
+              {
+                "entity_type": "scorpion",
+                "custom_name": "§6Scorpion des sables",
+                "count": 4,
+                "max_health": 36,
+                "attack_damage": 5,
+                "movement_speed": 0.31,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 8
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Légion de Momies",
+            "chance": 50,
+            "entities": [
+              {
+                "entity_type": "momie",
+                "custom_name": "§6Momie",
+                "count": 12,
+                "max_health": 44,
+                "attack_damage": 6,
+                "movement_speed": 0.24,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 4
+                  }
+                ]
+              },
+              {
+                "entity_type": "pilleur_tombes",
+                "custom_name": "§6Pilleur de tombes",
+                "count": 6,
+                "max_health": 32,
+                "attack_damage": 6,
+                "movement_speed": 0.28,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 4
+                  }
+                ]
+              },
+              {
+                "entity_type": "garde_pharaon",
+                "custom_name": "§6§lGarde du Pharaon",
+                "count": 1,
+                "max_health": 105,
+                "attack_damage": 12,
+                "movement_speed": 0.27,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "minecraft:gold_ingot",
+                    "minQty": 2,
+                    "maxQty": 4,
+                    "chance": 80
+                  },
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 30
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Marche des Pharaons",
+            "chance": 50,
+            "entities": [
+              {
+                "entity_type": "garde_pharaon",
+                "custom_name": "§6§lGarde du Pharaon",
+                "count": 3,
+                "max_health": 105,
+                "attack_damage": 12,
+                "movement_speed": 0.27,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 20
+                  }
+                ]
+              },
+              {
+                "entity_type": "golem_gres",
+                "custom_name": "§6§lGolem de grès",
+                "count": 2,
+                "max_health": 155,
+                "attack_damage": 13,
+                "movement_speed": 0.22,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 20
+                  }
+                ]
+              },
+              {
+                "entity_type": "djinn",
+                "custom_name": "§6§lDjinn",
+                "count": 2,
+                "max_health": 54,
+                "attack_damage": 4,
+                "movement_speed": 0.5,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 20
+                  }
+                ]
+              },
+              {
+                "entity_type": "momie",
+                "custom_name": "§6Momie",
+                "count": 8,
+                "max_health": 44,
+                "attack_damage": 6,
+                "movement_speed": 0.24,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 4
+                  }
+                ]
+              },
+              {
+                "entity_type": "profanateur_sables",
+                "custom_name": "§4§lProfanateur des Sables",
+                "count": 3,
+                "max_health": 48,
+                "attack_damage": 5,
+                "movement_speed": 0.25,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 8
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Pillards des Ruines",
+            "chance": 50,
+            "entities": [
+              {
+                "entity_type": "cavalier_dunes",
+                "custom_name": "§6§lCavalier des dunes",
+                "count": 3,
+                "max_health": 72,
+                "attack_damage": 9,
+                "movement_speed": 0.31,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 20
+                  }
+                ]
+              },
+              {
+                "entity_type": "archer_dunes",
+                "custom_name": "§6Archer des dunes",
+                "count": 6,
+                "max_health": 36,
+                "attack_damage": 6,
+                "movement_speed": 0.27,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 6
+                  }
+                ]
+              },
+              {
+                "entity_type": "chacal",
+                "custom_name": "§6Chacal des dunes",
+                "count": 8,
+                "max_health": 24,
+                "attack_damage": 5,
+                "movement_speed": 0.41,
+                "follow_range": 48,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 4
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "useBossWaves": true,
+        "bossWaves": [
+          {
+            "waveNumber": 4,
+            "bossName": "§6§lAnubis, Gardien des Tombes",
+            "entityType": "minecraft:wither_skeleton",
+            "useCustomEntity": true,
+            "customEntityName": "anubis_gardien",
+            "maxHealth": 650,
+            "attackDamage": 17,
+            "movementSpeed": 0.3,
+            "knockbackResistance": 1.0,
+            "scale": 1.8,
+            "equipment": {},
+            "useMinionSummon": false,
+            "minionConfig": {},
+            "lootTable": [
+              {
+                "item": "roulettechest:key_custom_reliquaire_du_boss",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 100
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 2,
+                "maxQty": 3,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:emerald",
+                "minQty": 8,
+                "maxQty": 14,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:diamond",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 50
+              },
+              {
+                "item": "wavesurvivor:voile_desert",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 35
+              },
+              {
+                "item": "minecraft:gold_ingot",
+                "minQty": 4,
+                "maxQty": 8,
+                "chance": 100
+              }
+            ],
+            "spawnMessage": "§6§l🏜 [BOSS] 🏜 §eAnubis, Gardien des Tombes §6§lse dresse hors du sarcophage !",
+            "deathMessage": "§6§l[VICTOIRE] §e{name} §6§lest terrassé !",
+            "spawnSound": "minecraft:entity.ravager.roar"
+          },
+          {
+            "waveNumber": 7,
+            "bossName": "§6§lSekhmet, Reine des Scorpions",
+            "entityType": "minecraft:spider",
+            "useCustomEntity": true,
+            "customEntityName": "sekhmet_reine",
+            "maxHealth": 520,
+            "attackDamage": 12,
+            "movementSpeed": 0.38,
+            "knockbackResistance": 0.8,
+            "scale": 2.0,
+            "equipment": {},
+            "useMinionSummon": false,
+            "minionConfig": {},
+            "lootTable": [
+              {
+                "item": "roulettechest:key_custom_reliquaire_du_boss",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 100
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 2,
+                "maxQty": 3,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:emerald",
+                "minQty": 8,
+                "maxQty": 14,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:diamond",
+                "minQty": 2,
+                "maxQty": 4,
+                "chance": 60
+              },
+              {
+                "item": "wavesurvivor:reliquaire_scelle",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 40
+              },
+              {
+                "item": "wavesurvivor:voile_desert",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 25
+              },
+              {
+                "item": "minecraft:gold_block",
+                "minQty": 2,
+                "maxQty": 4,
+                "chance": 70
+              }
+            ],
+            "spawnMessage": "§6§l🏜 [BOSS] 🏜 §eSekhmet, Reine des Scorpions §6§lémerge des dunes !",
+            "deathMessage": "§6§l[VICTOIRE] §e{name} §6§lest terrassé !",
+            "spawnSound": "minecraft:entity.ravager.roar"
+          },
+          {
+            "waveNumber": 10,
+            "bossName": "§6§lRê-Atoum, l'Ancien des Sables",
+            "entityType": "minecraft:ravager",
+            "useCustomEntity": true,
+            "customEntityName": "re_atoum_ancien",
+            "maxHealth": 1000,
+            "attackDamage": 24,
+            "movementSpeed": 0.3,
+            "knockbackResistance": 1.0,
+            "scale": 2.2,
+            "equipment": {},
+            "useMinionSummon": false,
+            "minionConfig": {},
+            "lootTable": [
+              {
+                "item": "roulettechest:key_custom_reliquaire_du_boss",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 100
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 2,
+                "maxQty": 3,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:emerald",
+                "minQty": 8,
+                "maxQty": 14,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:diamond",
+                "minQty": 3,
+                "maxQty": 6,
+                "chance": 100
+              },
+              {
+                "item": "wavesurvivor:reliquaire_scelle",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 100
+              },
+              {
+                "item": "wavesurvivor:voile_desert",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 50
+              },
+              {
+                "item": "wavesurvivor:coeur_saisons",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 10
+              },
+              {
+                "item": "minecraft:gold_ingot",
+                "minQty": 8,
+                "maxQty": 16,
+                "chance": 100
+              }
+            ],
+            "spawnMessage": "§6§l🏜 [BOSS] 🏜 §eRê-Atoum, l'Ancien des Sables §6§lse lève des dunes !",
+            "deathMessage": "§6§l[VICTOIRE] §e{name} §6§lest terrassé !",
+            "spawnSound": "minecraft:entity.ravager.roar"
+          }
+        ],
+        "chaosEnabled": true,
+        "chaosMinInterval": 20,
+        "chaosMaxInterval": 40,
+        "chaosEvents": [
+          {
+            "type": "gisement",
+            "message": "§6§l🏜 Un filon d'or affleure du sable ! 🏜",
+            "sound": "minecraft:entity.lightning_bolt.thunder",
+            "entityType": "minecraft:husk",
+            "isCustomEntity": false,
+            "count": 2,
+            "trades": [],
+            "effects": [],
+            "blocks": [
+              "minecraft:sandstone",
+              "minecraft:gold_ore",
+              "minecraft:red_sandstone",
+              "minecraft:copper_ore"
+            ],
+            "drops": [
+              {
+                "item": "minecraft:gold_ingot",
+                "minQty": 3,
+                "maxQty": 6,
+                "chance": 1.0
+              },
+              {
+                "item": "minecraft:sandstone",
+                "minQty": 2,
+                "maxQty": 4,
+                "chance": 1.0
+              },
+              {
+                "item": "minecraft:diamond",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 0.2
+              }
+            ],
+            "size": "aleatoire",
+            "minTier": 2,
+            "hits": 24,
+            "hitDrops": [
+              {
+                "item": "minecraft:raw_gold",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 20
+              },
+              {
+                "item": "minecraft:sand",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 20
+              },
+              {
+                "item": "minecraft:sandstone",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 20
+              },
+              {
+                "item": "minecraft:gold_nugget",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 20
+              }
+            ]
+          },
+          {
+            "type": "totem",
+            "message": "§6§l🏜 UN TOTEM DES SABLES S'ÉLÈVE ! 🏜",
+            "sound": "minecraft:entity.lightning_bolt.thunder",
+            "entityType": "minecraft:magma_cube",
+            "isCustomEntity": false,
+            "count": 1,
+            "trades": [],
+            "effects": [
+              {
+                "effect": "minecraft:hunger",
+                "level": 2,
+                "target": "joueurs"
+              },
+              {
+                "effect": "minecraft:weakness",
+                "level": 1,
+                "target": "joueurs"
+              }
+            ],
+            "aura": "malediction",
+            "rewardCount": 8,
+            "radius": 14
+          },
+          {
+            "type": "spawn",
+            "message": "§6§l🏜 Une meute de chacals jaillit des dunes ! 🏜",
+            "sound": "minecraft:entity.wolf.howl",
+            "entityType": "chacal",
+            "isCustomEntity": true,
+            "count": 5
+          },
+          {
+            "type": "merchant",
+            "message": "§6§l🏜 Un marchand nomade émerge d'une dune ! 🏜",
+            "sound": "minecraft:entity.lightning_bolt.thunder",
+            "entityType": "minecraft:ravager",
+            "isCustomEntity": false,
+            "count": 1,
+            "trades": [
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 2,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:cooked_mutton",
+                "outputCount": 6,
+                "maxUses": 8
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 6,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:golden_apple",
+                "outputCount": 1,
+                "maxUses": 3
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 24,
+                "input2": "minecraft:diamond",
+                "input2Count": 3,
+                "output": "wavesurvivor:voile_desert",
+                "outputCount": 1,
+                "maxUses": 1
+              }
+            ],
+            "effects": [],
+            "blocks": [
+              "minecraft:iron_ore",
+              "minecraft:stone"
+            ],
+            "drops": []
+          },
+          {
+            "type": "tempete",
+            "message": "§6§l🏜 UNE TEMPÊTE DE SABLE S'ABAT SUR LE DÉSERT ! 🏜",
+            "sound": "minecraft:entity.ravager.roar",
+            "radius": 45,
+            "stormDuration": 30,
+            "stormWarning": 6,
+            "stormDamage": 1.0,
+            "stormFreeze": false,
+            "stormWind": 0.015,
+            "stormParticle": "block:minecraft:sand",
+            "stormShelter": [],
+            "stormShelterRadius": 4,
+            "effects": [
+              {
+                "effect": "minecraft:hunger",
+                "level": 1,
+                "target": "joueurs"
+              },
+              {
+                "effect": "minecraft:speed",
+                "level": 1,
+                "target": "monstres"
+              }
+            ],
+            "stormShelterMode": "cover",
+            "stormLook": "sand",
+            "stormImmuneItem": "wavesurvivor:voile_desert"
+          },
+          {
+            "type": "seisme",
+            "message": "§6§l🌋 LE DÉSERT GRONDE ! 🌋",
+            "sound": "minecraft:entity.iron_golem.damage",
+            "radius": 40,
+            "quakeDuration": 8,
+            "quakeWarning": 4,
+            "quakeDamage": 3.0,
+            "quakeJolt": 0.35,
+            "quakeCracks": 5,
+            "quakeRubble": 6,
+            "quakeShake": 1.0
+          },
+          {
+            "type": "arbre",
+            "message": "§6§l🏜 Un palmier doré perce le sable ! 🏜",
+            "sound": "minecraft:block.amethyst_cluster.break",
+            "entityType": "minecraft:ravager",
+            "isCustomEntity": false,
+            "count": 1,
+            "trades": [],
+            "effects": [],
+            "blocks": [],
+            "drops": [
+              {
+                "item": "minecraft:stripped_acacia_log",
+                "minQty": 4,
+                "maxQty": 6,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:gold_nugget",
+                "minQty": 4,
+                "maxQty": 8,
+                "chance": 60
+              },
+              {
+                "item": "minecraft:honey_bottle",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 30
+              }
+            ],
+            "minTier": 0,
+            "trunkBlocks": [
+              "minecraft:stripped_acacia_wood"
+            ],
+            "leafBlocks": [
+              "minecraft:jungle_leaves",
+              "minecraft:azalea_leaves"
+            ],
+            "fruitBlocks": [
+              "minecraft:honey_block"
+            ],
+            "size": "aleatoire",
+            "hitDrops": [
+              {
+                "item": "minecraft:stripped_acacia_log",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 20
+              }
+            ]
+          }
+        ],
+        "stars": 3,
+        "unlockRequires": [
+          {
+            "horde": "La Nécropole",
+            "difficulty": ""
+          }
+        ],
+        "forceEndBonus": {}
+      },
+      "rewards": {
+        "enabled": false,
+        "top1": [],
+        "top2": [],
+        "top3": [],
+        "bossKiller": []
+      },
+      "id": "9251e36c471f4f6ddeff9300"
+    }
+  ],
+  "entities": [
+    {
+      "entityName": "momie",
+      "displayName": "§6Momie",
+      "baseEntityType": "minecraft:husk",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0.1,
+        "maxHealth": 42,
+        "attackDamage": 6,
+        "movementSpeed": 0.23
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "minecraft:leather_helmet",
+        "chest": "minecraft:leather_chestplate",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "93332d1aa5ea542ea99cbf77"
+    },
+    {
+      "entityName": "pilleur_tombes",
+      "displayName": "§6Pilleur de tombes",
+      "baseEntityType": "minecraft:skeleton",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0.1,
+        "maxHealth": 30,
+        "attackDamage": 6,
+        "movementSpeed": 0.27
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_sword",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "8c79f0e58ba584b6cf459cbe"
+    },
+    {
+      "entityName": "scarabee",
+      "displayName": "§6Scarabée",
+      "baseEntityType": "minecraft:silverfish",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0,
+        "maxHealth": 8,
+        "attackDamage": 3,
+        "movementSpeed": 0.36
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "529b09524105035c578e0d7a"
+    },
+    {
+      "entityName": "chacal",
+      "displayName": "§6Chacal des dunes",
+      "baseEntityType": "minecraft:wolf",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0.1,
+        "maxHealth": 22,
+        "attackDamage": 5,
+        "movementSpeed": 0.4
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "7de57f008d3fe737ee583ea7"
+    },
+    {
+      "entityName": "chacal_alpha",
+      "displayName": "§6§lChacal Alpha",
+      "baseEntityType": "minecraft:wolf",
+      "stats": {
+        "followRange": 56,
+        "knockbackResistance": 0.5,
+        "maxHealth": 90,
+        "attackDamage": 9,
+        "movementSpeed": 0.42
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "sa_bond_chacal"
+      ],
+      "id": "bd924705e7b5568ff74d861f"
+    },
+    {
+      "entityName": "archer_dunes",
+      "displayName": "§6Archer des dunes",
+      "baseEntityType": "minecraft:skeleton",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0.1,
+        "maxHealth": 34,
+        "attackDamage": 6,
+        "movementSpeed": 0.26
+      },
+      "equipment": {
+        "mainhand": "minecraft:bow",
+        "offhand": "",
+        "head": "minecraft:chainmail_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "0bd79a0045257a3c0554a7f8",
+      "keepDistance": 9
+    },
+    {
+      "entityName": "scorpion",
+      "displayName": "§6Scorpion des sables",
+      "baseEntityType": "minecraft:spider",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0.1,
+        "maxHealth": 34,
+        "attackDamage": 5,
+        "movementSpeed": 0.3
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "sa_dard_scorpion"
+      ],
+      "id": "d0438c63dc849fea363d86c2"
+    },
+    {
+      "entityName": "cavalier_dunes",
+      "displayName": "§6§lCavalier des dunes",
+      "baseEntityType": "minecraft:pillager",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0.1,
+        "maxHealth": 70,
+        "attackDamage": 9,
+        "movementSpeed": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:crossbow",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": true,
+        "entityType": "minecraft:camel",
+        "customName": "§6Chameau de guerre",
+        "stats": {
+          "maxHealth": 60,
+          "attackDamage": 4,
+          "movementSpeed": 0.3,
+          "followRange": 48,
+          "knockbackResistance": 0.3
+        },
+        "equipment": {},
+        "lootTable": []
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "9a6fa9969d8edd7642d81fa5"
+    },
+    {
+      "entityName": "garde_pharaon",
+      "displayName": "§6§lGarde du Pharaon",
+      "baseEntityType": "minecraft:wither_skeleton",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0.5,
+        "maxHealth": 100,
+        "attackDamage": 12,
+        "movementSpeed": 0.26
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_sword",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "minecraft:golden_chestplate",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "357217d7d9b08c58e2426962"
+    },
+    {
+      "entityName": "golem_gres",
+      "displayName": "§6§lGolem de grès",
+      "baseEntityType": "minecraft:ravager",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 1.0,
+        "maxHealth": 150,
+        "attackDamage": 13,
+        "movementSpeed": 0.21
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "d96b6b743e67670c103f4d53"
+    },
+    {
+      "entityName": "djinn",
+      "displayName": "§6§lDjinn",
+      "baseEntityType": "minecraft:evoker",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0.1,
+        "maxHealth": 52,
+        "attackDamage": 4,
+        "movementSpeed": 0.5
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [
+        "sa_orbes_djinn",
+        "sa_clignement_djinn"
+      ],
+      "id": "bbdf2b394f8e6cc6efacc17f",
+      "keepDistance": 10
+    },
+    {
+      "entityName": "profanateur_sables",
+      "displayName": "§4§lProfanateur des Sables",
+      "baseEntityType": "minecraft:husk",
+      "stats": {
+        "followRange": 48,
+        "knockbackResistance": 0.1,
+        "maxHealth": 46,
+        "attackDamage": 5,
+        "movementSpeed": 0.24
+      },
+      "equipment": {
+        "mainhand": "minecraft:iron_axe",
+        "offhand": "",
+        "head": "minecraft:chainmail_helmet",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": [],
+      "id": "b4d54bf021736a4a0c3c895d",
+      "targetsAltar": true
+    },
+    {
+      "entityName": "anubis_gardien",
+      "displayName": "§6§lAnubis, Gardien des Tombes",
+      "baseEntityType": "minecraft:wither_skeleton",
+      "stats": {
+        "followRange": 64,
+        "knockbackResistance": 1.0,
+        "maxHealth": 650,
+        "attackDamage": 17,
+        "movementSpeed": 0.3
+      },
+      "equipment": {
+        "mainhand": "minecraft:golden_axe",
+        "offhand": "",
+        "head": "minecraft:golden_helmet",
+        "chest": "minecraft:golden_chestplate",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "sa_charge_anubis",
+        "sa_frappe_anubis",
+        "sa_momies",
+        "sa_malediction",
+        "sa_marque_anubis",
+        "sa_enterrement",
+        "sa_onde_anubis"
+      ],
+      "id": "e2cd008b6171c6b9edc8ed9c"
+    },
+    {
+      "entityName": "sekhmet_reine",
+      "displayName": "§6§lSekhmet, Reine des Scorpions",
+      "baseEntityType": "minecraft:spider",
+      "stats": {
+        "followRange": 64,
+        "knockbackResistance": 0.8,
+        "maxHealth": 520,
+        "attackDamage": 12,
+        "movementSpeed": 0.38
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "sa_aiguillon",
+        "sa_epines",
+        "sa_sables_mouvants",
+        "sa_nuee",
+        "sa_enfouissement",
+        "sa_coup_queue",
+        "sa_drain_sekhmet",
+        "sa_toile_sable"
+      ],
+      "id": "bb37c8799085bb3710604997"
+    },
+    {
+      "entityName": "re_atoum_ancien",
+      "displayName": "§6§lRê-Atoum, l'Ancien des Sables",
+      "baseEntityType": "minecraft:ravager",
+      "stats": {
+        "followRange": 64,
+        "knockbackResistance": 1.0,
+        "maxHealth": 1000,
+        "attackDamage": 24,
+        "movementSpeed": 0.3
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": true,
+      "bossConfig": {},
+      "skills": [
+        "sa_tempete_sable",
+        "sa_tourbillon",
+        "sa_seisme",
+        "sa_mirage",
+        "sa_rayon_solaire",
+        "sa_geysers",
+        "sa_puits_sable",
+        "sa_barriere_sable",
+        "sa_gardes"
+      ],
+      "id": "5870d73a9924da605af2764b"
+    }
+  ],
+  "skills": [
+    {
+      "skillName": "sa_charge_anubis",
+      "skillType": "dash_charge",
+      "displayName": "Charge d'Anubis",
+      "description": "Anubis fonce sur les joueurs à distance",
+      "id": "fdd74249bd2d62496e4d3345",
+      "cooldown": 8,
+      "dashDelay": 150,
+      "dashMinDistance": 5,
+      "dashPower": 2.2,
+      "dashDamageMultiplier": 1.8,
+      "dashSpeedThreshold": 0.6,
+      "dashResistanceDuration": 20,
+      "dashWarningDelay": 20,
+      "dashSound": "minecraft:entity.ravager.attack"
+    },
+    {
+      "skillName": "sa_frappe_anubis",
+      "skillType": "telegraph",
+      "displayName": "Frappe du gardien",
+      "description": "Le sol se brise sous le poing du gardien",
+      "id": "79f0390dff2824dbde702da3",
+      "cooldown": 9,
+      "telegraphStyle": "slam",
+      "telegraphCount": 3,
+      "telegraphRadius": 3.0,
+      "telegraphWarning": 30,
+      "telegraphDamage": 11,
+      "telegraphKnockUp": 0.8,
+      "telegraphEffect": "minecraft:slowness",
+      "telegraphEffectLevel": 2,
+      "telegraphEffectDuration": 60,
+      "telegraphCooldown": 170,
+      "telegraphMessage": "§6§lLe gardien frappe le sol !"
+    },
+    {
+      "skillName": "sa_momies",
+      "skillType": "minions",
+      "displayName": "Momies du tombeau",
+      "description": "Anubis réveille des momies",
+      "id": "6c6bc56b52367317347a1134",
+      "cooldown": 16,
+      "minionType": "minecraft:husk",
+      "minionCount": 3,
+      "minionHealth": 28,
+      "minionSpeed": 0.26,
+      "minionSpawnChance": 1.0,
+      "minionCooldown": 320
+    },
+    {
+      "skillName": "sa_malediction",
+      "skillType": "wither_curse",
+      "displayName": "Malédiction du tombeau",
+      "description": "Une malédiction ronge un joueur",
+      "id": "15a09f63e620fe8da1afede2",
+      "cooldown": 10,
+      "witherCurseCooldown": 200,
+      "witherCurseRange": 18,
+      "witherCurseDuration": 100,
+      "witherCurseAmplifier": 1,
+      "witherCurseRadius": 0,
+      "witherCurseMessage": "§8§l☠ La malédiction du tombeau vous ronge !"
+    },
+    {
+      "skillName": "sa_marque_anubis",
+      "skillType": "death_mark",
+      "displayName": "Pesée de l'âme",
+      "description": "Un joueur est marqué : les morts le traquent",
+      "id": "9db60c7a88c2965e53183d5d",
+      "cooldown": 17,
+      "deathMarkCooldown": 340,
+      "deathMarkDuration": 160,
+      "deathMarkDamageBonus": 25,
+      "deathMarkRadius": 32,
+      "deathMarkMessage": "§6§l☠ Anubis pèse votre âme : vous êtes marqué !"
+    },
+    {
+      "skillName": "sa_enterrement",
+      "skillType": "burial",
+      "displayName": "Enterré vivant",
+      "description": "Le sable engloutit un joueur",
+      "id": "faf9ae3dd5f489e852d6928d",
+      "cooldown": 13,
+      "burialCooldown": 260,
+      "burialRange": 16,
+      "burialDuration": 60,
+      "burialSlowAmplifier": 4,
+      "burialMinionCount": 2,
+      "burialMinionEntity": "minecraft:husk",
+      "burialMinionHealth": 20,
+      "burialSound": "minecraft:block.sand.break",
+      "burialMessage": "§6§lLe sable vous engloutit !"
+    },
+    {
+      "skillName": "sa_onde_anubis",
+      "skillType": "tremor",
+      "displayName": "Fracture du gardien",
+      "description": "Des fissures partent en étoile",
+      "id": "af106341458477d915cd3067",
+      "cooldown": 15,
+      "tremorCooldown": 300,
+      "tremorLines": 6,
+      "tremorLength": 12,
+      "tremorWarning": 30,
+      "tremorDamage": 9,
+      "tremorMessage": "§6§lLe sol se fend en étoile !"
+    },
+    {
+      "skillName": "sa_aiguillon",
+      "skillType": "venom",
+      "displayName": "Aiguillon de Sekhmet",
+      "description": "Un venin qui brouille et empoisonne",
+      "id": "ae488415b774cc2fe736e6b7",
+      "cooldown": 9,
+      "venomCooldown": 180,
+      "venomRange": 8,
+      "venomPoisonDuration": 140,
+      "venomPoisonAmplifier": 1,
+      "venomNauseaDuration": 60,
+      "venomNauseaAmplifier": 0,
+      "venomBlindnessDuration": 0
+    },
+    {
+      "skillName": "sa_epines",
+      "skillType": "gatling",
+      "displayName": "Volée d'épines",
+      "description": "Une salve rapide d'épines",
+      "id": "ee767183fb91275e38a863bf",
+      "cooldown": 8,
+      "gatlingCooldown": 150,
+      "gatlingBulletCount": 8,
+      "gatlingShotInterval": 4,
+      "gatlingSpeed": 2.0,
+      "gatlingDispersion": 1.5,
+      "gatlingProjectileType": "minecraft:arrow",
+      "gatlingSound": "minecraft:entity.spider.ambient",
+      "gatlingMessage": "§6Des épines de scorpion sifflent vers vous !"
+    },
+    {
+      "skillName": "sa_sables_mouvants",
+      "skillType": "quicksand",
+      "displayName": "Sables mouvants",
+      "description": "Le sol se dérobe sous des joueurs",
+      "id": "650e7a9a146111b779809bab",
+      "cooldown": 15,
+      "quicksandCooldown": 300,
+      "quicksandRange": 22,
+      "quicksandCount": 2,
+      "quicksandRadius": 3.5,
+      "quicksandDuration": 100,
+      "quicksandDamage": 1.0,
+      "quicksandPull": 0.06,
+      "quicksandSlowAmplifier": 3
+    },
+    {
+      "skillName": "sa_nuee",
+      "skillType": "minions",
+      "displayName": "Nuée de scarabées",
+      "description": "Une nuée de scarabées surgit du sable",
+      "id": "c49a5e290f608405f9cdc979",
+      "cooldown": 18,
+      "minionType": "minecraft:silverfish",
+      "minionCount": 6,
+      "minionHealth": 8,
+      "minionSpeed": 0.35,
+      "minionSpawnChance": 1.0,
+      "minionCooldown": 360
+    },
+    {
+      "skillName": "sa_enfouissement",
+      "skillType": "blink",
+      "displayName": "Enfouissement",
+      "description": "Sekhmet s'enfouit et surgit dans le dos d'un joueur",
+      "id": "9af96906e6c113a8079fb58a",
+      "cooldown": 6,
+      "blinkCooldown": 110,
+      "blinkRange": 24,
+      "blinkDistance": 2.0,
+      "blinkStrike": true,
+      "blinkBonusDamage": 3,
+      "blinkSound": "minecraft:block.sand.break",
+      "blinkMessage": "§6§lSekhmet surgit du sable derrière vous !"
+    },
+    {
+      "skillName": "sa_coup_queue",
+      "skillType": "uppercut",
+      "displayName": "Coup de queue",
+      "description": "Projette les joueurs collés à Sekhmet",
+      "id": "b390b9fafeba8d24f2dcd82b",
+      "cooldown": 6,
+      "uppercutPower": 1.9,
+      "uppercutCooldown": 110,
+      "uppercutSlownessDuration": 60,
+      "uppercutSlownessAmplifier": 1,
+      "uppercutParticle": "minecraft:poof",
+      "uppercutRange": 5.0,
+      "uppercutMessage": "§6§lLa queue de Sekhmet vous fauche !"
+    },
+    {
+      "skillName": "sa_drain_sekhmet",
+      "skillType": "life_drain",
+      "displayName": "Soif de sang",
+      "description": "Sekhmet aspire la vie d'un joueur",
+      "id": "121199bcf1129bfc8aca81eb",
+      "cooldown": 11,
+      "lifeDrainCooldown": 220,
+      "lifeDrainRange": 12,
+      "lifeDrainDuration": 60,
+      "lifeDrainDamage": 2.0,
+      "lifeDrainHealRatio": 1.0,
+      "lifeDrainMessage": "§6§lSekhmet vous vide de votre sang !"
+    },
+    {
+      "skillName": "sa_toile_sable",
+      "skillType": "web_trap",
+      "displayName": "Toile de sable",
+      "description": "Des toiles piègent les joueurs",
+      "id": "54c458950bf302b275b821a8",
+      "cooldown": 15,
+      "webTrapInterval": 320,
+      "webTrapDuration": 60,
+      "webTrapRange": 16.0
+    },
+    {
+      "skillName": "sa_tempete_sable",
+      "skillType": "sandstorm",
+      "displayName": "Tempête de sable",
+      "description": "Une tempête de sable suit Rê-Atoum",
+      "id": "dd12f619277abb669f79acf2",
+      "cooldown": 21,
+      "sandstormCooldown": 420,
+      "sandstormRadius": 16,
+      "sandstormDuration": 14,
+      "sandstormDamage": 1.0,
+      "sandstormPull": 0.03,
+      "sandstormWind": 0.0,
+      "sandstormHungerAmplifier": 1,
+      "sandstormSlowAmplifier": 1,
+      "sandstormImmuneItem": "wavesurvivor:voile_desert",
+      "sandstormMessage": "§6§lLe sable se lève — mettez-vous à couvert !"
+    },
+    {
+      "skillName": "sa_tourbillon",
+      "skillType": "dust_devil",
+      "displayName": "Tourbillon de sable",
+      "description": "Un tourbillon traque les joueurs",
+      "id": "be5b6ff0ea02932a575435c4",
+      "cooldown": 18,
+      "dustDevilCooldown": 360,
+      "dustDevilRange": 22,
+      "dustDevilRadius": 5,
+      "dustDevilDuration": 120,
+      "dustDevilSpeed": 0.12,
+      "dustDevilPull": 0.1,
+      "dustDevilLift": 0.12,
+      "dustDevilDamage": 2.0,
+      "dustDevilMessage": "§6§lUn tourbillon de sable fonce sur vous !"
+    },
+    {
+      "skillName": "sa_seisme",
+      "skillType": "earthquake",
+      "displayName": "Séisme",
+      "description": "Le sol tremble autour de Rê-Atoum",
+      "id": "387c317156a3e0d60dbd0c08",
+      "cooldown": 25,
+      "earthquakeCooldown": 500,
+      "earthquakeRadius": 26,
+      "earthquakeDuration": 6,
+      "earthquakeDamage": 3.0,
+      "earthquakeJolt": 0.3,
+      "earthquakeCracks": 4,
+      "earthquakeRubble": 5,
+      "earthquakeShake": 1.0,
+      "earthquakeMessage": "§6§lRê-Atoum fait trembler le désert !"
+    },
+    {
+      "skillName": "sa_mirage",
+      "skillType": "illusions",
+      "displayName": "Mirage",
+      "description": "Des mirages brouillent la vue",
+      "id": "562d9f80fcba22ae81436c47",
+      "cooldown": 25,
+      "illusionsCloneCount": 3,
+      "illusionsCloneType": "minecraft:husk",
+      "illusionsCloneHealth": 1,
+      "illusionsSpawnRadius": 6,
+      "illusionsCooldown": 500
+    },
+    {
+      "skillName": "sa_rayon_solaire",
+      "skillType": "solar",
+      "displayName": "Rayon solaire",
+      "description": "Le soleil frappe la zone",
+      "id": "aea0df2068ede7f5aa90781a",
+      "cooldown": 21,
+      "solarCooldown": 420,
+      "solarRadius": 28,
+      "solarWarningDelay": 40
+    },
+    {
+      "skillName": "sa_geysers",
+      "skillType": "eruption",
+      "displayName": "Geysers de sable",
+      "description": "Des geysers jaillissent sous les joueurs",
+      "id": "271048e136eb0d0d2a99ab18",
+      "cooldown": 11,
+      "eruptionCooldown": 210,
+      "eruptionRange": 22,
+      "eruptionTargets": 3,
+      "eruptionDelay": 30,
+      "eruptionRadius": 2.2,
+      "eruptionDamage": 7,
+      "eruptionFireSeconds": 3,
+      "eruptionKnockup": 0.9,
+      "eruptionMessage": "§6§lDes geysers de sable jaillissent sous vos pieds !"
+    },
+    {
+      "skillName": "sa_puits_sable",
+      "skillType": "gravity_well",
+      "displayName": "Puits de sable",
+      "description": "Le sable aspire les joueurs vers le centre",
+      "id": "074e7610f07c4981f46ff84b",
+      "cooldown": 13,
+      "gravityWellCooldown": 250,
+      "gravityWellRange": 18,
+      "gravityWellRadius": 5,
+      "gravityWellDuration": 60,
+      "gravityWellStrength": 0.1,
+      "gravityWellDamage": 2,
+      "gravityWellImplosion": true,
+      "gravityWellMessage": "§6§lLe sable vous aspire vers le centre !"
+    },
+    {
+      "skillName": "sa_barriere_sable",
+      "skillType": "force_field",
+      "displayName": "Barrière de sable",
+      "description": "Une barrière de sable repousse les joueurs",
+      "id": "dda815786e1922e665b95dba",
+      "cooldown": 0,
+      "forceFieldRadius": 4.5,
+      "forceFieldCheckInterval": 5,
+      "forceFieldDamage": 2,
+      "forceFieldKnockback": 1.8,
+      "forceFieldFireDuration": 0,
+      "forceFieldParticle": "minecraft:poof"
+    },
+    {
+      "skillName": "sa_gardes",
+      "skillType": "minions",
+      "displayName": "Gardes de sable",
+      "description": "Des gardes de sable surgissent",
+      "id": "50898a8714b9943d03370a07",
+      "cooldown": 20,
+      "minionType": "minecraft:husk",
+      "minionCount": 3,
+      "minionHealth": 45,
+      "minionSpeed": 0.27,
+      "minionSpawnChance": 1.0,
+      "minionCooldown": 400
+    },
+    {
+      "skillName": "sa_bond_chacal",
+      "skillType": "dash_charge",
+      "displayName": "Bond du chacal",
+      "description": "Le chacal alpha bondit sur sa proie",
+      "id": "da8d6863d0946ab7c52b432a",
+      "cooldown": 7,
+      "dashDelay": 120,
+      "dashMinDistance": 4,
+      "dashPower": 1.9,
+      "dashDamageMultiplier": 1.6,
+      "dashSpeedThreshold": 0.6,
+      "dashResistanceDuration": 10,
+      "dashWarningDelay": 10
+    },
+    {
+      "skillName": "sa_dard_scorpion",
+      "skillType": "venom",
+      "displayName": "Dard du scorpion",
+      "description": "Un venin qui empoisonne",
+      "id": "d5087e15d6f71420564f6e81",
+      "cooldown": 10,
+      "venomCooldown": 240,
+      "venomRange": 6,
+      "venomPoisonDuration": 100,
+      "venomPoisonAmplifier": 0,
+      "venomNauseaDuration": 0,
+      "venomNauseaAmplifier": 0,
+      "venomBlindnessDuration": 0
+    },
+    {
+      "skillName": "sa_orbes_djinn",
+      "skillType": "homing_orbs",
+      "displayName": "Orbes du djinn",
+      "description": "Des orbes de sable traquent les joueurs",
+      "id": "b01097a49aefaf2737f0c100",
+      "cooldown": 9,
+      "homingOrbsCooldown": 170,
+      "homingOrbsCount": 3,
+      "homingOrbsRange": 26,
+      "homingOrbsMessage": "§6§lDes orbes de sable vous prennent en chasse !"
+    },
+    {
+      "skillName": "sa_clignement_djinn",
+      "skillType": "blink",
+      "displayName": "Disparition du djinn",
+      "description": "Le djinn se volatilise puis surgit",
+      "id": "766ce15c820e91750aa639e1",
+      "cooldown": 6,
+      "blinkCooldown": 130,
+      "blinkRange": 22,
+      "blinkDistance": 2.0,
+      "blinkStrike": false,
+      "blinkBonusDamage": 0,
+      "blinkSound": "minecraft:entity.enderman.teleport",
+      "blinkMessage": "§6§lLe djinn surgit dans un tourbillon de sable !"
+    }
+  ],
+  "altarRecipes": {
+    "Les Sables Ardents": {
+      "ingredients": [
+        {
+          "item": "minecraft:chiseled_sandstone",
+          "count": 1
+        },
+        {
+          "item": "minecraft:red_sand",
+          "count": 4
+        }
+      ],
+      "zone": {
+        "radius": 10,
+        "floor": [
+          {
+            "block": "minecraft:sand",
+            "weight": 35
+          },
+          {
+            "block": "minecraft:smooth_sandstone",
+            "weight": 25
+          },
+          {
+            "block": "minecraft:red_sand",
+            "weight": 20
+          },
+          {
+            "block": "minecraft:terracotta",
+            "weight": 20
+          }
+        ],
+        "autoLayout": true,
+        "maxChests": 8,
+        "excludedChests": [
+          "coffre_boss",
+          "coffre_mysterieux_accessoire",
+          "coffre_mysterieux_magic",
+          "coffre_drowned",
+          "coffre_nether",
+          "coffre_ender"
+        ],
+        "slots": []
+      },
+      "style": {
+        "color": "orange",
+        "particles": "braises"
+      },
+      "defense": {
+        "enabled": true,
+        "maxHealth": 500,
+        "repairItem": "minecraft:sand",
+        "repairAmount": 10,
+        "bonusThreshold": 75,
+        "bonusItem": "roulettechest:key_custom_reliquaire_du_boss",
+        "bonusCount": 1,
+        "profanerDamageMultiplier": 0.5,
+        "upgradeMaxLevel": 5,
+        "upgradeCurrency": "minecraft:emerald",
+        "hpPerLevel": 100,
+        "hpCostBase": 8,
+        "regenPerLevel": 1.0,
+        "regenCostBase": 10,
+        "armorPerLevel": 10,
+        "armorCostBase": 12
+      },
+      "breaches": {
+        "enabled": false,
+        "everyNWaves": 3,
+        "count": 3,
+        "distance": 0.0,
+        "buffPerOpen": 0.1,
+        "types": [
+          {
+            "name": "",
+            "weight": 1.0,
+            "style": "infernale",
+            "color": -1,
+            "health": 60.0,
+            "spawnIntervalSeconds": 15,
+            "spawnPerPulse": 2,
+            "maxAlive": 6,
+            "mobs": [
+              {
+                "entity": "minecraft:zombified_piglin",
+                "weight": 2.0
+              },
+              {
+                "entity": "minecraft:hoglin",
+                "weight": 1.0
+              },
+              {
+                "entity": "minecraft:blaze",
+                "weight": 1.0
+              }
+            ],
+            "rewards": [
+              {
+                "item": "minecraft:emerald",
+                "minQty": 4,
+                "maxQty": 4,
+                "chance": 100.0
+              }
+            ]
+          }
+        ],
+        "health": 60.0,
+        "spawnIntervalSeconds": 15,
+        "spawnPerPulse": 2,
+        "spawnEntities": [
+          "minecraft:zombified_piglin",
+          "minecraft:zombified_piglin",
+          "minecraft:hoglin",
+          "minecraft:blaze"
+        ],
+        "maxAlivePerBreach": 6,
+        "rewardItem": "minecraft:emerald",
+        "rewardCount": 4,
+        "style": "infernale",
+        "color": -1
+      },
+      "anomalies": {
+        "enabled": false,
+        "fromWave": 1,
+        "intervalSeconds": 20,
+        "count": 2,
+        "zoneRadius": 12.0,
+        "types": [
+          {
+            "name": "",
+            "weight": 1.0,
+            "color": 14237951,
+            "warningTicks": 40,
+            "durationTicks": 60,
+            "radius": 3.0,
+            "effects": [
+              {
+                "effect": "minecraft:levitation",
+                "level": 2,
+                "duration": 10
+              }
+            ],
+            "damagePerSecond": 0.0,
+            "pull": 0.0,
+            "burstDamage": 0.0
+          }
+        ],
+        "warningTicks": 40,
+        "durationTicks": 60,
+        "radius": 3.0,
+        "levitationAmplifier": 1
+      },
+      "variants": [
+        {
+          "horde": "Les Sables Ardents",
+          "label": "Vanilla"
+        }
+      ]
+    }
+  },
+  "unlocks": {
+    "Les Sables Ardents": [
+      {
+        "horde": "La Nécropole",
+        "difficulty": ""
+      }
+    ]
+  },
+  "chestRewards": {
+    "Reliquaire des Abysses": [
+      {
+        "item": "wavesurvivor:voile_desert",
+        "minQty": 1,
+        "maxQty": 1,
+        "chance": 1.5,
+        "tier": "EPIC"
+      }
+    ]
+  }
+}

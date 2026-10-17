@@ -926,6 +926,7 @@ public class HordeManager {
         com.wavesurvivor.horde.bossrush.BossRush.clear();
         com.wavesurvivor.horde.endless.Endless.clear();
         com.wavesurvivor.horde.frost.StormManager.clearAll();
+        com.wavesurvivor.horde.quake.QuakeManager.clearAll();
         this.state = State.IDLE;
         this.activeHorde = null;
         this.currentWave = 0;

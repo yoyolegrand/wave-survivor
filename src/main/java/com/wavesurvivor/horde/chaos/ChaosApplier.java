@@ -59,6 +59,7 @@ public class ChaosApplier {
             case "gisement" -> applyGisement(event, level, center, server, false);
             case "arbre"    -> applyGisement(event, level, center, server, true);
             case "tempete"  -> applyStorm(event, level, center);
+            case "seisme"   -> applyQuake(event, level, center);
             default -> WaveSurvivorMod.LOGGER.warn("[Chaos] Type inconnu : {}", event.type);
         }
     }
@@ -67,6 +68,20 @@ public class ChaosApplier {
      * Tempête (1.6) : zone fixe autour du centre, avec avertissement. Effets listés (joueurs ou monstres), gel, vent,
      * dégâts et abris réglables ; sans effet listé : Lenteur I sur les joueurs exposés.
      */
+    /** 1.7 — Séisme : zone qui tremble (secousses, fissures, éboulis), réglée par les champs quake* de l'événement. */
+    private static void applyQuake(ChaosEvent event, ServerLevel level, BlockPos center) {
+        var p = new com.wavesurvivor.horde.quake.QuakeManager.Params();
+        p.radius = Math.max(4, event.radius);
+        p.warningTicks = Math.max(0, event.quakeWarning) * 20;
+        p.durationTicks = Math.max(3, event.quakeDuration) * 20;
+        p.damage = Math.max(0, event.quakeDamage);
+        p.jolt = Math.max(0, event.quakeJolt);
+        p.cracks = Math.max(0, event.quakeCracks);
+        p.rubble = Math.max(0, event.quakeRubble);
+        p.shake = Math.max(0, event.quakeShake);
+        com.wavesurvivor.horde.quake.QuakeManager.start(level, net.minecraft.world.phys.Vec3.atBottomCenterOf(center), p);
+    }
+
     private static void applyStorm(ChaosEvent event, ServerLevel level, BlockPos center) {
         var p = new com.wavesurvivor.horde.frost.StormManager.Params();
         p.radius = Math.max(4, event.radius);
@@ -76,6 +91,9 @@ public class ChaosApplier {
         p.freeze = event.stormFreeze;
         p.wind = Math.max(0, event.stormWind);
         p.particle = event.stormParticle;
+        p.shelterMode = event.stormShelterMode;
+        p.look = event.stormLook;
+        p.immuneItem = event.stormImmuneItem;
         p.shelterRadius = Math.max(0, event.stormShelterRadius);
         if (event.stormShelter != null && !event.stormShelter.isEmpty()) p.shelter = event.stormShelter;
         if (event.effects != null) {
