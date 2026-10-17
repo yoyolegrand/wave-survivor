@@ -79,6 +79,10 @@ public class InvasionManager {
         final Set<UUID> adopted = new HashSet<>();
     }
 
+    /** Types d'envahisseurs du raid vanilla : dans l'onglet Envahisseurs, ils remplacent les statistiques / compétences de leur type. */
+    private static final Set<String> RAIDER_TYPES = Set.of("minecraft:pillager", "minecraft:vindicator", "minecraft:evoker",
+            "minecraft:witch", "minecraft:ravager");
+
     private static Inv cur = null;
     private static long cooldownUntil = 0;
     private static final Random RNG = new Random();
@@ -277,11 +281,20 @@ public class InvasionManager {
             int base = v.waves - (v.s.bonusWaveOmen > 0 && v.omen >= v.s.bonusWaveOmen ? 1 : 0);
             boolean bonus = n > base;
             total = 0;
-            for (Composition.Group g : Composition.vanilla(n, base, bonus, v.level.getDifficulty(), RNG)) {
-                total += spawnSplit(v, vanillaTemplate(g.entityType()), g.count(), players, maxShare);
+            // Un monstre d'un type du raid (pillard, vindicateur, évocateur, sorcière, ravageur) dans l'onglet Envahisseurs
+            // REMPLACE les statistiques, compétences et équipement de ce type ; son nombre reste celui du raid vanilla.
+            java.util.Map<String, HordeEntity> overrides = new java.util.HashMap<>();
+            if (v.cfg.hordeEntities != null) {
+                for (HordeEntity t : v.cfg.hordeEntities) if (t != null && RAIDER_TYPES.contains(t.entityType)) overrides.put(t.entityType, t);
             }
+            for (Composition.Group g : Composition.vanilla(n, base, bonus, v.level.getDifficulty(), RNG)) {
+                HordeEntity t = overrides.get(g.entityType());
+                total += spawnSplit(v, t != null ? t : vanillaTemplate(g.entityType(), v.s), g.count(), players, maxShare);
+            }
+            // …et les autres monstres, les vagues spéciales et le Chef de la horde s'ajoutent au raid.
+            total += spawnHorde(v, n, players, maxShare, true);
         } else {
-            total = spawnHorde(v, n, players, maxShare);
+            total = spawnHorde(v, n, players, maxShare, false);
         }
         v.waveSize = Math.max(1, total);
         v.lastSpawn = now + 40 + (maxShare[0] > 25 ? 60L * ((maxShare[0] + 24) / 25) : 0);
@@ -294,10 +307,14 @@ public class InvasionManager {
     }
 
     /** Vague de la horde : monstres, vague spéciale (tirage) et boss de cette vague. */
-    private static int spawnHorde(Inv v, int wave, int players, int[] maxShare) {
+    private static int spawnHorde(Inv v, int wave, int players, int[] maxShare, boolean skipRaiders) {
         int total = 0;
         if (v.cfg.hordeEntities != null) {
-            for (HordeEntity t : v.cfg.hordeEntities) total += spawnSplit(v, t, t.getCountForWave(wave, players), players, maxShare);
+            for (HordeEntity t : v.cfg.hordeEntities) {
+                // Composition vanilla : les types du raid sont des remplacements, pas des ajouts
+                if (skipRaiders && RAIDER_TYPES.contains(t.entityType)) continue;
+                total += spawnSplit(v, t, t.getCountForWave(wave, players), players, maxShare);
+            }
         }
         SpecialWave sw = pickSpecial(v.cfg, wave);
         if (sw != null && sw.entities != null) {
@@ -347,7 +364,7 @@ public class InvasionManager {
     }
 
     /** Modèle d'unité pour un envahisseur vanilla (statistiques vanilla ; équipement vanilla laissé tel quel). */
-    private static HordeEntity vanillaTemplate(String type) {
+    private static HordeEntity vanillaTemplate(String type, HordeConfigMultiData.InvasionSettings s) {
         HordeEntity t = new HordeEntity();
         t.entityType = type;
         t.lootTable = new ArrayList<>();
@@ -357,6 +374,9 @@ public class InvasionManager {
             case "minecraft:witch" -> { t.maxHealth = 26; t.attackDamage = 2; t.movementSpeed = 0.25; }
             default -> { t.maxHealth = 24; t.attackDamage = 5; t.movementSpeed = 0.35; } // pillard, vindicateur
         }
+        // Multiplicateurs réglés dans l'éditeur (1 = valeurs vanilla)
+        t.maxHealth *= Math.max(0.1, s.vanillaHealthMult);
+        t.attackDamage *= Math.max(0.1, s.vanillaDamageMult);
         t.followRange = 64;
         return t;
     }

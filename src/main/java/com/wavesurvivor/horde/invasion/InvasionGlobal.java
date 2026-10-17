@@ -19,8 +19,9 @@ public final class InvasionGlobal {
     public boolean enabled = true;
     /** Le Mauvais présage dans un village lance une roulette (raid vanilla ou invasion du mod). Faux = raid vanilla seul. */
     public boolean omenRoulette = true;
-    /** Poids du raid vanilla dans la roulette (les invasions ont le leur, dans l'éditeur). */
-    public int vanillaWeight = 50;
+    /** Poids du raid vanilla PUR dans la roulette (les invasions ont le leur, dans l'éditeur ; 0 = toujours une invasion du mod,
+     *  par exemple « Invasion de Pillards » qui reprend la composition du raid vanilla et se modifie dans l'éditeur). */
+    public int vanillaWeight = 25;
     /** Raid vanilla : récompenses du mod (émeraudes, clés, points de Renaissance), statistiques et succès. */
     public boolean vanillaExtras = true;
     public int vanillaRewardEmeralds = 4;

@@ -1752,7 +1752,18 @@ public class HordeEditorScreen extends Screen {
         y += 22;
         toggle(x, y, half, t("ui.inv.doors_open"), inv, "openDoors", true);
         toggle(x + half + 4, y, half, t("ui.inv.doors_break"), inv, "breakDoors", true);
-        y += 26;
+        y += 22;
+        if (vanilla) {
+            flow(x, y);
+            fl(t("ui.inv.vhp"));
+            fDbl(28, HordeJson.dbl(inv, "vanillaHealthMult", 1.0), v -> inv.addProperty("vanillaHealthMult", Math.max(0.1, Math.min(20, v))));
+            fl(t("ui.inv.vdmg"));
+            fDbl(28, HordeJson.dbl(inv, "vanillaDamageMult", 1.0), v -> inv.addProperty("vanillaDamageMult", Math.max(0.1, Math.min(20, v))));
+            y += 20;
+            label(x, y, t("ui.inv.hint_vanilla"));
+            y += 12;
+        }
+        y += 8;
         label(x, y, t("ui.inv.hint_flow"));
     }
 

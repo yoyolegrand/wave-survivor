@@ -316,6 +316,9 @@ public class HordeConfigMultiData {
         @SerializedName("weight") public int weight = 50;
         /** « vanilla » : composition des vagues du raid vanilla ; « horde » : monstres, vagues spéciales et boss de cette horde. */
         @SerializedName("composition") public String composition = "horde";
+        /** Composition « vanilla » : multiplicateurs de PV et de dégâts des envahisseurs vanilla (1 = valeurs du jeu). */
+        @SerializedName("vanillaHealthMult") public double vanillaHealthMult = 1.0;
+        @SerializedName("vanillaDamageMult") public double vanillaDamageMult = 1.0;
         /** Préparation avant la première vague, et pause entre deux vagues (secondes). */
         @SerializedName("prepSeconds") public int prepSeconds = 30;
         @SerializedName("waveDelaySeconds") public int waveDelaySeconds = 20;
