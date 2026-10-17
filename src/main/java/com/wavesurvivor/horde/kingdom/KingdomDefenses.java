@@ -241,8 +241,8 @@ public final class KingdomDefenses {
             case MAGE -> { for (int y = 1; y <= 3; y++) out.add(p.above(y)); }
             case SHRINE, COLLECTOR -> { for (int y = 1; y <= 2; y++) out.add(p.above(y)); }
             case WORKSHOP -> out.add(p.east()); // atelier : 2 blocs de long (vers l'est), 1 de haut
-            case BARRACKS -> { // bâtiment 6×4 (x de -1 à +4, z de -1 à +2), 5 blocs de haut
-                for (int dx = -1; dx <= 4; dx++) for (int dz = -1; dz <= 2; dz++) for (int dy = 0; dy <= 4; dy++) {
+            case BARRACKS -> { // bâtiment 4×3 (x de -1 à +2, z de -1 à +1), 4 blocs de haut
+                for (int dx = -1; dx <= 2; dx++) for (int dz = -1; dz <= 1; dz++) for (int dy = 0; dy <= 3; dy++) {
                     if (dx != 0 || dz != 0 || dy != 0) out.add(p.offset(dx, dy, dz));
                 }
             }

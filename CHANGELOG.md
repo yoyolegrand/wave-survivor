@@ -22,6 +22,14 @@
 ### 📊 Statistics
 - 📈 New **Statistics** screen (altar button or `/ws stats`): hordes started and completed, waves cleared, monsters and bosses killed, deaths, time in hordes, Boss Rush wins, Daily Challenges, best Endless wave — and your achievements with their progress.
 
+### 🏰 Kingdom
+- 🔥 **Offering Brazier** rebalanced: it levels up as the kingdom feeds it (**4,000** and **12,000** items in total, was 1,000 and 3,000), and each player can offer up to **750 items per Calm**, **+250 per Brazier level** (was a shared 1,500 per Calm).
+- 🏘 **Barracks** are now more compact: **4×3 blocks, 4 high** (was 6×4, 5 high).
+
+### ✨ Quality of life
+- 🎁 **Mystery chests**: right-clicking with a **stack of keys** now uses **all of them at once** — one 3-second roulette, then every reward is given together with a single summary.
+- 🧰 **Built-in roulette chests** (Mystery, Boss, Nether…) can now be **edited in-game** like custom chests, and restored to their original version.
+
 ### 🛠️ Editor & Codex
 - 📝 New **Endless** settings view in the editor.
 - 📖 The **Codex** has new *Endless mode* and *Statistics* pages.

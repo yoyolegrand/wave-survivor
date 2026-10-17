@@ -14,6 +14,8 @@ import static com.wavesurvivor.horde.roulette.RouletteReward.Rarity.*;
 public class RouletteChestRegistry {
 
     private static final Map<String, RouletteChestConfig> CHESTS = new LinkedHashMap<>();
+    /** Version d'origine des coffres intégrés (pour l'édition en jeu et la restauration). */
+    private static final Map<String, RouletteChestConfig> BUILTIN = new LinkedHashMap<>();
 
     // Sons standards partagés par presque toutes les configs
     private static final RouletteSounds STANDARD_SOUNDS = new RouletteSounds(
@@ -242,6 +244,27 @@ public class RouletteChestRegistry {
 
     private static void register(RouletteChestConfig cfg) {
         CHESTS.put(cfg.configKey(), cfg);
+        BUILTIN.put(cfg.configKey(), cfg);
+    }
+
+    /** Coffres intégrés au mod (version d'origine). */
+    public static Collection<RouletteChestConfig> builtins() {
+        return BUILTIN.values();
+    }
+
+    /** Coffre intégré d'origine portant ce nom (ou cette clé de configuration), sinon null. */
+    public static RouletteChestConfig builtinByName(String name) {
+        if (name == null) return null;
+        for (RouletteChestConfig c : BUILTIN.values()) {
+            if (name.equalsIgnoreCase(c.chestName()) || name.equalsIgnoreCase(c.configKey())) return c;
+        }
+        return null;
+    }
+
+    /** Remet la version d'origine d'un coffre intégré (après suppression de sa version modifiée). */
+    public static void restoreBuiltin(String configKey) {
+        RouletteChestConfig b = BUILTIN.get(configKey);
+        if (b != null) CHESTS.put(configKey, b);
     }
 
     /** Enregistre un chest custom (venant de CustomChestStore). Peut écraser un chest custom existant du même configKey. */

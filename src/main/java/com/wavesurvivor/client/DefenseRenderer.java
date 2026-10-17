@@ -64,7 +64,15 @@ public class DefenseRenderer implements BlockEntityRenderer<DefenseBlockEntity> 
             case ARCHER -> archer(pose, buf, lt, level, t, lvl);
             case MAGE -> mage(pose, buf, lt, level, t, lvl);
             case SHRINE -> shrine(pose, buf, lt, level, t, lvl);
-            case BARRACKS -> barracks(pose, buf, lt, level, lvl);
+            case BARRACKS -> {
+                // Bâtiment réduit aux 2/3 depuis son coin (-1 ; -1) : 6×4×5 → 4×~2,7×~3,3 (emprise 4×3 sur 4 de haut)
+                pose.pushPose();
+                pose.translate(-1f, 0f, -1f);
+                pose.scale(2f / 3f, 2f / 3f, 2f / 3f);
+                pose.translate(1f, 0f, 1f);
+                barracks(pose, buf, lt, level, lvl);
+                pose.popPose();
+            }
             case COLLECTOR -> collector(pose, buf, lt, level, t);
             case WORKSHOP -> workshop(pose, buf, lt, level, t);
         }
@@ -73,16 +81,16 @@ public class DefenseRenderer implements BlockEntityRenderer<DefenseBlockEntity> 
             case ARCHER -> 9.6f;
             case MAGE -> 4.3f;
             case SHRINE -> 3.2f;
-            case BARRACKS -> 6.0f;
+            case BARRACKS -> 4.3f;
             case COLLECTOR -> 3.9f;
             case WORKSHOP -> 1.9f;
         };
-        // Centre de la défense : tour d'archers 2×2 (1 ; 1), baraquement 6×4 (2 ; 1), atelier 2×1 (1 ; 0,5), autres (0,5 ; 0,5)
+        // Centre de la défense : tour d'archers 2×2 (1 ; 1), baraquement 4×3 (1 ; 0,33), atelier 2×1 (1 ; 0,5), autres (0,5 ; 0,5)
         float midX = be.kind() == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.ARCHER ? 1.0f
-                : be.kind() == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.BARRACKS ? 2.0f
+                : be.kind() == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.BARRACKS ? 1.0f
                 : be.kind() == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.WORKSHOP ? 1.0f : 0.5f;
-        float midZ = (be.kind() == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.ARCHER
-                || be.kind() == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.BARRACKS) ? 1.0f : 0.5f;
+        float midZ = be.kind() == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.ARCHER ? 1.0f
+                : be.kind() == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.BARRACKS ? 0.33f : 0.5f;
         crest(be, pose, buf, barY, t, midX, midZ);
         hpBar(be, pose, buf, barY, midX, midZ);
     }

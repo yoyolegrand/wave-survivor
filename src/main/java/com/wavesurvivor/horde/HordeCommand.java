@@ -91,11 +91,28 @@ public class HordeCommand {
 
     private static final SuggestionProvider<CommandSourceStack> CUSTOM_CHEST_NAMES =
             (ctx, builder) -> {
-                String remaining = builder.getRemaining().toLowerCase();
+                String remaining = builder.getRemaining().toLowerCase().replace("\"", "");
+                java.util.Set<String> seen = new java.util.HashSet<>();
                 for (var c : CustomChestStore.all()) {
-                    if (c.name != null && c.name.toLowerCase().startsWith(remaining)) {
+                    if (c.name != null && c.name.toLowerCase().startsWith(remaining) && seen.add(c.name)) {
                         String s = c.name.contains(" ") ? "\"" + c.name + "\"" : c.name;
                         builder.suggest(s);
+                    }
+                }
+                return builder.buildFuture();
+            };
+
+    /** « edit » : coffres créés en jeu + coffres intégrés au mod (Mystérieux, Boss, Nether…). */
+    private static final SuggestionProvider<CommandSourceStack> EDITABLE_CHEST_NAMES =
+            (ctx, builder) -> {
+                String remaining = builder.getRemaining().toLowerCase().replace("\"", "");
+                java.util.Set<String> seen = new java.util.HashSet<>();
+                java.util.List<String> names = new java.util.ArrayList<>();
+                for (var c : CustomChestStore.all()) if (c.name != null) names.add(c.name);
+                for (var c : RouletteChestRegistry.builtins()) names.add(c.chestName());
+                for (String n : names) {
+                    if (n.toLowerCase().startsWith(remaining) && seen.add(n)) {
+                        builder.suggest(n.contains(" ") ? "\"" + n + "\"" : n);
                     }
                 }
                 return builder.buildFuture();
@@ -367,7 +384,7 @@ public class HordeCommand {
                                         .executes(HordeCommand::rouletteCreate)))
                         .then(Commands.literal("edit")
                                 .then(Commands.argument("name", StringArgumentType.string())
-                                        .suggests(CUSTOM_CHEST_NAMES)
+                                        .suggests(EDITABLE_CHEST_NAMES)
                                         .executes(HordeCommand::rouletteEdit)))
                         .then(Commands.literal("delete")
                                 .then(Commands.argument("name", StringArgumentType.string())
@@ -1052,6 +1069,7 @@ public class HordeCommand {
         }
         String name = StringArgumentType.getString(ctx, "name");
         var data = CustomChestStore.get(name);
+        if (data == null) data = CustomChestStore.fromBuiltin(name); // coffre intégré (Mystérieux, Boss…) : ouvert avec ses récompenses actuelles
         if (data == null) {
             ctx.getSource().sendFailure(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.coffre_custom_introuvable") + name + com.wavesurvivor.i18n.WSLang.t("srv.utilise_ws_roulettechest_list_pour_voir")));
             return 0;

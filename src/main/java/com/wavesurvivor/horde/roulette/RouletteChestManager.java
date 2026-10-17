@@ -48,7 +48,7 @@ public class RouletteChestManager {
     private static final Map<BlockPos, ActiveState> ACTIVE = new ConcurrentHashMap<>();
 
     /** Tirages en attente sur un coffre déjà en animation (clé déjà consommée, récompense déjà tirée). */
-    private record Queued(ServerPlayer player, RouletteChestConfig config, RouletteReward reward) {}
+    private record Queued(ServerPlayer player, RouletteChestConfig config, List<RouletteReward> rewards) {}
     private static final Map<BlockPos, java.util.ArrayDeque<Queued>> QUEUE = new ConcurrentHashMap<>();
 
     /** Pattern d'émission par configKey (uniquement pour les custom chests). Absent → comportement idle par défaut. */
@@ -280,9 +280,10 @@ public class RouletteChestManager {
             return true;
         }
 
-        // Consomme la clé si config.consumeKey
+        // Consomme les clés : TOUTE la pile tenue en main (une seule animation pour toutes), ou 1 si les clés ne sont pas consommées
+        int keys = config.consumeKey() ? Math.max(1, itemInHand.getCount()) : 1;
         if (config.consumeKey()) {
-            itemInHand.shrink(1);
+            itemInHand.shrink(keys);
             if (!busy) player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().consumed())), true);
         }
 
@@ -290,20 +291,24 @@ public class RouletteChestManager {
         int currentWave = HordeManager.get().getCurrentWave();
         List<RouletteReward> adjusted = getAdjustedRewards(config, currentWave);
 
-        // Sélectionne un reward random pondéré
-        RouletteReward reward = selectRandomReward(adjusted);
-        if (reward == null) {
+        // Un tirage pondéré par clé
+        List<RouletteReward> rolled = new java.util.ArrayList<>();
+        for (int i = 0; i < keys; i++) {
+            RouletteReward r = selectRandomReward(adjusted);
+            if (r != null) rolled.add(r);
+        }
+        if (rolled.isEmpty()) {
             player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.erreur_aucune_recompense_disponible")), true);
             return true;
         }
 
         if (busy) {
             java.util.ArrayDeque<Queued> q = QUEUE.computeIfAbsent(pos.immutable(), k -> new java.util.ArrayDeque<>());
-            q.add(new Queued(player, config, reward));
+            q.add(new Queued(player, config, rolled));
             player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("roulette.queued", q.size())), true);
             return true;
         }
-        startAnimation(player, level, pos, config, reward, false);
+        startAnimation(player, level, pos, config, rolled, false);
         return true;
     }
 
@@ -360,7 +365,7 @@ public class RouletteChestManager {
             Queued n = q.poll();
             if (n.player() == null || n.player().isRemoved() || n.player().hasDisconnected()) continue;
             if (q.isEmpty()) QUEUE.remove(pos);
-            startAnimation(n.player(), level, pos, n.config(), n.reward(), true);
+            startAnimation(n.player(), level, pos, n.config(), n.rewards(), true);
             if (q != null && !q.isEmpty()) n.player().displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("roulette.queued", q.size())), true);
             return true;
         }
@@ -369,7 +374,7 @@ public class RouletteChestManager {
     }
 
     private static void startAnimation(ServerPlayer player, ServerLevel level, BlockPos pos,
-                                        RouletteChestConfig config, RouletteReward reward, boolean fast) {
+                                        RouletteChestConfig config, List<RouletteReward> rewards, boolean fast) {
         MinecraftServer server = level.getServer();
 
         // Son activation
@@ -377,8 +382,7 @@ public class RouletteChestManager {
 
         if (!config.showAnimation()) {
             // Pas d'animation : donne direct
-            giveReward(server, player, reward, config);
-            jackpot(server, player, config);
+            giveAll(server, player, rewards, config);
             return;
         }
 
@@ -409,12 +413,60 @@ public class RouletteChestManager {
             }, "roulette anim step " + i);
         }
 
-        // Fin de l'animation : donne le reward
+        // Fin de l'animation : donne toutes les récompenses (une par clé)
         DelayedActionScheduler.schedule(server, 10 + steps * 5, () -> {
             if (!player.isAlive()) return;
-            giveReward(server, player, reward, config);
-            jackpot(server, player, config);
+            giveAll(server, player, rewards, config);
         }, "roulette give reward");
+    }
+
+    /**
+     * Donne toutes les récompenses d'un coup (une par clé) : une seule récompense → message habituel ;
+     * plusieurs → récapitulatif regroupé (« 64 ouvertures : 12× Diamant, … »). Bonus par clé conservés.
+     */
+    private static void giveAll(MinecraftServer server, ServerPlayer player, List<RouletteReward> rewards, RouletteChestConfig config) {
+        if (rewards.size() == 1) {
+            giveReward(server, player, rewards.get(0), config);
+            jackpot(server, player, config);
+            return;
+        }
+        java.util.LinkedHashMap<String, Integer> sum = new java.util.LinkedHashMap<>();
+        java.util.Map<String, RouletteReward> byKey = new java.util.HashMap<>();
+        for (RouletteReward r : rewards) {
+            int qty = r.minQty() + (r.maxQty() > r.minQty() ? RNG.nextInt(r.maxQty() - r.minQty() + 1) : 0);
+            String k = r.item() + "|" + r.displayName();
+            sum.merge(k, Math.max(1, qty), Integer::sum);
+            byKey.putIfAbsent(k, r);
+        }
+        StringBuilder recap = new StringBuilder();
+        String bestSound = null;
+        for (var e : sum.entrySet()) {
+            RouletteReward r = byKey.get(e.getKey());
+            ItemStack resolved = com.wavesurvivor.horde.loot.LootItems.resolve(r.item(), 1);
+            if (resolved.isEmpty()) continue;
+            int left = e.getValue();
+            while (left > 0) {
+                ItemStack stack = resolved.copy();
+                int n = Math.min(left, stack.getMaxStackSize());
+                stack.setCount(n);
+                left -= n;
+                if (!player.getInventory().add(stack)) player.drop(stack, false);
+            }
+            if (recap.length() > 0) recap.append("§7, ");
+            recap.append("§f").append(e.getValue()).append("× ").append(r.displayName());
+            String rar = String.valueOf(r.rarity()).toLowerCase();
+            if (rar.contains("epic") || rar.contains("legend") || rar.contains("épique") || rar.contains("légend")) {
+                player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().reward())
+                        .replace("{reward}", e.getValue() + "x " + r.displayName())));
+                bestSound = config.sounds().forRarity(r.rarity());
+            } else if (bestSound == null) {
+                bestSound = config.sounds().forRarity(r.rarity());
+            }
+        }
+        player.sendSystemMessage(com.wavesurvivor.i18n.WSLang.c("roulette.batch", rewards.size(), recap.toString()));
+        if (bestSound != null) playSound((ServerLevel) player.level(), player.blockPosition(), bestSound, 1.0f, 1.0f);
+        WaveSurvivorMod.LOGGER.info("[Roulette] '{}' a ouvert {} coffres d'un coup", player.getName().getString(), rewards.size());
+        for (int i = 0; i < rewards.size(); i++) jackpot(server, player, config); // bonus par clé (set Fortune, Héritage)
     }
 
     /** Set Fortune (4 pièces) — Jackpot : 15 % de chance d'un 2e tirage gratuit. */

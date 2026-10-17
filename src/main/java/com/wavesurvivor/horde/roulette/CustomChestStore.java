@@ -50,6 +50,8 @@ public class CustomChestStore {
     /** Charge le fichier + enregistre chaque chest dans RouletteChestRegistry. */
     public static void load() {
         CHESTS.clear();
+        // Coffres intégrés : on repart de leur version d'origine (les versions modifiées sont réappliquées ci-dessous)
+        for (RouletteChestConfig b : RouletteChestRegistry.builtins()) RouletteChestRegistry.restoreBuiltin(b.configKey());
         Path file = filePath();
         if (!Files.exists(file)) {
             WaveSurvivorMod.LOGGER.info("[CustomChestStore] Aucun fichier custom_roulette_chests.json — 0 chests custom.");
@@ -121,6 +123,17 @@ public class CustomChestStore {
         if (name == null || name.isBlank()) return false;
         CustomChestData removed = CHESTS.remove(name);
         if (removed == null) return false;
+        RouletteChestConfig base = RouletteChestRegistry.builtinByName(name);
+        if (base != null) {
+            // Coffre intégré modifié : on remet sa version d'origine
+            RouletteChestRegistry.restoreBuiltin(base.configKey());
+            RouletteChestManager.removePattern(base.configKey());
+            RouletteChestManager.setColor(base.configKey(), "auto");
+            RouletteChestManager.setKeyMaterial(base.configKey(), "or");
+            save();
+            WaveSurvivorMod.LOGGER.info("[CustomChestStore] Coffre intégré '{}' restauré à sa version d'origine.", name);
+            return true;
+        }
         String slug = slugify(name);
         String configKey = "custom_" + slug;
         RouletteChestRegistry.removeCustom(configKey);
@@ -134,6 +147,31 @@ public class CustomChestStore {
 
     public static CustomChestData get(String name) {
         return CHESTS.get(name);
+    }
+
+    /**
+     * Coffre INTÉGRÉ (Mystérieux, Boss, Nether…) converti au format de l'éditeur en jeu, avec ses récompenses actuelles.
+     * À l'enregistrement, il garde son identité (voir toRouletteConfig). null si ce nom n'est pas un coffre intégré.
+     */
+    public static CustomChestData fromBuiltin(String name) {
+        RouletteChestConfig base = RouletteChestRegistry.builtinByName(name);
+        if (base == null) return null;
+        RouletteChestConfig current = RouletteChestRegistry.get(base.configKey());
+        if (current == null) current = base;
+        CustomChestData d = new CustomChestData();
+        d.name = base.chestName();
+        d.particles = "none"; // « none » = garder les particules d'origine
+        d.tierMessages = CustomChestData.defaultTierMessages();
+        for (RouletteReward r : current.rewards()) {
+            CustomChestData.Reward cr = new CustomChestData.Reward();
+            cr.item = r.item();
+            cr.minQty = r.minQty();
+            cr.maxQty = r.maxQty();
+            cr.chance = r.chance();
+            cr.tier = r.rarity().name();
+            d.rewards.add(cr);
+        }
+        return d;
     }
 
     public static int count() {
@@ -181,6 +219,21 @@ public class CustomChestStore {
 
         // Particules : mappe le preset court vers un ID particle vanilla
         String[] particles = resolveParticles(d.particles);
+
+        // Coffre INTÉGRÉ modifié en jeu : il garde son identité (clé de configuration, nom de clé, coffres liés, sons,
+        // messages, durée d'animation, chances par vague) ; seules les récompenses (et les particules si choisies) changent.
+        RouletteChestConfig base = RouletteChestRegistry.builtinByName(d.name);
+        if (base != null) {
+            boolean keepParticles = d.particles == null || d.particles.isBlank() || "none".equalsIgnoreCase(d.particles);
+            return new RouletteChestConfig(
+                    base.configKey(), base.chestType(), base.chestName(), base.keyName(),
+                    base.consumeKey(), base.allowedChests(), base.showAnimation(), base.animationDurationSeconds(),
+                    keepParticles ? base.particleIdle() : particles[0],
+                    keepParticles ? base.particleActive() : particles[1],
+                    base.sounds(), base.dynamicChances(),
+                    rewards.isEmpty() ? base.rewards() : rewards,
+                    base.messages());
+        }
 
         // Sons standards (partagés avec les 8 chests base44)
         RouletteSounds sounds = new RouletteSounds(

@@ -37,8 +37,10 @@ import java.util.Random;
 public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvider {
 
     public static final int SLOTS = 27;
-    public static final int TIER2 = 1000, TIER3 = 3000;
-    public static final int CALM_CAP = 1500;
+    /** Paliers du niveau (COMMUN à tous les joueurs) : total d'objets sacrifiés au Brasier. */
+    public static final int TIER2 = 4000, TIER3 = 12000;
+    /** Limite PAR JOUEUR et par Calme : 750 au niveau 1, +250 par niveau. */
+    public static final int CALM_CAP_BASE = 750, CALM_CAP_PER_LEVEL = 250;
     public static final String[] VARIANTS = {"", "abundance", "relics", "war"};
     private static final Random RNG = new Random();
 
@@ -49,28 +51,38 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
             OfferingBrazierBlockEntity.this.setChanged();
         }
     };
-    private int total, gauge, calmUsed, calmCycle = -1;
+    private int total, gauge, calmCycle = -1;
+    /** Points sacrifiés pendant le Calme en cours, par joueur. */
+    private final java.util.Map<java.util.UUID, Integer> calmUsed = new java.util.HashMap<>();
     private String variant = "";
 
-    /** Valeurs synchronisées avec le menu : total, jauge, taille de jauge, points du Calme, plafond, spécialisation. */
-    private final ContainerData data = new ContainerData() {
-        @Override
-        public int get(int i) {
-            return switch (i) {
-                case 0 -> total;
-                case 1 -> gauge;
-                case 2 -> perRoll();
-                case 3 -> calmCycle == KingdomManager.cycle() ? calmUsed : 0;
-                case 4 -> CALM_CAP;
-                case 5 -> variantIndex();
-                default -> 0;
-            };
-        }
-        @Override
-        public void set(int i, int v) {}
-        @Override
-        public int getCount() { return 6; }
-    };
+    public int calmCap() { return CALM_CAP_BASE + CALM_CAP_PER_LEVEL * (level() - 1); }
+
+    private int usedBy(java.util.UUID id) {
+        return calmCycle == KingdomManager.cycle() ? calmUsed.getOrDefault(id, 0) : 0;
+    }
+
+    /** Valeurs synchronisées avec le menu de CE joueur : total, jauge, taille de jauge, ses points du Calme, sa limite, spécialisation. */
+    private ContainerData dataFor(java.util.UUID player) {
+        return new ContainerData() {
+            @Override
+            public int get(int i) {
+                return switch (i) {
+                    case 0 -> Math.min(total, 32000); // valeurs du menu limitées à 32 767
+                    case 1 -> gauge;
+                    case 2 -> perRoll();
+                    case 3 -> usedBy(player);
+                    case 4 -> calmCap();
+                    case 5 -> variantIndex();
+                    default -> 0;
+                };
+            }
+            @Override
+            public void set(int i, int v) {}
+            @Override
+            public int getCount() { return 6; }
+        };
+    }
 
     public OfferingBrazierBlockEntity(BlockPos pos, BlockState state) {
         super(com.wavesurvivor.registry.ModBlockEntities.OFFERING_BRAZIER.get(), pos, state);
@@ -110,10 +122,11 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
             p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.brazier.calm_only"), true);
             return;
         }
-        if (calmCycle != KingdomManager.cycle()) { calmCycle = KingdomManager.cycle(); calmUsed = 0; }
-        int room = CALM_CAP - calmUsed;
+        if (calmCycle != KingdomManager.cycle()) { calmCycle = KingdomManager.cycle(); calmUsed.clear(); }
+        int cap = calmCap();
+        int room = cap - calmUsed.getOrDefault(p.getUUID(), 0);
         if (room <= 0) {
-            p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.brazier.cap", CALM_CAP), true);
+            p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.brazier.cap", cap), true);
             return;
         }
         int points = 0, refused = 0;
@@ -133,7 +146,7 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
         storage.setChanged();
         int before = level();
         total += points;
-        calmUsed += points;
+        calmUsed.merge(p.getUUID(), points, Integer::sum);
         gauge += points;
         int per = perRoll();
         int rolls = gauge / per;
@@ -245,7 +258,7 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
 
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
-        return new OfferingBrazierMenu(id, inv, storage, data, worldPosition);
+        return new OfferingBrazierMenu(id, inv, storage, dataFor(player.getUUID()), worldPosition);
     }
 
     // ─── Sauvegarde ───
@@ -255,8 +268,10 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
         super.saveAdditional(tag);
         tag.putInt("total", total);
         tag.putInt("gauge", gauge);
-        tag.putInt("calmUsed", calmUsed);
         tag.putInt("calmCycle", calmCycle);
+        CompoundTag used = new CompoundTag();
+        calmUsed.forEach((id, v) -> used.putInt(id.toString(), v));
+        tag.put("calmUsedBy", used);
         tag.putString("variant", variant);
         net.minecraft.world.ContainerHelper.saveAllItems(tag, itemsList());
     }
@@ -266,8 +281,12 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
         super.load(tag);
         total = tag.getInt("total");
         gauge = tag.getInt("gauge");
-        calmUsed = tag.getInt("calmUsed");
         calmCycle = tag.contains("calmCycle") ? tag.getInt("calmCycle") : -1;
+        calmUsed.clear();
+        CompoundTag used = tag.getCompound("calmUsedBy");
+        for (String k : used.getAllKeys()) {
+            try { calmUsed.put(java.util.UUID.fromString(k), used.getInt(k)); } catch (IllegalArgumentException ignored) {}
+        }
         variant = tag.getString("variant");
         net.minecraft.core.NonNullList<ItemStack> l = net.minecraft.core.NonNullList.withSize(SLOTS, ItemStack.EMPTY);
         net.minecraft.world.ContainerHelper.loadAllItems(tag, l);
