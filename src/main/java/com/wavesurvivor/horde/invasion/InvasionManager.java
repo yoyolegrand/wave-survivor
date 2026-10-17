@@ -24,7 +24,9 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -211,6 +213,7 @@ public class InvasionManager {
 
         adoptInvaders(v);
         v.villagersAlive = countVillagers(v.level, v.center, v.s.villagerRadius);
+        if (v.phase == Phase.FIGHT && now % 20 == 0) huntVillagers(v);
 
         // Personne près du village depuis une minute : l'invasion est abandonnée
         boolean anyone = false;
@@ -430,6 +433,38 @@ public class InvasionManager {
             }
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.warn("[Invasion] Buts d'envahisseur impossibles : {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Chasse aux villageois : un envahisseur sans cible valable (ou arrivé à la cloche) vise le villageois le plus proche,
+     * même caché derrière un mur ou une porte (le but de ciblage vanilla exige de VOIR sa cible). Il s'y rend en ouvrant
+     * ou en brisant les portes ; sa cible est relancée s'il s'arrête en chemin.
+     */
+    private static void huntVillagers(Inv v) {
+        int r = v.s.villagerRadius + 24;
+        List<Villager> vills = v.level.getEntitiesOfClass(Villager.class, new AABB(v.center).inflate(r, 48, r), Villager::isAlive);
+        if (vills.isEmpty()) return;
+        for (UUID id : v.invaders) {
+            Entity e = v.level.getEntity(id);
+            if (!(e instanceof Mob mob) || !mob.isAlive()) continue;
+            LivingEntity t = mob.getTarget();
+            boolean valid = t != null && t.isAlive() && !(t instanceof Player p && (p.isCreative() || p.isSpectator()));
+            if (valid) {
+                // Cible = villageois : on relance la marche si l'envahisseur s'est arrêté
+                if (t instanceof Villager && mob.getNavigation().isDone()) mob.getNavigation().moveTo(t, 1.0);
+                continue;
+            }
+            Villager best = null;
+            double bestD = Double.MAX_VALUE;
+            for (Villager vil : vills) {
+                double d = mob.distanceToSqr(vil);
+                if (d < bestD) { bestD = d; best = vil; }
+            }
+            if (best != null) {
+                mob.setTarget(best);
+                mob.getNavigation().moveTo(best, 1.0);
+            }
         }
     }
 
