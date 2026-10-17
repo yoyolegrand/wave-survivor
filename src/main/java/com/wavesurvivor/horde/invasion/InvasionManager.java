@@ -91,6 +91,9 @@ public class InvasionManager {
 
     public static boolean inCooldown(MinecraftServer srv) { return srv != null && srv.getTickCount() < cooldownUntil; }
 
+    /** Ticks restants avant la fin du délai entre deux invasions (0 = aucun). */
+    public static long cooldownRemaining(MinecraftServer srv) { return srv == null ? 0 : Math.max(0, cooldownUntil - srv.getTickCount()); }
+
     /** Hordes de mode « invasion » activées (celles de la roulette du Mauvais présage). */
     public static List<HordeConfigMultiData> pool() {
         List<HordeConfigMultiData> out = new ArrayList<>();

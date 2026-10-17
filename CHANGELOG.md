@@ -8,7 +8,7 @@
 
 ### 🏘️ Village invasions
 - 🔔 **Invasions of real villages**: the bell rings, villagers hide, a short preparation, then **waves** with pauses between them. The number of waves follows the world difficulty and the **Bad Omen** level, like the vanilla raid — and the default invasion reuses the vanilla wave composition — which you can customize in the editor (HP and damage multipliers, stats and skills per invader type, extra monsters, special waves and a chief).
-- 🎲 **Bad Omen roulette**: walk into a village with the effect and the game picks — the classic vanilla raid (now with extra rewards and pillagers that open and break doors) or one of the mod's invasions (Pillagers, Sand Raid, Snow Pack…).
+- 🎲 **Bad Omen roulette**: walk into a village with the effect and the game picks one of the mod's invasions (Pillagers, Sand Raid, Snow Pack…). The classic vanilla raid is **off by default** (it can be given a weight in `invasions.json`, and then gets extra rewards and pillagers that open and break doors).
 - 🏘 The top bar shows the **villagers left** and the **wave**. Lose too many villagers (half by default, configurable) or all of them and the village falls.
 - 🚪 Invaders **open and break doors** and hunt the villagers. Nothing else is destroyed.
 - 🏅 Victory: **Hero of the Village** (level from the omen), **raiders' loot**, Renaissance points, statistics and 3 new achievements.

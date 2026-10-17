@@ -90,7 +90,14 @@ public class InvasionEvents {
         pool.removeIf(h -> h.configData.invasion().weight <= 0);
         int vanillaW = Math.max(0, g.vanillaWeight), total = vanillaW;
         for (HordeConfigMultiData h : pool) total += h.configData.invasion().weight;
-        if (pool.isEmpty() || total <= 0 || InvasionManager.active() || HordeManager.get().isRunning() || InvasionManager.inCooldown(srv)) return;
+        if (pool.isEmpty() || total <= 0) return; // aucune invasion disponible : le jeu fait son raid vanilla
+        // Poids du raid vanilla à 0 : il ne doit JAMAIS se lancer. Si l'on ne peut pas lancer d'invasion tout de suite
+        // (une autre est en cours, une horde tourne, délai), le présage est mis de côté puis rendu un peu plus tard.
+        boolean strict = vanillaW == 0;
+        if (InvasionManager.active() || HordeManager.get().isRunning() || InvasionManager.inCooldown(srv)) {
+            if (strict) deferOmen(p, omen, InvasionManager.inCooldown(srv) ? (int) InvasionManager.cooldownRemaining(srv) + 20 : 600);
+            return;
+        }
 
         int r = RNG.nextInt(total);
         if (r < vanillaW) {
@@ -104,9 +111,35 @@ public class InvasionEvents {
             if (r < 0) { chosen = h; break; }
         }
         String err = InvasionManager.start(level, p.blockPosition(), chosen, omen.getAmplifier() + 1);
-        if (err != null) return; // village vide, etc. : raid vanilla
+        if (err != null) { // village vide, etc.
+            if (strict) { // pas de raid vanilla de secours : le présage se dissipe
+                p.removeEffect(MobEffects.BAD_OMEN);
+                p.sendSystemMessage(Component.literal(WSLang.t(err)));
+            }
+            return;
+        }
+        WAITING.remove(p.getUUID());
         p.removeEffect(MobEffects.BAD_OMEN); // le jeu ne créera pas son propre raid
         p.sendSystemMessage(Component.literal(WSLang.t("invasion.omen_pick", WSLang.t(chosen.hordeName))));
+    }
+
+    /** Joueurs dont le présage est mis de côté (un seul message par attente). */
+    private static final Set<UUID> WAITING = ConcurrentHashMap.newKeySet();
+
+    /** Retire le Mauvais présage (sans raid) et le rend après {@code waitTicks}, avec le temps restant et le même niveau. */
+    private static void deferOmen(ServerPlayer p, MobEffectInstance omen, int waitTicks) {
+        int amp = omen.getAmplifier(), remaining = omen.getDuration();
+        p.removeEffect(MobEffects.BAD_OMEN);
+        if (WAITING.add(p.getUUID())) p.sendSystemMessage(Component.literal(WSLang.t("invasion.omen_wait")));
+        MinecraftServer srv = p.getServer();
+        if (srv == null) return;
+        UUID id = p.getUUID();
+        com.wavesurvivor.horde.skill.DelayedActionScheduler.schedule(srv, Math.max(40, waitTicks), () -> {
+            ServerPlayer q = srv.getPlayerList().getPlayer(id);
+            if (q != null && q.isAlive() && !q.hasEffect(MobEffects.BAD_OMEN)) {
+                q.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, Math.max(2400, remaining - waitTicks), amp, false, false, true));
+            }
+        }, "invasion omen restore");
     }
 
     // ─── Raid vanilla : récompenses du mod, portes ───
