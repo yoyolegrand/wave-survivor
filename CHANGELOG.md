@@ -50,6 +50,14 @@
 ### ✨ Quality of life
 - 🎁 **Mystery chests**: right-clicking with a **stack of keys** now uses **all of them at once** — one 3-second roulette, then every reward is given together with a single summary.
 - 🧰 **Built-in roulette chests** (Mystery, Boss, Nether…) can now be **edited in-game** like custom chests, and restored to their original version.
+- 🙏 **Blessing choice**: in **solo** the game now **pauses** while you choose; in **multiplayer** you are **ignored by monsters and invulnerable** until you pick (30 s at most).
+
+### ⚖️ Balance
+- 🙏 **Blessings scale with the difficulty**: ×1 on Easy and Normal, **×1.25 on Hard**, **×1.5 on Nightmare** — in every mode (hordes, Kingdom, Boss Rush, Daily Challenge, Endless). The choice screen and the catalogue show the real values.
+
+### 🐛 Fixes
+- 🧟 **Horde monsters no longer transform**: a horde zombie that falls in water stays a zombie instead of turning into a Drowned (which left the wave stuck forever), and the same goes for husks, skeletons, piglins and hoglins. Killing every unit now always ends the wave.
+- 🧪 **Witches no longer heal themselves** (healing potion and regeneration), which made them far too tough on high difficulties.
 
 ### 🛠️ Editor & Codex
 - 📝 New **Endless** settings view in the editor.

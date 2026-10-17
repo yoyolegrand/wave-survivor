@@ -2584,6 +2584,8 @@
   "invasion.omen_pick": "§6🔔 The bad omen draws in: §f{0}§6!",
   "invasion.omen_vanilla": "§6🔔 The bad omen draws in a classic pillager raid!",
   "invasion.omen_wait": "§6🔔 The village is still on edge: your bad omen will return shortly.",
+  "benediction.protect": "§7Monsters ignore you while you choose (30 s at most).",
+  "benediction.diff_mult": "difficulty: bonus ×{0}",
   "invasion.err.disabled": "§cInvasions are disabled (config/wavesurvivor/invasions.json).",
   "invasion.err.busy": "§cAn invasion is already under way.",
   "invasion.err.horde": "§cA horde is running.",

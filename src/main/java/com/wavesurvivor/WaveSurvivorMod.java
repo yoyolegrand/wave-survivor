@@ -109,6 +109,8 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.bossrush.BossRush()); // 1.6 : Boss Rush (vies, barre d'action)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.endless.Endless()); // 1.7 : mode sans fin (vies, barre d'action)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.stats.StatsEvents()); // 1.7 : statistiques (morts, temps de jeu)
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.spawn.HordeUnitGuard()); // 1.7 : pas de transformation des unités, sorcières sans soin
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BenedictionProtection()); // 1.7 : protection pendant le choix (multi)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.invasion.InvasionEvents()); // 1.7 : invasions de village, Mauvais présage
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.quake.QuakeManager()); // 1.7 : séismes (chaos)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.frost.StormManager()); // 1.6 : tempêtes (chaos et boss)

@@ -2091,6 +2091,8 @@
   "invasion.omen_pick": "§6🔔 Le mauvais présage attire : §f{0}§6 !",
   "invasion.omen_vanilla": "§6🔔 Le mauvais présage attire un raid de pillards classique !",
   "invasion.omen_wait": "§6🔔 Le village est encore agité : ton mauvais présage reviendra dans un instant.",
+  "benediction.protect": "§7Les monstres t'ignorent le temps de ton choix (30 s maximum).",
+  "benediction.diff_mult": "difficulté : bonus ×{0}",
   "invasion.err.disabled": "§cLes invasions sont désactivées (config/wavesurvivor/invasions.json).",
   "invasion.err.busy": "§cUne invasion est déjà en cours.",
   "invasion.err.horde": "§cUne horde est en cours.",

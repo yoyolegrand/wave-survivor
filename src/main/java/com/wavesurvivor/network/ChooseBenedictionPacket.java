@@ -61,6 +61,7 @@ public class ChooseBenedictionPacket {
 
             RogueUpgradeManager.addUpgrade(player, pkt.id);
             RogueUpgradeManager.setLastChosenWave(player, currentWave);
+            com.wavesurvivor.horde.benediction.BenedictionProtection.release(player); // 1.7 : fin de la protection (multijoueur)
             player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.vous_avez_choisi") + upg.name())
                     .withStyle(upg.color(), ChatFormatting.BOLD));
         });

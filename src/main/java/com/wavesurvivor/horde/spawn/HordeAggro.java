@@ -65,7 +65,8 @@ public class HordeAggro {
             boolean valid = t != null && t.isAlive() && !(t instanceof Player p && (p.isCreative() || p.isSpectator()));
             Player target = valid && t instanceof Player pl ? pl : null;
             if (!valid) {
-                Player near = mob.level().getNearestPlayer(mob, SEARCH);
+                Player near = mob.level().getNearestPlayer(mob.getX(), mob.getY(), mob.getZ(), SEARCH,
+                        e -> !(e instanceof net.minecraft.server.level.ServerPlayer sp && com.wavesurvivor.horde.benediction.BenedictionProtection.isProtected(sp)));
                 if (near != null && !near.isCreative() && !near.isSpectator()) {
                     mob.setTarget(near);
                     target = near;

@@ -869,7 +869,7 @@ public class HordeCommand {
         }
         com.wavesurvivor.network.NetworkHandler.CHANNEL.send(
                 net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> player),
-                new com.wavesurvivor.network.OpenBenedictionListScreenPacket());
+                new com.wavesurvivor.network.OpenBenedictionListScreenPacket((float) com.wavesurvivor.horde.benediction.RogueUpgradeManager.difficultyMult()));
         return 1;
     }
 

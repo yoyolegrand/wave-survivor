@@ -18,10 +18,13 @@ public class OpenBenedictionScreenPacket {
 
     private final List<String> ids;
     private final int currentWave;
+    /** Multiplicateur de difficulté des bonus (1.7), pour afficher les valeurs réelles. */
+    private final float mult;
 
-    public OpenBenedictionScreenPacket(List<String> ids, int currentWave) {
+    public OpenBenedictionScreenPacket(List<String> ids, int currentWave, float mult) {
         this.ids = ids;
         this.currentWave = currentWave;
+        this.mult = mult;
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -30,6 +33,7 @@ public class OpenBenedictionScreenPacket {
             buf.writeUtf(id, 128);
         }
         buf.writeInt(currentWave);
+        buf.writeFloat(mult);
     }
 
     public static OpenBenedictionScreenPacket decode(FriendlyByteBuf buf) {
@@ -37,13 +41,14 @@ public class OpenBenedictionScreenPacket {
         List<String> ids = new ArrayList<>(n);
         for (int i = 0; i < n; i++) ids.add(buf.readUtf(128));
         int wave = buf.readInt();
-        return new OpenBenedictionScreenPacket(ids, wave);
+        float mult = buf.readFloat();
+        return new OpenBenedictionScreenPacket(ids, wave, mult);
     }
 
     public static void handle(OpenBenedictionScreenPacket pkt, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                    () -> () -> ClientPacketHandler.openBenedictionScreen(pkt.ids, pkt.currentWave));
+                    () -> () -> ClientPacketHandler.openBenedictionScreen(pkt.ids, pkt.currentWave, pkt.mult));
         });
         ctx.get().setPacketHandled(true);
     }

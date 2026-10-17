@@ -164,7 +164,7 @@ public class BenedictionListScreen extends Screen {
             cy += font.lineHeight + 1;
         }
         if (upg.healOnApply() > 0) {
-            g.drawString(font, Component.literal("  +" + upg.healOnApply() + com.wavesurvivor.i18n.WSLang.t("ui.pv_immediats")).withStyle(ChatFormatting.RED),
+            g.drawString(font, Component.literal("  +" + Math.round(upg.healOnApply() * BenedictionClient.mult) + com.wavesurvivor.i18n.WSLang.t("ui.pv_immediats")).withStyle(ChatFormatting.RED),
                     x, cy, 0xFFFF5555, false);
             cy += font.lineHeight + 1;
         }
@@ -180,7 +180,7 @@ public class BenedictionListScreen extends Screen {
 
     private static String formatModifier(RogueUpgrade.AttributeMod mod) {
         String attrName = friendlyAttrName(mod.attribute().getDescriptionId());
-        double amount = mod.amount();
+        double amount = mod.amount() * BenedictionClient.mult; // valeur réelle (difficulté)
         String sign = amount >= 0 ? "+" : "";
         if (mod.operation() == AttributeModifier.Operation.ADDITION) {
             String num;

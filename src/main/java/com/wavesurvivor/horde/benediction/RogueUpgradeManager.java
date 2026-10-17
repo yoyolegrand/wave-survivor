@@ -101,7 +101,7 @@ public class RogueUpgradeManager {
         reapplyAll(p);
 
         if (upg.healOnApply() > 0) {
-            p.heal(upg.healOnApply());
+            p.heal((float) (upg.healOnApply() * difficultyMult()));
         }
 
         WaveSurvivorMod.LOGGER.info("[Benediction] '{}' -> upgrade '{}' lvl {}",
@@ -129,7 +129,7 @@ public class RogueUpgradeManager {
                 if (instance.getModifier(modUuid) != null) {
                     instance.removeModifier(modUuid);
                 }
-                double totalAmount = mod.amount() * lvl;
+                double totalAmount = mod.amount() * lvl * difficultyMult();
                 String name = "rogue_" + id + "_" + safeAttrName(mod);
                 AttributeModifier newMod = new AttributeModifier(modUuid, name, totalAmount, mod.operation());
                 instance.addTransientModifier(newMod);
@@ -191,7 +191,9 @@ public class RogueUpgradeManager {
         int currentWave = com.wavesurvivor.horde.HordeManager.get().getCurrentWave();
         NetworkHandler.CHANNEL.send(
                 PacketDistributor.PLAYER.with(() -> p),
-                new OpenBenedictionScreenPacket(choices, currentWave));
+                new OpenBenedictionScreenPacket(choices, currentWave, (float) difficultyMult()));
+        // Multijoueur : le jeu ne se met pas en pause, le joueur est donc protégé pendant son choix (solo : pause côté client)
+        if (BenedictionProtection.needed(p.getServer())) BenedictionProtection.protect(p);
 
         // Petit son pour attirer l'attention
         p.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0f, 1.0f);
@@ -213,6 +215,20 @@ public class RogueUpgradeManager {
     // ================================================================
     // Helpers
     // ================================================================
+
+    /**
+     * Multiplicateur des bonus de bénédiction selon la difficulté de la partie (les monstres montent avec elle) :
+     * Facile et Normal ×1, Difficile ×1,25, Cauchemar ×1,5. Vaut pour tous les modes (hordes, Kingdom, Boss Rush, Défi du jour, sans fin).
+     */
+    public static double difficultyMult() {
+        var d = com.wavesurvivor.horde.difficulty.HordeDifficulty.active();
+        if (d == null) return 1.0;
+        return switch (d.id) {
+            case "hard" -> 1.25;
+            case "nightmare" -> 1.5;
+            default -> 1.0;
+        };
+    }
 
     private static UUID makeModifierUuid(String upgradeId, RogueUpgrade.AttributeMod mod) {
         String key = "rogue_up_" + upgradeId + "_" + safeAttrName(mod);

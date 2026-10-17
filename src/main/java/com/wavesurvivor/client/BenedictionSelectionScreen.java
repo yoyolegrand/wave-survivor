@@ -86,7 +86,8 @@ public class BenedictionSelectionScreen extends Screen {
         int titleY = 40;
         graphics.drawCenteredString(font, Component.literal(title), width / 2, titleY, 0xFFFFFFFF);
 
-        String subtitle = com.wavesurvivor.i18n.WSLang.t("ui.choisissez_un_don_pour_la_vague") + currentWave;
+        String subtitle = com.wavesurvivor.i18n.WSLang.t("ui.choisissez_un_don_pour_la_vague") + currentWave
+                + (BenedictionClient.mult != 1.0 ? "  §6(" + com.wavesurvivor.i18n.WSLang.t("benediction.diff_mult", String.format(java.util.Locale.ROOT, "%.2f", BenedictionClient.mult)) + ")" : "");
         graphics.drawCenteredString(font, Component.literal(subtitle).withStyle(ChatFormatting.GRAY),
                 width / 2, titleY + 14, 0xFFAAAAAA);
 
@@ -164,7 +165,7 @@ public class BenedictionSelectionScreen extends Screen {
         }
         // Heal on apply (si applicable)
         if (upg.healOnApply() > 0) {
-            String healLine = "+" + upg.healOnApply() + com.wavesurvivor.i18n.WSLang.t("ui.pv_immediats");
+            String healLine = "+" + Math.round(upg.healOnApply() * BenedictionClient.mult) + com.wavesurvivor.i18n.WSLang.t("ui.pv_immediats");
             g.drawCenteredString(font, Component.literal(healLine).withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
                     x + CARD_WIDTH / 2, descY, 0xFFFF5555);
         }
@@ -173,7 +174,7 @@ public class BenedictionSelectionScreen extends Screen {
     /** Formate un modifier en chaîne lisible pour l'affichage : "+2 Armure" ou "+15% Vitesse". */
     private static String formatModifier(RogueUpgrade.AttributeMod mod) {
         String attrName = friendlyAttrName(mod.attribute().getDescriptionId());
-        double amount = mod.amount();
+        double amount = mod.amount() * BenedictionClient.mult; // valeur réelle (difficulté)
         String sign = amount >= 0 ? "+" : "";
         if (mod.operation() == AttributeModifier.Operation.ADDITION) {
             // ADDITION : montant brut
@@ -203,9 +204,13 @@ public class BenedictionSelectionScreen extends Screen {
         return descId != null ? descId : "?";
     }
 
-    /** Empêche le jeu de se mettre en pause (les vagues continuent pendant le choix). */
+    /**
+     * Solo (serveur intégré, un seul joueur, pas ouvert au réseau local) : le jeu se met en pause pendant le choix.
+     * Multijoueur : pas de pause (le joueur est alors protégé côté serveur pendant son choix).
+     */
     @Override
     public boolean isPauseScreen() {
-        return false;
+        var s = net.minecraft.client.Minecraft.getInstance().getSingleplayerServer();
+        return s != null && !s.isPublished() && s.getPlayerCount() <= 1;
     }
 }

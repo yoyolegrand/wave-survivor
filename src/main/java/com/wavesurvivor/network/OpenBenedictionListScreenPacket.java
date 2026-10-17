@@ -14,20 +14,23 @@ import java.util.function.Supplier;
  */
 public class OpenBenedictionListScreenPacket {
 
-    public OpenBenedictionListScreenPacket() {}
+    /** Multiplicateur de difficulté des bonus (1.7), pour afficher les valeurs réelles. */
+    private final float mult;
+
+    public OpenBenedictionListScreenPacket(float mult) { this.mult = mult; }
 
     public void encode(FriendlyByteBuf buf) {
-        // pas de payload
+        buf.writeFloat(mult);
     }
 
     public static OpenBenedictionListScreenPacket decode(FriendlyByteBuf buf) {
-        return new OpenBenedictionListScreenPacket();
+        return new OpenBenedictionListScreenPacket(buf.readFloat());
     }
 
     public static void handle(OpenBenedictionListScreenPacket pkt, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                    () -> () -> ClientPacketHandler.openBenedictionListScreen());
+                    () -> () -> ClientPacketHandler.openBenedictionListScreen(pkt.mult));
         });
         ctx.get().setPacketHandled(true);
     }
