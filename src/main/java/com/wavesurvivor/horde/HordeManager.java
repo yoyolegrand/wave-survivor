@@ -538,7 +538,7 @@ public class HordeManager {
                 }
                 // Brèches encore ouvertes : se referment en renforçant la horde ; renforts retirés
                 com.wavesurvivor.horde.breach.BreachManager.onWaveEnd(srv);
-                if (cleared) com.wavesurvivor.horde.renaissance.RenaissanceRewards.onWaveCleared(); // PR : vague terminée
+                if (cleared && com.wavesurvivor.horde.endless.Endless.countsForPr(currentWave)) com.wavesurvivor.horde.renaissance.RenaissanceRewards.onWaveCleared(); // PR : vague terminée (sans fin : +1 PR toutes les 2 vagues au-delà des vagues normales)
                 if (cleared) com.wavesurvivor.horde.stats.PlayerStats.addForAll(srv, "waves_cleared", 1); // 1.7 : statistiques
                 // Horde classique : gisements / arbres garantis pendant la pause entre deux vagues
                 if (cleared && !com.wavesurvivor.horde.kingdom.KingdomManager.isActive() && !com.wavesurvivor.horde.bossrush.BossRush.active()) spawnGuaranteedResources(srv);

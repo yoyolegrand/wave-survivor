@@ -11,6 +11,7 @@
 - 👑 A **boss from the horde returns every few waves**, stronger each time.
 - ❤ **Shared lives** for the team. At zero lives (or when the Monolith falls), the run ends.
 - 🏆 Your score is the number of **waves cleared**. Top scores are ranked per horde — check them with `/ws endless`.
+- 💎 **Renaissance Points**: normal waves pay as usual, plus the victory bonus once the last normal wave is cleared — then **+1 PR every 2 waves**.
 - 🔒 Unlocked by completing the horde once. Classic hordes only; no save & resume.
 - ⚙ Fully configurable per horde in the editor (**Boss tab › Endless**): lives, growth per wave, monster cap, boss return, unlock, leaderboard size.
 

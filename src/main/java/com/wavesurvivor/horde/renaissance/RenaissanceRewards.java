@@ -83,7 +83,8 @@ public class RenaissanceRewards {
             if (p.isSpectator() && !victory) continue;
             boolean rush = com.wavesurvivor.horde.bossrush.BossRush.active(); // Boss Rush : PR par boss + bonus de victoire réglés dans l'éditeur
             int base = rush ? bosses * com.wavesurvivor.horde.bossrush.BossRush.prPerBoss() : waves * perWave + bosses;
-            int bonusWin = victory ? (rush ? com.wavesurvivor.horde.bossrush.BossRush.prVictory() : 5) : 0;
+            int bonusWin = victory ? (rush ? com.wavesurvivor.horde.bossrush.BossRush.prVictory() : 5)
+                    : (com.wavesurvivor.horde.endless.Endless.reachedBase() ? 5 : 0); // sans fin : vagues normales terminées = comme une horde réussie
             int first = 0;
             if (victory) {
                 boolean done = false;

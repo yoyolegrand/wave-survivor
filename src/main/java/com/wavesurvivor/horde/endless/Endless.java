@@ -114,6 +114,20 @@ public class Endless {
         return active ? Math.min(wave, Math.max(1, baseTotal)) : wave;
     }
 
+    /**
+     * PR de Renaissance : une vague terminée compte-t-elle ? Les vagues normales comptent toutes ; au-delà, une vague
+     * sur deux (soit +1 PR toutes les 2 vagues, avec 1 PR par vague comptée).
+     */
+    public static boolean countsForPr(int wave) {
+        if (!active || wave <= baseTotal) return true;
+        return (wave - baseTotal) % 2 == 0;
+    }
+
+    /** La dernière vague normale a-t-elle été terminée ? (donne alors le bonus de victoire, comme une horde réussie) */
+    public static boolean reachedBase() {
+        return active && HordeManager.get().wavesCleared() >= baseTotal;
+    }
+
     /** Total affiché sur la barre de la horde : 0 (= « ∞ ») une fois la dernière vague normale atteinte en mode sans fin. */
     public static int hudTotal(int total, int wave) {
         return active && wave >= total ? 0 : total;

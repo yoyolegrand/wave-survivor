@@ -12,21 +12,19 @@
 - ♻ **Renaissance** — Heritage tree, ranks I–V, Renaissance Points earned by playing
 - 📖 **In-game Codex** — a guide to every mechanic (`/ws codex`)
 - 🗺 **The Pillager Siege** — a Kingdom horde
+- ❄ **Frozen Peaks horde** — frost creatures, special waves, three bosses with their own mechanics (1.6)
+- 🌨 **Storm chaos event** — a blizzard where a lit campfire gives shelter, reusable in any horde (1.6)
+- 👑 **Boss Rush mode** — the bosses of a horde or a Kingdom back to back, shared lives, leaderboard (1.6)
+- 📅 **Daily Challenge** — a daily difficulty and 3 mutators for the whole server, bonus Renaissance Points (1.6)
 
-## 🔜 Next: 1.6 *(tested, ready to release)*
-- ❄ **Frozen Peaks horde** — a new themed campaign: frost creatures, special waves, three bosses with their own mechanics
-- 🌨 **Storm chaos event** — a blizzard where a lit campfire gives shelter, reusable in any horde
-- 👑 **Boss Rush mode** — fight the bosses of a horde or a Kingdom back to back, with shared lives and a leaderboard
-- 📅 **Daily Challenge** — a daily difficulty and 3 mutators, the same for the whole server, with bonus Renaissance Points
-
-## 🔜 Next: 1.7 *(a lighter update, in progress)*
+## 🔜 Next: 1.7 *(in progress)*
 - ♾ **Endless mode** — infinite waves with growing difficulty and a best-score leaderboard
 - 🏅 **Advancements** — "First horde survived", "Krag defeated", "All relics found"…
 - 📊 **Player statistics screen** — hordes won, monsters killed, bosses defeated, best rank
+- 🏜 **Desert horde** — a new themed campaign with its own monsters and bosses, built around a **Sandstorm** (like the Frozen Peaks storm, but with an item or mechanic to counter it) and **earthquakes**
+- 🏘 **Village invasions** — Pillager-style raids on villages, outside of altars *(design to be explored)*
 
 ## 🔭 Later
-- 🏜 **Desert horde** — a new themed campaign with its own monsters and bosses, built around a **Sandstorm** (like the Frozen Peaks storm, but with an item or mechanic to counter it) and **earthquakes**
-- 🏘 **World hordes** — random invasions of villages, outside of altars
 - 🏛 **Ready-made arenas** — structures generated around the altar (ruins, temple, fortress)
 - 🧩 **Creator API** (KubeJS / datapacks) — add skills, hordes and relics without touching the code
 - 🆙 **Port to newer versions** — Minecraft 1.21 / NeoForge
