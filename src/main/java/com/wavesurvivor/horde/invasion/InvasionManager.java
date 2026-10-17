@@ -250,23 +250,12 @@ public class InvasionManager {
                         v.phaseEnd = now + Math.max(5, v.s.waveDelaySeconds) * 20L;
                         for (ServerPlayer p : v.level.players()) if (near(p, v)) p.sendSystemMessage(Component.literal(WSLang.t("invasion.wave_done", v.wave, v.waves)));
                     }
-                } else if (v.cfg.chaosEnabled && v.cfg.chaosEvents != null && !v.cfg.chaosEvents.isEmpty() && now >= v.nextChaos) {
-                    var ev = v.cfg.chaosEvents.get(RNG.nextInt(v.cfg.chaosEvents.size()));
-                    try { com.wavesurvivor.horde.chaos.ChaosApplier.apply(ev, v.level, v.center, srv); } catch (Exception e) {
-                        WaveSurvivorMod.LOGGER.warn("[Invasion] Événement de chaos impossible : {}", e.getMessage());
-                    }
-                    v.nextChaos = now + chaosDelay(v);
                 }
             }
             case BREAK -> { if (now >= v.phaseEnd) startWave(v, v.wave + 1, now); }
             case END -> { if (now >= v.phaseEnd) { cleanup(srv, v.won); return; } }
         }
         updateBar(v, now);
-    }
-
-    private static long chaosDelay(Inv v) {
-        int min = Math.max(5, v.cfg.chaosMinInterval), max = Math.max(min, v.cfg.chaosMaxInterval);
-        return (min + RNG.nextInt(max - min + 1)) * 20L;
     }
 
     // ─── Vagues ───
@@ -276,7 +265,6 @@ public class InvasionManager {
         v.phase = Phase.FIGHT;
         v.waveStart = now;
         v.leaderGiven = false;
-        v.nextChaos = now + chaosDelay(v);
         int players = 0;
         for (ServerPlayer p : v.level.players()) if (near(p, v)) players++;
         players = Math.max(1, players);

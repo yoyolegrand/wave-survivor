@@ -319,7 +319,7 @@ public class HordeEditorScreen extends Screen {
             case T_SPECIAL -> buildSpecials();
             case T_BOSS -> buildBosses();
             case T_MERCH -> { if (invasion()) buildInvasionSettings(); else buildMerchants(); }
-            case T_CHAOS -> buildChaos();
+            case T_CHAOS -> { if (invasion()) label(left + 10, top + 52, t("ui.inv.no_events")); else buildChaos(); }
             case T_ALTAR -> { if (invasion()) label(left + 10, top + 52, t("ui.inv.no_altar")); else buildAltar(); }
             case T_PREVIEW -> buildTestTools();
             default -> {}
@@ -352,6 +352,26 @@ public class HordeEditorScreen extends Screen {
     }
 
     private void label(int x, int y, String text) { labels.add(new Object[]{x, y, text}); }
+
+    /** Texte long sur plusieurs lignes (retour automatique à la largeur donnée ; la couleur de tête est reprise). Renvoie la hauteur utilisée. */
+    private int labelWrap(int x, int y, String text, int width) {
+        String prefix = text.length() >= 2 && text.charAt(0) == '\u00a7' ? text.substring(0, 2) : "";
+        String body = prefix.isEmpty() ? text : text.substring(2);
+        StringBuilder line = new StringBuilder();
+        int lines = 0;
+        for (String w : body.split(" ")) {
+            String trial = line.length() == 0 ? w : line + " " + w;
+            if (line.length() > 0 && font.width(trial) > width) {
+                label(x, y + lines * 10, prefix + line);
+                lines++;
+                line = new StringBuilder(w);
+            } else {
+                line = new StringBuilder(trial);
+            }
+        }
+        if (line.length() > 0) { label(x, y + lines * 10, prefix + line); lines++; }
+        return lines * 10;
+    }
 
     private EditBox text(int x, int y, int w, String value, Consumer<String> onChange) {
         EditBox e = new EditBox(font, x, y, w, 14, Component.empty());
@@ -895,7 +915,8 @@ public class HordeEditorScreen extends Screen {
             changed();
             init();
         });
-        label(x + 158, y + 3, invasionMode ? t("ui.inv.hint") : kingdom ? t("ui.kgd.see_sub") : t("ui.kingdom.hint"));
+        if (invasionMode) labelWrap(x + 158, y + 3, t("ui.inv.hint"), W - 190);
+        else label(x + 158, y + 3, kingdom ? t("ui.kgd.see_sub") : t("ui.kingdom.hint"));
     }
 
     /** Sous-onglet « ♛ Royaume » : tous les réglages du mode Kingdom, en 5 blocs titrés qui tiennent dans le panneau. */
@@ -1717,7 +1738,7 @@ public class HordeEditorScreen extends Screen {
             y += 16;
             text(x, y, 300, HordeJson.str(inv, "lootCsv", ""), v -> inv.addProperty("lootCsv", v.trim()));
             y += 28;
-            label(x, y, t("ui.inv.hint_rewards"));
+            labelWrap(x, y, t("ui.inv.hint_rewards"), W - 24);
             return;
         }
         toggle(x, y, half, t("ui.inv.enabled"), inv, "enabled", true);
@@ -1760,11 +1781,10 @@ public class HordeEditorScreen extends Screen {
             fl(t("ui.inv.vdmg"));
             fDbl(28, HordeJson.dbl(inv, "vanillaDamageMult", 1.0), v -> inv.addProperty("vanillaDamageMult", Math.max(0.1, Math.min(20, v))));
             y += 20;
-            label(x, y, t("ui.inv.hint_vanilla"));
-            y += 12;
+            y += labelWrap(x, y, t("ui.inv.hint_vanilla"), W - 24) + 4;
         }
-        y += 8;
-        label(x, y, t("ui.inv.hint_flow"));
+        y += 6;
+        labelWrap(x, y, t("ui.inv.hint_flow"), W - 24);
     }
 
     // ─── Onglet Boss › ♾ Sans fin (1.7 : vies, montée en puissance, retour des boss, déblocage, classement) ───
@@ -3714,7 +3734,7 @@ public class HordeEditorScreen extends Screen {
             case T_BOSS -> List.of(bossList);
             case T_MERCH -> invasion() ? List.of() : kingdom() && calmSub == 2 ? List.of()
                     : kingdom() && calmSub == 1 ? (selBreach < 0 ? List.of(breachList) : List.of()) : List.of(merchantList);
-            case T_CHAOS -> List.of(chaosList);
+            case T_CHAOS -> invasion() ? List.of() : List.of(chaosList);
             default -> List.of();
         };
     }
