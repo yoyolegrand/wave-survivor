@@ -138,6 +138,15 @@ public class HordeManager {
     private BlockPos fallbackCenter = null;
 
     public boolean start(HordeConfigMultiData horde, MinecraftServer srv) {
+        // 1.7 — une invasion de village n'est pas une horde d'autel (Mauvais présage / commande), et une seule chose à la fois
+        if (horde != null && horde.configData != null && horde.configData.isInvasion()) {
+            WaveSurvivorMod.LOGGER.warn("[HordeManager] '{}' est une invasion de village : elle se lance par le Mauvais présage ou /ws invasion.", horde.hordeName);
+            return false;
+        }
+        if (com.wavesurvivor.horde.invasion.InvasionManager.active()) {
+            WaveSurvivorMod.LOGGER.warn("[HordeManager] Une invasion de village est en cours.");
+            return false;
+        }
         if (state == State.RUNNING || state == State.WAITING_NEXT_WAVE || state == State.PAUSED) {
             WaveSurvivorMod.LOGGER.warn("[HordeManager] Horde déjà en cours.");
             return false;

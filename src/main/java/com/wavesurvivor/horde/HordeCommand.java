@@ -127,6 +127,8 @@ public class HordeCommand {
                 .then(Commands.literal("daily").executes(ctx -> com.wavesurvivor.horde.daily.DailyServer.show(ctx.getSource())))
                 // Boss Rush : meilleurs temps (ouvert à tous)
                 .then(Commands.literal("bossrush").executes(ctx -> com.wavesurvivor.horde.bossrush.BossRush.showTop(ctx.getSource())))
+                // Invasions de village (opérateurs)
+                .then(com.wavesurvivor.horde.invasion.InvasionCommand.build())
                 // Mode sans fin : meilleurs scores (ouvert à tous)
                 .then(Commands.literal("endless").executes(ctx -> com.wavesurvivor.horde.endless.Endless.showTop(ctx.getSource())))
                 // Statistiques et succès du joueur (ouvert à tous)
@@ -417,6 +419,7 @@ public class HordeCommand {
     private static int reload(CommandContext<CommandSourceStack> ctx) {
         try {
             String summary = WaveSurvivorMod.reloadConfig();
+            com.wavesurvivor.horde.invasion.InvasionGlobal.reload(); // 1.7 : réglages généraux des invasions
             // Broadcast la nouvelle config à tous les clients pour que /ws info affiche à jour.
             PlayerLoginHandler.broadcastToAll(ctx.getSource().getServer());
             ctx.getSource().sendSuccess(() -> Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.config_rechargee") + summary).withStyle(ChatFormatting.GREEN), true);

@@ -2,9 +2,17 @@
 
 ## 1.7.0 — Endless Mode, Achievements & Statistics
 
-> ♾ **The horde never stops.** Play any horde without limit in the new **Endless mode**, unlock **21 achievements**, and track your career in the new **Statistics** screen.
+> ♾ **The horde never stops.** Play any horde without limit in the new **Endless mode**, unlock **24 achievements**, and track your career in the new **Statistics** screen.
 
 ---
+
+### 🏘️ Village invasions
+- 🔔 **Invasions of real villages**: the bell rings, villagers hide, a short preparation, then **waves** with pauses between them. The number of waves follows the world difficulty and the **Bad Omen** level, like the vanilla raid — and the default invasion reuses the vanilla wave composition.
+- 🎲 **Bad Omen roulette**: walk into a village with the effect and the game picks — the classic vanilla raid (now with extra rewards and pillagers that open and break doors) or one of the mod's invasions (Pillagers, Sand Raid, Snow Pack…).
+- 🏘 The top bar shows the **villagers left** and the **wave**. Lose too many villagers (half by default, configurable) or all of them and the village falls.
+- 🚪 Invaders **open and break doors** and hunt the villagers. Nothing else is destroyed.
+- 🏅 Victory: **Hero of the Village** (level from the omen), **raiders' loot**, Renaissance points, statistics and 3 new achievements.
+- ⚙ Build your own in the editor: the mode button now has a **third state, Invasion**, which reshapes the tabs. Operators can use `/ws invasion start [name]` in the village they stand in.
 
 ### 🏜️ Burning Sands — new horde
 - 🏜 A new **desert horde**: mummies, scarabs, scorpions, jackals, desert riders, pharaoh guards, sandstone golems and djinns, with special waves and **three bosses** — **Anubis**, **Sekhmet** and **Ra-Atum**, each with 7 to 9 skills.
@@ -29,7 +37,7 @@
 - ⚙ Fully configurable per horde in the editor (**Boss tab › Endless**): lives, growth per wave, monster cap, boss return, unlock, leaderboard size.
 
 ### 🏅 Achievements
-- ✨ **21 achievements** (real Minecraft advancements — press **L**, tab *Wave Survivor*): first pact and victories, waves cleared, monsters and bosses slain, Boss Rush, Daily Challenge streaks, Endless waves and more.
+- ✨ **24 achievements** (real Minecraft advancements — press **L**, tab *Wave Survivor*): first pact and victories, waves cleared, monsters and bosses slain, Boss Rush, Daily Challenge streaks, Endless waves and more.
 - ⏳ They unlock on their own when you reach the thresholds. Counters start with 1.7: nothing is retroactive.
 
 ### 📊 Statistics

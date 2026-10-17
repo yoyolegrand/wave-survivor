@@ -12,7 +12,7 @@ public final class HordeTemplates {
 
     private HordeTemplates() {}
 
-    public static final String[] IDS = {"short", "long", "kingdom", "empty"};
+    public static final String[] IDS = {"short", "long", "kingdom", "invasion", "empty"};
 
     /** Construit la horde du modèle {@code id} avec le nom donné. */
     public static JsonObject build(String id, String name) {
@@ -20,6 +20,7 @@ public final class HordeTemplates {
             case "short" -> classicShort(name);
             case "long" -> classicLong(name);
             case "kingdom" -> kingdom(name);
+            case "invasion" -> invasion(name);
             default -> HordeJson.newHorde(name);
         };
     }
@@ -105,6 +106,18 @@ public final class HordeTemplates {
         JsonObject cd = HordeJson.obj(h, "configData");
         cd.addProperty("totalWaves", waves);
         cd.addProperty("delayBetweenWaves", delay);
+        return h;
+    }
+
+    // ─── Invasion de village (1.7) : composition du raid vanilla, réglages par défaut ───
+
+    private static JsonObject invasion(String name) {
+        JsonObject h = base(name, "tpl.invasion.hdesc", 5, 20);
+        JsonObject cd = HordeJson.obj(h, "configData");
+        cd.addProperty("mode", "invasion");
+        JsonObject inv = new JsonObject();
+        inv.addProperty("composition", "vanilla");
+        cd.add("invasion", inv);
         return h;
     }
 

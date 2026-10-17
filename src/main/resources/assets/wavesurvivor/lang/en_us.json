@@ -123,5 +123,11 @@
   "advancement.wavesurvivor.endless_60.desc": "Reach wave 60 in Endless mode.",
   "advancement.wavesurvivor.marathon.title": "Marathoner",
   "advancement.wavesurvivor.marathon.desc": "Spend 10 hours in hordes.",
-  "item.wavesurvivor.voile_desert": "Desert Veil"
+  "item.wavesurvivor.voile_desert": "Desert Veil",
+  "advancement.wavesurvivor.invasion_1.title": "Village Defender",
+  "advancement.wavesurvivor.invasion_1.desc": "Repel a village invasion.",
+  "advancement.wavesurvivor.invasion_10.title": "Rampart of the Villages",
+  "advancement.wavesurvivor.invasion_10.desc": "Repel 10 village invasions.",
+  "advancement.wavesurvivor.invasion_flawless.title": "Not a Scratch",
+  "advancement.wavesurvivor.invasion_flawless.desc": "Repel an invasion without losing a single villager."
 }

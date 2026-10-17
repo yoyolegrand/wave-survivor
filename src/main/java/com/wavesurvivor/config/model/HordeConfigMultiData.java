@@ -75,6 +75,15 @@ public class HordeConfigMultiData {
 
         public boolean isKingdom() { return "kingdom".equalsIgnoreCase(mode); }
 
+        /** 1.7 — Invasion de village : cette « horde » est une invasion (Mauvais présage / commande), pas une horde d'autel. */
+        public boolean isInvasion() { return "invasion".equalsIgnoreCase(mode); }
+
+        /** Réglages de l'invasion (jamais null). */
+        public InvasionSettings invasion() { return invasion != null ? invasion : new InvasionSettings(); }
+
+        @SerializedName("invasion")
+        public InvasionSettings invasion = new InvasionSettings();
+
         public KingdomSettings kingdom() { return kingdom != null ? kingdom : new KingdomSettings(); }
 
         @SerializedName("playerScaling")
@@ -294,6 +303,41 @@ public class HordeConfigMultiData {
         @SerializedName("maxMinutes") public int maxMinutes = 0;
         /** Boss retenus : numéros de vague séparés par des virgules (vide = tous les boss de la horde). */
         @SerializedName("waves") public String waves = "";
+    }
+
+    /**
+     * Invasion de village (1.7) : réglages d'une horde de mode « invasion ». Déclenchée par le Mauvais présage (roulette)
+     * ou la commande /ws invasion, dans un vrai village : le nombre de vagues dépend de la difficulté du monde et du
+     * niveau de présage, comme le raid vanilla.
+     */
+    public static class InvasionSettings {
+        @SerializedName("enabled") public boolean enabled = true;
+        /** Poids dans la roulette du Mauvais présage (0 = jamais tirée au sort : lançable seulement par commande). */
+        @SerializedName("weight") public int weight = 50;
+        /** « vanilla » : composition des vagues du raid vanilla ; « horde » : monstres, vagues spéciales et boss de cette horde. */
+        @SerializedName("composition") public String composition = "horde";
+        /** Préparation avant la première vague, et pause entre deux vagues (secondes). */
+        @SerializedName("prepSeconds") public int prepSeconds = 30;
+        @SerializedName("waveDelaySeconds") public int waveDelaySeconds = 20;
+        /** Une vague de plus à partir de ce niveau de Mauvais présage (vanilla : 2 ; 0 = jamais). */
+        @SerializedName("bonusWaveOmen") public int bonusWaveOmen = 2;
+        /** Rayon (blocs) autour de la cloche où l'on compte les villageois ; distance d'apparition des envahisseurs. */
+        @SerializedName("villagerRadius") public int villagerRadius = 72;
+        @SerializedName("spawnDistance") public int spawnDistance = 56;
+        /** Défaite : % de villageois perdus à partir duquel l'invasion est perdue (100 = tous). */
+        @SerializedName("lossPercent") public int lossPercent = 50;
+        /** Les envahisseurs ouvrent les portes / les brisent (le village est un peu abîmé, jamais le terrain). */
+        @SerializedName("openDoors") public boolean openDoors = true;
+        @SerializedName("breakDoors") public boolean breakDoors = true;
+        /** Une vague non terminée au bout de ce temps (secondes) laisse place à la suivante (0 = jamais). */
+        @SerializedName("waveTimeoutSeconds") public int waveTimeoutSeconds = 360;
+        /** Récompenses de victoire : « Héros du village » (durée en secondes, niveau = présage − 1), émeraudes ×présage,
+         *  clés de coffre mystère, points de Renaissance, et butin supplémentaire (« objet*min-max@chance, … »). */
+        @SerializedName("heroSeconds") public int heroSeconds = 2400;
+        @SerializedName("rewardEmeralds") public int rewardEmeralds = 6;
+        @SerializedName("rewardKeys") public int rewardKeys = 1;
+        @SerializedName("rewardPr") public int rewardPr = 3;
+        @SerializedName("lootCsv") public String lootCsv = "";
     }
 
     /** Mode sans fin (1.7) : après la dernière vague, la horde continue, de plus en plus forte, jusqu'à la défaite. */

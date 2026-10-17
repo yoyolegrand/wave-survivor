@@ -26,7 +26,7 @@ public class StatsScreen extends Screen {
 
     /** Compteurs affichés, dans l'ordre (texte : clé stats.&lt;clé&gt;). */
     private static final String[] KEYS = {"hordes_started", "hordes_won", "distinct_hordes", "waves_cleared", "monsters_killed",
-            "bosses_killed", "deaths", "playtime_ticks", "bossrush_wins", "daily_wins", "daily_best_streak", "endless_best_wave"};
+            "bosses_killed", "deaths", "playtime_ticks", "bossrush_wins", "daily_wins", "daily_best_streak", "endless_best_wave", "invasions_won"};
 
     private static final int ROW_H = 26;
 

@@ -42,7 +42,10 @@ public final class Achievements {
             new Def("endless_25", "endless_best_wave", 25L, "minecraft:compass", "task"),
             new Def("endless_40", "endless_best_wave", 40L, "minecraft:ender_chest", "goal"),
             new Def("endless_60", "endless_best_wave", 60L, "minecraft:dragon_egg", "challenge"),
-            new Def("marathon", "playtime_ticks", 720000L, "minecraft:lantern", "goal"));
+            new Def("marathon", "playtime_ticks", 720000L, "minecraft:lantern", "goal"),
+            new Def("invasion_1", "invasions_won", 1L, "minecraft:bell", "task"),
+            new Def("invasion_10", "invasions_won", 10L, "minecraft:shield", "goal"),
+            new Def("invasion_flawless", "invasions_flawless", 1L, "minecraft:emerald", "goal"));
 
     /** Succès déjà donnés pendant cette session (évite de réinterroger les advancements à chaque compteur). */
     private static final Set<String> GIVEN = ConcurrentHashMap.newKeySet();

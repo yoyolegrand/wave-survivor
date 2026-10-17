@@ -115,6 +115,7 @@ public class HordeSafety {
         if (event.getLevel().isClientSide() || !event.loadedFromDisk()) return;  // seulement les entités rechargées
         HordeManager hm = HordeManager.get();
         if (hm != null && hm.isRunning()) return;                                // une horde tourne : rien à nettoyer
+        if (com.wavesurvivor.horde.invasion.InvasionManager.active()) return;    // 1.7 : une invasion de village tourne
         Entity e = event.getEntity();
         if (isLeftover(e)) {
             event.setCanceled(true);

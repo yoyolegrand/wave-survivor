@@ -1,0 +1,750 @@
+{
+  "_comment": "Wave Survivor 1.7.0 : invasions de village prêtes à jouer (Mauvais présage / /ws invasion). Fusionné une seule fois.",
+  "hordes": [
+    {
+      "hordeName": "Invasion de Pillards",
+      "hordeDescription": "Des pillards, des vindicateurs, des sorcières et des ravageurs attaquent le village, comme dans un raid, mais avec la barre des villageois, les portes brisées et un butin.",
+      "configData": {
+        "totalWaves": 5,
+        "delayBetweenWaves": 20,
+        "spawnType": "fixed",
+        "spawnRadius": 30,
+        "gameOverRadius": 2000,
+        "playerScaling": {
+          "enabled": true,
+          "countMultiplier": 0.5,
+          "statsMultiplier": 0.1
+        },
+        "multiSpawns": [],
+        "dynamicSpawns": [],
+        "spawnConditions": {
+          "useTickInterval": false,
+          "tickInterval": 60000,
+          "useKillCount": false,
+          "requiredKills": [
+            {
+              "entity": "minecraft:zombie",
+              "count": 10
+            }
+          ],
+          "killCountdownDelay": 10
+        },
+        "spawnMessages": {
+          "normalWave": "§6§l[INVASION] §eVague {wave}/{total}",
+          "specialWave": "§6§l[INVASION] §eVague {wave}/{total} §6- {name} !",
+          "useSound": false
+        },
+        "useWavePauses": false,
+        "wavePauses": [],
+        "useMerchants": false,
+        "merchantDebug": false,
+        "merchants": [],
+        "hordeEntities": [],
+        "useSpecialWaves": false,
+        "specialWaveChance": 40,
+        "specialWaves": [],
+        "useBossWaves": false,
+        "bossWaves": [],
+        "chaosEnabled": false,
+        "chaosMinInterval": 20,
+        "chaosMaxInterval": 40,
+        "chaosEvents": [],
+        "stars": 0,
+        "unlockRequires": [],
+        "forceEndBonus": {},
+        "mode": "invasion",
+        "invasion": {
+          "enabled": true,
+          "weight": 40,
+          "composition": "vanilla",
+          "prepSeconds": 30,
+          "waveDelaySeconds": 20,
+          "bonusWaveOmen": 2,
+          "villagerRadius": 72,
+          "spawnDistance": 56,
+          "lossPercent": 50,
+          "openDoors": true,
+          "breakDoors": true,
+          "waveTimeoutSeconds": 360,
+          "heroSeconds": 2400,
+          "rewardEmeralds": 6,
+          "rewardKeys": 1,
+          "rewardPr": 3,
+          "lootCsv": ""
+        }
+      },
+      "rewards": {
+        "enabled": false,
+        "top1": [],
+        "top2": [],
+        "top3": [],
+        "bossKiller": []
+      },
+      "id": "077b36096676aca83c32f0b8"
+    },
+    {
+      "hordeName": "Razzia des Sables",
+      "hordeDescription": "Une razzia venue des dunes : momies, chacals, scorpions et cavaliers pillent le village.",
+      "configData": {
+        "totalWaves": 4,
+        "delayBetweenWaves": 20,
+        "spawnType": "fixed",
+        "spawnRadius": 30,
+        "gameOverRadius": 2000,
+        "playerScaling": {
+          "enabled": true,
+          "countMultiplier": 0.5,
+          "statsMultiplier": 0.1
+        },
+        "multiSpawns": [],
+        "dynamicSpawns": [],
+        "spawnConditions": {
+          "useTickInterval": false,
+          "tickInterval": 60000,
+          "useKillCount": false,
+          "requiredKills": [
+            {
+              "entity": "minecraft:zombie",
+              "count": 10
+            }
+          ],
+          "killCountdownDelay": 10
+        },
+        "spawnMessages": {
+          "normalWave": "§6§l[INVASION] §eVague {wave}/{total}",
+          "specialWave": "§6§l[INVASION] §eVague {wave}/{total} §6- {name} !",
+          "useSound": false
+        },
+        "useWavePauses": false,
+        "wavePauses": [],
+        "useMerchants": false,
+        "merchantDebug": false,
+        "merchants": [],
+        "hordeEntities": [
+          {
+            "entity_type": "momie",
+            "custom_name": "§6Momie",
+            "base_count": 3,
+            "count_increment": 1,
+            "max_health": 42,
+            "attack_damage": 6,
+            "movement_speed": 0.23,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:rotten_flesh",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 60
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 4
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 0,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "pilleur_tombes",
+            "custom_name": "§6Pilleur de tombes",
+            "base_count": 3,
+            "count_increment": 1,
+            "max_health": 30,
+            "attack_damage": 6,
+            "movement_speed": 0.27,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:gold_nugget",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 40
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 4
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 0,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "chacal",
+            "custom_name": "§6Chacal des dunes",
+            "base_count": 3,
+            "count_increment": 1,
+            "max_health": 22,
+            "attack_damage": 5,
+            "movement_speed": 0.4,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:bone",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 50
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "scorpion",
+            "custom_name": "§6Scorpion des sables",
+            "base_count": 1,
+            "count_increment": 1,
+            "max_health": 34,
+            "attack_damage": 5,
+            "movement_speed": 0.3,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:spider_eye",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 50
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "archer_dunes",
+            "custom_name": "§6Archer des dunes",
+            "base_count": 2,
+            "count_increment": 0,
+            "max_health": 34,
+            "attack_damage": 6,
+            "movement_speed": 0.26,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:arrow",
+                "minQty": 2,
+                "maxQty": 5,
+                "chance": 60
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "scarabee",
+            "custom_name": "§6Scarabée",
+            "base_count": 6,
+            "count_increment": 2,
+            "max_health": 8,
+            "attack_damage": 3,
+            "movement_speed": 0.36,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:string",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 25
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 3,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "garde_pharaon",
+            "custom_name": "§6§lGarde du Pharaon",
+            "base_count": 1,
+            "count_increment": 0,
+            "max_health": 100,
+            "attack_damage": 12,
+            "movement_speed": 0.26,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:gold_ingot",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 60
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 4,
+            "max_wave": 0
+          }
+        ],
+        "useSpecialWaves": true,
+        "specialWaveChance": 40,
+        "specialWaves": [
+          {
+            "name": "Ruée de Scarabées",
+            "chance": 40,
+            "excludedWaves": "1",
+            "entities": [
+              {
+                "entity_type": "scarabee",
+                "custom_name": "§6Scarabée",
+                "count": 16,
+                "max_health": 8,
+                "attack_damage": 3,
+                "movement_speed": 0.38,
+                "follow_range": 64,
+                "equipment": {},
+                "loot_table": []
+              },
+              {
+                "entity_type": "scorpion",
+                "custom_name": "§6Scorpion des sables",
+                "count": 3,
+                "max_health": 36,
+                "attack_damage": 5,
+                "movement_speed": 0.31,
+                "follow_range": 64,
+                "equipment": {},
+                "loot_table": []
+              }
+            ]
+          }
+        ],
+        "useBossWaves": true,
+        "bossWaves": [
+          {
+            "waveNumber": 4,
+            "bossName": "§6§lChef de la razzia",
+            "entityType": "minecraft:pillager",
+            "useCustomEntity": true,
+            "customEntityName": "cavalier_dunes",
+            "maxHealth": 260,
+            "attackDamage": 12,
+            "movementSpeed": 0.3,
+            "knockbackResistance": 0.8,
+            "scale": 1.3,
+            "equipment": {},
+            "useMinionSummon": false,
+            "minionConfig": {},
+            "lootTable": [
+              {
+                "item": "minecraft:emerald",
+                "minQty": 6,
+                "maxQty": 12,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:gold_ingot",
+                "minQty": 4,
+                "maxQty": 8,
+                "chance": 100
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 100
+              }
+            ],
+            "spawnMessage": "",
+            "deathMessage": "§6§l[VICTOIRE] §e{name} §6§lest terrassé !",
+            "spawnSound": "minecraft:entity.ravager.roar"
+          }
+        ],
+        "chaosEnabled": false,
+        "chaosMinInterval": 20,
+        "chaosMaxInterval": 40,
+        "chaosEvents": [],
+        "stars": 0,
+        "unlockRequires": [],
+        "forceEndBonus": {},
+        "mode": "invasion",
+        "invasion": {
+          "enabled": true,
+          "weight": 30,
+          "composition": "horde",
+          "prepSeconds": 30,
+          "waveDelaySeconds": 20,
+          "bonusWaveOmen": 2,
+          "villagerRadius": 72,
+          "spawnDistance": 56,
+          "lossPercent": 50,
+          "openDoors": true,
+          "breakDoors": true,
+          "waveTimeoutSeconds": 360,
+          "heroSeconds": 2400,
+          "rewardEmeralds": 8,
+          "rewardKeys": 1,
+          "rewardPr": 4,
+          "lootCsv": "minecraft:gold_ingot*2-5@70"
+        }
+      },
+      "rewards": {
+        "enabled": false,
+        "top1": [],
+        "top2": [],
+        "top3": [],
+        "bossKiller": []
+      },
+      "id": "b12a784cf140af3d6e3656f9"
+    },
+    {
+      "hordeName": "Meute des Neiges",
+      "hordeDescription": "Une meute descendue des cimes : zombies gelés, loups et rôdeurs du givre assiègent le village.",
+      "configData": {
+        "totalWaves": 4,
+        "delayBetweenWaves": 20,
+        "spawnType": "fixed",
+        "spawnRadius": 30,
+        "gameOverRadius": 2000,
+        "playerScaling": {
+          "enabled": true,
+          "countMultiplier": 0.5,
+          "statsMultiplier": 0.1
+        },
+        "multiSpawns": [],
+        "dynamicSpawns": [],
+        "spawnConditions": {
+          "useTickInterval": false,
+          "tickInterval": 60000,
+          "useKillCount": false,
+          "requiredKills": [
+            {
+              "entity": "minecraft:zombie",
+              "count": 10
+            }
+          ],
+          "killCountdownDelay": 10
+        },
+        "spawnMessages": {
+          "normalWave": "§6§l[INVASION] §eVague {wave}/{total}",
+          "specialWave": "§6§l[INVASION] §eVague {wave}/{total} §6- {name} !",
+          "useSound": false
+        },
+        "useWavePauses": false,
+        "wavePauses": [],
+        "useMerchants": false,
+        "merchantDebug": false,
+        "merchants": [],
+        "hordeEntities": [
+          {
+            "entity_type": "zombie_gele",
+            "custom_name": "§bZombie Gelé",
+            "base_count": 4,
+            "count_increment": 1,
+            "max_health": 42,
+            "attack_damage": 6,
+            "movement_speed": 0.22,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:rotten_flesh",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 60
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 4
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 0,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "rodeur_givre",
+            "custom_name": "§bRôdeur du Givre",
+            "base_count": 3,
+            "count_increment": 1,
+            "max_health": 24,
+            "attack_damage": 4,
+            "movement_speed": 0.25,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:arrow",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 50
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 4
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 0,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "loup_neiges",
+            "custom_name": "§bLoup des Neiges",
+            "base_count": 4,
+            "count_increment": 1,
+            "max_health": 22,
+            "attack_damage": 5,
+            "movement_speed": 0.38,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:bone",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 40
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "revenant_neiges",
+            "custom_name": "§bRevenant des Neiges",
+            "base_count": 2,
+            "count_increment": 1,
+            "max_health": 36,
+            "attack_damage": 6,
+            "movement_speed": 0.24,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:bone",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 40
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "ours_glaces",
+            "custom_name": "§bOurs des Glaces",
+            "base_count": 1,
+            "count_increment": 0,
+            "max_health": 70,
+            "attack_damage": 9,
+            "movement_speed": 0.28,
+            "follow_range": 64,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:salmon",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 60
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 8
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 3,
+            "max_wave": 0
+          }
+        ],
+        "useSpecialWaves": true,
+        "specialWaveChance": 40,
+        "specialWaves": [
+          {
+            "name": "Meute des Loups",
+            "chance": 40,
+            "excludedWaves": "1",
+            "entities": [
+              {
+                "entity_type": "loup_neiges",
+                "custom_name": "§bLoup des Neiges",
+                "count": 12,
+                "max_health": 24,
+                "attack_damage": 5,
+                "movement_speed": 0.4,
+                "follow_range": 64,
+                "equipment": {},
+                "loot_table": []
+              },
+              {
+                "entity_type": "loup_alpha",
+                "custom_name": "§3§lLoup Alpha",
+                "count": 1,
+                "max_health": 90,
+                "attack_damage": 9,
+                "movement_speed": 0.42,
+                "follow_range": 64,
+                "equipment": {},
+                "loot_table": [
+                  {
+                    "item": "roulettechest:key_coffre_mysterieux",
+                    "minQty": 1,
+                    "maxQty": 1,
+                    "chance": 30
+                  }
+                ],
+                "scale": 1.4
+              }
+            ]
+          }
+        ],
+        "useBossWaves": true,
+        "bossWaves": [
+          {
+            "waveNumber": 4,
+            "bossName": "§b§lLe Grand Loup",
+            "entityType": "minecraft:wolf",
+            "useCustomEntity": true,
+            "customEntityName": "loup_alpha",
+            "maxHealth": 220,
+            "attackDamage": 13,
+            "movementSpeed": 0.42,
+            "knockbackResistance": 0.8,
+            "scale": 1.8,
+            "equipment": {},
+            "useMinionSummon": false,
+            "minionConfig": {},
+            "lootTable": [
+              {
+                "item": "minecraft:emerald",
+                "minQty": 6,
+                "maxQty": 12,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:blue_ice",
+                "minQty": 4,
+                "maxQty": 8,
+                "chance": 100
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 100
+              }
+            ],
+            "spawnMessage": "",
+            "deathMessage": "§6§l[VICTOIRE] §e{name} §6§lest terrassé !",
+            "spawnSound": "minecraft:entity.ravager.roar"
+          }
+        ],
+        "chaosEnabled": false,
+        "chaosMinInterval": 20,
+        "chaosMaxInterval": 40,
+        "chaosEvents": [],
+        "stars": 0,
+        "unlockRequires": [],
+        "forceEndBonus": {},
+        "mode": "invasion",
+        "invasion": {
+          "enabled": true,
+          "weight": 30,
+          "composition": "horde",
+          "prepSeconds": 30,
+          "waveDelaySeconds": 20,
+          "bonusWaveOmen": 2,
+          "villagerRadius": 72,
+          "spawnDistance": 56,
+          "lossPercent": 50,
+          "openDoors": true,
+          "breakDoors": true,
+          "waveTimeoutSeconds": 360,
+          "heroSeconds": 2400,
+          "rewardEmeralds": 8,
+          "rewardKeys": 1,
+          "rewardPr": 4,
+          "lootCsv": "minecraft:blue_ice*2-4@70"
+        }
+      },
+      "rewards": {
+        "enabled": false,
+        "top1": [],
+        "top2": [],
+        "top3": [],
+        "bossKiller": []
+      },
+      "id": "abdc7172eec071a776b18d86"
+    }
+  ]
+}

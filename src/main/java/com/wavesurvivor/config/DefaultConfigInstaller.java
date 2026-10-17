@@ -77,7 +77,8 @@ public final class DefaultConfigInstaller {
             "additions/progression_1_4.json",    // 1.4.0 : conditions de déblocage (progression des hordes)
             "additions/relics_1_5.json",         // 1.5.0 : nouvelles reliques dans les Reliquaires
             "additions/frozen_peaks.json",       // 1.6.0 : « Les Pics Gelés » (horde Vanilla : monstres, élites, vagues spéciales, 3 boss)
-            "additions/sables_ardents.json"      // 1.7.0 : « Les Sables Ardents » (horde Vanilla : tempête de sable, séisme, 3 boss, relique Voile du Désert)
+            "additions/sables_ardents.json",     // 1.7.0 : « Les Sables Ardents » (horde Vanilla : tempête de sable, séisme, 3 boss, relique Voile du Désert)
+            "additions/invasions.json"           // 1.7.0 : invasions de village prêtes à jouer (Pillards, Razzia des Sables, Meute des Neiges)
     };
 
     private static final com.google.gson.Gson GSON = new com.google.gson.GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

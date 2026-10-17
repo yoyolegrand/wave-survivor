@@ -123,5 +123,11 @@
   "advancement.wavesurvivor.endless_60.desc": "Atteins la vague 60 en mode sans fin.",
   "advancement.wavesurvivor.marathon.title": "Marathonien",
   "advancement.wavesurvivor.marathon.desc": "Passe 10 heures en horde.",
-  "item.wavesurvivor.voile_desert": "Voile du Désert"
+  "item.wavesurvivor.voile_desert": "Voile du Désert",
+  "advancement.wavesurvivor.invasion_1.title": "Défenseur du village",
+  "advancement.wavesurvivor.invasion_1.desc": "Repousse une invasion de village.",
+  "advancement.wavesurvivor.invasion_10.title": "Rempart des villages",
+  "advancement.wavesurvivor.invasion_10.desc": "Repousse 10 invasions de village.",
+  "advancement.wavesurvivor.invasion_flawless.title": "Sans une égratignure",
+  "advancement.wavesurvivor.invasion_flawless.desc": "Repousse une invasion sans perdre un seul villageois."
 }

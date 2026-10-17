@@ -291,7 +291,7 @@ public class HordeEditorScreen extends Screen {
         for (int i = 0; i < TAB_NAMES.length; i++) {
             final int t = i;
             Button b = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t(
-                    kingdom() && TAB_NAMES_KINGDOM[i] != null ? TAB_NAMES_KINGDOM[i] : TAB_NAMES[i])), bt -> switchTab(t))
+                    tabKey(i))), bt -> switchTab(t))
                     .bounds(tx, top + 24, tw, 16).build());
             tabButtons.add(b);
             tx += tw + 2;
@@ -318,9 +318,9 @@ public class HordeEditorScreen extends Screen {
             case T_MOBS -> buildMobs();
             case T_SPECIAL -> buildSpecials();
             case T_BOSS -> buildBosses();
-            case T_MERCH -> buildMerchants();
+            case T_MERCH -> { if (invasion()) buildInvasionSettings(); else buildMerchants(); }
             case T_CHAOS -> buildChaos();
-            case T_ALTAR -> buildAltar();
+            case T_ALTAR -> { if (invasion()) label(left + 10, top + 52, t("ui.inv.no_altar")); else buildAltar(); }
             case T_PREVIEW -> buildTestTools();
             default -> {}
         }
@@ -416,6 +416,22 @@ public class HordeEditorScreen extends Screen {
     // ─── Onglet Général ───
 
     /** Mode Kingdom actif pour cette horde : libellés et champs des onglets adaptés. */
+    /** 1.7 — Mode « invasion de village » (3e état du bouton de mode de l'onglet Général). */
+    private boolean invasion() {
+        try {
+            return "invasion".equalsIgnoreCase(HordeJson.str(cd(), "mode", "waves"));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Clé de texte de l'onglet {@code i} selon le mode (vagues, Kingdom ou invasion). */
+    private String tabKey(int i) {
+        if (invasion() && TAB_NAMES_INVASION[i] != null) return TAB_NAMES_INVASION[i];
+        if (kingdom() && TAB_NAMES_KINGDOM[i] != null) return TAB_NAMES_KINGDOM[i];
+        return TAB_NAMES[i];
+    }
+
     private boolean kingdom() {
         try {
             return "kingdom".equalsIgnoreCase(HordeJson.str(cd(), "mode", "waves"));
@@ -431,9 +447,13 @@ public class HordeEditorScreen extends Screen {
 
     /** Noms d'onglets en mode Kingdom (null = inchangé). */
     private static final String[] TAB_NAMES_KINGDOM = {null, null, "ui.kgd.tab_special", "ui.kgd.tab_boss", "ui.kgd.tab_calm", "ui.kgd.tab_chaos", null, null};
+    /** 1.7 — Onglets du mode Invasion : Général, Envahisseurs, Vagues spéciales, Chef, Invasion (réglages), Événements, (pas d'autel), Aperçu. */
+    private static final String[] TAB_NAMES_INVASION = {null, "ui.inv.tab_mobs", "ui.inv.tab_special", "ui.inv.tab_boss", "ui.inv.tab_settings", "ui.inv.tab_chaos", "ui.inv.tab_altar", null};
 
     /** Sous-onglet de l'onglet Général en mode Kingdom : 0 = Horde, 1 = Royaume. */
     private int generalSub = 0;
+    /** 1.7 — Onglet « Invasion » : 0 = déroulement, 1 = récompenses. */
+    private int invSub = 0;
 
     /** Numéros de Portes d'une unité (« 1,3 » → {1, 3}, triés ; vide = toutes). */
     private static java.util.Set<Integer> parseGates(String s) {
@@ -866,13 +886,16 @@ public class HordeEditorScreen extends Screen {
         // ── Mode de jeu : Vagues / Kingdom ──
         y += 18;
         boolean kingdom = "kingdom".equalsIgnoreCase(HordeJson.str(cd, "mode", "waves"));
-        button(x, y - 1, 150, kingdom ? t("ui.kingdom.mode_kingdom") : t("ui.kingdom.mode_waves"), () -> {
-            cd.addProperty("mode", "kingdom".equalsIgnoreCase(HordeJson.str(cd, "mode", "waves")) ? "waves" : "kingdom");
+        boolean invasionMode = "invasion".equalsIgnoreCase(HordeJson.str(cd, "mode", "waves"));
+        button(x, y - 1, 150, invasionMode ? t("ui.inv.mode_invasion") : kingdom ? t("ui.kingdom.mode_kingdom") : t("ui.kingdom.mode_waves"), () -> {
+            // Trois états : Vagues → Kingdom → Invasion de village → Vagues
+            String cur = HordeJson.str(cd, "mode", "waves");
+            cd.addProperty("mode", "kingdom".equalsIgnoreCase(cur) ? "invasion" : "invasion".equalsIgnoreCase(cur) ? "waves" : "kingdom");
             generalSub = 0;
             changed();
             init();
         });
-        label(x + 158, y + 3, kingdom ? t("ui.kgd.see_sub") : t("ui.kingdom.hint"));
+        label(x + 158, y + 3, invasionMode ? t("ui.inv.hint") : kingdom ? t("ui.kgd.see_sub") : t("ui.kingdom.hint"));
     }
 
     /** Sous-onglet « ♛ Royaume » : tous les réglages du mode Kingdom, en 5 blocs titrés qui tiennent dans le panneau. */
@@ -1671,6 +1694,68 @@ public class HordeEditorScreen extends Screen {
         label(x, y, t("ui.br.hint"));
     }
 
+    // ─── Onglet « 🏘 Invasion » (1.7) : déroulement et récompenses d'une invasion de village ───
+
+    private void buildInvasionSettings() {
+        JsonObject inv = HordeJson.obj(cd(), "invasion");
+        int x = left + 10, y = top + 48, half = 150;
+        button(x, y - 2, 130, (invSub == 0 ? "§e§l" : "§7") + t("ui.inv.sub_flow"), () -> { invSub = 0; init(); });
+        button(x + 134, y - 2, 130, (invSub == 1 ? "§e§l" : "§7") + t("ui.inv.sub_rewards"), () -> { invSub = 1; init(); });
+        y += 26;
+        if (invSub == 1) {
+            flow(x, y);
+            fl(t("ui.inv.hero"));
+            fInt(30, HordeJson.num(inv, "heroSeconds", 2400), v -> inv.addProperty("heroSeconds", Math.max(0, Math.min(86400, v))));
+            fl(t("ui.inv.emeralds"));
+            fInt(24, HordeJson.num(inv, "rewardEmeralds", 6), v -> inv.addProperty("rewardEmeralds", Math.max(0, Math.min(500, v))));
+            fl(t("ui.inv.keys"));
+            fInt(22, HordeJson.num(inv, "rewardKeys", 1), v -> inv.addProperty("rewardKeys", Math.max(0, Math.min(50, v))));
+            fl(t("ui.inv.pr"));
+            fInt(24, HordeJson.num(inv, "rewardPr", 3), v -> inv.addProperty("rewardPr", Math.max(0, Math.min(1000, v))));
+            y += 24;
+            label(x, y + 3, t("ui.inv.loot"));
+            y += 16;
+            text(x, y, 300, HordeJson.str(inv, "lootCsv", ""), v -> inv.addProperty("lootCsv", v.trim()));
+            y += 28;
+            label(x, y, t("ui.inv.hint_rewards"));
+            return;
+        }
+        toggle(x, y, half, t("ui.inv.enabled"), inv, "enabled", true);
+        boolean vanilla = "vanilla".equalsIgnoreCase(HordeJson.str(inv, "composition", "horde"));
+        button(x + half + 4, y - 1, 150, t(vanilla ? "ui.inv.comp_vanilla" : "ui.inv.comp_horde"), () -> {
+            inv.addProperty("composition", "vanilla".equalsIgnoreCase(HordeJson.str(inv, "composition", "horde")) ? "horde" : "vanilla");
+            changed();
+            init();
+        });
+        y += 22;
+        flow(x, y);
+        fl(t("ui.inv.weight"));
+        fInt(26, HordeJson.num(inv, "weight", 50), v -> inv.addProperty("weight", Math.max(0, Math.min(1000, v))));
+        fl(t("ui.inv.prep"));
+        fInt(26, HordeJson.num(inv, "prepSeconds", 30), v -> inv.addProperty("prepSeconds", Math.max(5, Math.min(600, v))));
+        fl(t("ui.inv.delay"));
+        fInt(26, HordeJson.num(inv, "waveDelaySeconds", 20), v -> inv.addProperty("waveDelaySeconds", Math.max(5, Math.min(600, v))));
+        y += 22;
+        flow(x, y);
+        fl(t("ui.inv.bonus"));
+        fInt(20, HordeJson.num(inv, "bonusWaveOmen", 2), v -> inv.addProperty("bonusWaveOmen", Math.max(0, Math.min(5, v))));
+        fl(t("ui.inv.radius"));
+        fInt(26, HordeJson.num(inv, "villagerRadius", 72), v -> inv.addProperty("villagerRadius", Math.max(20, Math.min(160, v))));
+        fl(t("ui.inv.spawn"));
+        fInt(26, HordeJson.num(inv, "spawnDistance", 56), v -> inv.addProperty("spawnDistance", Math.max(24, Math.min(120, v))));
+        y += 22;
+        flow(x, y);
+        fl(t("ui.inv.loss"));
+        fInt(26, HordeJson.num(inv, "lossPercent", 50), v -> inv.addProperty("lossPercent", Math.max(1, Math.min(100, v))));
+        fl(t("ui.inv.timeout"));
+        fInt(30, HordeJson.num(inv, "waveTimeoutSeconds", 360), v -> inv.addProperty("waveTimeoutSeconds", Math.max(0, Math.min(3600, v))));
+        y += 22;
+        toggle(x, y, half, t("ui.inv.doors_open"), inv, "openDoors", true);
+        toggle(x + half + 4, y, half, t("ui.inv.doors_break"), inv, "breakDoors", true);
+        y += 26;
+        label(x, y, t("ui.inv.hint_flow"));
+    }
+
     // ─── Onglet Boss › ♾ Sans fin (1.7 : vies, montée en puissance, retour des boss, déblocage, classement) ───
 
     private void buildEndlessSettings(int x, int y) {
@@ -1714,8 +1799,8 @@ public class HordeEditorScreen extends Screen {
         JsonObject cd = cd();
         int y0 = top + 46;
         toggle(listX(), y0, 134, com.wavesurvivor.i18n.WSLang.t("ui.boss_d908"), cd, "useBossWaves", false);
-        button(detailX(), y0, 150, bossRushView ? t("ui.br.back") : t("ui.br.btn"), () -> { bossRushView = !bossRushView; if (bossRushView) endlessView = false; init(); });
-        if (!kingdom()) button(detailX() + 154, y0, 130, endlessView ? t("ui.br.back") : t("ui.en.btn"), () -> { endlessView = !endlessView; if (endlessView) bossRushView = false; init(); });
+        if (!invasion()) button(detailX(), y0, 150, bossRushView ? t("ui.br.back") : t("ui.br.btn"), () -> { bossRushView = !bossRushView; if (bossRushView) endlessView = false; init(); });
+        if (!kingdom() && !invasion()) button(detailX() + 154, y0, 130, endlessView ? t("ui.br.back") : t("ui.en.btn"), () -> { endlessView = !endlessView; if (endlessView) bossRushView = false; init(); });
         if (kingdom()) label(detailX() + 156, y0 + 4, com.wavesurvivor.i18n.WSLang.t("ui.kgd.boss_hint"));
         int ly = y0 + 22;
         bossList.place(listX(), ly, 134, rowsFrom(ly));
@@ -1761,11 +1846,11 @@ public class HordeEditorScreen extends Screen {
             init();
         }).active = b != null;
 
-        if (bossRushView) {
+        if (bossRushView && !invasion()) {
             buildBossRushSettings(detailX(), ly);
             return;
         }
-        if (endlessView && !kingdom()) {
+        if (endlessView && !kingdom() && !invasion()) {
             buildEndlessSettings(detailX(), ly);
             return;
         }
@@ -3616,7 +3701,7 @@ public class HordeEditorScreen extends Screen {
             case T_MOBS -> List.of(mobList);
             case T_SPECIAL -> selSpecial >= 0 && selSpecialEnt < 0 ? List.of(specialList, specialEntList) : List.of(specialList);
             case T_BOSS -> List.of(bossList);
-            case T_MERCH -> kingdom() && calmSub == 2 ? List.of()
+            case T_MERCH -> invasion() ? List.of() : kingdom() && calmSub == 2 ? List.of()
                     : kingdom() && calmSub == 1 ? (selBreach < 0 ? List.of(breachList) : List.of()) : List.of(merchantList);
             case T_CHAOS -> List.of(chaosList);
             default -> List.of();
@@ -3756,8 +3841,7 @@ public class HordeEditorScreen extends Screen {
             HordeValidator.Issue is = issues.get(i);
             boolean hover = mx >= x + 6 && mx < x + w - 6 && my >= ly - 1 && my < ly + 11;
             if (hover) g.fill(x + 6, ly - 1, x + w - 6, ly + 11, 0x30FFFFFF);
-            String tabName = com.wavesurvivor.i18n.WSLang.t(kingdom() && TAB_NAMES_KINGDOM[is.tab()] != null
-                    ? TAB_NAMES_KINGDOM[is.tab()] : TAB_NAMES[is.tab()]);
+            String tabName = com.wavesurvivor.i18n.WSLang.t(tabKey(is.tab()));
             String line = (is.blocking() ? "§c● " : "§e● ") + "§f" + is.text() + " §8[" + tabName.replaceAll("§.", "") + "]";
             g.drawString(font, font.plainSubstrByWidth(line, w - 16), x + 10, ly, 0xFFFFFFFF);
             ly += 12;
@@ -3986,7 +4070,7 @@ public class HordeEditorScreen extends Screen {
         for (int i = 0; i < tabButtons.size(); i++) {
             Button b = tabButtons.get(i);
             String who = collab() ? lockedBy.get(i) : null;
-            String base = com.wavesurvivor.i18n.WSLang.t(kingdom() && TAB_NAMES_KINGDOM[i] != null ? TAB_NAMES_KINGDOM[i] : TAB_NAMES[i]);
+            String base = com.wavesurvivor.i18n.WSLang.t(tabKey(i));
             b.setMessage(Component.literal(who != null ? "§8🔒 " + base : base));
             b.setTooltip(who != null ? net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("collab.locked", who)) : null);
             b.active = tab != i && who == null;

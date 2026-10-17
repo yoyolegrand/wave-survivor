@@ -22,7 +22,7 @@
 - 🏅 **Advancements** — "First horde survived", "Krag defeated", "All relics found"…
 - 📊 **Player statistics screen** — hordes won, monsters killed, bosses defeated, best rank
 - 🏜 **Desert horde** *(coded, in testing)* — "The Burning Sands": a new themed campaign with its own monsters and three bosses, built around a **Sandstorm** (shelter under cover, or the Desert Veil relic) and **earthquakes**
-- 🏘 **Village invasions** — Pillager-style raids on villages, outside of altars *(design to be explored)*
+- 🏘 **Village invasions** *(coded, in testing)* — Pillager-style raids on real villages, outside of altars: Bad Omen roulette (vanilla raid or the mod's invasions), villager bar, broken doors, Hero of the Village, editor mode
 
 ## 🔭 Later
 - 🏛 **Ready-made arenas** — structures generated around the altar (ruins, temple, fortress)
