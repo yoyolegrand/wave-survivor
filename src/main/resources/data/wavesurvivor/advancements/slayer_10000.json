@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:netherite_axe"
+    },
+    "title": {
+      "translate": "advancement.wavesurvivor.slayer_10000.title"
+    },
+    "description": {
+      "translate": "advancement.wavesurvivor.slayer_10000.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "parent": "wavesurvivor:root"
+}

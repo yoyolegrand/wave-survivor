@@ -66,6 +66,8 @@ public class DailyServer extends SavedData {
         long streak = (e != null && e[0] == day - 1) ? e[1] + 1 : 1;
         s.data.put(p.getUUID(), new long[]{day, streak});
         s.setDirty();
+        com.wavesurvivor.horde.stats.PlayerStats.add(p, "daily_wins", 1); // 1.7 : statistiques et succès
+        com.wavesurvivor.horde.stats.PlayerStats.max(p, "daily_best_streak", streak);
         int pr = DailyChallenge.reward((int) streak, runPlan.difficulty(), kingdom);
         p.sendSystemMessage(Component.literal(WSLang.t("daily.reward", pr, streak)));
         return pr;

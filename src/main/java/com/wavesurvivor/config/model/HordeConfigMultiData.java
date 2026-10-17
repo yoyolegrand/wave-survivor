@@ -156,6 +156,10 @@ public class HordeConfigMultiData {
         @SerializedName("bossRush")
         public BossRushSettings bossRush = new BossRushSettings();
 
+        /** 1.7 — Mode sans fin : la horde ne s'arrête plus après sa dernière vague (réglages par horde, éditeur › Sans fin). */
+        @SerializedName("endless")
+        public EndlessSettings endless = new EndlessSettings();
+
         @SerializedName("bossWaves")
         public List<BossWave> bossWaves;
 
@@ -290,6 +294,27 @@ public class HordeConfigMultiData {
         @SerializedName("maxMinutes") public int maxMinutes = 0;
         /** Boss retenus : numéros de vague séparés par des virgules (vide = tous les boss de la horde). */
         @SerializedName("waves") public String waves = "";
+    }
+
+    /** Mode sans fin (1.7) : après la dernière vague, la horde continue, de plus en plus forte, jusqu'à la défaite. */
+    public static class EndlessSettings {
+        @SerializedName("enabled") public boolean enabled = true;
+        /** Vies partagées par l'équipe (chaque mort d'un joueur en consomme une ; la chute du Monolithe met aussi fin à la partie). */
+        @SerializedName("lives") public int lives = 5;
+        /** Par vague au-delà de la dernière : monstres en plus (%), PV en plus (%), dégâts en plus (%). */
+        @SerializedName("countPercent") public double countPercent = 8;
+        @SerializedName("healthPercent") public double healthPercent = 6;
+        @SerializedName("damagePercent") public double damagePercent = 4;
+        /** Plafond du nombre de monstres (multiple de la dernière vague normale), pour garder le serveur fluide. */
+        @SerializedName("maxCountMultiplier") public double maxCountMultiplier = 4.0;
+        /** Un boss de la horde (tour à tour) revient toutes les N vagues au-delà de la dernière (0 = aucun). */
+        @SerializedName("bossEvery") public int bossEvery = 5;
+        /** Chaque retour de boss : PV et dégâts en plus (%, cumulés). */
+        @SerializedName("bossPowerPercent") public double bossPowerPercent = 15;
+        /** Débloqué seulement après avoir terminé la horde une fois. */
+        @SerializedName("requiresCompletion") public boolean requiresCompletion = true;
+        /** Nombre de scores gardés au classement. */
+        @SerializedName("topSize") public int topSize = 10;
     }
 
     /** Purification : des foyers de corruption à casser ; aucun = Assaut suivant plus fort, tous = plus faible. */

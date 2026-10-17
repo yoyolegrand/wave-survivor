@@ -22,13 +22,13 @@ import java.util.List;
 public class CodexScreen extends Screen {
 
     private static final String[] PAGES = {
-            "start", "classic", "frost", "breaches", "blessings", "difficulty", "daily", "boss", "bossrush",
+            "start", "classic", "frost", "breaches", "blessings", "difficulty", "daily", "boss", "bossrush", "endless",
             "kingdom", "objectives", "treasury", "monolith", "defenses", "workshop", "tools",
-            "roles", "alchemy", "omens", "relics", "renaissance", "interface", "editor"
+            "roles", "alchemy", "omens", "relics", "renaissance", "stats", "interface", "editor"
     };
-    private static final String[] ICONS = {"📖", "⚔", "❄", "☄", "✚", "🎲", "◷", "☠", "♔",
+    private static final String[] ICONS = {"📖", "⚔", "❄", "☄", "✚", "🎲", "◷", "☠", "♔", "♾",
             "♛", "⚑", "◆", "🏛", "🛡", "⚒", "➤",
-            "♟", "⚗", "👁", "✦", "☼", "⌨", "✎"};
+            "♟", "⚗", "👁", "✦", "☼", "📊", "⌨", "✎"};
     private static final String[] WORKSHOP_SPECS = {"forge", "armory", "mechanic", "foundry"};
     private static final String[] HERITAGE_BRANCHES = {"survivor", "merchant", "lord"};
 

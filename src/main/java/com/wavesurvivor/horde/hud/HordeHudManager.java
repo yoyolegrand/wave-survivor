@@ -66,11 +66,11 @@ public class HordeHudManager {
         lastSecondsRemaining = -1;
 
         String label = "🧟 " + mobs + com.wavesurvivor.i18n.WSLang.t("srv.mob") + (mobs > 1 ? "s" : "") + com.wavesurvivor.i18n.WSLang.t(mobs > 1 ? "srv.restants" : "srv.restant")
-                + com.wavesurvivor.i18n.WSLang.t("srv.vague_668d") + currentWave + " / " + totalWaves;
+                + com.wavesurvivor.i18n.WSLang.t("srv.vague_668d") + currentWave + (totalWaves > 0 ? " / " + totalWaves : " ∞");
         hordeBar.setName(Component.literal(label).withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD));
         hordeBar.setColor(BossEvent.BossBarColor.PURPLE);
 
-        float progress = totalWaves > 0 ? Math.min(1f, (float) currentWave / totalWaves) : 0f;
+        float progress = totalWaves > 0 ? Math.min(1f, (float) currentWave / totalWaves) : ((Math.max(1, currentWave) - 1) % 10 + 1) / 10f;
         hordeBar.setProgress(progress);
     }
 
@@ -95,7 +95,7 @@ public class HordeHudManager {
         lastSecondsRemaining = secondsRemaining;
 
         // Label : affiche la prochaine vague à venir
-        int nextWave = Math.min(currentWave + 1, totalWaves);
+        int nextWave = totalWaves > 0 ? Math.min(currentWave + 1, totalWaves) : currentWave + 1; // sans fin : pas de total
         String prefix;
         ChatFormatting labelColor;
         BossEvent.BossBarColor barColor;
@@ -108,7 +108,7 @@ public class HordeHudManager {
             labelColor = ChatFormatting.YELLOW;
             barColor = BossEvent.BossBarColor.YELLOW;
         }
-        String label = prefix + secondsRemaining + com.wavesurvivor.i18n.WSLang.t("srv.s_vague") + nextWave + " / " + totalWaves;
+        String label = prefix + secondsRemaining + com.wavesurvivor.i18n.WSLang.t("srv.s_vague") + nextWave + (totalWaves > 0 ? " / " + totalWaves : " ∞");
         hordeBar.setName(Component.literal(label).withStyle(labelColor, ChatFormatting.BOLD));
         hordeBar.setColor(barColor);
 

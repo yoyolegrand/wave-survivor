@@ -110,6 +110,13 @@ public class HordeCommand {
                 .then(Commands.literal("daily").executes(ctx -> com.wavesurvivor.horde.daily.DailyServer.show(ctx.getSource())))
                 // Boss Rush : meilleurs temps (ouvert à tous)
                 .then(Commands.literal("bossrush").executes(ctx -> com.wavesurvivor.horde.bossrush.BossRush.showTop(ctx.getSource())))
+                // Mode sans fin : meilleurs scores (ouvert à tous)
+                .then(Commands.literal("endless").executes(ctx -> com.wavesurvivor.horde.endless.Endless.showTop(ctx.getSource())))
+                // Statistiques et succès du joueur (ouvert à tous)
+                .then(Commands.literal("stats").executes(ctx -> {
+                    com.wavesurvivor.network.StatsPackets.openFor(ctx.getSource().getPlayerOrException());
+                    return 1;
+                }))
                 // Codex : guide des mécaniques, ouvert à tous
                 .then(Commands.literal("codex").executes(ctx -> {
                     com.wavesurvivor.network.CodexPacket.openFor(ctx.getSource().getPlayerOrException());

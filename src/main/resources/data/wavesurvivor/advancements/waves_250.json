@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:recovery_compass"
+    },
+    "title": {
+      "translate": "advancement.wavesurvivor.waves_250.title"
+    },
+    "description": {
+      "translate": "advancement.wavesurvivor.waves_250.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "parent": "wavesurvivor:root"
+}

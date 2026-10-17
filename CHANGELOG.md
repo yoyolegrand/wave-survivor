@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.7.0 — Endless Mode, Achievements & Statistics
+
+> ♾ **The horde never stops.** Play any horde without limit in the new **Endless mode**, unlock **21 achievements**, and track your career in the new **Statistics** screen.
+
+---
+
+### ♾️ Endless mode
+- ♾ New button at the altar: after the horde's **last wave**, it **keeps going** — more monsters, more HP and more damage every wave — until your team falls.
+- 👑 A **boss from the horde returns every few waves**, stronger each time.
+- ❤ **Shared lives** for the team. At zero lives (or when the Monolith falls), the run ends.
+- 🏆 Your score is the number of **waves cleared**. Top scores are ranked per horde — check them with `/ws endless`.
+- 🔒 Unlocked by completing the horde once. Classic hordes only; no save & resume.
+- ⚙ Fully configurable per horde in the editor (**Boss tab › Endless**): lives, growth per wave, monster cap, boss return, unlock, leaderboard size.
+
+### 🏅 Achievements
+- ✨ **21 achievements** (real Minecraft advancements — press **L**, tab *Wave Survivor*): first pact and victories, waves cleared, monsters and bosses slain, Boss Rush, Daily Challenge streaks, Endless waves and more.
+- ⏳ They unlock on their own when you reach the thresholds. Counters start with 1.7: nothing is retroactive.
+
+### 📊 Statistics
+- 📈 New **Statistics** screen (altar button or `/ws stats`): hordes started and completed, waves cleared, monsters and bosses killed, deaths, time in hordes, Boss Rush wins, Daily Challenges, best Endless wave — and your achievements with their progress.
+
+### 🛠️ Editor & Codex
+- 📝 New **Endless** settings view in the editor.
+- 📖 The **Codex** has new *Endless mode* and *Statistics* pages.
+
+### 📝 Notes
+- Existing config files are never overwritten on update. Hordes get the Endless defaults automatically.
+
+---
+
+**Thanks for playing!** ⚔ Bugs & ideas: [GitHub Issues](https://github.com/yoyolegrand/wave-survivor/issues) · Support the development on [Patreon](https://www.patreon.com/cw/yoyolegrand34)
+
 ## 1.6.0 — Frozen Peaks, Boss Rush & Daily Challenge
 
 > ❄ **A frozen horde, a race against the bosses, and a new challenge every day.** Brave the blizzard of the Frozen Peaks and its three bosses, fight them all back to back in **Boss Rush**, and take on the **Daily Challenge** for bonus Renaissance Points. Kingdom mode gets a new **Offering Brazier**, smarter **Gleaners** and a lot of quality-of-life.

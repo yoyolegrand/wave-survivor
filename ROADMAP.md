@@ -19,7 +19,7 @@
 - 👑 **Boss Rush mode** — fight the bosses of a horde or a Kingdom back to back, with shared lives and a leaderboard
 - 📅 **Daily Challenge** — a daily difficulty and 3 mutators, the same for the whole server, with bonus Renaissance Points
 
-## 🧭 Planned: 1.7 *(a lighter update)*
+## 🔜 Next: 1.7 *(a lighter update, in progress)*
 - ♾ **Endless mode** — infinite waves with growing difficulty and a best-score leaderboard
 - 🏅 **Advancements** — "First horde survived", "Krag defeated", "All relics found"…
 - 📊 **Player statistics screen** — hordes won, monsters killed, bosses defeated, best rank

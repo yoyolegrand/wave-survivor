@@ -111,6 +111,7 @@ public class BossDirector {
         if (boss == null || wave == null || !(boss.level() instanceof ServerLevel level)) return;
         // Niveau de difficulté de la horde (avant tout le reste : s'applique même sans difficulté adaptative)
         com.wavesurvivor.horde.difficulty.HordeDifficulty.applyToBoss(boss);
+        com.wavesurvivor.horde.endless.Endless.applyToBoss(boss); // 1.7 : puissance cumulée des retours de boss (sans fin)
         // Taille du boss (mod Pehkui, optionnel) : prioritaire sur la taille d'unité
         boss.getPersistentData().putBoolean("ws_boss_scaled", true);
         com.wavesurvivor.compat.PehkuiCompat.setScale(boss, wave.scale > 0 ? wave.scale : 1.0);

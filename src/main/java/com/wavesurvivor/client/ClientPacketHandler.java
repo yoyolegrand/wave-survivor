@@ -47,6 +47,14 @@ public class ClientPacketHandler {
         }
     }
 
+    /** Statistiques et succès (1.7). */
+    public static void openStats(com.wavesurvivor.network.StatsPackets.Data pkt) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc != null) {
+            mc.setScreen(new StatsScreen(pkt));
+        }
+    }
+
     // ─── Éditeur de Hordes ───
 
     public static void openHordeEditorList(com.wavesurvivor.network.HordeEditorPackets.OpenList pkt) {

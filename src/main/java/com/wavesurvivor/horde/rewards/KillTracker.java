@@ -62,10 +62,12 @@ public class KillTracker {
         if (!(killer instanceof ServerPlayer p)) return;
 
         KILLS.merge(p.getUUID(), 1, Integer::sum);
+        com.wavesurvivor.horde.stats.PlayerStats.add(p, "monsters_killed", 1); // 1.7 : statistiques
 
         // Bonus : bossKiller si le mort était un boss
         if (com.wavesurvivor.horde.boss.BossManager.isBoss(dead.getUUID())) {
             BOSS_KILLERS.add(p.getUUID());
+            com.wavesurvivor.horde.stats.PlayerStats.add(p, "bosses_killed", 1);
         }
     }
 

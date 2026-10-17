@@ -163,6 +163,12 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, HordeCollabPackets.SectionUpdate.class,
                 HordeCollabPackets.SectionUpdate::encode, HordeCollabPackets.SectionUpdate::decode, HordeCollabPackets.SectionUpdate::handle);
 
+        // Statistiques et succès (1.7)
+        CHANNEL.registerMessage(id++, StatsPackets.Request.class,
+                StatsPackets.Request::encode, StatsPackets.Request::decode, StatsPackets.Request::handle);
+        CHANNEL.registerMessage(id++, StatsPackets.Data.class,
+                StatsPackets.Data::encode, StatsPackets.Data::decode, StatsPackets.Data::handle);
+
         WaveSurvivorMod.LOGGER.info("[Network] Channel 'main' enregistré (protocol v{}, {} packets)",
                 PROTOCOL_VERSION, id);
     }

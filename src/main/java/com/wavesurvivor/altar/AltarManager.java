@@ -66,7 +66,7 @@ public class AltarManager {
                     com.wavesurvivor.horde.difficulty.HordeProgress.encode(player, horde),
                     horde.configData != null && horde.configData.isKingdom(),
                     com.wavesurvivor.horde.kingdom.KingdomRoles.encodeAvailable(horde),
-                    com.wavesurvivor.horde.bossrush.BossRush.encodeFor(player, horde)));
+                    com.wavesurvivor.horde.bossrush.BossRush.encodeFor(player, horde) + "#" + com.wavesurvivor.horde.endless.Endless.encodeFor(player, horde)));
         }
         if (variants.isEmpty()) {
             player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.autel_horde_inconnue") + entry.hordeName));
@@ -175,6 +175,17 @@ public class AltarManager {
             }
         }
         com.wavesurvivor.horde.bossrush.BossRush.setPending(brMode);
+        // 1.7 — Mode sans fin : seulement si la horde le propose et que le joueur l'a débloqué (jamais avec le Boss Rush)
+        boolean endless = "endless".equalsIgnoreCase(mode == null ? "" : mode.trim());
+        if (endless) {
+            if (!com.wavesurvivor.horde.endless.Endless.available(horde)) {
+                endless = false;
+            } else if (!com.wavesurvivor.horde.endless.Endless.unlockedFor(player, horde)) {
+                player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("endless.locked")));
+                return;
+            }
+        }
+        com.wavesurvivor.horde.endless.Endless.setPending(endless);
         launchWithCountdown(player, level, pos, horde);
     }
 

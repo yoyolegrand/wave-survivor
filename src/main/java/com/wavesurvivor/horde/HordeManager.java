@@ -107,6 +107,11 @@ public class HordeManager {
             if (com.wavesurvivor.horde.bossrush.BossRush.begin(srv, horde) && !(horde.configData != null && horde.configData.isKingdom())) {
                 HordeHudManager.show(srv, com.wavesurvivor.i18n.WSLang.t(horde.hordeName), com.wavesurvivor.horde.bossrush.BossRush.hudTotal());
             }
+            // 1.7 — Mode sans fin : demandé à l'autel (jamais en même temps que le Boss Rush)
+            if (!com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.endless.Endless.begin(srv, horde);
+            else com.wavesurvivor.horde.endless.Endless.setPending(false);
+            // 1.7 — Statistiques : une horde lancée pour chaque joueur présent
+            com.wavesurvivor.horde.stats.PlayerStats.addForAll(srv, "hordes_started", 1);
             // 1.5 — Héritage : émeraudes et clé de départ (Marchand), coup fatal évité rechargé (Survivant)
             com.wavesurvivor.horde.renaissance.Heritage.onHordeStart(srv);
             // 1.5 — PR gagnés en jouant : compteurs de la partie
@@ -233,9 +238,12 @@ public class HordeManager {
     public boolean stop() {
         if (state == State.IDLE || state == State.FINISHED) return false;
         // Défaite réelle (Monolithe tombé, équipe vaincue) : PR des vagues acquises ; un arrêt manuel ne rapporte rien
-        if (com.wavesurvivor.horde.renaissance.RenaissanceRewards.consumeDefeat() && activeHorde != null) {
+        boolean defeat = com.wavesurvivor.horde.renaissance.RenaissanceRewards.consumeDefeat();
+        if (defeat && activeHorde != null) {
             com.wavesurvivor.horde.renaissance.RenaissanceRewards.payout(server, activeHorde, false);
         }
+        // 1.7 — Mode sans fin : score (vagues terminées) enregistré au classement
+        com.wavesurvivor.horde.endless.Endless.onEnd(server, activeHorde != null ? activeHorde.hordeName : "?", wavesCleared(), defeat);
         String name = activeHorde != null ? activeHorde.hordeName : "?";
         WaveSurvivorMod.LOGGER.info("[HordeManager] Horde '{}' arrêtée manuellement (vague {}).", name, currentWave);
         if (!quietStop) broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.horde_d97e") + com.wavesurvivor.i18n.WSLang.t(name) + com.wavesurvivor.i18n.WSLang.t("srv.arretee")).withStyle(ChatFormatting.RED));
@@ -277,7 +285,7 @@ public class HordeManager {
             HordeConfigMultiData.ConfigDataInner cfg = activeHorde.configData;
 
             // Dernière vague skip → terminer la horde immédiatement
-            if (cfg != null && currentWave >= cfg.totalWaves) {
+            if (cfg != null && currentWave >= cfg.totalWaves && !com.wavesurvivor.horde.endless.Endless.active()) {
                 finishHorde(server);
                 return true;
             }
@@ -440,6 +448,14 @@ public class HordeManager {
         com.wavesurvivor.horde.bossrush.BossRush.onVictory(srv); // Boss Rush : chrono et classement
         // PR gagnés en jouant (avant l'enregistrement de la victoire : on sait si c'est la première)
         if (activeHorde != null) com.wavesurvivor.horde.renaissance.RenaissanceRewards.payout(srv, activeHorde, true);
+        // 1.7 — Statistiques : horde gagnée (ou Boss Rush) pour chaque joueur présent
+        if (activeHorde != null) {
+            if (com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.stats.PlayerStats.addForAll(srv, "bossrush_wins", 1);
+            else {
+                com.wavesurvivor.horde.stats.PlayerStats.addForAll(srv, "hordes_won", 1);
+                com.wavesurvivor.horde.stats.PlayerStats.addForAll(srv, com.wavesurvivor.horde.stats.PlayerStats.WON_PREFIX + activeHorde.hordeName, 1);
+            }
+        }
         // Progression : horde terminée (au niveau de difficulté en cours) pour les joueurs connectés
         // Le Boss Rush ne compte pas comme avoir terminé la horde (déblocages, première victoire)
         if (activeHorde != null && !com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.difficulty.HordeProgress.recordWin(srv, activeHorde.hordeName);
@@ -491,11 +507,11 @@ public class HordeManager {
         // Dispatch HUD selon state
         if (state == State.RUNNING) {
             HordeHudManager.update(com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.hudWave() : currentWave,
-                    com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.hudTotal() : cfg.totalWaves);
+                    com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.hudTotal() : com.wavesurvivor.horde.endless.Endless.hudTotal(cfg.totalWaves, currentWave));
         } else if (state == State.WAITING_NEXT_WAVE || state == State.PAUSED) {
             int secondsRemaining = (int) Math.max(0, (nextActionTick - now) / 20);
             HordeHudManager.updateCountdown(com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.hudWave() : currentWave,
-                    com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.hudTotal() : cfg.totalWaves,
+                    com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.hudTotal() : com.wavesurvivor.horde.endless.Endless.hudTotal(cfg.totalWaves, currentWave),
                     secondsRemaining, currentDelaySeconds, state == State.PAUSED);
         }
 
@@ -523,10 +539,11 @@ public class HordeManager {
                 // Brèches encore ouvertes : se referment en renforçant la horde ; renforts retirés
                 com.wavesurvivor.horde.breach.BreachManager.onWaveEnd(srv);
                 if (cleared) com.wavesurvivor.horde.renaissance.RenaissanceRewards.onWaveCleared(); // PR : vague terminée
+                if (cleared) com.wavesurvivor.horde.stats.PlayerStats.addForAll(srv, "waves_cleared", 1); // 1.7 : statistiques
                 // Horde classique : gisements / arbres garantis pendant la pause entre deux vagues
                 if (cleared && !com.wavesurvivor.horde.kingdom.KingdomManager.isActive() && !com.wavesurvivor.horde.bossrush.BossRush.active()) spawnGuaranteedResources(srv);
                 // Dernière vague clear → terminer immédiatement (pas de délai) ; Boss Rush : dernier boss retenu
-                if (currentWave >= cfg.totalWaves || com.wavesurvivor.horde.bossrush.BossRush.isLastStage(currentWave)) {
+                if ((currentWave >= cfg.totalWaves && !com.wavesurvivor.horde.endless.Endless.active()) || com.wavesurvivor.horde.bossrush.BossRush.isLastStage(currentWave)) {
                     broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.vague_5e08") + currentWave + com.wavesurvivor.i18n.WSLang.t("srv.nettoyee")).withStyle(ChatFormatting.GREEN));
                     // Arène du boss final : un portail s'ouvre près de l'autel au lieu de terminer la horde
                     if (raidBoss != null) {
@@ -585,7 +602,7 @@ public class HordeManager {
 
             currentWave = com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.nextWave(currentWave, cfg.totalWaves) : currentWave + 1;
 
-            if (currentWave > cfg.totalWaves) {
+            if (currentWave > cfg.totalWaves && !com.wavesurvivor.horde.endless.Endless.active()) {
                 finishHorde(srv);
                 return;
             }
@@ -601,6 +618,7 @@ public class HordeManager {
                 broadcastWaveMessage(cfg, currentWave, null, false);
             }
             spawnBossesForWave(currentWave, cfg);
+            com.wavesurvivor.horde.endless.Endless.onWaveStart(srv, currentWave); // 1.7 : annonces du mode sans fin
 
             // Brèches infernales (horde avec breaches.enabled) : s'ouvrent toutes les N vagues
             {
@@ -747,7 +765,8 @@ public class HordeManager {
         int total = 0;
         for (SpecialWave.SpecialWaveEntity swe : sw.entities) {
             HordeEntity h = swe.toHordeEntity();
-            int count = h.getCountForWave(wave, playerCount);
+            int count = (int) Math.round(h.getCountForWave(com.wavesurvivor.horde.endless.Endless.templateWave(wave), playerCount)
+                    * com.wavesurvivor.horde.endless.Endless.countFactor(wave));
             queueSpawn(level, h, center, radius, count, playerCount);
             int done = Math.max(0, count);
             total += done;
@@ -773,7 +792,7 @@ public class HordeManager {
         template = com.wavesurvivor.i18n.WSLang.t(template); // message de la config, traduit
         String rendered = template
                 .replace("{wave}", String.valueOf(wave))
-                .replace("{total}", String.valueOf(cfg.totalWaves))
+                .replace("{total}", com.wavesurvivor.horde.endless.Endless.extraWaves(wave) > 0 ? "∞" : String.valueOf(cfg.totalWaves))
                 .replace("{name}", specialName != null ? com.wavesurvivor.i18n.WSLang.t(specialName) : "");
         broadcast(Component.literal(rendered).withStyle(isSpecial ? ChatFormatting.DARK_PURPLE : ChatFormatting.YELLOW));
 
@@ -818,7 +837,9 @@ public class HordeManager {
         // Héritage — Seigneur 5 : 2 premières vagues −15 % de monstres
         boolean lordFirst = wave <= 2 && com.wavesurvivor.horde.renaissance.Heritage.anyone(server, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 5);
         for (HordeEntity template : cfg.hordeEntities) {
-            int totalCount = template.getCountForWave(wave, playerCount);
+            // 1.7 — Mode sans fin : au-delà de la dernière vague, mêmes monstres que la dernière vague, en nombre croissant
+            int totalCount = (int) Math.round(template.getCountForWave(com.wavesurvivor.horde.endless.Endless.templateWave(wave), playerCount)
+                    * com.wavesurvivor.horde.endless.Endless.countFactor(wave));
             if (lordFirst && totalCount > 1) totalCount = Math.max(1, (int) Math.round(totalCount * 0.85));
             if (totalCount <= 0) continue;
 
@@ -857,7 +878,7 @@ public class HordeManager {
         for (BossWave boss : cfg.bossWaves) {
             if (boss.waveNumber != wave) continue;
             // Arène du boss final : le boss de la dernière vague ne sort pas, il attend dans son arène
-            if (cfg.raidArena && wave >= cfg.totalWaves && raidBoss == null) {
+            if (cfg.raidArena && wave >= cfg.totalWaves && raidBoss == null && !com.wavesurvivor.horde.endless.Endless.active()) {
                 raidBoss = boss;
                 broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("raid.await_classic", com.wavesurvivor.i18n.WSLang.t(boss.bossName))));
                 continue;
@@ -866,6 +887,11 @@ public class HordeManager {
             if (ok) {
                 broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.boss_b2e9") + com.wavesurvivor.i18n.WSLang.t(boss.bossName) + com.wavesurvivor.i18n.WSLang.t("srv.apparait")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
             }
+        }
+        // 1.7 — Mode sans fin : un boss de la horde revient périodiquement au-delà de la dernière vague
+        BossWave endlessBoss = com.wavesurvivor.horde.endless.Endless.bossFor(cfg, wave);
+        if (endlessBoss != null && BossManager.spawnBoss(level, endlessBoss, center, radius, server)) {
+            broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.boss_b2e9") + com.wavesurvivor.i18n.WSLang.t(endlessBoss.bossName) + com.wavesurvivor.i18n.WSLang.t("srv.apparait")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
         }
     }
 
@@ -898,6 +924,7 @@ public class HordeManager {
         com.wavesurvivor.horde.difficulty.HordeDifficulty.clear();
         com.wavesurvivor.horde.daily.DailyServer.clear();
         com.wavesurvivor.horde.bossrush.BossRush.clear();
+        com.wavesurvivor.horde.endless.Endless.clear();
         com.wavesurvivor.horde.frost.StormManager.clearAll();
         this.state = State.IDLE;
         this.activeHorde = null;
@@ -972,6 +999,9 @@ public class HordeManager {
     public State getState() { return state; }
     public HordeConfigMultiData getActiveHorde() { return activeHorde; }
     public int getCurrentWave() { return currentWave; }
+
+    /** Vagues terminées (la vague en cours ne compte pas tant qu'elle n'est pas nettoyée). */
+    public int wavesCleared() { return state == State.RUNNING ? Math.max(0, currentWave - 1) : Math.max(0, currentWave); }
     public long getStartedAtTick() { return startedAtTick; }
     public boolean isRunning() { return state == State.RUNNING || state == State.WAITING_NEXT_WAVE || state == State.PAUSED; }
 

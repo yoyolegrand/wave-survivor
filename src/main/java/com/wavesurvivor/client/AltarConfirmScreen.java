@@ -31,6 +31,8 @@ public class AltarConfirmScreen extends Screen {
     static String ROLE = "";
     /** Mode Boss Rush choisi (« », « rush », « gauntlet »), gardé d'un lancement à l'autre pendant la session. */
     static String MODE = "";
+    /** Mode sans fin (1.7) choisi, gardé d'un lancement à l'autre pendant la session (exclusif avec le Boss Rush). */
+    static boolean ENDLESS = false;
 
     /** Infobulle du bouton de difficulté : nom du niveau + description. */
     private static String diffTooltip(com.wavesurvivor.horde.difficulty.Difficulty d) {
@@ -82,7 +84,7 @@ public class AltarConfirmScreen extends Screen {
                         btn -> {
                             NetworkHandler.CHANNEL.sendToServer(new TriggerAltarPacket(data.altarPos, current().hordeName(),
                                     com.wavesurvivor.horde.mutator.Mutator.join(SELECTED), DIFF.id,
-                                    current().kingdom() ? ROLE : "", MODE));
+                                    current().kingdom() ? ROLE : "", ENDLESS ? "endless" : MODE));
                             this.onClose();
                         })
                 .bounds(centerX - 110, height - 60, 100, 22)
@@ -161,7 +163,10 @@ public class AltarConfirmScreen extends Screen {
         addRenderableWidget(dailyBtn);
 
         // Bouton « Boss Rush » (haut gauche, sous le Défi du jour) : Désactivé → Boss Rush → Gantelet
-        String rushInfo = current().rush() == null ? "" : current().rush();
+        // Le champ « rush » porte deux blocs séparés par « # » : Boss Rush, puis mode sans fin (1.7)
+        String[] segs = (current().rush() == null ? "" : current().rush()).split("#", -1);
+        String rushInfo = segs.length > 0 ? segs[0] : "";
+        String endlessInfo = segs.length > 1 ? segs[1] : "";
         if (!rushInfo.isEmpty()) {
             String[] ri = rushInfo.split(";");
             boolean gauntletOk = ri.length > 2 && ri[2].equals("1");
@@ -174,6 +179,7 @@ public class AltarConfirmScreen extends Screen {
                         if (MODE.isEmpty()) MODE = "rush";
                         else if (MODE.equals("rush") && gauntletOk) MODE = "gauntlet";
                         else MODE = "";
+                        if (!MODE.isEmpty()) ENDLESS = false; // le Boss Rush et le sans fin s'excluent
                         init();
                     })
                     .bounds(10, 54, 110, 18).build();
@@ -187,6 +193,33 @@ public class AltarConfirmScreen extends Screen {
         } else {
             MODE = "";
         }
+
+        // Bouton « Sans fin » (haut gauche, sous le Boss Rush) : la horde ne s'arrête plus après sa dernière vague
+        if (!endlessInfo.isEmpty()) {
+            String[] ei = endlessInfo.split(";");
+            boolean endLocked = ei.length > 2 && ei[2].equals("1");
+            if (endLocked) ENDLESS = false;
+            Button endBtn = Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t(ENDLESS ? "endless.btn_on" : "endless.btn_off")), btn -> {
+                        ENDLESS = !ENDLESS;
+                        if (ENDLESS) MODE = "";
+                        init();
+                    })
+                    .bounds(10, 76, 110, 18).build();
+            endBtn.active = !endLocked;
+            String endTip = "§6§l" + com.wavesurvivor.i18n.WSLang.t("endless.title") + "\n§7"
+                    + com.wavesurvivor.i18n.WSLang.t("endless.tip", ei.length > 3 ? ei[3] : "?", ei.length > 0 ? ei[0] : "?")
+                    + (ei.length > 1 && !ei[1].equals("0") ? "\n§7" + com.wavesurvivor.i18n.WSLang.t("endless.tip_boss", ei[1]) : "")
+                    + (endLocked ? "\n§c" + com.wavesurvivor.i18n.WSLang.t("endless.tip_locked") : "\n§8" + com.wavesurvivor.i18n.WSLang.t("endless.tip_click"));
+            endBtn.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(endTip)));
+            addRenderableWidget(endBtn);
+        } else {
+            ENDLESS = false;
+        }
+
+        // Bouton « Statistiques » (haut gauche) : compteurs et succès du joueur
+        addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("stats.button")),
+                        btn -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.StatsPackets.Request()))
+                .bounds(10, 98, 110, 18).build());
 
         // Bouton "Codex" (haut gauche) : guide des mécaniques
         addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("codex.button")),

@@ -28,6 +28,8 @@ public class MobRegistry {
             com.wavesurvivor.horde.mutator.MutatorEffects.applyToUnit(entity);
             // Niveau de difficulté de la horde (PV et dégâts des monstres)
             com.wavesurvivor.horde.difficulty.HordeDifficulty.applyToUnit(entity);
+            // Mode sans fin (1.7) : PV et dégâts qui montent à chaque vague au-delà de la dernière
+            com.wavesurvivor.horde.endless.Endless.applyToUnit(entity);
             // Monture / passager non demandés (jockeys vanilla ou d'autres mods) : contrôlés au tick suivant
             MOUNT_CHECK.add(entity.getUUID());
             // « Briseur de Monolithe » coché sur l'unité : ignore les joueurs, ne vise que le Monolithe (sans entité custom)
