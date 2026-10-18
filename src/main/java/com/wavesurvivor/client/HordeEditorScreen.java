@@ -4190,6 +4190,7 @@ public class HordeEditorScreen extends Screen {
             status = com.wavesurvivor.i18n.WSLang.t("ui.modifications_non_enregistrees_fermer_a");
             return;
         }
+        HordeEditorListScreen.focusMode(invasion() ? "invasion" : kingdom() ? "kingdom" : "waves");
         NetworkHandler.CHANNEL.sendToServer(new HordeEditorPackets.Request("", HordeEditorPackets.PURPOSE_LIST));
         sendPresence(false);
         if (ACTIVE == this) ACTIVE = null;

@@ -49,12 +49,18 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] Multijoueur : vies partagées
 - [ ] Succès « Marathonien »
 - [ ] Les 24 succès s'obtiennent et s'affichent
-- [ ] Reprise d'une sauvegarde 1.6 en 1.7 : ajouts `invasions` et `sables_ardents` appliqués une seule fois, config existante intacte
+- [ ] Reprise d'un monde 1.6 en 1.7 : hordes, Kingdom et sauvegarde/reprise de partie fonctionnent, `invasions` et `sables_ardents` apparaissent dans la liste des hordes
 - [ ] Ajouts de Claude Chat rejoués : Brasier d'offrande, Baraquement, coffres roulette
 
 ## Retours joueurs CurseForge (BLaoTea, 2026-10-18)
 - [ ] Tuto Vanilla, vague 5 (Zombie puissant) : la charge (dash) ne fait des dégâts que si elle touche, plus de mort en un coup
 - [ ] Anomalies / Terrain instable : plus aucune entre deux vagues (Calme, pause, coffres), celles en cours disparaissent
+
+## Éditeur : liste triée en onglets
+- [ ] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
+- [ ] Créer une horde de chaque type (modèle) puis enregistrer : la liste se rouvre sur le bon onglet
+- [ ] Changer le mode d'une horde (Général) puis enregistrer : elle change d'onglet
+- [ ] Défilement, ↺, 🗑, copier : fonctionnent dans chaque onglet ; onglet vide : message « Aucune horde »
 
 ## Couches de configuration (base du mod + couche du joueur)
 - [ ] Nouvelle installation (dossier `config/wavesurvivor` supprimé) : le jeu démarre, les hordes du mod sont là, aucun fichier copié en dehors des tiens

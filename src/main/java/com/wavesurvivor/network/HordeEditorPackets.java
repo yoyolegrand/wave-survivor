@@ -59,7 +59,8 @@ public final class HordeEditorPackets {
 
     // ─── S→C : liste ───
 
-    public record Entry(String name, String source, int waves, int mobs, int specials, int bosses) {}
+    /** mode : « waves » (horde), « kingdom » ou « invasion » (onglets de la liste). */
+    public record Entry(String name, String source, int waves, int mobs, int specials, int bosses, String mode) {}
 
     public static class OpenList {
         public final List<Entry> entries;
@@ -81,6 +82,7 @@ public final class HordeEditorPackets {
             for (Entry e : entries) {
                 buf.writeUtf(e.name()); buf.writeUtf(e.source());
                 buf.writeVarInt(e.waves()); buf.writeVarInt(e.mobs()); buf.writeVarInt(e.specials()); buf.writeVarInt(e.bosses());
+                buf.writeUtf(e.mode());
             }
             buf.writeVarInt(customEntities.size());
             for (String s : customEntities) buf.writeUtf(s);
@@ -92,7 +94,7 @@ public final class HordeEditorPackets {
         public static OpenList decode(FriendlyByteBuf buf) {
             int n = buf.readVarInt();
             List<Entry> l = new ArrayList<>(n);
-            for (int i = 0; i < n; i++) l.add(new Entry(buf.readUtf(), buf.readUtf(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt()));
+            for (int i = 0; i < n; i++) l.add(new Entry(buf.readUtf(), buf.readUtf(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readUtf()));
             int m = buf.readVarInt();
             List<String> ce = new ArrayList<>(m);
             for (int i = 0; i < m; i++) ce.add(buf.readUtf());

@@ -21,6 +21,21 @@ public class HordeEditorListScreen extends Screen {
 
     private static final int PANEL_W = 380;
     private static final int ROW_H = 24;
+    /** Début de la liste (sous la barre d'onglets). */
+    private static final int LIST_Y = 76;
+    private static final String[] TAB_KEYS = {"waves", "kingdom", "invasion"};
+    /** Onglet affiché (gardé d'une ouverture à l'autre). */
+    private static String tabMode = "waves";
+
+    /** Choisit l'onglet à afficher à la prochaine ouverture (après avoir enregistré une horde : son onglet). */
+    public static void focusMode(String mode) {
+        tabMode = mode != null && (mode.equals("kingdom") || mode.equals("invasion")) ? mode : "waves";
+    }
+
+    private static String modeOf(HordeEditorPackets.Entry e) {
+        String m = e.mode() == null ? "waves" : e.mode().toLowerCase();
+        return m.equals("kingdom") || m.equals("invasion") ? m : "waves";
+    }
 
     final List<HordeEditorPackets.Entry> entries;
     final List<String> customEntities;
@@ -32,6 +47,8 @@ public class HordeEditorListScreen extends Screen {
     private String pendingRevert = null;
     private String status = "";
     private int left, top, panelH, visible;
+    /** Hordes de l'onglet affiché. */
+    private List<HordeEditorPackets.Entry> shown = new java.util.ArrayList<>();
 
     public HordeEditorListScreen(HordeEditorPackets.OpenList pkt) {
         super(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.editeur_de_hordes_5153")));
@@ -53,10 +70,33 @@ public class HordeEditorListScreen extends Screen {
     @Override
     protected void init() {
         clearWidgets();
-        visible = Math.max(3, (height - 110) / ROW_H);
-        panelH = 62 + visible * ROW_H + 10;
+        shown = new java.util.ArrayList<>();
+        int[] counts = new int[TAB_KEYS.length];
+        for (HordeEditorPackets.Entry e : entries) {
+            String m = modeOf(e);
+            for (int t = 0; t < TAB_KEYS.length; t++) if (TAB_KEYS[t].equals(m)) counts[t]++;
+            if (m.equals(tabMode)) shown.add(e);
+        }
+        visible = Math.max(3, (height - 134) / ROW_H);
+        panelH = LIST_Y + 8 + visible * ROW_H + 10;
+        scroll = Math.max(0, Math.min(scroll, Math.max(0, shown.size() - visible)));
         left = (width - PANEL_W) / 2;
         top = Math.max(4, (height - panelH) / 2);
+
+        // Onglets : Hordes / Kingdom / Invasions (une horde enregistrée se range d'elle-même dans le bon onglet)
+        String[] tabNames = {com.wavesurvivor.i18n.WSLang.t("cfg.tab_hordes"), com.wavesurvivor.i18n.WSLang.t("cfg.tab_kingdom"),
+                com.wavesurvivor.i18n.WSLang.t("cfg.tab_invasions")};
+        for (int t = 0; t < TAB_KEYS.length; t++) {
+            final String key = TAB_KEYS[t];
+            boolean sel = key.equals(tabMode);
+            addRenderableWidget(Button.builder(Component.literal((sel ? "§e§l" : "§7") + tabNames[t] + " (" + counts[t] + ")"), b -> {
+                tabMode = key;
+                scroll = 0;
+                pendingDelete = null;
+                pendingRevert = null;
+                init();
+            }).bounds(left + 8 + t * 120, top + 50, 116, 18).build());
+        }
 
         // Nouvelle horde : choix d'un modèle de départ (Classique courte / longue, Kingdom, Vide)
         addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.nouvelle_horde_cc62")),
@@ -87,9 +127,9 @@ public class HordeEditorListScreen extends Screen {
                 .tooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("cfg.restore_deleted_tip")))
                 .bounds(left + PANEL_W - 176, top + panelH - 17, 168, 14).build());
 
-        for (int i = 0; i < visible && i + scroll < entries.size(); i++) {
-            HordeEditorPackets.Entry e = entries.get(i + scroll);
-            int y = top + 54 + i * ROW_H;
+        for (int i = 0; i < visible && i + scroll < shown.size(); i++) {
+            HordeEditorPackets.Entry e = shown.get(i + scroll);
+            int y = top + LIST_Y + i * ROW_H;
             int bx = left + PANEL_W - 8;
             boolean armed = e.name().equals(pendingDelete);
             bx -= 22;
@@ -171,7 +211,7 @@ public class HordeEditorListScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mx, double my, double delta) {
-        int max = Math.max(0, entries.size() - visible);
+        int max = Math.max(0, shown.size() - visible);
         scroll = Math.max(0, Math.min(max, scroll - (int) Math.signum(delta)));
         init();
         return true;
@@ -184,9 +224,10 @@ public class HordeEditorListScreen extends Screen {
         g.fill(left, top, left + PANEL_W, top + 2, 0xFFF59E0B);
         g.drawString(font, com.wavesurvivor.i18n.WSLang.t("ui.editeur_de_hordes"), left + 8, top + 9, 0xFFFFFFFF);
 
-        for (int i = 0; i < visible && i + scroll < entries.size(); i++) {
-            HordeEditorPackets.Entry e = entries.get(i + scroll);
-            int y = top + 54 + i * ROW_H;
+        if (shown.isEmpty()) g.drawCenteredString(font, com.wavesurvivor.i18n.WSLang.t("cfg.tab_empty"), left + PANEL_W / 2, top + LIST_Y + 12, 0xFF9CA3AF);
+        for (int i = 0; i < visible && i + scroll < shown.size(); i++) {
+            HordeEditorPackets.Entry e = shown.get(i + scroll);
+            int y = top + LIST_Y + i * ROW_H;
             g.fill(left + 6, y - 1, left + PANEL_W - 6, y + ROW_H - 3, 0x22FFFFFF);
             String srcKey = e.source().contains(":") ? e.source().substring(0, e.source().indexOf(':')) : e.source();
             String badge = switch (srcKey) {
@@ -202,8 +243,8 @@ public class HordeEditorListScreen extends Screen {
             g.drawString(font, "§7" + e.waves() + com.wavesurvivor.i18n.WSLang.t("ui.vagues_b512") + e.mobs() + com.wavesurvivor.i18n.WSLang.t("ui.mobs") + e.specials() + com.wavesurvivor.i18n.WSLang.t("ui.speciales")
                     + e.bosses() + com.wavesurvivor.i18n.WSLang.t("ui.boss_3847"), left + 12, y + 12, 0xFFFFFFFF);
         }
-        if (entries.size() > visible) {
-            g.drawString(font, com.wavesurvivor.i18n.WSLang.t("ui.molette") + (scroll + 1) + "–" + Math.min(entries.size(), scroll + visible) + "/" + entries.size(),
+        if (shown.size() > visible) {
+            g.drawString(font, com.wavesurvivor.i18n.WSLang.t("ui.molette") + (scroll + 1) + "–" + Math.min(shown.size(), scroll + visible) + "/" + shown.size(),
                     left + 8, top + panelH - 12, 0xFFFFFFFF);
         }
         if (!status.isEmpty()) g.drawCenteredString(font, status, width / 2, top + panelH + 4, 0xFFFFFFFF);

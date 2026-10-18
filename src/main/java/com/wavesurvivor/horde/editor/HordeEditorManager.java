@@ -44,7 +44,8 @@ public final class HordeEditorManager {
             String source = CustomHordeStore.sourceOf(name).name();
             if (source.equals("OVERRIDE")) source += ":" + CustomHordeStore.modifiedFields(name);
             entries.add(new HordeEditorPackets.Entry(name, source,
-                    intOf(cd, "totalWaves"), sizeOf(cd, "hordeEntities"), sizeOf(cd, "specialWaves"), sizeOf(cd, "bossWaves")));
+                    intOf(cd, "totalWaves"), sizeOf(cd, "hordeEntities"), sizeOf(cd, "specialWaves"), sizeOf(cd, "bossWaves"),
+                    cd.has("mode") && cd.get("mode").isJsonPrimitive() ? cd.get("mode").getAsString().toLowerCase() : "waves"));
         }
         List<String> ce = new ArrayList<>();
         ModConfig cfg = WaveSurvivorMod.getConfig();
