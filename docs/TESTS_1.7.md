@@ -60,6 +60,8 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] Cavalier des dunes : le chameau ne s'assoit plus (surtout la nuit), le cavalier n'est plus immobilisé
 - [ ] Séisme et Fissures (Tremor) : fissures en zigzag avec branches, plus de barre droite ; dégâts une seule fois par fissure
 
+- [ ] Perdre ou arrêter une horde en plein séisme / sable mouvant / pics de glace : plus aucun bloc d'effet ne reste au sol (essayer aussi `/horde stop`)
+
 ## Éditeur : liste triée en onglets
 - [x] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
 - [x] Créer une horde de chaque type (modèle) puis enregistrer : la liste se rouvre sur le bon onglet

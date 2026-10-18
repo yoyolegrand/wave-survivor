@@ -57,6 +57,7 @@
 
 ### 🐛 Fixes
 - 🧟 **Horde monsters no longer transform**: a horde zombie that falls in water stays a zombie instead of turning into a Drowned (which left the wave stuck forever), and the same goes for husks, skeletons, piglins and hoglins. Killing every unit now always ends the wave.
+- 🧹 **Visual effects no longer stay behind** when a horde ends or is lost: earthquake rocks and cracks, ice spikes, quicksand discs and telegraphs are all removed.
 - 🐪 **Dune Riders' war camels never sit down** anymore (at night the vanilla camel lay down and left its rider stuck).
 - 🌋 **Earthquake and Tremor cracks look like real cracks**: a jagged path that narrows towards the end, with branches splitting off, instead of a straight bar.
 - 🧪 **Witches no longer heal themselves** (healing potion and regeneration), which made them far too tough on high difficulties.

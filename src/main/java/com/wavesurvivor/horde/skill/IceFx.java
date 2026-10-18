@@ -199,6 +199,14 @@ public final class IceFx {
 
     @SubscribeEvent
     public void onStopping(ServerStoppingEvent e) {
+        clearAll();
+    }
+
+    /**
+     * Retire TOUS les blocs d'effet encore présents (fissures, rochers, pics, disques de sable mouvant…). Appelé à la fin ou à
+     * l'arrêt d'une horde : le nettoyage différé de chaque effet est alors purgé avec le planificateur et ne s'exécuterait jamais.
+     */
+    public static void clearAll() {
         for (Display.BlockDisplay d : ACTIVE.values()) if (!d.isRemoved()) d.discard();
         ACTIVE.clear();
     }

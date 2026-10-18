@@ -936,6 +936,7 @@ public class HordeManager {
         com.wavesurvivor.horde.endless.Endless.clear();
         com.wavesurvivor.horde.frost.StormManager.clearAll();
         com.wavesurvivor.horde.quake.QuakeManager.clearAll();
+        com.wavesurvivor.horde.skill.IceFx.clearAll(); // fissures, rochers, pics… encore à l'écran
         this.state = State.IDLE;
         this.activeHorde = null;
         this.currentWave = 0;

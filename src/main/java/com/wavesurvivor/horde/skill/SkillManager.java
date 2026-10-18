@@ -119,6 +119,7 @@ public class SkillManager {
         GatlingScheduler.clearAll();
         WebTrapTracker.clearAll();
         DelayedActionScheduler.clearAll();
+        IceFx.clearAll(); // les nettoyages différés viennent d'être purgés : on retire les effets visuels restants
     }
 
     public static int activeBossCount() {
