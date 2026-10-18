@@ -56,6 +56,10 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [x] Tuto Vanilla, vague 5 (Zombie puissant) : la charge (dash) ne fait des dégâts que si elle touche, plus de mort en un coup
 - [x] Anomalies / Terrain instable : plus aucune entre deux vagues (Calme, pause, coffres), celles en cours disparaissent
 
+## Retours de test du désert (2026-10-18)
+- [ ] Cavalier des dunes : le chameau ne s'assoit plus (surtout la nuit), le cavalier n'est plus immobilisé
+- [ ] Séisme et Fissures (Tremor) : fissures en zigzag avec branches, plus de barre droite ; dégâts une seule fois par fissure
+
 ## Éditeur : liste triée en onglets
 - [x] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
 - [x] Créer une horde de chaque type (modèle) puis enregistrer : la liste se rouvre sur le bon onglet

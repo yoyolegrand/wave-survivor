@@ -211,30 +211,84 @@ public class QuakeManager {
     }
 
     /**
-     * Une fissure qui court sur le sol (un bloc tous les 2 ticks) depuis (sx, sz) dans la direction {@code dir}
-     * (radians) : blesse et soulève les joueurs qu'elle traverse. Visuelle seulement (blocs « display »).
+     * Une fissure qui se FAUFILE dans le sol depuis (sx, sz), globalement dans la direction {@code dir} (radians) :
+     * tracé en zigzag qui s'affine vers le bout, avec des branches qui partent sur les côtés (et des sous-branches).
+     * Elle s'ouvre segment après segment (un tous les 2 ticks) ; blesse et soulève une seule fois chaque joueur qu'elle
+     * traverse. Visuelle seulement (blocs « display », le terrain n'est jamais modifié).
+     * @param length portée approximative de la fissure principale, en blocs
      */
     public static void crackLine(ServerLevel level, MinecraftServer srv, double sx, double sz, double dir, int length,
                                  double damage, BlockState crackState) {
-        Quaternionf rot = new Quaternionf().rotateY(-(float) dir);
-        for (int i = 0; i < length; i++) {
-            final int step = i;
-            DelayedActionScheduler.schedule(srv, i * 2, () -> {
-                double x = sx + Math.cos(dir) * step, z = sz + Math.sin(dir) * step;
-                int gy = groundY(level, (int) Math.floor(x), (int) Math.floor(z));
-                Display.BlockDisplay d = IceFx.spawn(level, x, gy + 0.02, z, crackState, rot, 1.2f, 0.04f, 0.5f, 0f);
-                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState()), x, gy + 0.2, z, 8, 0.3, 0.1, 0.3, 0.1);
+        List<double[]> segs = new ArrayList<>();
+        buildCrack(segs, sx, sz, dir, Math.max(4, (int) Math.round(length * 0.8)), 0.8, 0, 0);
+        java.util.Set<java.util.UUID> hit = new java.util.HashSet<>();
+        for (double[] s : segs) {
+            final double x1 = s[0], z1 = s[1], x2 = s[2], z2 = s[3], width = s[4];
+            DelayedActionScheduler.schedule(srv, (int) s[5], () -> {
+                double mx = (x1 + x2) / 2, mz = (z1 + z2) / 2;
+                double ang = Math.atan2(z2 - z1, x2 - x1);
+                float segLen = (float) Math.hypot(x2 - x1, z2 - z1);
+                int gy = groundY(level, (int) Math.floor(mx), (int) Math.floor(mz));
+                Quaternionf rot = new Quaternionf().rotateY(-(float) ang);
+                // La fissure : dalle sombre fine, un peu plus longue que le segment pour que les morceaux se recouvrent
+                Display.BlockDisplay d = IceFx.spawn(level, mx, gy + 0.02, mz, crackState, rot, segLen + 0.45f, 0.05f, (float) width, 0f);
+                // Éclats posés de travers sur les bords
+                Display.BlockDisplay chip = null;
+                if (RNG.nextDouble() < 0.4) {
+                    double off = (RNG.nextDouble() - 0.5) * (width + 0.7);
+                    double cx = mx - Math.sin(ang) * off, cz = mz + Math.cos(ang) * off;
+                    float size = 0.18f + RNG.nextFloat() * 0.2f;
+                    Quaternionf tilt = new Quaternionf().rotateY(RNG.nextFloat() * 6.28f).rotateX((RNG.nextFloat() - 0.5f) * 0.9f);
+                    chip = IceFx.spawn(level, cx, groundY(level, (int) Math.floor(cx), (int) Math.floor(cz)) + 0.02, cz,
+                            crackState, tilt, size, size, size, 0f);
+                }
+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState()), mx, gy + 0.2, mz, 6, 0.3, 0.1, 0.3, 0.1);
                 for (ServerPlayer p : level.players()) {
-                    if (!p.isAlive() || p.isSpectator() || p.getY() < gy - 1 || p.getY() > gy + 2) continue;
-                    double dx = p.getX() - x, dz = p.getZ() - z;
-                    if (dx * dx + dz * dz > 1.2 * 1.2) continue;
+                    if (!p.isAlive() || p.isSpectator() || p.getY() < gy - 1 || p.getY() > gy + 2 || hit.contains(p.getUUID())) continue;
+                    if (distToSegment(p.getX(), p.getZ(), x1, z1, x2, z2) > width / 2 + 0.9) continue;
+                    hit.add(p.getUUID());
                     p.hurt(level.damageSources().generic(), (float) damage);
                     p.setDeltaMovement(p.getDeltaMovement().add(0, 0.45, 0));
                     p.hurtMarked = true;
                 }
-                if (d != null) DelayedActionScheduler.schedule(srv, 50, () -> IceFx.remove(d), "quake crack clean");
+                final Display.BlockDisplay d1 = d, d2 = chip;
+                DelayedActionScheduler.schedule(srv, 50, () -> { IceFx.remove(d1); IceFx.remove(d2); }, "quake crack clean");
             }, "quake crack");
         }
+    }
+
+    /**
+     * Génère les segments d'une fissure : {x1, z1, x2, z2, largeur, délai (ticks), profondeur de branche}.
+     * Le cap dérive au hasard autour de la direction de départ (zigzag), la largeur diminue vers le bout, et des branches
+     * (plus courtes, plus fines) partent sur les côtés — jusqu'à 2 niveaux.
+     */
+    private static void buildCrack(List<double[]> segs, double x, double z, double baseHeading, int steps, double width0,
+                                   int startDelay, int depth) {
+        double wander = 0;
+        for (int i = 0; i < steps; i++) {
+            wander = wander * 0.8 + (RNG.nextDouble() - 0.5) * 1.0; // dérive qui revient vers la direction de départ
+            double heading = baseHeading + Math.max(-0.7, Math.min(0.7, wander));
+            double len = 0.9 + RNG.nextDouble() * 0.9;
+            double nx = x + Math.cos(heading) * len, nz = z + Math.sin(heading) * len;
+            double width = width0 * (1.0 - 0.7 * i / steps) * (0.8 + RNG.nextDouble() * 0.4);
+            int delay = startDelay + i * 2;
+            segs.add(new double[]{x, z, nx, nz, Math.max(0.12, width), delay, depth});
+            if (depth < 2 && i >= 2 && i < steps - 2 && RNG.nextDouble() < 0.3) {
+                double side = (RNG.nextBoolean() ? 1 : -1) * (0.55 + RNG.nextDouble() * 0.6);
+                buildCrack(segs, nx, nz, heading + side, Math.max(3, (int) Math.round((steps - i) * 0.55)), width * 0.65, delay + 2, depth + 1);
+            }
+            x = nx;
+            z = nz;
+        }
+    }
+
+    /** Distance du point (px, pz) au segment [(x1, z1), (x2, z2)]. */
+    private static double distToSegment(double px, double pz, double x1, double z1, double x2, double z2) {
+        double dx = x2 - x1, dz = z2 - z1;
+        double l2 = dx * dx + dz * dz;
+        double t = l2 == 0 ? 0 : Math.max(0, Math.min(1, ((px - x1) * dx + (pz - z1) * dz) / l2));
+        double cx = x1 + t * dx, cz = z1 + t * dz;
+        return Math.hypot(px - cx, pz - cz);
     }
 
     /** Hauteur du sol (pour les compétences qui posent des effets). */

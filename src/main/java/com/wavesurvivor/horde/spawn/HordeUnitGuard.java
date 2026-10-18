@@ -65,6 +65,20 @@ public class HordeUnitGuard {
         if (i != null) i.setBaseValue(v);
     }
 
+    // ─── Chameaux de guerre : jamais assis ───
+
+    /**
+     * Une monture de horde qui est un chameau ne s'assoit jamais : de nuit, le chameau vanilla se couche de temps en temps
+     * et le cavalier (Cavalier des dunes) se retrouvait immobilisé. On le relève aussitôt.
+     */
+    @SubscribeEvent
+    public void onCamelTick(net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent event) {
+        if (event.getEntity() instanceof net.minecraft.world.entity.animal.camel.Camel c && !c.level().isClientSide
+                && c.getPersistentData().getBoolean("ws_mount") && (c.isCamelSitting() || c.isInPoseTransition())) {
+            c.standUpInstantly();
+        }
+    }
+
     // ─── Sorcières : aucun soin ───
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
