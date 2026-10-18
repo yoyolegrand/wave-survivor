@@ -56,7 +56,7 @@ public class CustomSkillData {
     public double dashPower = 2;
 
     @SerializedName("dashDamageMultiplier")
-    public double dashDamageMultiplier = 2;
+    public double dashDamageMultiplier = 1.2;
 
     @SerializedName("dashSpeedThreshold")
     public double dashSpeedThreshold = 0.6;
