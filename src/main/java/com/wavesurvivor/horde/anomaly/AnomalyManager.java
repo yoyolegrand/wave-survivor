@@ -99,7 +99,8 @@ public class AnomalyManager {
 
         // Déclenchement périodique pendant une horde qui a des anomalies
         HordeManager hm = HordeManager.get();
-        if (hm.isRunning() && hm.getActiveHorde() != null) {
+        // Pas de salve entre deux vagues (Calme, pause, coffres) : seulement quand une vague est en cours
+        if (hm.getState() == HordeManager.State.RUNNING && hm.getActiveHorde() != null) {
             AltarRecipes.Anomalies cfg = AltarRecipes.getAnomalies(hm.getActiveHorde().hordeName);
             if (cfg != null && hm.getCurrentWave() >= cfg.fromWave) {
                 if (nextWave == 0) nextWave = now + 100;
@@ -113,6 +114,11 @@ public class AnomalyManager {
         }
 
         if (ANOMALIES.isEmpty()) return;
+        // Entre deux vagues : les anomalies en cours (avertissement ou actives) disparaissent sans effet
+        if (hm.isRunning() && hm.getState() != HordeManager.State.RUNNING) {
+            ANOMALIES.clear();
+            return;
+        }
         Iterator<Anomaly> it = ANOMALIES.iterator();
         while (it.hasNext()) {
             Anomaly a = it.next();

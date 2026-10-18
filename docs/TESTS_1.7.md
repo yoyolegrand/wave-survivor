@@ -51,3 +51,7 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] Les 24 succès s'obtiennent et s'affichent
 - [ ] Reprise d'une sauvegarde 1.6 en 1.7 : ajouts `invasions` et `sables_ardents` appliqués une seule fois, config existante intacte
 - [ ] Ajouts de Claude Chat rejoués : Brasier d'offrande, Baraquement, coffres roulette
+
+## Retours joueurs CurseForge (BLaoTea, 2026-10-18)
+- [ ] Tuto Vanilla, vague 5 (Zombie puissant) : la charge (dash) ne fait des dégâts que si elle touche, plus de mort en un coup
+- [ ] Anomalies / Terrain instable : plus aucune entre deux vagues (Calme, pause, coffres), celles en cours disparaissent

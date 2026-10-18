@@ -3,6 +3,7 @@ package com.wavesurvivor.horde.skill.impl;
 import com.wavesurvivor.WaveSurvivorMod;
 import com.wavesurvivor.config.model.CustomSkillData;
 import com.wavesurvivor.horde.skill.BossSkill;
+import com.wavesurvivor.horde.skill.DelayedActionScheduler;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -42,19 +43,31 @@ public class SkillDashCharge extends BossSkill {
         int resistTicks = Math.max(10, config.dashResistanceDuration);
         boss.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, resistTicks, 3, false, false));
 
-        // Damage bonus si le boss touche la cible dans les 20 ticks (via TargetHit tick check)
-        // Simplification : on applique immédiatement un damage bonus proportionnel
+        // 1.7 : le bonus de dégâts n'est plus instantané (il touchait à coup sûr, même sans contact, et pouvait tuer d'un coup) :
+        // il n'est infligé que si le boss ARRIVE au contact de la cible pendant la charge, une seule fois. Esquiver = aucun dégât.
         double bonusDamage = getBossAttackDamage(boss) * config.dashDamageMultiplier;
-        // Le damage n'est appliqué que si assez proche à l'arrivée (dans 20 ticks)
-        // Pour rester simple : on schedule via delta d'impact — ici on applique direct si dist < 6
-        if (dist < 8) {
-            target.hurt(boss.damageSources().mobAttack(boss), (float) bonusDamage);
-        }
+        checkImpact(boss, target, level, (float) bonusDamage, 0);
 
         playSound(level, boss, config.dashSound);
         WaveSurvivorMod.LOGGER.debug("[Skill dash] '{}' fonce sur {} (dist {}, bonus dmg {})",
                 boss.getCustomName() != null ? boss.getCustomName().getString() : boss.getType(),
                 target.getName().getString(), (int) dist, (int) bonusDamage);
+    }
+
+    /** Durée de la charge pendant laquelle l'impact est testé (ticks) et pas de test (ticks). */
+    private static final int CHARGE_TICKS = 16, STEP = 2;
+
+    private void checkImpact(LivingEntity boss, LivingEntity target, ServerLevel level, float damage, int elapsed) {
+        DelayedActionScheduler.schedule(level.getServer(), STEP, () -> {
+            if (!boss.isAlive() || !target.isAlive()) return;
+            // Contact : le boss touche la cible (marge légère pour une charge à pleine vitesse)
+            if (boss.getBoundingBox().inflate(0.6).intersects(target.getBoundingBox())) {
+                target.hurt(boss.damageSources().mobAttack(boss), damage);
+                playSound(level, boss, config.dashImpactSound);
+                return;
+            }
+            if (elapsed + STEP < CHARGE_TICKS) checkImpact(boss, target, level, damage, elapsed + STEP);
+        }, "dash_impact");
     }
 
     private double getBossAttackDamage(LivingEntity boss) {
