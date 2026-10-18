@@ -788,31 +788,22 @@ public class HordeCommand {
         horde.configData.spawnCoords.dimension = dim;
 
         try {
-            Path cfgFile = FMLPaths.CONFIGDIR.get().resolve("wavesurvivor").resolve("config.json");
-            if (!Files.exists(cfgFile)) {
-                ctx.getSource().sendFailure(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.config_json_introuvable_la_modification")));
+            // 1.7 : le point d'apparition est une modification du joueur (couche du joueur), la base du mod n'est jamais réécrite
+            JsonObject h = com.wavesurvivor.config.CustomHordeStore.get(horde.hordeName);
+            if (h == null) {
+                ctx.getSource().sendFailure(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.horde_introuvable_1934") + name + "'."));
                 return 0;
             }
-            String content = new String(Files.readAllBytes(cfgFile), StandardCharsets.UTF_8);
-            JsonObject root = JsonParser.parseString(content).getAsJsonObject();
-            JsonObject donnees = root.has("donnees") ? root.getAsJsonObject("donnees") : root;
-            if (!donnees.has("HordeConfigMulti")) throw new RuntimeException("HordeConfigMulti absent");
-
-            for (var el : donnees.getAsJsonArray("HordeConfigMulti")) {
-                JsonObject h = el.getAsJsonObject();
-                if (h.has("hordeName") && h.get("hordeName").getAsString().equals(name)) {
-                    JsonObject configData = h.has("configData") ? h.getAsJsonObject("configData") : new JsonObject();
-                    JsonObject coords = new JsonObject();
-                    coords.addProperty("x", x);
-                    coords.addProperty("y", y);
-                    coords.addProperty("z", z);
-                    coords.addProperty("dimension", dim);
-                    configData.add("spawnCoords", coords);
-                    h.add("configData", configData);
-                    break;
-                }
-            }
-            Files.write(cfgFile, PRETTY_GSON.toJson(root).getBytes(StandardCharsets.UTF_8));
+            JsonObject configData = h.has("configData") && h.get("configData").isJsonObject() ? h.getAsJsonObject("configData") : new JsonObject();
+            JsonObject coords = new JsonObject();
+            coords.addProperty("x", x);
+            coords.addProperty("y", y);
+            coords.addProperty("z", z);
+            coords.addProperty("dimension", dim);
+            configData.add("spawnCoords", coords);
+            h.add("configData", configData);
+            com.wavesurvivor.config.CustomHordeStore.put(h, horde.hordeName);
+            WaveSurvivorMod.reloadConfig();
             WaveSurvivorMod.LOGGER.info("[setSpawn] Horde '{}' spawnCoords → ({},{},{}) dim={}", name, x, y, z, dim);
 
             ctx.getSource().sendSuccess(() -> Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.spawncoords_de") + name + com.wavesurvivor.i18n.WSLang.t("srv.mis_a") + x + "," + y + "," + z + com.wavesurvivor.i18n.WSLang.t("srv.dim") + dim).withStyle(ChatFormatting.GREEN), true);

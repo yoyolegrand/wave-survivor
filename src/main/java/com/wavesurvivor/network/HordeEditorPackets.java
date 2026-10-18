@@ -202,6 +202,21 @@ public final class HordeEditorPackets {
         }
     }
 
+    /** C→S : rétablit la version du mod d'une horde (name vide = toutes les hordes du mod que le joueur a supprimées). */
+    public static class Revert {
+        public final String name;
+        public Revert(String name) { this.name = name; }
+        public void encode(FriendlyByteBuf buf) { buf.writeUtf(name); }
+        public static Revert decode(FriendlyByteBuf buf) { return new Revert(buf.readUtf()); }
+        public static void handle(Revert pkt, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(() -> {
+                ServerPlayer p = ctx.get().getSender();
+                if (p != null) HordeEditorManager.revert(p, pkt.name);
+            });
+            ctx.get().setPacketHandled(true);
+        }
+    }
+
     // ─── S→C : résultat ───
 
     public static class Result {

@@ -29,6 +29,7 @@ public class HordeEditorListScreen extends Screen {
     final com.google.gson.JsonObject skillCatalog;
     private int scroll = 0;
     private String pendingDelete = null;
+    private String pendingRevert = null;
     private String status = "";
     private int left, top, panelH, visible;
 
@@ -80,6 +81,12 @@ public class HordeEditorListScreen extends Screen {
                         b -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.EntityEditorPackets.Open()))
                 .bounds(left + PANEL_W - 146, top + 4, 138, 18).build());
 
+        // Hordes du mod supprimées par le joueur : les rétablir (couches de configuration)
+        addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("cfg.restore_deleted")),
+                        b -> NetworkHandler.CHANNEL.sendToServer(new HordeEditorPackets.Revert("")))
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("cfg.restore_deleted_tip")))
+                .bounds(left + PANEL_W - 176, top + panelH - 17, 168, 14).build());
+
         for (int i = 0; i < visible && i + scroll < entries.size(); i++) {
             HordeEditorPackets.Entry e = entries.get(i + scroll);
             int y = top + 54 + i * ROW_H;
@@ -96,6 +103,21 @@ public class HordeEditorListScreen extends Screen {
                 }
                 init();
             }).bounds(bx, y, 20, 20).build());
+            if (e.source().startsWith("OVERRIDE")) {
+                bx -= 22;
+                boolean rArmed = e.name().equals(pendingRevert);
+                addRenderableWidget(Button.builder(Component.literal(rArmed ? "§e§l?" : "§e↺"), b -> {
+                    if (e.name().equals(pendingRevert)) {
+                        NetworkHandler.CHANNEL.sendToServer(new HordeEditorPackets.Revert(e.name()));
+                        pendingRevert = null;
+                    } else {
+                        pendingRevert = e.name();
+                        status = com.wavesurvivor.i18n.WSLang.t("cfg.revert_confirm", e.name());
+                    }
+                    init();
+                }).tooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("cfg.revert_tip")))
+                        .bounds(bx, y, 20, 20).build());
+            }
             bx -= 22;
             addRenderableWidget(Button.builder(Component.literal("📋"), b -> {
                 NetworkHandler.CHANNEL.sendToServer(new HordeEditorPackets.Request(e.name(), HordeEditorPackets.PURPOSE_COPY));
@@ -166,10 +188,13 @@ public class HordeEditorListScreen extends Screen {
             HordeEditorPackets.Entry e = entries.get(i + scroll);
             int y = top + 54 + i * ROW_H;
             g.fill(left + 6, y - 1, left + PANEL_W - 6, y + ROW_H - 3, 0x22FFFFFF);
-            String badge = switch (e.source()) {
+            String srcKey = e.source().contains(":") ? e.source().substring(0, e.source().indexOf(':')) : e.source();
+            String badge = switch (srcKey) {
                 case "CUSTOM" -> com.wavesurvivor.i18n.WSLang.t("§a[en jeu]");
-                case "OVERRIDE" -> com.wavesurvivor.i18n.WSLang.t("§e[modifiée]");
-                default -> com.wavesurvivor.i18n.WSLang.t("ui.base44_511e");
+                case "OVERRIDE" -> e.source().contains(":") && !e.source().endsWith(":0")
+                        ? com.wavesurvivor.i18n.WSLang.t("cfg.badge_modified", e.source().substring(e.source().indexOf(':') + 1))
+                        : com.wavesurvivor.i18n.WSLang.t("§e[modifiée]");
+                default -> com.wavesurvivor.i18n.WSLang.t("cfg.badge_base");
             };
             String name = e.name();
             if (font.width(name) > 150) name = font.plainSubstrByWidth(name, 144) + "…";

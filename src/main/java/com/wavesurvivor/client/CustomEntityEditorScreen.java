@@ -55,6 +55,7 @@ public class CustomEntityEditorScreen extends Screen {
     private String editOldName = "";  // "" = nouveau
     private boolean dirty = false;
     private String pendingDelete = null;
+    private String pendingRevert = null;
     private String status = "";
     private int left, top, W, H;
 
@@ -119,7 +120,15 @@ public class CustomEntityEditorScreen extends Screen {
 
     private String sourceOf(String name) {
         JsonObject s = HordeJson.obj(data, tab == 0 ? "entitySources" : "skillSources");
-        return HordeJson.str(s, name, com.wavesurvivor.i18n.WSLang.t("ui.base44"));
+        String v = HordeJson.str(s, name, com.wavesurvivor.i18n.WSLang.t("ui.base44"));
+        return v.contains(":") ? v.substring(0, v.indexOf(':')) : v; // « OVERRIDE:N » → OVERRIDE
+    }
+
+    /** Nombre de champs modifiés d'un élément du mod (0 si inconnu). */
+    private int modifiedFields(String name) {
+        JsonObject s = HordeJson.obj(data, tab == 0 ? "entitySources" : "skillSources");
+        String v = HordeJson.str(s, name, "");
+        try { return v.contains(":") ? Integer.parseInt(v.substring(v.indexOf(':') + 1)) : 0; } catch (NumberFormatException e) { return 0; }
     }
 
     private List<String> skillNames() {
@@ -225,6 +234,24 @@ public class CustomEntityEditorScreen extends Screen {
             }
             init();
         }).active = edit != null;
+        // Rétablir la version du mod (élément du mod modifié par le joueur)
+        {
+            boolean revertable = edit != null && !editOldName.isEmpty() && "OVERRIDE".equals(sourceOf(editOldName));
+            boolean armed = revertable && editOldName.equals(pendingRevert);
+            Button rb = button(left + 142, by, 22, armed ? "§e§l?" : "§e↺", () -> {
+                if (!"OVERRIDE".equals(sourceOf(editOldName))) return;
+                if (editOldName.equals(pendingRevert)) {
+                    NetworkHandler.CHANNEL.sendToServer(new EntityEditorPackets.Revert(tab == 1, editOldName));
+                    pendingRevert = null;
+                } else {
+                    pendingRevert = editOldName;
+                    status = com.wavesurvivor.i18n.WSLang.t("cfg.revert_confirm", editOldName);
+                }
+                init();
+            });
+            rb.active = revertable;
+            rb.setTooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("cfg.revert_tip")));
+        }
         button(left + 102, by, 38, com.wavesurvivor.i18n.WSLang.t("ui.dupl"), () -> {
             if (edit == null) return;
             JsonObject c = edit.deepCopy();
@@ -544,7 +571,7 @@ public class CustomEntityEditorScreen extends Screen {
 
     private String sourceTag(String name) {
         if (name == null || name.isEmpty()) return com.wavesurvivor.i18n.WSLang.t("ui.nouveau");
-        return switch (sourceOf(name)) { case "CUSTOM" -> com.wavesurvivor.i18n.WSLang.t("[en jeu]"); case "OVERRIDE" -> com.wavesurvivor.i18n.WSLang.t("[modifié]"); default -> com.wavesurvivor.i18n.WSLang.t("[base44]"); };
+        return switch (sourceOf(name)) { case "CUSTOM" -> com.wavesurvivor.i18n.WSLang.t("[en jeu]"); case "OVERRIDE" -> modifiedFields(name) > 0 ? com.wavesurvivor.i18n.WSLang.t("cfg.badge_modified", modifiedFields(name)) : com.wavesurvivor.i18n.WSLang.t("[modifié]"); default -> com.wavesurvivor.i18n.WSLang.t("cfg.badge_base"); };
     }
 
     // ─── Fiche compétence ───

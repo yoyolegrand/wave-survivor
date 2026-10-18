@@ -55,3 +55,20 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 ## Retours joueurs CurseForge (BLaoTea, 2026-10-18)
 - [ ] Tuto Vanilla, vague 5 (Zombie puissant) : la charge (dash) ne fait des dégâts que si elle touche, plus de mort en un coup
 - [ ] Anomalies / Terrain instable : plus aucune entre deux vagues (Calme, pause, coffres), celles en cours disparaissent
+
+## Couches de configuration (base du mod + couche du joueur)
+- [ ] Nouvelle installation (dossier `config/wavesurvivor` supprimé) : le jeu démarre, les hordes du mod sont là, aucun fichier copié en dehors des tiens
+- [ ] Migration d'une config 1.6 : dossier `wavesurvivor_backup_avant_couches` créé, rien de perdu (hordes perso, entités perso, coffres perso, boutique)
+- [ ] Après migration : tes hordes de base modifiées gardent leurs changements (point d'apparition…), le reste suit le mod
+- [ ] Dash à ×1,2 et Zombie puissant à 10 d'attaque visibles après migration (sans rien régler à la main)
+- [ ] Éditeur de hordes : badge `[modifiée · N]` sur une horde de base modifiée, `[mod]` sur les autres, `[en jeu]` sur les tiennes
+- [ ] Modifier un champ d'une horde de base puis enregistrer : seul ce champ est gardé (le reste suit les mises à jour)
+- [ ] Bouton ↺ d'une horde modifiée : rétablit la version du mod (confirmation au 2ᵉ clic)
+- [ ] Supprimer une horde du mod puis « ↺ Hordes du mod supprimées » : elle revient
+- [ ] Éditeur d'entités et de compétences : badge, bouton ↺, modification d'un seul champ
+- [ ] Autels : modifier la recette d'une horde de base, relancer le jeu : la modification est conservée
+- [ ] Coffres roulette : créer / modifier / supprimer un coffre, relancer : l'état est conservé
+- [ ] Boutique Renaissance et raretés : modifier, relancer : conservé
+- [ ] `/horde setspawn <horde>` : le point d'apparition est conservé après relance
+- [ ] Export / import d'une horde (zip) fonctionne toujours
+- [ ] Serveur dédié : démarre et migre sans erreur

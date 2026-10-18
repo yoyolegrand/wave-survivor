@@ -45,51 +45,86 @@ public class CustomChestStore {
     // ─── Wrapper JSON ───
     private static class FileFormat {
         List<CustomChestData> chests = new ArrayList<>();
+        /** Coffres de base (livrés avec le mod) que le joueur a supprimés (noms en minuscules). */
+        List<String> deleted = new ArrayList<>();
     }
 
-    /** Charge le fichier + enregistre chaque chest dans RouletteChestRegistry. */
+    /** Coffres de base livrés avec le mod (couche BASE, relue du jar à chaque démarrage). */
+    private static Map<String, CustomChestData> baseChests() {
+        Map<String, CustomChestData> out = new LinkedHashMap<>();
+        for (com.google.gson.JsonElement e : com.wavesurvivor.config.ConfigLayers.builtin().chests) {
+            try {
+                CustomChestData c = GSON.fromJson(e, CustomChestData.class);
+                if (c != null && c.name != null && !c.name.isBlank()) out.put(c.name, c);
+            } catch (JsonSyntaxException ex) {
+                WaveSurvivorMod.LOGGER.warn("[CustomChestStore] Coffre de base illisible ignoré : {}", ex.getMessage());
+            }
+        }
+        return out;
+    }
+
+    private static CustomChestData findCi(Map<String, CustomChestData> m, String name) {
+        for (Map.Entry<String, CustomChestData> e : m.entrySet()) if (e.getKey().equalsIgnoreCase(name)) return e.getValue();
+        return null;
+    }
+
+    /** Charge la base du mod + la couche du joueur, et enregistre chaque chest dans RouletteChestRegistry. */
     public static void load() {
         CHESTS.clear();
         // Coffres intégrés : on repart de leur version d'origine (les versions modifiées sont réappliquées ci-dessous)
         for (RouletteChestConfig b : RouletteChestRegistry.builtins()) RouletteChestRegistry.restoreBuiltin(b.configKey());
+        Map<String, CustomChestData> effective = baseChests();
         Path file = filePath();
-        if (!Files.exists(file)) {
-            WaveSurvivorMod.LOGGER.info("[CustomChestStore] Aucun fichier custom_roulette_chests.json — 0 chests custom.");
-            return;
-        }
-        try {
-            String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
-            FileFormat parsed = GSON.fromJson(content, FileFormat.class);
-            if (parsed == null || parsed.chests == null) {
-                WaveSurvivorMod.LOGGER.warn("[CustomChestStore] Fichier vide ou mal formé, ignoré.");
-                return;
+        if (Files.exists(file)) {
+            try {
+                String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+                FileFormat parsed = GSON.fromJson(content, FileFormat.class);
+                if (parsed != null) {
+                    if (parsed.deleted != null) {
+                        for (String d : parsed.deleted) effective.keySet().removeIf(k -> k.trim().equalsIgnoreCase(d.trim()));
+                    }
+                    if (parsed.chests != null) for (CustomChestData c : parsed.chests) {
+                        if (c == null || c.name == null || c.name.isBlank()) continue;
+                        effective.keySet().removeIf(k -> k.equalsIgnoreCase(c.name));
+                        effective.put(c.name, c);
+                    }
+                }
+            } catch (JsonSyntaxException | IOException e) {
+                WaveSurvivorMod.LOGGER.error("[CustomChestStore] Erreur load : {}", e.getMessage(), e);
             }
-            for (CustomChestData c : parsed.chests) {
-                if (c == null || c.name == null || c.name.isBlank()) continue;
-                CHESTS.put(c.name, c);
-                RouletteChestConfig cfg = toRouletteConfig(c);
-                RouletteChestRegistry.registerCustom(cfg);
-                // Pattern d'émission (P6) : override du comportement idle par défaut
-                RouletteChestManager.setPattern(cfg.configKey(), c.pattern);
-                RouletteChestManager.setColor(cfg.configKey(), c.color);
-                RouletteChestManager.setKeyMaterial(cfg.configKey(), c.keyMaterial);
-            }
-            WaveSurvivorMod.LOGGER.info("[CustomChestStore] {} chests custom chargés.", CHESTS.size());
-        } catch (IOException | JsonSyntaxException e) {
-            WaveSurvivorMod.LOGGER.error("[CustomChestStore] Erreur load : {}", e.getMessage(), e);
         }
+        for (CustomChestData c : effective.values()) {
+            CHESTS.put(c.name, c);
+            RouletteChestConfig cfg = toRouletteConfig(c);
+            RouletteChestRegistry.registerCustom(cfg);
+            // Pattern d'émission (P6) : override du comportement idle par défaut
+            RouletteChestManager.setPattern(cfg.configKey(), c.pattern);
+            RouletteChestManager.setColor(cfg.configKey(), c.color);
+            RouletteChestManager.setKeyMaterial(cfg.configKey(), c.keyMaterial);
+        }
+        WaveSurvivorMod.LOGGER.info("[CustomChestStore] {} chests chargés (base du mod + les vôtres).", CHESTS.size());
     }
 
-    /** Écrit tous les chests custom dans le fichier. */
+    /** Écrit uniquement ce qui diffère de la base : coffres créés ou modifiés par le joueur + coffres de base supprimés. */
     public static void save() {
         try {
             Path dir = FMLPaths.CONFIGDIR.get().resolve("wavesurvivor");
             if (!Files.exists(dir)) Files.createDirectories(dir);
+            Map<String, CustomChestData> base = baseChests();
             FileFormat fmt = new FileFormat();
-            fmt.chests = new ArrayList<>(CHESTS.values());
+            for (CustomChestData c : CHESTS.values()) {
+                CustomChestData b = findCi(base, c.name);
+                if (b != null && com.wavesurvivor.config.Canon.same(GSON.toJsonTree(c), GSON.toJsonTree(b))) continue;
+                fmt.chests.add(c);
+            }
+            for (String bn : base.keySet()) {
+                boolean present = false;
+                for (String k : CHESTS.keySet()) if (k.equalsIgnoreCase(bn)) present = true;
+                if (!present) fmt.deleted.add(bn.trim().toLowerCase());
+            }
             String json = GSON.toJson(fmt);
             Files.write(filePath(), json.getBytes(StandardCharsets.UTF_8));
-            WaveSurvivorMod.LOGGER.info("[CustomChestStore] {} chests custom sauvegardés.", CHESTS.size());
+            WaveSurvivorMod.LOGGER.info("[CustomChestStore] {} chests à vous sauvegardés.", fmt.chests.size());
         } catch (IOException e) {
             WaveSurvivorMod.LOGGER.error("[CustomChestStore] Erreur save : {}", e.getMessage(), e);
         }

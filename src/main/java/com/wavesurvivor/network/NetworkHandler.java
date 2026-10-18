@@ -173,6 +173,12 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, ShakePacket.class,
                 ShakePacket::encode, ShakePacket::decode, ShakePacket::handle);
 
+        // Rétablir la version du mod d'un élément de la config (1.7, couches de configuration)
+        CHANNEL.registerMessage(id++, HordeEditorPackets.Revert.class,
+                HordeEditorPackets.Revert::encode, HordeEditorPackets.Revert::decode, HordeEditorPackets.Revert::handle);
+        CHANNEL.registerMessage(id++, EntityEditorPackets.Revert.class,
+                EntityEditorPackets.Revert::encode, EntityEditorPackets.Revert::decode, EntityEditorPackets.Revert::handle);
+
         WaveSurvivorMod.LOGGER.info("[Network] Channel 'main' enregistré (protocol v{}, {} packets)",
                 PROTOCOL_VERSION, id);
     }

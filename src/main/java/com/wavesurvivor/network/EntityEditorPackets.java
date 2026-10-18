@@ -94,6 +94,22 @@ public final class EntityEditorPackets {
         }
     }
 
+    /** C→S : rétablit la version du mod d'une entité ou d'une compétence. */
+    public static class Revert {
+        public final boolean skill;
+        public final String name;
+        public Revert(boolean skill, String name) { this.skill = skill; this.name = name; }
+        public void encode(FriendlyByteBuf buf) { buf.writeBoolean(skill); buf.writeUtf(name); }
+        public static Revert decode(FriendlyByteBuf buf) { return new Revert(buf.readBoolean(), buf.readUtf()); }
+        public static void handle(Revert pkt, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(() -> {
+                ServerPlayer p = ctx.get().getSender();
+                if (p != null) EntityEditorManager.revert(p, pkt.skill, pkt.name);
+            });
+            ctx.get().setPacketHandled(true);
+        }
+    }
+
     public static class Delete {
         public final boolean skill;
         public final String name;

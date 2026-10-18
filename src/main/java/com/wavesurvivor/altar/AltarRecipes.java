@@ -3,6 +3,7 @@ package com.wavesurvivor.altar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -526,85 +527,130 @@ public class AltarRecipes {
         if (DEFS.remove(hordeName) != null) save();
     }
 
-    // ─── Chargement / sauvegarde ───
+    // ─── Chargement / sauvegarde (couches : base du jar + fichier du joueur) ───
+
+    /** Clé réservée du fichier du joueur : noms des autels de base qu'il a supprimés. */
+    private static final String DELETED_KEY = "__deleted";
+    /** Dans le fichier du joueur : { "__patch": {champs modifiés} } = modification d'un autel de base. */
+    private static final String PATCH_KEY = "__patch";
+
+    /** Lit un objet {nom de horde → définition} (accepte l'ancien format : simple liste d'ingrédients). */
+    private static Map<String, HordeAltarDef> parseDefs(JsonObject root) {
+        Map<String, HordeAltarDef> out = new LinkedHashMap<>();
+        for (Map.Entry<String, JsonElement> e : root.entrySet()) {
+            if (e.getKey().equals(DELETED_KEY)) continue;
+            out.put(e.getKey(), parseDef(e.getValue()));
+        }
+        return out;
+    }
+
+    private static HordeAltarDef parseDef(JsonElement v) {
+        HordeAltarDef def;
+        if (v.isJsonArray()) {
+            def = new HordeAltarDef();
+            def.ingredients = GSON.fromJson(v, new TypeToken<List<Ingredient>>() {}.getType());
+        } else {
+            def = GSON.fromJson(v, HordeAltarDef.class);
+        }
+        if (def == null) def = new HordeAltarDef();
+        if (def.ingredients == null) def.ingredients = new ArrayList<>();
+        return def;
+    }
+
+    /** Forme normalisée d'une définition (passée par le modèle) : sert à comparer et à calculer les patchs. */
+    public static JsonObject normalizeEntry(JsonElement v) {
+        return JsonParser.parseString(GSON.toJson(parseDef(v))).getAsJsonObject();
+    }
+
+    /** Autels de base (jar), formes normalisées, par nom de horde. */
+    private static Map<String, JsonObject> builtinJson() {
+        Map<String, JsonObject> out = new LinkedHashMap<>();
+        for (Map.Entry<String, JsonElement> e : com.wavesurvivor.config.ConfigLayers.builtin().altar.entrySet()) {
+            if (e.getKey().equals(DELETED_KEY)) continue;
+            out.put(e.getKey(), normalizeEntry(e.getValue()));
+        }
+        return out;
+    }
+
+    private static JsonObject baseOf(Map<String, JsonObject> base, String name) {
+        for (Map.Entry<String, JsonObject> e : base.entrySet()) if (e.getKey().equalsIgnoreCase(name)) return e.getValue();
+        return null;
+    }
 
     public static void load() {
         Path file = filePath();
         try {
-            if (!Files.exists(file)) {
-                DEFS = defaults();
-                save();
-                WaveSurvivorMod.LOGGER.info("[AltarRecipes] Fichier créé avec les définitions par défaut.");
-                return;
-            }
-            JsonObject root = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
+            Map<String, JsonObject> base = builtinJson();
             Map<String, HordeAltarDef> out = new LinkedHashMap<>();
-            boolean legacy = false;
-            for (Map.Entry<String, JsonElement> e : root.entrySet()) {
-                HordeAltarDef def;
-                if (e.getValue().isJsonArray()) {
-                    // Ancien format : directement la liste d'ingrédients
-                    def = new HordeAltarDef();
-                    def.ingredients = GSON.fromJson(e.getValue(), new TypeToken<List<Ingredient>>() {}.getType());
-                    legacy = true;
-                } else {
-                    def = GSON.fromJson(e.getValue(), HordeAltarDef.class);
+            for (Map.Entry<String, JsonObject> e : base.entrySet()) out.put(e.getKey(), parseDef(e.getValue()));
+            java.util.Set<String> deleted = new java.util.HashSet<>();
+            if (Files.exists(file)) {
+                JsonObject root = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
+                if (root.has(DELETED_KEY) && root.get(DELETED_KEY).isJsonArray()) {
+                    for (JsonElement e : root.getAsJsonArray(DELETED_KEY)) deleted.add(e.getAsString().trim().toLowerCase());
                 }
-                if (def.ingredients == null) def.ingredients = new ArrayList<>();
-                out.put(e.getKey(), def);
+                for (Map.Entry<String, JsonElement> e : root.entrySet()) {
+                    if (e.getKey().equals(DELETED_KEY)) continue;
+                    HordeAltarDef def;
+                    JsonObject b = baseOf(base, e.getKey());
+                    if (e.getValue().isJsonObject() && e.getValue().getAsJsonObject().has(PATCH_KEY)) {
+                        if (b == null) continue; // modification d'un autel de base qui n'existe plus : ignorée
+                        def = parseDef(com.wavesurvivor.config.Patch.apply(b, e.getValue().getAsJsonObject().getAsJsonObject(PATCH_KEY)));
+                    } else {
+                        def = parseDef(e.getValue());
+                    }
+                    out.keySet().removeIf(k -> k.equalsIgnoreCase(e.getKey()));
+                    out.put(e.getKey(), def);
+                    deleted.remove(e.getKey().trim().toLowerCase());
+                }
             }
-            // Migration : les hordes par défaut récupèrent leur zone / style si absents
-            Map<String, HordeAltarDef> d = defaults();
-            boolean migrated = false;
-            for (Map.Entry<String, HordeAltarDef> e : out.entrySet()) {
-                HordeAltarDef def0 = d.get(e.getKey());
-                if (def0 == null) continue;
-                if (e.getValue().zone == null) { e.getValue().zone = def0.zone; migrated = true; }
-                if (e.getValue().style == null) { e.getValue().style = def0.style; migrated = true; }
-            }
+            out.keySet().removeIf(k -> deleted.contains(k.trim().toLowerCase()));
             DEFS = out;
-            if (legacy || migrated) {
-                save();
-                WaveSurvivorMod.LOGGER.info("[AltarRecipes] Ancien format migré vers ingrédients + zone.");
-            }
             WaveSurvivorMod.LOGGER.info("[AltarRecipes] {} définition(s) d'autel chargée(s).", DEFS.size());
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[AltarRecipes] Erreur load : {}", e.getMessage());
-            DEFS = defaults();
+            Map<String, HordeAltarDef> out = new LinkedHashMap<>();
+            for (Map.Entry<String, JsonObject> b : builtinJson().entrySet()) out.put(b.getKey(), parseDef(b.getValue()));
+            DEFS = out;
         }
     }
 
+    /** Écrit uniquement ce qui diffère de la base : autels du joueur (complets), modifications d'autels de base (patchs), suppressions. */
     public static void save() {
         try {
+            Map<String, JsonObject> base = builtinJson();
+            JsonObject root = new JsonObject();
+            for (Map.Entry<String, HordeAltarDef> e : DEFS.entrySet()) {
+                JsonObject mine = JsonParser.parseString(GSON.toJson(e.getValue())).getAsJsonObject();
+                JsonObject b = baseOf(base, e.getKey());
+                if (b == null) { root.add(e.getKey(), mine); continue; }
+                JsonObject p = com.wavesurvivor.config.Patch.diff(b, mine);
+                if (p == null) continue;
+                JsonObject wrap = new JsonObject();
+                wrap.add(PATCH_KEY, p);
+                root.add(e.getKey(), wrap);
+            }
+            JsonArray del = new JsonArray();
+            for (String bk : base.keySet()) {
+                boolean present = false;
+                for (String k : DEFS.keySet()) if (k.equalsIgnoreCase(bk)) present = true;
+                if (!present) del.add(bk.trim().toLowerCase());
+            }
+            if (del.size() > 0) root.add(DELETED_KEY, del);
             Files.createDirectories(filePath().getParent());
-            Files.writeString(filePath(), GSON.toJson(DEFS), StandardCharsets.UTF_8);
+            Files.writeString(filePath(), GSON.toJson(root), StandardCharsets.UTF_8);
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[AltarRecipes] Erreur save : {}", e.getMessage());
         }
     }
 
-    private static Map<String, HordeAltarDef> defaults() {
-        Map<String, HordeAltarDef> m = new LinkedHashMap<>();
-
-        HordeAltarDef deep = new HordeAltarDef();
-        deep.ingredients.add(new Ingredient("minecraft:heart_of_the_sea", 1));
-        deep.zone = new Zone();
-        deep.zone.radius = 8;
-        deep.zone.floor.add(new FloorBlock("minecraft:prismarine", 30));
-        deep.zone.floor.add(new FloorBlock("minecraft:sand", 70));
-        m.put("Horde des profondeurs", deep);
-        deep.style = new Style("cyan", "abysses");
-
-        HordeAltarDef tuto = new HordeAltarDef();
-        tuto.ingredients.add(new Ingredient("minecraft:iron_ingot", 1));
-        tuto.zone = new Zone();
-        tuto.zone.radius = 8;
-        tuto.zone.floor.add(new FloorBlock("minecraft:mossy_cobblestone", 35));
-        tuto.zone.floor.add(new FloorBlock("minecraft:cobblestone", 35));
-        tuto.zone.floor.add(new FloorBlock("minecraft:stone", 30));
-        m.put("Tuto", tuto);
-        tuto.style = new Style("orange", "flammes");
-        return m;
+    /** Rétablit l'autel de base de cette horde (retire les modifications et la suppression). */
+    public static void revert(String hordeName) {
+        DEFS.keySet().removeIf(k -> k.equalsIgnoreCase(hordeName));
+        for (Map.Entry<String, JsonObject> be : builtinJson().entrySet()) {
+            if (be.getKey().equalsIgnoreCase(hordeName)) DEFS.put(be.getKey(), parseDef(be.getValue()));
+        }
+        save();
     }
 
     // ─── Accès ───

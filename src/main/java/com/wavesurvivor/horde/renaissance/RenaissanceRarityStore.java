@@ -28,17 +28,32 @@ public class RenaissanceRarityStore {
     private static final Map<String, String> OVERRIDES = new TreeMap<>();
     private static boolean loaded = false;
 
+    /** Valeur du fichier du joueur : annule une rareté de la base (retour au comportement par défaut). */
+    private static final String RESET = "__reset__";
+
+    /** Raretés de la base livrée avec le mod. */
+    private static Map<String, String> baseRarities() {
+        Map<String, String> out = new TreeMap<>();
+        for (Map.Entry<String, com.google.gson.JsonElement> e : com.wavesurvivor.config.ConfigLayers.builtin().rarities.entrySet()) {
+            out.put(e.getKey(), e.getValue().getAsString());
+        }
+        return out;
+    }
+
     private static void ensureLoaded() {
         if (loaded) return;
         loaded = true;
         OVERRIDES.clear();
+        OVERRIDES.putAll(baseRarities());
         Path file = filePath();
         if (!Files.exists(file)) return;
         try {
             Map<String, String> m = GSON.fromJson(Files.readString(file, StandardCharsets.UTF_8),
                     new TypeToken<Map<String, String>>() {}.getType());
-            if (m != null) OVERRIDES.putAll(m);
-            WaveSurvivorMod.LOGGER.info("[Renaissance] {} rareté(s) réglée(s) en jeu.", OVERRIDES.size());
+            if (m != null) for (Map.Entry<String, String> e : m.entrySet()) {
+                if (RESET.equals(e.getValue())) OVERRIDES.remove(e.getKey()); else OVERRIDES.put(e.getKey(), e.getValue());
+            }
+            WaveSurvivorMod.LOGGER.info("[Renaissance] {} rareté(s) réglée(s) (base + les vôtres).", OVERRIDES.size());
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[Renaissance] Erreur lecture {} : {}", FILE_NAME, e.getMessage());
         }
@@ -72,7 +87,12 @@ public class RenaissanceRarityStore {
         try {
             Path dir = FMLPaths.CONFIGDIR.get().resolve("wavesurvivor");
             if (!Files.exists(dir)) Files.createDirectories(dir);
-            Files.writeString(filePath(), GSON.toJson(OVERRIDES), StandardCharsets.UTF_8);
+            // Uniquement ce qui diffère de la base ; une rareté de base retirée est notée « __reset__ »
+            Map<String, String> base = baseRarities();
+            Map<String, String> mine = new TreeMap<>();
+            for (Map.Entry<String, String> e : OVERRIDES.entrySet()) if (!e.getValue().equals(base.get(e.getKey()))) mine.put(e.getKey(), e.getValue());
+            for (String k : base.keySet()) if (!OVERRIDES.containsKey(k)) mine.put(k, RESET);
+            Files.writeString(filePath(), GSON.toJson(mine), StandardCharsets.UTF_8);
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[Renaissance] Erreur écriture {} : {}", FILE_NAME, e.getMessage());
         }

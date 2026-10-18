@@ -33,35 +33,67 @@ public class RenaissanceShopStore {
 
     private static class FileFormat {
         List<RenaissanceConfigData.ShopItem> items = new ArrayList<>();
+        /** Reliques masquées par le joueur (en plus de celles que la base masque déjà). */
         List<String> disabled = new ArrayList<>();
+        /** Reliques que la base masque et que le joueur a réactivées. */
+        List<String> enabled = new ArrayList<>();
     }
 
+    /** Reliques de la base livrée avec le mod (relue du jar à chaque démarrage). */
+    private static Map<String, RenaissanceConfigData.ShopItem> baseItems() {
+        Map<String, RenaissanceConfigData.ShopItem> out = new LinkedHashMap<>();
+        for (com.google.gson.JsonElement e : com.wavesurvivor.config.ConfigLayers.builtin().shopItems) {
+            RenaissanceConfigData.ShopItem s = GSON.fromJson(e, RenaissanceConfigData.ShopItem.class);
+            if (s != null && s.id != null && !s.id.isBlank()) out.put(s.id, s);
+        }
+        return out;
+    }
+
+    private static Set<String> baseDisabled() {
+        Set<String> out = new LinkedHashSet<>();
+        for (com.google.gson.JsonElement e : com.wavesurvivor.config.ConfigLayers.builtin().shopDisabled) out.add(e.getAsString());
+        return out;
+    }
+
+    /** Charge la base du mod + la couche du joueur. */
     public static void load() {
         ITEMS.clear();
         DISABLED.clear();
+        ITEMS.putAll(baseItems());
+        DISABLED.addAll(baseDisabled());
         Path file = filePath();
-        if (!Files.exists(file)) return;
         try {
-            String content = Files.readString(file, StandardCharsets.UTF_8);
-            FileFormat f = GSON.fromJson(content, FileFormat.class);
-            if (f == null) return;
-            if (f.items != null) for (RenaissanceConfigData.ShopItem s : f.items) {
-                if (s != null && s.id != null && !s.id.isBlank()) ITEMS.put(s.id, s);
+            if (Files.exists(file)) {
+                FileFormat f = GSON.fromJson(Files.readString(file, StandardCharsets.UTF_8), FileFormat.class);
+                if (f != null) {
+                    if (f.items != null) for (RenaissanceConfigData.ShopItem s : f.items) {
+                        if (s != null && s.id != null && !s.id.isBlank()) ITEMS.put(s.id, s);
+                    }
+                    if (f.disabled != null) DISABLED.addAll(f.disabled);
+                    if (f.enabled != null) DISABLED.removeAll(f.enabled);
+                }
             }
-            if (f.disabled != null) DISABLED.addAll(f.disabled);
-            WaveSurvivorMod.LOGGER.info("[RenaissanceShop] {} reliques custom, {} masquées.", ITEMS.size(), DISABLED.size());
+            WaveSurvivorMod.LOGGER.info("[RenaissanceShop] {} reliques (base + les vôtres), {} masquées.", ITEMS.size(), DISABLED.size());
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[RenaissanceShop] Erreur load : {}", e.getMessage(), e);
         }
     }
 
+    /** Écrit uniquement ce qui diffère de la base. */
     public static void save() {
         try {
             Path dir = FMLPaths.CONFIGDIR.get().resolve("wavesurvivor");
             if (!Files.exists(dir)) Files.createDirectories(dir);
+            Map<String, RenaissanceConfigData.ShopItem> base = baseItems();
+            Set<String> baseOff = baseDisabled();
             FileFormat f = new FileFormat();
-            f.items = new ArrayList<>(ITEMS.values());
-            f.disabled = new ArrayList<>(DISABLED);
+            for (RenaissanceConfigData.ShopItem s : ITEMS.values()) {
+                RenaissanceConfigData.ShopItem b = base.get(s.id);
+                if (b != null && com.wavesurvivor.config.Canon.same(GSON.toJsonTree(s), GSON.toJsonTree(b))) continue;
+                f.items.add(s);
+            }
+            for (String d : DISABLED) if (!baseOff.contains(d)) f.disabled.add(d);
+            for (String d : baseOff) if (!DISABLED.contains(d)) f.enabled.add(d);
             Files.writeString(filePath(), GSON.toJson(f), StandardCharsets.UTF_8);
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[RenaissanceShop] Erreur save : {}", e.getMessage(), e);

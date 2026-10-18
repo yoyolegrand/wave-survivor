@@ -40,7 +40,10 @@ public final class HordeEditorManager {
         for (String name : CustomHordeStore.names()) {
             JsonObject h = CustomHordeStore.get(name);
             JsonObject cd = h != null && h.has("configData") && h.get("configData").isJsonObject() ? h.getAsJsonObject("configData") : new JsonObject();
-            entries.add(new HordeEditorPackets.Entry(name, CustomHordeStore.sourceOf(name).name(),
+            // Horde du mod modifiée : « OVERRIDE:N » (N = champs modifiés), pour l'affichage
+            String source = CustomHordeStore.sourceOf(name).name();
+            if (source.equals("OVERRIDE")) source += ":" + CustomHordeStore.modifiedFields(name);
+            entries.add(new HordeEditorPackets.Entry(name, source,
                     intOf(cd, "totalWaves"), sizeOf(cd, "hordeEntities"), sizeOf(cd, "specialWaves"), sizeOf(cd, "bossWaves")));
         }
         List<String> ce = new ArrayList<>();
@@ -157,6 +160,31 @@ public final class HordeEditorManager {
         com.wavesurvivor.altar.AltarRecipes.removeFromEditor(name);
         WaveSurvivorMod.reloadConfig();
         result(p, true, com.wavesurvivor.i18n.WSLang.t("srv.horde") + name + com.wavesurvivor.i18n.WSLang.t("srv.supprimee"), null);
+        openList(p);
+    }
+
+    /** Rétablit la version du mod d'une horde (ou, avec un nom vide, de toutes celles que le joueur a supprimées). */
+    public static void revert(ServerPlayer p, String name) {
+        if (!allowed(p)) return;
+        if (HordeManager.get().isRunning()) {
+            result(p, false, com.wavesurvivor.i18n.WSLang.t("srv.impossible_de_supprimer_pendant_une_hord"), null);
+            return;
+        }
+        if (name == null || name.isBlank()) {
+            List<String> gone = CustomHordeStore.deletedBaseNames();
+            for (String n : gone) {
+                CustomHordeStore.revert(n);
+                com.wavesurvivor.altar.AltarRecipes.revert(n);
+            }
+            WaveSurvivorMod.reloadConfig();
+            result(p, true, gone.isEmpty() ? com.wavesurvivor.i18n.WSLang.t("cfg.nothing_deleted")
+                    : com.wavesurvivor.i18n.WSLang.t("cfg.restored_n", gone.size()), null);
+        } else {
+            CustomHordeStore.revert(name);
+            com.wavesurvivor.altar.AltarRecipes.revert(name);
+            WaveSurvivorMod.reloadConfig();
+            result(p, true, com.wavesurvivor.i18n.WSLang.t("cfg.reverted", name), null);
+        }
         openList(p);
     }
 

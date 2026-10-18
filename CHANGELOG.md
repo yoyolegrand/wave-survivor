@@ -59,12 +59,19 @@
 - 🧟 **Horde monsters no longer transform**: a horde zombie that falls in water stays a zombie instead of turning into a Drowned (which left the wave stuck forever), and the same goes for husks, skeletons, piglins and hoglins. Killing every unit now always ends the wave.
 - 🧪 **Witches no longer heal themselves** (healing potion and regeneration), which made them far too tough on high difficulties.
 
+### ⚙️ Configuration layers
+- 🧱 The mod's own content (hordes, monsters, skills, altars, chests, Renaissance shop) is now **read from the mod itself at every launch**. Updates fix the built-in hordes for everyone — **no more deleting your config** to get new balance changes.
+- 🧍 Your own work lives in `config/wavesurvivor/` and only stores **what you changed**, field by field: your own hordes and creations, your edits to a built-in horde (a changed boss attack, a spawn point…), and what you deleted. Everything you did not touch keeps following the mod's updates.
+- 🛟 First launch on 1.7 **migrates your existing config automatically**: the whole folder is copied to `config/wavesurvivor_backup_avant_couches` first, unmodified built-in content is recognised and left to the mod, and anything you made or edited is kept.
+- 🛠️ The editors show **[modified · N]** on built-in content you changed, with a **↺** button to restore the mod's version, and **↺ Deleted mod hordes** brings back built-in hordes you deleted.
+- 📍 `/horde setspawn` now saves the spawn point in your own layer. The old `config/wavesurvivor/config.json` is no longer read.
+
 ### 🛠️ Editor & Codex
 - 📝 New **Endless** settings view in the editor.
 - 📖 The **Codex** has new *Endless mode* and *Statistics* pages.
 
 ### 📝 Notes
-- Existing config files are never overwritten on update. Hordes get the Endless defaults automatically.
+- Your config is never overwritten: see *Configuration layers* above. Hordes get the Endless defaults automatically.
 
 ---
 

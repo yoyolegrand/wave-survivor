@@ -163,7 +163,9 @@ public final class EntityEditorManager {
             JsonObject src = new JsonObject();
             for (Map.Entry<String, JsonObject> e : CustomEntityStore.all(k).entrySet()) {
                 arr.add(e.getValue());
-                src.addProperty(e.getKey(), CustomEntityStore.sourceOf(k, e.getKey()));
+                String source = CustomEntityStore.sourceOf(k, e.getKey());
+                if (source.equals("OVERRIDE")) source += ":" + CustomEntityStore.modifiedFields(k, e.getKey()); // champs modifiés
+                src.addProperty(e.getKey(), source);
             }
             root.add(k == CustomEntityStore.Kind.ENTITY ? "entities" : "skills", arr);
             root.add(k == CustomEntityStore.Kind.ENTITY ? "entitySources" : "skillSources", src);
@@ -243,6 +245,17 @@ public final class EntityEditorManager {
         CustomEntityStore.delete(k, name);
         WaveSurvivorMod.reloadConfig();
         result(p, true, "« " + name + com.wavesurvivor.i18n.WSLang.t("srv.supprime_e"));
+        open(p);
+    }
+
+    /** Rétablit la version du mod d'une entité ou d'une compétence (annule les modifications du joueur). */
+    public static void revert(ServerPlayer p, boolean skill, String name) {
+        if (!allowed(p)) return;
+        if (HordeManager.get().isRunning()) { result(p, false, com.wavesurvivor.i18n.WSLang.t("srv.impossible_de_supprimer_pendant_une_hord")); return; }
+        CustomEntityStore.Kind k = skill ? CustomEntityStore.Kind.SKILL : CustomEntityStore.Kind.ENTITY;
+        CustomEntityStore.revert(k, name);
+        WaveSurvivorMod.reloadConfig();
+        result(p, true, com.wavesurvivor.i18n.WSLang.t("cfg.reverted", name));
         open(p);
     }
 
