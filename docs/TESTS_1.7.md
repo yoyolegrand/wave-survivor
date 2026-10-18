@@ -4,8 +4,8 @@ Cocher `[x]` quand c'est validé en jeu. Une ligne en échec : la laisser décoc
 Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 succès de base, ajouts de Claude Chat (à rejouer une fois dans la 1.7 fusionnée, voir plus bas).
 
 ## Invasions de village
-- [ ] Les envahisseurs chassent les villageois, même cachés derrière des portes (pas d'attente à la cloche)
-- [ ] Portes : les envahisseurs les ouvrent / les brisent selon les réglages
+- [x] Les envahisseurs chassent les villageois, même cachés derrière des portes (pas d'attente à la cloche)
+- [x] Portes : les envahisseurs les ouvrent / les brisent selon les réglages
 - [ ] Roulette du Mauvais présage : raid vanilla avec les ajouts
 - [ ] Roulette du Mauvais présage : invasion préparée
 - [ ] Poids vanilla à 0 : le Mauvais présage est différé, aucune raid vanilla pure
@@ -35,7 +35,7 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] (Plus tard) icône définitive de la relique
 
 ## Correctifs du retour joueur
-- [ ] Zombie de horde dans l'eau : reste un zombie, la vague se termine
+- [x] Zombie de horde dans l'eau : reste un zombie (confirmé ; fin de vague non précisée)
 - [ ] Husk, squelette, piglin, hoglin : pas de transformation
 - [ ] Sorcières : plus de soin
 - [ ] Bénédiction en solo : le jeu se met en pause pendant le choix
