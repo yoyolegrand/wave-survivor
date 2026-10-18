@@ -6,22 +6,22 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 ## Invasions de village
 - [x] Les envahisseurs chassent les villageois, même cachés derrière des portes (pas d'attente à la cloche)
 - [x] Portes : les envahisseurs les ouvrent / les brisent selon les réglages
-- [ ] Roulette du Mauvais présage : raid vanilla avec les ajouts
+- [x] Roulette du Mauvais présage : raid vanilla avec les ajouts
 - [x] Roulette du Mauvais présage : invasion préparée (Razzia des Sables déclenchée)
-- [ ] Poids vanilla à 0 : le Mauvais présage est différé, aucune raid vanilla pure
-- [ ] Cloche + barre de boss (villageois, vagues)
-- [ ] Délai de préparation entre les vagues
-- [ ] Composition mixte vanilla/mod (PV et dégâts du multiplicateur appliqués)
-- [ ] Victoire : Héros du village, butin, PR, statistiques
-- [ ] Défaite : conséquence configurée appliquée
-- [ ] Succès `invasion_1`, `invasion_10`, `invasion_flawless`
-- [ ] Commande `/invasion`
-- [ ] Les 3 invasions par défaut : Pillards, Razzia des Sables, Meute des Neiges
-- [ ] Éditeur, mode « Invasion » : textes lisibles, boutons clairs, onglet Événements vide, template « invasion »
-- [ ] Pas de horde normale pendant une invasion, ni d'invasion pendant une horde
+- [x] Poids vanilla à 0 : le Mauvais présage est différé, aucune raid vanilla pure
+- [x] Cloche + barre de boss (villageois, vagues)
+- [x] Délai de préparation entre les vagues
+- [x] Composition mixte vanilla/mod (PV et dégâts du multiplicateur appliqués)
+- [x] Victoire : Héros du village, butin, PR, statistiques
+- [x] Défaite : conséquence configurée appliquée
+- [x] Succès `invasion_1`, `invasion_10`, `invasion_flawless`
+- [x] Commande `/invasion`
+- [x] Les 3 invasions par défaut : Pillards, Razzia des Sables, Meute des Neiges
+- [x] Éditeur, mode « Invasion » : textes lisibles, boutons clairs, onglet Événements vide, template « invasion »
+- [x] Pas de horde normale pendant une invasion, ni d'invasion pendant une horde
 
 ## Horde des Sables ardents
-- [ ] Débloquée après la Nécropole
+- [x] Débloquée après la Nécropole
 - [ ] Tempête de sable : l'abri couvert protège, une source de chaleur n'arrête pas la tempête, particules de bloc visibles
 - [ ] Séisme : secousse de caméra, fissures
 - [ ] Relique Voile du Désert : immunité au séisme
@@ -36,13 +36,13 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 
 ## Correctifs du retour joueur
 - [x] Zombie de horde dans l'eau : reste un zombie (confirmé ; fin de vague non précisée)
-- [ ] Husk, squelette, piglin, hoglin : pas de transformation
-- [ ] Sorcières : plus de soin
-- [ ] Bénédiction en solo : le jeu se met en pause pendant le choix
-- [ ] Bénédiction en multi : monstres ignorent le joueur + invulnérable (30 s max)
-- [ ] Bénédiction en multi : la protection tombe après le choix ou la déconnexion
-- [ ] Bénédictions ×1 Facile/Normal, ×1,25 Difficile, ×1,5 Cauchemar, dans tous les modes
-- [ ] Écran de choix et catalogue : valeurs affichées = valeurs réelles
+- [x] Husk, squelette, piglin, hoglin : pas de transformation
+- [x] Sorcières : plus de soin
+- [x] Bénédiction en solo : le jeu se met en pause pendant le choix
+- [x] Bénédiction en multi : monstres ignorent le joueur + invulnérable (30 s max)
+- [x] Bénédiction en multi : la protection tombe après le choix ou la déconnexion
+- [x] Bénédictions ×1 Facile/Normal, ×1,25 Difficile, ×1,5 Cauchemar, dans tous les modes
+- [x] Écran de choix et catalogue : valeurs affichées = valeurs réelles
 
 ## Jamais testé
 - [ ] Multijoueur : statistiques
@@ -50,31 +50,31 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] Succès « Marathonien »
 - [ ] Les 24 succès s'obtiennent et s'affichent
 - [ ] Reprise d'un monde 1.6 en 1.7 : hordes, Kingdom et sauvegarde/reprise de partie fonctionnent, `invasions` et `sables_ardents` apparaissent dans la liste des hordes
-- [ ] Ajouts de Claude Chat rejoués : Brasier d'offrande, Baraquement, coffres roulette
+- [x] Ajouts de Claude Chat rejoués : Brasier d'offrande, Baraquement, coffres roulette
 
 ## Retours joueurs CurseForge (BLaoTea, 2026-10-18)
-- [ ] Tuto Vanilla, vague 5 (Zombie puissant) : la charge (dash) ne fait des dégâts que si elle touche, plus de mort en un coup
-- [ ] Anomalies / Terrain instable : plus aucune entre deux vagues (Calme, pause, coffres), celles en cours disparaissent
+- [x] Tuto Vanilla, vague 5 (Zombie puissant) : la charge (dash) ne fait des dégâts que si elle touche, plus de mort en un coup
+- [x] Anomalies / Terrain instable : plus aucune entre deux vagues (Calme, pause, coffres), celles en cours disparaissent
 
 ## Éditeur : liste triée en onglets
 - [x] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
-- [ ] Créer une horde de chaque type (modèle) puis enregistrer : la liste se rouvre sur le bon onglet
-- [ ] Changer le mode d'une horde (Général) puis enregistrer : elle change d'onglet
-- [ ] Défilement, ↺, 🗑, copier : fonctionnent dans chaque onglet ; onglet vide : message « Aucune horde »
+- [x] Créer une horde de chaque type (modèle) puis enregistrer : la liste se rouvre sur le bon onglet
+- [x] Changer le mode d'une horde (Général) puis enregistrer : elle change d'onglet
+- [x] Défilement, ↺, 🗑, copier : fonctionnent dans chaque onglet ; onglet vide : message « Aucune horde »
 
 ## Couches de configuration (base du mod + couche du joueur)
-- [ ] Nouvelle installation (dossier `config/wavesurvivor` supprimé) : le jeu démarre, les hordes du mod sont là, aucun fichier copié en dehors des tiens
-- [ ] Migration d'une config 1.6 : dossier `wavesurvivor_backup_avant_couches` créé, rien de perdu (hordes perso, entités perso, coffres perso, boutique)
-- [ ] Après migration : tes hordes de base modifiées gardent leurs changements (point d'apparition…), le reste suit le mod
-- [ ] Dash à ×1,2 et Zombie puissant à 10 d'attaque visibles après migration (sans rien régler à la main)
-- [ ] Éditeur de hordes : badge `[modifiée · N]` sur une horde de base modifiée, `[mod]` sur les autres, `[en jeu]` sur les tiennes
-- [ ] Modifier un champ d'une horde de base puis enregistrer : seul ce champ est gardé (le reste suit les mises à jour)
-- [ ] Bouton ↺ d'une horde modifiée : rétablit la version du mod (confirmation au 2ᵉ clic)
-- [ ] Supprimer une horde du mod puis « ↺ Hordes du mod supprimées » : elle revient
-- [ ] Éditeur d'entités et de compétences : badge, bouton ↺, modification d'un seul champ
-- [ ] Autels : modifier la recette d'une horde de base, relancer le jeu : la modification est conservée
-- [ ] Coffres roulette : créer / modifier / supprimer un coffre, relancer : l'état est conservé
-- [ ] Boutique Renaissance et raretés : modifier, relancer : conservé
-- [ ] `/horde setspawn <horde>` : le point d'apparition est conservé après relance
-- [ ] Export / import d'une horde (zip) fonctionne toujours
-- [ ] Serveur dédié : démarre et migre sans erreur
+- [x] Nouvelle installation (dossier `config/wavesurvivor` supprimé) : le jeu démarre, les hordes du mod sont là, aucun fichier copié en dehors des tiens
+- [x] Migration d'une config 1.6 : dossier `wavesurvivor_backup_avant_couches` créé, rien de perdu (hordes perso, entités perso, coffres perso, boutique)
+- [x] Après migration : tes hordes de base modifiées gardent leurs changements (point d'apparition…), le reste suit le mod
+- [x] Dash à ×1,2 et Zombie puissant à 10 d'attaque visibles après migration (sans rien régler à la main)
+- [x] Éditeur de hordes : badge `[modifiée · N]` sur une horde de base modifiée, `[mod]` sur les autres, `[en jeu]` sur les tiennes
+- [x] Modifier un champ d'une horde de base puis enregistrer : seul ce champ est gardé (le reste suit les mises à jour)
+- [x] Bouton ↺ d'une horde modifiée : rétablit la version du mod (confirmation au 2ᵉ clic)
+- [x] Supprimer une horde du mod puis « ↺ Hordes du mod supprimées » : elle revient
+- [x] Éditeur d'entités et de compétences : badge, bouton ↺, modification d'un seul champ
+- [x] Autels : modifier la recette d'une horde de base, relancer le jeu : la modification est conservée
+- [x] Coffres roulette : créer / modifier / supprimer un coffre, relancer : l'état est conservé
+- [x] Boutique Renaissance et raretés : modifier, relancer : conservé
+- [x] `/horde setspawn <horde>` : le point d'apparition est conservé après relance
+- [x] Export / import d'une horde (zip) fonctionne toujours
+- [x] Serveur dédié : démarre et migre sans erreur
