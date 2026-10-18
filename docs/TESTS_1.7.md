@@ -7,7 +7,7 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [x] Les envahisseurs chassent les villageois, même cachés derrière des portes (pas d'attente à la cloche)
 - [x] Portes : les envahisseurs les ouvrent / les brisent selon les réglages
 - [ ] Roulette du Mauvais présage : raid vanilla avec les ajouts
-- [ ] Roulette du Mauvais présage : invasion préparée
+- [x] Roulette du Mauvais présage : invasion préparée (Razzia des Sables déclenchée)
 - [ ] Poids vanilla à 0 : le Mauvais présage est différé, aucune raid vanilla pure
 - [ ] Cloche + barre de boss (villageois, vagues)
 - [ ] Délai de préparation entre les vagues
@@ -57,7 +57,7 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] Anomalies / Terrain instable : plus aucune entre deux vagues (Calme, pause, coffres), celles en cours disparaissent
 
 ## Éditeur : liste triée en onglets
-- [ ] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
+- [x] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
 - [ ] Créer une horde de chaque type (modèle) puis enregistrer : la liste se rouvre sur le bon onglet
 - [ ] Changer le mode d'une horde (Général) puis enregistrer : elle change d'onglet
 - [ ] Défilement, ↺, 🗑, copier : fonctionnent dans chaque onglet ; onglet vide : message « Aucune horde »
