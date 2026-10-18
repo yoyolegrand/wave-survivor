@@ -1517,7 +1517,7 @@
     {
       "entityName": "djinn",
       "displayName": "§6§lDjinn",
-      "baseEntityType": "minecraft:evoker",
+      "baseEntityType": "wavesurvivor:djinn",
       "stats": {
         "followRange": 48,
         "knockbackResistance": 0.1,

@@ -103,6 +103,21 @@ public class ModEntities {
                     .clientTrackingRange(10)
                     .build("frost_ravager"));
 
+    /** Horde des Sables Ardents : Djinn (génie, base Évocateur, modèle sur mesure). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Djinn>> DJINN = ENTITIES.register("djinn",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Djinn>of(com.wavesurvivor.entity.Djinn::new, MobCategory.MONSTER)
+                    .sized(0.6f, 1.95f)
+                    .clientTrackingRange(8)
+                    .build("djinn"));
+
+    /** Esprit du Djinn : Vex invoqué par le Djinn (turquoise et or). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.DjinnSpirit>> DJINN_SPIRIT = ENTITIES.register("djinn_spirit",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.DjinnSpirit>of(com.wavesurvivor.entity.DjinnSpirit::new, MobCategory.MONSTER)
+                    .sized(0.4f, 0.8f)
+                    .fireImmune()
+                    .clientTrackingRange(8)
+                    .build("djinn_spirit"));
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
     }
@@ -119,5 +134,7 @@ public class ModEntities {
         event.put(FROST_GOLEM.get(), com.wavesurvivor.entity.FrostGolem.createAttributes().build());
         event.put(SNOW_SORCERER.get(), com.wavesurvivor.entity.SnowSorcerer.createAttributes().build());
         event.put(FROST_RAVAGER.get(), net.minecraft.world.entity.monster.Ravager.createAttributes().build());
+        event.put(DJINN.get(), net.minecraft.world.entity.monster.Evoker.createAttributes().build());
+        event.put(DJINN_SPIRIT.get(), net.minecraft.world.entity.monster.Vex.createAttributes().build());
     }
 }

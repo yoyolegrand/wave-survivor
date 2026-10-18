@@ -48,6 +48,11 @@ public class ClientModEvents {
     }
 
     @SubscribeEvent
+    public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(DjinnModel.LAYER, DjinnModel::createBodyLayer); // Djinn : turban et queue de fumée
+    }
+
+    @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.ALTAR_RUNIC.get(), AltarBookRenderer::new);
         // Mode Kingdom : structures 3D des défenses (tours, sanctuaire, baraquement)
@@ -64,6 +69,8 @@ public class ClientModEvents {
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.FROST_GOLEM.get(), FrostGolemRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.SNOW_SORCERER.get(), SnowSorcererRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.FROST_RAVAGER.get(), FrostRavagerRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DJINN.get(), DjinnRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DJINN_SPIRIT.get(), DjinnSpiritRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.XALTOR_CRYSTAL.get(),
                 net.minecraft.client.renderer.entity.EndCrystalRenderer::new);
     }

@@ -11,7 +11,7 @@ Entités **hostiles** (implémentent `Enemy`) ; elles ne doivent pas s'attaquer 
 | `wavesurvivor:scarab` | `minecraft:silverfish` | Artésien / Endermite | Petit, très rapide, par dizaines, mord. Peut s'enfouir (visuel) | PV 8, dégâts 3, vitesse 0,36 |
 | `wavesurvivor:jackal` | `minecraft:wolf` | Loup (pelage sable, oreilles dressées) | Chasse en meute, rapide. Sert aussi au Chacal Alpha (plus grand) | PV 22, dégâts 5, vitesse 0,40 (Alpha : 90 / 9 / 0,42) |
 | `wavesurvivor:scorpion` | `minecraft:spider` | Araignée (queue recourbée si possible) | Poison au contact ; porte la compétence « Dard du scorpion ». Sekhmet (boss) utilise la même base en grand | PV 34, dégâts 5, vitesse 0,30 |
-| `wavesurvivor:djinn` | `minecraft:evoker` | Évocateur / Vex (turban, bas du corps en volutes de sable) | Lanceur de sorts, garde ses distances (10 blocs), flotte légèrement. Orbes de sable + disparition | PV 52, dégâts 4, vitesse 0,50 |
+| `wavesurvivor:djinn` (✅ fait, voir CLAUDE.md « Djinn ») | `minecraft:evoker` | Évocateur / Vex (turban, bas du corps en volutes de sable) | Lanceur de sorts, garde ses distances (10 blocs), flotte légèrement. Orbes de sable + disparition | PV 52, dégâts 4, vitesse 0,50 |
 | `wavesurvivor:sandstone_golem` | `minecraft:ravager` | Golem de fer (grès, hiéroglyphes) | Gros bloc de grès lent et très résistant (recul 100 % bloqué). Sert aussi de base à Rê-Atoum (boss, très agrandi) | PV 150, dégâts 13, vitesse 0,21 (Rê-Atoum : 1000 / 24 / 0,30) |
 
 ## Pour remplacer les entités provisoires

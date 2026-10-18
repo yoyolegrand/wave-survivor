@@ -31,8 +31,10 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] Boss : compétence Dust Devil
 - [ ] Boss : compétence Tremor
 - [ ] Boss : compétence Earthquake
-- [ ] (Plus tard) vraies entités de Claude Chat : scarabée, chacal, scorpion, djinn, golem de grès
-- [ ] (Plus tard) icône définitive de la relique
+- [ ] Djinn : modèle 3D sur mesure (turban, queue de fumée, yeux lumineux), sorts (orbes de sable, disparition), animation bras levés
+- [ ] Djinn : les Vex invoqués sont des Esprits du Djinn (modèle propre)
+- [ ] Icône définitive du Voile du Désert (objet, inventaire, Curios)
+- [ ] (Plus tard) vraies entités de Claude Chat : scarabée, chacal, scorpion, golem de grès
 
 ## Correctifs du retour joueur
 - [x] Zombie de horde dans l'eau : reste un zombie (confirmé ; fin de vague non précisée)
