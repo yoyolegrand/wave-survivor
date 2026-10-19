@@ -90,6 +90,8 @@
   "entity.wavesurvivor.sandstone_golem": "Colosse de grès",
   "item.wavesurvivor.jackal_spawn_egg": "Œuf d'apparition de Chacal maudit",
   "item.wavesurvivor.sandstone_golem_spawn_egg": "Œuf d'apparition de Colosse de grès",
+  "entity.wavesurvivor.royal_guard": "Garde royal momifié",
+  "item.wavesurvivor.royal_guard_spawn_egg": "Œuf d'apparition de Garde royal momifié",
   "item.wavesurvivor.djinn_spawn_egg": "Œuf d'apparition de Djinn",
   "item.wavesurvivor.djinn_spirit_spawn_egg": "Œuf d'apparition d'Esprit du Djinn",
   "advancement.wavesurvivor.root.title": "Wave Survivor",

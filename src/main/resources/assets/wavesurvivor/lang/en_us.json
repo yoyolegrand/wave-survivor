@@ -90,6 +90,8 @@
   "entity.wavesurvivor.sandstone_golem": "Sandstone Colossus",
   "item.wavesurvivor.jackal_spawn_egg": "Cursed Jackal Spawn Egg",
   "item.wavesurvivor.sandstone_golem_spawn_egg": "Sandstone Colossus Spawn Egg",
+  "entity.wavesurvivor.royal_guard": "Mummified Royal Guard",
+  "item.wavesurvivor.royal_guard_spawn_egg": "Mummified Royal Guard Spawn Egg",
   "item.wavesurvivor.djinn_spawn_egg": "Djinn Spawn Egg",
   "item.wavesurvivor.djinn_spirit_spawn_egg": "Djinn Spirit Spawn Egg",
   "advancement.wavesurvivor.root.title": "Wave Survivor",

@@ -154,6 +154,14 @@ public class ModEntities {
                     .clientTrackingRange(10)
                     .build("sandstone_golem"));
 
+    /** Horde des Sables Ardents : Garde royal momifié (modèle sur mesure, base du Garde du Pharaon et d'Anubis). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.RoyalGuard>> ROYAL_GUARD = ENTITIES.register("royal_guard",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.RoyalGuard>of(com.wavesurvivor.entity.RoyalGuard::new, MobCategory.MONSTER)
+                    .sized(0.8f, 2.6f)
+                    .fireImmune()
+                    .clientTrackingRange(8)
+                    .build("royal_guard"));
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
     }
@@ -176,5 +184,6 @@ public class ModEntities {
         event.put(SCORPION.get(), com.wavesurvivor.entity.Scorpion.createAttributes().build());
         event.put(JACKAL.get(), com.wavesurvivor.entity.Jackal.createAttributes().build());
         event.put(SANDSTONE_GOLEM.get(), com.wavesurvivor.entity.SandstoneGolem.createAttributes().build());
+        event.put(ROYAL_GUARD.get(), com.wavesurvivor.entity.RoyalGuard.createAttributes().build());
     }
 }

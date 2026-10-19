@@ -135,6 +135,9 @@ public class ModItems {
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.JACKAL, 0x8C6840, 0x2A1E18, new Item.Properties()));
     public static final RegistryObject<Item> SANDSTONE_GOLEM_SPAWN_EGG = ITEMS.register("sandstone_golem_spawn_egg",
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.SANDSTONE_GOLEM, 0xD8B880, 0x46E0D8, new Item.Properties()));
+    /** Œuf d'apparition du Garde royal momifié (horde des Sables Ardents). */
+    public static final RegistryObject<Item> ROYAL_GUARD_SPAWN_EGG = ITEMS.register("royal_guard_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.ROYAL_GUARD, 0xE0B040, 0x1A3A78, new Item.Properties()));
 
     /** Relique : Anneau d'Ancrage du Néant (immunité à la Lévitation, compatible Curios « bague »). */
     public static final RegistryObject<Item> ANNEAU_ANCRAGE = ITEMS.register("anneau_ancrage",
@@ -284,6 +287,7 @@ public class ModItems {
                         output.accept(SCORPION_SPAWN_EGG.get());
                         output.accept(JACKAL_SPAWN_EGG.get());
                         output.accept(SANDSTONE_GOLEM_SPAWN_EGG.get());
+                        output.accept(ROYAL_GUARD_SPAWN_EGG.get());
                         output.accept(ECLAT_NEANT_SPAWN_EGG.get());
                         output.accept(ANNEAU_ANCRAGE.get());
                         output.accept(AMULETTE_BRASIER.get());

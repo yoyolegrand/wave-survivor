@@ -776,7 +776,7 @@
           {
             "waveNumber": 4,
             "bossName": "§6§lAnubis, Gardien des Tombes",
-            "entityType": "minecraft:wither_skeleton",
+            "entityType": "wavesurvivor:royal_guard",
             "useCustomEntity": true,
             "customEntityName": "anubis_gardien",
             "maxHealth": 650,
@@ -1461,7 +1461,7 @@
     {
       "entityName": "garde_pharaon",
       "displayName": "§6§lGarde du Pharaon",
-      "baseEntityType": "minecraft:wither_skeleton",
+      "baseEntityType": "wavesurvivor:royal_guard",
       "stats": {
         "followRange": 48,
         "knockbackResistance": 0.5,
@@ -1575,7 +1575,7 @@
     {
       "entityName": "anubis_gardien",
       "displayName": "§6§lAnubis, Gardien des Tombes",
-      "baseEntityType": "minecraft:wither_skeleton",
+      "baseEntityType": "wavesurvivor:royal_guard",
       "stats": {
         "followRange": 64,
         "knockbackResistance": 1.0,

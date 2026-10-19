@@ -54,6 +54,7 @@ public class ClientModEvents {
         event.registerLayerDefinition(ScorpionModel.LAYER, ScorpionModel::createBodyLayer); // Scorpion (modèle sur mesure)
         event.registerLayerDefinition(JackalModel.LAYER, JackalModel::createBodyLayer); // Chacal maudit (modèle sur mesure)
         event.registerLayerDefinition(SandstoneGolemModel.LAYER, SandstoneGolemModel::createBodyLayer); // Colosse de grès (modèle sur mesure)
+        event.registerLayerDefinition(RoyalGuardModel.LAYER, RoyalGuardModel::createBodyLayer); // Garde royal momifié (modèle sur mesure)
     }
 
     @SubscribeEvent
@@ -80,6 +81,7 @@ public class ClientModEvents {
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.SCORPION.get(), ScorpionRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.JACKAL.get(), JackalRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.SANDSTONE_GOLEM.get(), SandstoneGolemRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ROYAL_GUARD.get(), RoyalGuardRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.XALTOR_CRYSTAL.get(),
                 net.minecraft.client.renderer.entity.EndCrystalRenderer::new);
     }

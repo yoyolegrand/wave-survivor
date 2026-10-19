@@ -42,6 +42,7 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [x] Chacal maudit : yeux rouges, attaque en meute ; Chacal Alpha a le même modèle
 - [x] Colosse de grès : voûté, cœur-soleil, rochers en orbite, hostile ; Rê-Atoum (vague 10) a le même modèle
 - [x] Crocs du Djinn (invoqués par le Djinn) : modèle turquoise et or
+- [ ] Garde royal momifié : modèle sur mesure, coup de Wither ; Anubis (vague 4) a le même modèle
 - [x] Les 6 œufs d'apparition du désert (Djinn, Esprit, Scarabée, Scorpion, Chacal, Colosse) donnent la bonne créature, avec le bon nom FR/EN
 
 ## Correctifs du retour joueur
