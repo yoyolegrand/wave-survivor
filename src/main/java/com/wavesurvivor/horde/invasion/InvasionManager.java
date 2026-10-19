@@ -167,6 +167,55 @@ public class InvasionManager {
         return true;
     }
 
+    /**
+     * Commande « skip » (même mécanique que /ws skip pour la horde) : passe l'étape en cours.
+     *   préparation → la première vague démarre ; combat → les envahisseurs disparaissent, et si c'était la DERNIÈRE vague
+     *   l'invasion est gagnée (récompenses comprises), sinon pause courte puis vague suivante ; pause → vague suivante tout de suite.
+     * @return clé de message d'erreur, ou null si c'est fait
+     */
+    public static String skip(MinecraftServer srv) {
+        Inv v = cur;
+        if (v == null) return "invasion.err.none";
+        long now = srv.getTickCount();
+        switch (v.phase) {
+            case PREP -> {
+                tell(v, WSLang.t("invasion.skipped_prep"));
+                startWave(v, 1, now);
+            }
+            case FIGHT -> {
+                adoptInvaders(v); // unités apparues depuis le dernier passage
+                int killed = 0;
+                for (UUID id : new ArrayList<>(v.invaders)) {
+                    Entity e = v.level.getEntity(id);
+                    if (e != null && e.isAlive()) { e.discard(); killed++; }
+                    MobRegistry.remove(id);
+                }
+                v.invaders.clear();
+                BossManager.clearAll(srv);
+                tell(v, WSLang.t("invasion.skipped", v.wave, v.waves, killed));
+                if (v.wave >= v.waves) {
+                    victory(v, now);
+                } else {
+                    v.phase = Phase.BREAK;
+                    v.phaseStart = now;
+                    v.phaseEnd = now + 20;
+                }
+            }
+            case BREAK -> {
+                tell(v, WSLang.t("invasion.skipped_break"));
+                startWave(v, v.wave + 1, now);
+            }
+            default -> { return "invasion.err.ended"; }
+        }
+        updateBar(v, now);
+        return null;
+    }
+
+    /** Message aux joueurs proches du village. */
+    private static void tell(Inv v, String msg) {
+        for (ServerPlayer p : v.level.players()) if (near(p, v)) p.sendSystemMessage(Component.literal(msg));
+    }
+
     // ─── Village ───
 
     /** Cloche du village la plus proche (point d'intérêt), sinon la position donnée. */

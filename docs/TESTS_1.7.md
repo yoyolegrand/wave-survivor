@@ -16,6 +16,7 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [x] Défaite : conséquence configurée appliquée
 - [x] Succès `invasion_1`, `invasion_10`, `invasion_flawless`
 - [x] Commande `/invasion`
+- [ ] `/ws invasion skip` : en préparation (la 1re vague démarre), en combat (envahisseurs retirés, pause puis vague suivante), en pause (vague suivante) ; sur la dernière vague : victoire avec récompenses
 - [x] Les 3 invasions par défaut : Pillards, Razzia des Sables, Meute des Neiges
 - [x] Éditeur, mode « Invasion » : textes lisibles, boutons clairs, onglet Événements vide, template « invasion »
 - [x] Pas de horde normale pendant une invasion, ni d'invasion pendant une horde

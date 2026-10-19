@@ -20,7 +20,8 @@ import java.util.Random;
  * Commande /ws invasion (opérateurs) :
  *   start                       invasion tirée au sort parmi celles du mod, sur le village où l'on se trouve ;
  *   start <nom> [présage 1-5]   une invasion précise (« vanilla » = raid vanilla classique) ;
- *   stop                        arrête l'invasion en cours (sans récompense).
+ *   stop                        arrête l'invasion en cours (sans récompense) ;
+ *   skip                        passe la vague en cours (la dernière termine l'invasion, avec récompenses).
  */
 public final class InvasionCommand {
 
@@ -48,7 +49,8 @@ public final class InvasionCommand {
                                 .then(Commands.argument("omen", IntegerArgumentType.integer(1, 5))
                                         .executes(ctx -> start(ctx.getSource(), StringArgumentType.getString(ctx, "name"),
                                                 IntegerArgumentType.getInteger(ctx, "omen"))))))
-                .then(Commands.literal("stop").executes(ctx -> stop(ctx.getSource())));
+                .then(Commands.literal("stop").executes(ctx -> stop(ctx.getSource())))
+                .then(Commands.literal("skip").executes(ctx -> skip(ctx.getSource())));
     }
 
     private static int fail(CommandSourceStack src, String key) {
@@ -80,6 +82,13 @@ public final class InvasionCommand {
         if (err != null) return fail(src, err);
         final String shown = WSLang.t(horde.hordeName);
         src.sendSuccess(() -> Component.literal(WSLang.t("invasion.cmd.started", shown)), true);
+        return 1;
+    }
+
+    private static int skip(CommandSourceStack src) {
+        String err = InvasionManager.skip(src.getServer());
+        if (err != null) return fail(src, err);
+        src.sendSuccess(() -> Component.literal(WSLang.t("invasion.cmd.skipped")), true);
         return 1;
     }
 

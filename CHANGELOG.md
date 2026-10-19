@@ -12,7 +12,7 @@
 - 🏘 The top bar shows the **villagers left** and the **wave**. Lose too many villagers (half by default, configurable) or all of them and the village falls.
 - 🚪 Invaders **open and break doors** and hunt the villagers. Nothing else is destroyed.
 - 🏅 Victory: **Hero of the Village** (level from the omen), **raiders' loot**, Renaissance points, statistics and 3 new achievements.
-- ⚙ Build your own in the editor: the mode button now has a **third state, Invasion**, which reshapes the tabs. Operators can use `/ws invasion start [name]` in the village they stand in.
+- ⚙ Build your own in the editor: the mode button now has a **third state, Invasion**, which reshapes the tabs. Operators can use `/ws invasion start [name]` in the village they stand in, and `/ws invasion skip` to skip the current wave (skipping the last one wins the invasion) — same mechanic as `/ws skip` for hordes.
 - 🏜 The **Sand Raid** now also fields **Djinns** (from wave 3) and a **Sandstone Colossus** (final wave), with their custom models.
 
 ### 🏜️ Burning Sands — new horde
