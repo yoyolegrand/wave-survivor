@@ -50,6 +50,10 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(DjinnModel.LAYER, DjinnModel::createBodyLayer); // Djinn : turban et queue de fumée
+        event.registerLayerDefinition(ScarabModel.LAYER, ScarabModel::createBodyLayer); // Scarabée (modèle sur mesure)
+        event.registerLayerDefinition(ScorpionModel.LAYER, ScorpionModel::createBodyLayer); // Scorpion (modèle sur mesure)
+        event.registerLayerDefinition(JackalModel.LAYER, JackalModel::createBodyLayer); // Chacal maudit (modèle sur mesure)
+        event.registerLayerDefinition(SandstoneGolemModel.LAYER, SandstoneGolemModel::createBodyLayer); // Colosse de grès (modèle sur mesure)
     }
 
     @SubscribeEvent
@@ -71,6 +75,11 @@ public class ClientModEvents {
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.FROST_RAVAGER.get(), FrostRavagerRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DJINN.get(), DjinnRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DJINN_SPIRIT.get(), DjinnSpiritRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DJINN_FANGS.get(), DjinnFangsRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.SCARAB.get(), ScarabRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.SCORPION.get(), ScorpionRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.JACKAL.get(), JackalRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.SANDSTONE_GOLEM.get(), SandstoneGolemRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.XALTOR_CRYSTAL.get(),
                 net.minecraft.client.renderer.entity.EndCrystalRenderer::new);
     }

@@ -1,3 +1,5 @@
+> ✅ **Toutes ces entités sont faites** (Claude Chat, 1.7) : voir les sections Djinn / Scarabée et Scorpion / Chacal et Colosse de `CLAUDE.md`. Ce document reste la fiche de conception d'origine.
+
 # Horde des Sables Ardents — entités à créer (pour Claude Chat)
 
 La horde est déjà jouable : `src/main/resources/defaults/wavesurvivor/additions/sables_ardents.json`.

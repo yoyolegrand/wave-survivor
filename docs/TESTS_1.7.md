@@ -34,7 +34,12 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] Djinn : modèle 3D sur mesure (turban, queue de fumée, yeux lumineux), sorts (orbes de sable, disparition), animation bras levés
 - [ ] Djinn : les Vex invoqués sont des Esprits du Djinn (modèle propre)
 - [ ] Icône définitive du Voile du Désert (objet, inventaire, Curios)
-- [ ] (Plus tard) vraies entités de Claude Chat : scarabée, chacal, scorpion, golem de grès
+- [ ] Scarabée : modèle sur mesure (scarabée sacré lapis et or), ne s'enfouit pas
+- [ ] Scorpion : queue articulée, coup de dard animé, grimpe, poison ; Sekhmet (vague 7) a le même modèle
+- [ ] Chacal maudit : yeux rouges, attaque en meute ; Chacal Alpha a le même modèle
+- [ ] Colosse de grès : voûté, cœur-soleil, rochers en orbite, hostile ; Rê-Atoum (vague 10) a le même modèle
+- [ ] Crocs du Djinn (invoqués par le Djinn) : modèle turquoise et or
+- [ ] Les 6 œufs d'apparition du désert (Djinn, Esprit, Scarabée, Scorpion, Chacal, Colosse) donnent la bonne créature, avec le bon nom FR/EN
 
 ## Correctifs du retour joueur
 - [x] Zombie de horde dans l'eau : reste un zombie (confirmé ; fin de vague non précisée)

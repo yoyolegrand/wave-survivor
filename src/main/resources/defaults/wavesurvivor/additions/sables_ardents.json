@@ -832,7 +832,7 @@
           {
             "waveNumber": 7,
             "bossName": "§6§lSekhmet, Reine des Scorpions",
-            "entityType": "minecraft:spider",
+            "entityType": "wavesurvivor:scorpion",
             "useCustomEntity": true,
             "customEntityName": "sekhmet_reine",
             "maxHealth": 520,
@@ -894,7 +894,7 @@
           {
             "waveNumber": 10,
             "bossName": "§6§lRê-Atoum, l'Ancien des Sables",
-            "entityType": "minecraft:ravager",
+            "entityType": "wavesurvivor:sandstone_golem",
             "useCustomEntity": true,
             "customEntityName": "re_atoum_ancien",
             "maxHealth": 1000,
@@ -1277,7 +1277,7 @@
     {
       "entityName": "scarabee",
       "displayName": "§6Scarabée",
-      "baseEntityType": "minecraft:silverfish",
+      "baseEntityType": "wavesurvivor:scarab",
       "stats": {
         "followRange": 48,
         "knockbackResistance": 0,
@@ -1305,7 +1305,7 @@
     {
       "entityName": "chacal",
       "displayName": "§6Chacal des dunes",
-      "baseEntityType": "minecraft:wolf",
+      "baseEntityType": "wavesurvivor:jackal",
       "stats": {
         "followRange": 48,
         "knockbackResistance": 0.1,
@@ -1333,7 +1333,7 @@
     {
       "entityName": "chacal_alpha",
       "displayName": "§6§lChacal Alpha",
-      "baseEntityType": "minecraft:wolf",
+      "baseEntityType": "wavesurvivor:jackal",
       "stats": {
         "followRange": 56,
         "knockbackResistance": 0.5,
@@ -1392,7 +1392,7 @@
     {
       "entityName": "scorpion",
       "displayName": "§6Scorpion des sables",
-      "baseEntityType": "minecraft:spider",
+      "baseEntityType": "wavesurvivor:scorpion",
       "stats": {
         "followRange": 48,
         "knockbackResistance": 0.1,
@@ -1489,7 +1489,7 @@
     {
       "entityName": "golem_gres",
       "displayName": "§6§lGolem de grès",
-      "baseEntityType": "minecraft:ravager",
+      "baseEntityType": "wavesurvivor:sandstone_golem",
       "stats": {
         "followRange": 48,
         "knockbackResistance": 1.0,
@@ -1521,7 +1521,7 @@
       "stats": {
         "followRange": 48,
         "knockbackResistance": 0.1,
-        "maxHealth": 52,
+        "maxHealth": 40,
         "attackDamage": 4,
         "movementSpeed": 0.5
       },
@@ -1539,10 +1539,7 @@
       },
       "isBoss": false,
       "bossConfig": {},
-      "skills": [
-        "sa_orbes_djinn",
-        "sa_clignement_djinn"
-      ],
+      "skills": [],
       "id": "bbdf2b394f8e6cc6efacc17f",
       "keepDistance": 10
     },
@@ -1614,7 +1611,7 @@
     {
       "entityName": "sekhmet_reine",
       "displayName": "§6§lSekhmet, Reine des Scorpions",
-      "baseEntityType": "minecraft:spider",
+      "baseEntityType": "wavesurvivor:scorpion",
       "stats": {
         "followRange": 64,
         "knockbackResistance": 0.8,
@@ -1651,7 +1648,7 @@
     {
       "entityName": "re_atoum_ancien",
       "displayName": "§6§lRê-Atoum, l'Ancien des Sables",
-      "baseEntityType": "minecraft:ravager",
+      "baseEntityType": "wavesurvivor:sandstone_golem",
       "stats": {
         "followRange": 64,
         "knockbackResistance": 1.0,

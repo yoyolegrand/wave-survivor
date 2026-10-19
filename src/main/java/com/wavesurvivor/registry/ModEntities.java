@@ -118,6 +118,42 @@ public class ModEntities {
                     .clientTrackingRange(8)
                     .build("djinn_spirit"));
 
+    /** Crocs du Djinn : crocs de l'Évocateur invoqués par le Djinn (turquoise et or). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.DjinnFangs>> DJINN_FANGS = ENTITIES.register("djinn_fangs",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.DjinnFangs>of(com.wavesurvivor.entity.DjinnFangs::new, MobCategory.MISC)
+                    .sized(0.5f, 0.8f)
+                    .clientTrackingRange(6)
+                    .updateInterval(2)
+                    .build("djinn_fangs"));
+
+    /** Horde des Sables Ardents : Scarabée (modèle sur mesure). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Scarab>> SCARAB = ENTITIES.register("scarab",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Scarab>of(com.wavesurvivor.entity.Scarab::new, MobCategory.MONSTER)
+                    .sized(0.6f, 0.4f)
+                    .clientTrackingRange(8)
+                    .build("scarab"));
+
+    /** Horde des Sables Ardents : Scorpion (modèle sur mesure, base de Sekhmet). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Scorpion>> SCORPION = ENTITIES.register("scorpion",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Scorpion>of(com.wavesurvivor.entity.Scorpion::new, MobCategory.MONSTER)
+                    .sized(1.4f, 0.9f)
+                    .clientTrackingRange(8)
+                    .build("scorpion"));
+
+    /** Horde des Sables Ardents : Chacal maudit (modèle sur mesure, base du Chacal Alpha). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Jackal>> JACKAL = ENTITIES.register("jackal",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Jackal>of(com.wavesurvivor.entity.Jackal::new, MobCategory.MONSTER)
+                    .sized(0.7f, 0.9f)
+                    .clientTrackingRange(8)
+                    .build("jackal"));
+
+    /** Horde des Sables Ardents : Colosse de grès (modèle sur mesure, base de Rê-Atoum). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.SandstoneGolem>> SANDSTONE_GOLEM = ENTITIES.register("sandstone_golem",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.SandstoneGolem>of(com.wavesurvivor.entity.SandstoneGolem::new, MobCategory.MONSTER)
+                    .sized(2.0f, 2.9f)
+                    .clientTrackingRange(10)
+                    .build("sandstone_golem"));
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
     }
@@ -134,7 +170,11 @@ public class ModEntities {
         event.put(FROST_GOLEM.get(), com.wavesurvivor.entity.FrostGolem.createAttributes().build());
         event.put(SNOW_SORCERER.get(), com.wavesurvivor.entity.SnowSorcerer.createAttributes().build());
         event.put(FROST_RAVAGER.get(), net.minecraft.world.entity.monster.Ravager.createAttributes().build());
-        event.put(DJINN.get(), net.minecraft.world.entity.monster.Evoker.createAttributes().build());
+        event.put(DJINN.get(), com.wavesurvivor.entity.Djinn.createAttributes().build());
         event.put(DJINN_SPIRIT.get(), net.minecraft.world.entity.monster.Vex.createAttributes().build());
+        event.put(SCARAB.get(), com.wavesurvivor.entity.Scarab.createAttributes().build());
+        event.put(SCORPION.get(), com.wavesurvivor.entity.Scorpion.createAttributes().build());
+        event.put(JACKAL.get(), com.wavesurvivor.entity.Jackal.createAttributes().build());
+        event.put(SANDSTONE_GOLEM.get(), com.wavesurvivor.entity.SandstoneGolem.createAttributes().build());
     }
 }
