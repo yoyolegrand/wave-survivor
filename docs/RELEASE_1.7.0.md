@@ -34,7 +34,7 @@ touching your config.
 
 ## 🏜️ Burning Sands — new horde
 - Mummies, scarabs, scorpions, jackals, desert riders, royal guards, sandstone colossi and djinns, with special waves
-  (Scarab Rush, Legion of Mummies, March of the Pharaohs, Ruins Raiders) and **three bosses**: **Anubis** (wave 4), **Sekhmet** (wave 7,
+  and **three bosses**: **Anubis** (wave 4), **Sekhmet** (wave 7,
   twice the size of a normal scorpion) and **Ra-Atum** (wave 10) — 7 to 9 skills each.
 - Unlocks after the **Necropolis**; bound at the altar with **chiseled sandstone and red sand**. 4-star difficulty.
 - **Sand Desecrators** ignore players and rush the **Monolith**.
@@ -122,4 +122,4 @@ touching your config.
 - [ ] Merge `dev-1.7` into `main`; `mod_version=1.7.0` is already set.
 - [ ] Descriptions (CurseForge + Modrinth) from this file and `CHANGELOG.md`; gallery images.
 - [ ] Tag `v1.7.0` — only with Yoann's explicit go (triggers GitHub + CurseForge + Modrinth upload).
-- [ ] Still untested before release: multiplayer statistics / shared lives, the "Marathon" achievement, the Djinn's new speed (see `docs/TESTS_1.7.md`).
+- [ ] Still untested before release: multiplayer statistics / shared lives, the "Marathoner" achievement, the Djinn's new speed (see `docs/TESTS_1.7.md`).
