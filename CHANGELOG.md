@@ -59,9 +59,12 @@
 - 🙏 **Blessing choice**: in **solo** the game now **pauses** while you choose; in **multiplayer** you are **ignored by monsters and invulnerable** until you pick (30 s at most).
 
 ### ⚖️ Balance
+- 🐎 **Tuto Vanilla**: the wave-5 boss (*Powerful Zombie*) hits for **10** instead of 15, and the **Dash** skill's damage bonus is **×1.2** instead of ×2.
 - 🙏 **Blessings scale with the difficulty**: ×1 on Easy and Normal, **×1.25 on Hard**, **×1.5 on Nightmare** — in every mode (hordes, Kingdom, Boss Rush, Daily Challenge, Endless). The choice screen and the catalogue show the real values.
 
 ### 🐛 Fixes
+- 💨 **The Dash skill no longer one-shots players**: its bonus damage used to land instantly on anyone within 8 blocks, touching or not; it now only hits if the boss actually reaches you during the charge, and only once.
+- 🌀 **Anomalies (Unstable Ground) no longer appear between waves** — no more debuff at your feet while using the chests during a Calm. Active ones vanish when the wave ends.
 - 🧟 **Horde monsters no longer transform**: a horde zombie that falls in water stays a zombie instead of turning into a Drowned (which left the wave stuck forever), and the same goes for husks, skeletons, piglins and hoglins. Killing every unit now always ends the wave.
 - 🧹 **Visual effects no longer stay behind** when a horde ends or is lost: earthquake rocks and cracks, ice spikes, quicksand discs and telegraphs are all removed.
 - 🐪 **Dune Riders' war camels never sit down** anymore (at night the vanilla camel lay down and left its rider stuck).
@@ -79,7 +82,7 @@
 - 🧪 **Test any boss skill yourself**: operators can run `/ws skill <name>` (a harmless test monster appears in front of you and casts it on you, like a real boss), `/ws skill <name> me` (you cast it), and `/ws skill list` — tab completion included. Switch to survival: most skills ignore creative players.
 - 📂 The horde list is sorted into **Hordes / Kingdom / Invasions** tabs (with counts); a new horde lands in the right tab by itself.
 - 📝 New **Endless** settings view in the editor.
-- 📖 The **Codex** has new *Endless mode* and *Statistics* pages.
+- 📖 The **Codex** has new *Endless mode*, *Statistics*, *Burning Sands* and *Village invasions* pages.
 
 ### 📝 Notes
 - Your config is never overwritten: see *Configuration layers* above. Hordes get the Endless defaults automatically.
