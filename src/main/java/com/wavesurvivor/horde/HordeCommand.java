@@ -129,6 +129,7 @@ public class HordeCommand {
                 .then(Commands.literal("bossrush").executes(ctx -> com.wavesurvivor.horde.bossrush.BossRush.showTop(ctx.getSource())))
                 // Invasions de village (opérateurs)
                 .then(com.wavesurvivor.horde.invasion.InvasionCommand.build())
+                .then(com.wavesurvivor.horde.skill.SkillTestCommand.build())
                 // Mode sans fin : meilleurs scores (ouvert à tous)
                 .then(Commands.literal("endless").executes(ctx -> com.wavesurvivor.horde.endless.Endless.showTop(ctx.getSource())))
                 // Statistiques et succès du joueur (ouvert à tous)

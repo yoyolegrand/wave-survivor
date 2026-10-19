@@ -79,6 +79,8 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] Rayon solaire : le cercle et la colonne restent visibles jusqu'à l'impact, la foudre frappe bien l'endroit visé
 - [ ] Éditeur de compétences : les champs « Particle » ont un bouton « Choisir » (liste avec recherche, sable en tête) ; la valeur choisie est bien appliquée en jeu
 
+- [ ] `/ws skill list`, `/ws skill sa_puits_sable`, `/ws skill sa_rayon_solaire self`… : la compétence se lance depuis le joueur (complétion des noms) ; les compétences qui supposent un monstre affichent une erreur claire
+
 ## Éditeur : liste triée en onglets
 - [x] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
 - [x] Créer une horde de chaque type (modèle) puis enregistrer : la liste se rouvre sur le bon onglet

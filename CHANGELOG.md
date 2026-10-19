@@ -76,6 +76,7 @@
 - 📍 `/horde setspawn` now saves the spawn point in your own layer. The old `config/wavesurvivor/config.json` is no longer read.
 
 ### 🛠️ Editor & Codex
+- 🧪 **Test any boss skill yourself**: operators can run `/ws skill <name>` (you are the caster, the target is what you look at) or `/ws skill <name> self`, and `/ws skill list` — tab completion included.
 - 📂 The horde list is sorted into **Hordes / Kingdom / Invasions** tabs (with counts); a new horde lands in the right tab by itself.
 - 📝 New **Endless** settings view in the editor.
 - 📖 The **Codex** has new *Endless mode* and *Statistics* pages.
