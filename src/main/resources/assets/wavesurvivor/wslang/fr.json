@@ -2098,6 +2098,7 @@
   "skilltest.err.none": "Compétence introuvable : {0} (voir /ws skill list).",
   "skilltest.err.type": "Type de compétence inconnu : {0}.",
   "skilltest.err.fail": "La compétence « {0} » a échoué ({1}). Certaines compétences supposent un monstre comme lanceur.",
+  "skilltest.warn_creative": "§e⚠ Tu es en créatif/spectateur : la plupart des compétences ignorent les joueurs dans ces modes. Passe en survie (/gamemode survival) pour voir leurs effets.",
   "ui.particle.pick": "Choisir",
   "ui.particle.title": "Choisir une particule",
   "ui.particle.default": "(effet d'origine de la compétence)",

@@ -2591,6 +2591,7 @@
   "skilltest.err.none": "Skill not found: {0} (see /ws skill list).",
   "skilltest.err.type": "Unknown skill type: {0}.",
   "skilltest.err.fail": "Skill \"{0}\" failed ({1}). Some skills expect a monster as the caster.",
+  "skilltest.warn_creative": "§e⚠ You are in creative/spectator: most skills ignore players in those modes. Switch to survival (/gamemode survival) to see their effects.",
   "ui.particle.pick": "Pick",
   "ui.particle.title": "Pick a particle",
   "ui.particle.default": "(the skill's original effect)",
