@@ -71,14 +71,25 @@ public class SkillSolar extends BossSkill {
         EntityType<?> strikeType = resolveEntityType(config.solarStrikeType);
         int delay = Math.max(5, config.solarWarningDelay);
 
+        // Particule réglable (ex. block:minecraft:sand) ; vide = flammes d'origine
+        final net.minecraft.core.particles.ParticleOptions fxp = com.wavesurvivor.horde.skill.SandFx.parse(config.solarParticle, ParticleTypes.FLAME);
+
         for (ServerPlayer p : victims) {
             final BlockPos strikePos = p.blockPosition();
 
-            // Warning : colonne de particules flame au-dessus du joueur
-            for (int y = 0; y < 5; y++) {
-                level.sendParticles(ParticleTypes.FLAME,
-                        strikePos.getX() + 0.5, strikePos.getY() + y + 0.5, strikePos.getZ() + 0.5,
-                        3, 0.15, 0.05, 0.15, 0.02);
+            // Avertissement soutenu jusqu'à l'impact : cercle au sol + colonne de lumière qui monte (avant : une seule
+            // petite bouffée qui disparaissait en une seconde, bien avant le coup)
+            for (int t = 0; t < delay; t += 4) {
+                DelayedActionScheduler.schedule(level.getServer(), Math.max(1, t), () -> {
+                    double cx = strikePos.getX() + 0.5, cz = strikePos.getZ() + 0.5;
+                    for (int k = 0; k < 20; k++) {
+                        double a = Math.PI * 2 * k / 20;
+                        level.sendParticles(fxp, cx + Math.cos(a) * 1.6, strikePos.getY() + 0.1, cz + Math.sin(a) * 1.6, 1, 0, 0.02, 0, 0);
+                    }
+                    for (int y = 0; y < 8; y++) {
+                        level.sendParticles(fxp, cx, strikePos.getY() + y * 0.6, cz, 2, 0.15, 0.05, 0.15, 0.01);
+                    }
+                }, "solar warning");
             }
 
             // Schedule strike
@@ -89,6 +100,7 @@ public class SkillSolar extends BossSkill {
                 if (strike == null) return;
                 strike.moveTo(strikePos.getX() + 0.5, strikePos.getY(), strikePos.getZ() + 0.5, 0f, 0f);
                 level.addFreshEntity(strike);
+                level.sendParticles(fxp, strikePos.getX() + 0.5, strikePos.getY() + 0.5, strikePos.getZ() + 0.5, 70, 0.8, 1.2, 0.8, 0.25);
             }, "solar strike @ " + strikePos);
         }
 

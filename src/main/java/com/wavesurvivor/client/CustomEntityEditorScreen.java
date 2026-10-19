@@ -641,6 +641,11 @@ public class CustomEntityEditorScreen extends Screen {
                         text(x + 120, ry, 94, curStr, v -> s.addProperty(name, v.trim()));
                         button(x + 217, ry - 1, 40, com.wavesurvivor.i18n.WSLang.t("ui.spell.pick"), () ->
                                 minecraft.setScreen(new SpellPickerScreen(this, curStr, id -> { s.addProperty(name, id); changed(); })));
+                    } else if (name.toLowerCase().endsWith("particle")) {
+                        // Particule : champ libre + sélecteur (liste avec recherche, sable en tête)
+                        text(x + 120, ry, 94, curStr, v -> s.addProperty(name, v.trim()));
+                        button(x + 217, ry - 1, 40, com.wavesurvivor.i18n.WSLang.t("ui.particle.pick"), () ->
+                                minecraft.setScreen(new ParticlePickerScreen(this, curStr, id -> { s.addProperty(name, id); changed(); })));
                     } else {
                         text(x + 120, ry, 136, curStr, v -> s.addProperty(name, v));
                     }

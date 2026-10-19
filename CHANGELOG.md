@@ -19,6 +19,8 @@
 - 🏜 A new **desert horde**: mummies, scarabs, scorpions, jackals, desert riders, pharaoh guards, sandstone golems and djinns, with special waves and **three bosses** — **Anubis**, **Sekhmet** and **Ra-Atum**, each with 7 to 9 skills.
 - 🔓 Unlocks after the **Necropolis** — bind it at the altar with **chiseled sandstone and red sand**.
 - 🗿 **Sand Desecrators** ignore players and rush the **Monolith** — protect it!
+- ☀ **Ra-Atum's skills now all throw sand** (sand pit, geysers, sun ray, dust devil, sand barrier — no more purple or white effects), and the **Mirage** (illusions) is gone from his kit. The Sun Ray warning is now visible until the strike.
+- 🎛 **Particles are selectable in the skill editor**: Sand Pit / Gravity Well, Eruption, Sun Ray, Dust Devil, Blink, Force Field, Venom… each has a **Pick** button that opens a searchable list (sand blocks first).
 - 🦂 **Sekhmet is twice as big** (the Scorpion supports a body size setting, hitbox included), and her tail strike and burrow now throw **sand** instead of white puffs. Skills accept `block:<block id>` as a particle setting, and Blink has a new particle setting.
 - 🪲 **Every desert creature has a custom 3D model** (not recolors): the sacred **Scarab**, the articulated-tail **Scorpion** (also Sekhmet), the red-eyed pack-hunting **Cursed Jackal** (also the Alpha), the hunched **Sandstone Colossus** with its sun heart and orbiting rocks (also Ra-Atum), plus spawn eggs for all of them.
 - 🧞 The **Djinn** has a custom 3D model (turban, belted robe, smoke tail instead of legs) and summons **Djinn Spirits** instead of vanilla Vexes.

@@ -74,9 +74,9 @@ public class SkillDustDevil extends BossSkill {
             // Spirale de sable
             for (int h = 0; h < 8; h++) {
                 double a = t * 0.7 + h * 0.9, rr = 0.5 + h * 0.3;
-                level.sendParticles(SandFx.SAND, pos[0] + Math.cos(a) * rr, gy + h * 0.55, pos[1] + Math.sin(a) * rr, 3, 0.1, 0.1, 0.1, 0.02);
+                level.sendParticles(SandFx.parse(config.dustDevilParticle, SandFx.SAND), pos[0] + Math.cos(a) * rr, gy + h * 0.55, pos[1] + Math.sin(a) * rr, 3, 0.1, 0.1, 0.1, 0.02);
             }
-            if (t % 10 == 0) level.sendParticles(ParticleTypes.CLOUD, pos[0], gy + 2.5, pos[1], 6, 0.8, 1.5, 0.8, 0.02);
+            if (t % 10 == 0) level.sendParticles(SandFx.parse(config.dustDevilParticle, ParticleTypes.CLOUD), pos[0], gy + 2.5, pos[1], 6, 0.8, 1.5, 0.8, 0.02);
             for (ServerPlayer p : level.players()) {
                 if (!p.isAlive() || p.isSpectator() || p.getY() < gy - 1 || p.getY() > gy + 9) continue;
                 double dx = pos[0] - p.getX(), dz = pos[1] - p.getZ();

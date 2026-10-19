@@ -74,6 +74,10 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 
 - [ ] Sekhmet (vague 7) : deux fois plus grande (modèle et hitbox, pas bloquée dans les passages), plus de particules blanches : coup de queue et enfouissement lancent du sable
 
+- [ ] Rê-Atoum (vague 10) : plus de Mirage ; puits de sable, geysers, rayon solaire, tourbillon, barrière : uniquement des particules de sable (ni violet ni blanc)
+- [ ] Rayon solaire : le cercle et la colonne restent visibles jusqu'à l'impact, la foudre frappe bien l'endroit visé
+- [ ] Éditeur de compétences : les champs « Particle » ont un bouton « Choisir » (liste avec recherche, sable en tête) ; la valeur choisie est bien appliquée en jeu
+
 ## Éditeur : liste triée en onglets
 - [x] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
 - [x] Créer une horde de chaque type (modèle) puis enregistrer : la liste se rouvre sur le bon onglet

@@ -335,6 +335,12 @@ public class CustomSkillData {
     @SerializedName("voidScreamMessage")
     public String voidScreamMessage;
 
+    // === particules réglables (vide = effet d'origine ; « block:minecraft:sand » = éclats de sable ; sinon un id de particule) ===
+    @SerializedName("gravityWellParticle") public String gravityWellParticle = "";
+    @SerializedName("eruptionParticle")    public String eruptionParticle = "";
+    @SerializedName("solarParticle")       public String solarParticle = "";
+    @SerializedName("dustDevilParticle")   public String dustDevilParticle = "";
+
     // === solar ===
     @SerializedName("solarCooldown")
     public int solarCooldown = 400;

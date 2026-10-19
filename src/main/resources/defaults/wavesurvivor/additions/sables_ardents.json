@@ -1675,7 +1675,6 @@
         "sa_tempete_sable",
         "sa_tourbillon",
         "sa_seisme",
-        "sa_mirage",
         "sa_rayon_solaire",
         "sa_geysers",
         "sa_puits_sable",
@@ -1943,7 +1942,8 @@
       "dustDevilPull": 0.1,
       "dustDevilLift": 0.12,
       "dustDevilDamage": 2.0,
-      "dustDevilMessage": "§6§lUn tourbillon de sable fonce sur vous !"
+      "dustDevilMessage": "§6§lUn tourbillon de sable fonce sur vous !",
+      "dustDevilParticle": "block:minecraft:sand"
     },
     {
       "skillName": "sa_seisme",
@@ -1984,7 +1984,8 @@
       "cooldown": 21,
       "solarCooldown": 420,
       "solarRadius": 28,
-      "solarWarningDelay": 40
+      "solarWarningDelay": 40,
+      "solarParticle": "block:minecraft:sand"
     },
     {
       "skillName": "sa_geysers",
@@ -2001,7 +2002,8 @@
       "eruptionDamage": 7,
       "eruptionFireSeconds": 3,
       "eruptionKnockup": 0.9,
-      "eruptionMessage": "§6§lDes geysers de sable jaillissent sous vos pieds !"
+      "eruptionMessage": "§6§lDes geysers de sable jaillissent sous vos pieds !",
+      "eruptionParticle": "block:minecraft:sand"
     },
     {
       "skillName": "sa_puits_sable",
@@ -2017,7 +2019,8 @@
       "gravityWellStrength": 0.1,
       "gravityWellDamage": 2,
       "gravityWellImplosion": true,
-      "gravityWellMessage": "§6§lLe sable vous aspire vers le centre !"
+      "gravityWellMessage": "§6§lLe sable vous aspire vers le centre !",
+      "gravityWellParticle": "block:minecraft:sand"
     },
     {
       "skillName": "sa_barriere_sable",
@@ -2031,7 +2034,7 @@
       "forceFieldDamage": 2,
       "forceFieldKnockback": 1.8,
       "forceFieldFireDuration": 0,
-      "forceFieldParticle": "minecraft:poof"
+      "forceFieldParticle": "block:minecraft:sand"
     },
     {
       "skillName": "sa_gardes",

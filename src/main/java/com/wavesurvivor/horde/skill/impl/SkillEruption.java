@@ -49,6 +49,8 @@ public class SkillEruption extends BossSkill {
         int n = Math.min(players.size(), Math.max(1, config.eruptionTargets));
         int delay = Math.max(10, config.eruptionDelay);
         double radius = Math.max(0.8, config.eruptionRadius);
+        // Particule réglable (ex. block:minecraft:sand) : geysers de sable au lieu de flammes et de lave ; vide = d'origine
+        final net.minecraft.core.particles.ParticleOptions themed = com.wavesurvivor.horde.skill.SandFx.parse(config.eruptionParticle, null);
 
         for (int i = 0; i < n; i++) {
             ServerPlayer p = players.get(i);
@@ -61,27 +63,27 @@ public class SkillEruption extends BossSkill {
                 DelayedActionScheduler.schedule(level.getServer(), t, () -> {
                     for (int k = 0; k < 16; k++) {
                         double a = Math.PI * 2 * k / 16;
-                        level.sendParticles(ParticleTypes.FLAME, spot.x + Math.cos(a) * radius, spot.y + 0.1,
+                        level.sendParticles(themed != null ? themed : ParticleTypes.FLAME, spot.x + Math.cos(a) * radius, spot.y + 0.1,
                                 spot.z + Math.sin(a) * radius, 1, 0, 0.02, 0, 0);
                     }
-                    level.sendParticles(ParticleTypes.LAVA, spot.x, spot.y + 0.1, spot.z, 1, radius * 0.4, 0, radius * 0.4, 0);
+                    level.sendParticles(themed != null ? themed : ParticleTypes.LAVA, spot.x, spot.y + 0.1, spot.z, themed != null ? 4 : 1, radius * 0.4, 0, radius * 0.4, 0);
                 }, "eruption warning");
             }
             // Geyser
-            DelayedActionScheduler.schedule(level.getServer(), delay, () -> geyser(boss, level, spot, radius), "eruption geyser");
+            DelayedActionScheduler.schedule(level.getServer(), delay, () -> geyser(boss, level, spot, radius, themed), "eruption geyser");
         }
         NecroTracker.playSound(level, boss.blockPosition(), config.eruptionSound, 0.7f);
     }
 
-    private void geyser(LivingEntity boss, ServerLevel level, Vec3 spot, double radius) {
+    private void geyser(LivingEntity boss, ServerLevel level, Vec3 spot, double radius, net.minecraft.core.particles.ParticleOptions themed) {
         BlockPos bp = BlockPos.containing(spot);
         level.playSound(null, bp, SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 1.2f, 0.6f);
         level.playSound(null, bp, SoundEvents.LAVA_POP, SoundSource.HOSTILE, 1.0f, 0.8f);
         for (int h = 0; h < 12; h++) {
-            level.sendParticles(ParticleTypes.FLAME, spot.x, spot.y + h * 0.35, spot.z, 6, radius * 0.35, 0.1, radius * 0.35, 0.03);
+            level.sendParticles(themed != null ? themed : ParticleTypes.FLAME, spot.x, spot.y + h * 0.35, spot.z, themed != null ? 10 : 6, radius * 0.35, 0.1, radius * 0.35, 0.03);
         }
-        level.sendParticles(ParticleTypes.LAVA, spot.x, spot.y + 0.5, spot.z, 12, radius * 0.5, 0.3, radius * 0.5, 0.1);
-        level.sendParticles(ParticleTypes.LARGE_SMOKE, spot.x, spot.y + 2.5, spot.z, 10, 0.4, 0.8, 0.4, 0.02);
+        level.sendParticles(themed != null ? themed : ParticleTypes.LAVA, spot.x, spot.y + 0.5, spot.z, 12, radius * 0.5, 0.3, radius * 0.5, 0.1);
+        level.sendParticles(themed != null ? themed : ParticleTypes.LARGE_SMOKE, spot.x, spot.y + 2.5, spot.z, 10, 0.4, 0.8, 0.4, 0.02);
 
         AABB box = new AABB(spot.x - radius, spot.y - 1, spot.z - radius, spot.x + radius, spot.y + 3, spot.z + radius);
         for (ServerPlayer p : level.getEntitiesOfClass(ServerPlayer.class, box,
