@@ -83,15 +83,6 @@
                 "output": "minecraft:chainmail_chestplate",
                 "outputCount": 1,
                 "maxUses": 3
-              },
-              {
-                "input1": "minecraft:emerald",
-                "input1Count": 24,
-                "input2": "minecraft:diamond",
-                "input2Count": 3,
-                "output": "wavesurvivor:voile_desert",
-                "outputCount": 1,
-                "maxUses": 1
               }
             ]
           }
@@ -100,7 +91,7 @@
           {
             "entity_type": "momie",
             "custom_name": "§6Momie",
-            "base_count": 5,
+            "base_count": 2,
             "count_increment": 1,
             "max_health": 42,
             "attack_damage": 6,
@@ -139,7 +130,7 @@
           {
             "entity_type": "pilleur_tombes",
             "custom_name": "§6Pilleur de tombes",
-            "base_count": 4,
+            "base_count": 1,
             "count_increment": 1,
             "max_health": 30,
             "attack_damage": 6,
@@ -178,7 +169,7 @@
           {
             "entity_type": "scarabee",
             "custom_name": "§6Scarabée",
-            "base_count": 8,
+            "base_count": 4,
             "count_increment": 2,
             "max_health": 8,
             "attack_damage": 3,
@@ -211,7 +202,7 @@
           {
             "entity_type": "chacal",
             "custom_name": "§6Chacal des dunes",
-            "base_count": 4,
+            "base_count": 2,
             "count_increment": 1,
             "max_health": 22,
             "attack_damage": 5,
@@ -244,7 +235,7 @@
           {
             "entity_type": "archer_dunes",
             "custom_name": "§6Archer des dunes",
-            "base_count": 2,
+            "base_count": 4,
             "count_increment": 0,
             "max_health": 34,
             "attack_damage": 6,
@@ -389,12 +380,13 @@
               "damageMultiplier": 0.1
             },
             "min_wave": 5,
-            "max_wave": 0
+            "max_wave": 0,
+            "override_stats": true
           },
           {
             "entity_type": "golem_gres",
             "custom_name": "§6§lGolem de grès",
-            "base_count": 1,
+            "base_count": 2,
             "count_increment": 0,
             "max_health": 150,
             "attack_damage": 13,
@@ -433,7 +425,7 @@
           {
             "entity_type": "djinn",
             "custom_name": "§6§lDjinn",
-            "base_count": 1,
+            "base_count": 3,
             "count_increment": 0,
             "max_health": 52,
             "attack_damage": 4,
@@ -513,7 +505,7 @@
               {
                 "entity_type": "scarabee",
                 "custom_name": "§6Scarabée",
-                "count": 24,
+                "count": 12,
                 "max_health": 8,
                 "attack_damage": 3,
                 "movement_speed": 0.38,
@@ -555,7 +547,7 @@
               {
                 "entity_type": "momie",
                 "custom_name": "§6Momie",
-                "count": 12,
+                "count": 6,
                 "max_health": 44,
                 "attack_damage": 6,
                 "movement_speed": 0.24,
@@ -573,7 +565,7 @@
               {
                 "entity_type": "pilleur_tombes",
                 "custom_name": "§6Pilleur de tombes",
-                "count": 6,
+                "count": 2,
                 "max_health": 32,
                 "attack_damage": 6,
                 "movement_speed": 0.28,
@@ -592,25 +584,27 @@
                 "entity_type": "garde_pharaon",
                 "custom_name": "§6§lGarde du Pharaon",
                 "count": 1,
-                "max_health": 105,
+                "max_health": 100,
                 "attack_damage": 12,
-                "movement_speed": 0.27,
+                "movement_speed": 0.26,
                 "follow_range": 48,
                 "equipment": {},
                 "loot_table": [
                   {
                     "item": "minecraft:gold_ingot",
-                    "minQty": 2,
-                    "maxQty": 4,
-                    "chance": 80
+                    "minQty": 1,
+                    "maxQty": 3,
+                    "chance": 60
                   },
                   {
                     "item": "roulettechest:key_coffre_mysterieux",
                     "minQty": 1,
                     "maxQty": 1,
-                    "chance": 30
+                    "chance": 12
                   }
-                ]
+                ],
+                "knockback_resistance": 0.5,
+                "override_stats": true
               }
             ]
           },
@@ -622,19 +616,27 @@
                 "entity_type": "garde_pharaon",
                 "custom_name": "§6§lGarde du Pharaon",
                 "count": 3,
-                "max_health": 105,
+                "max_health": 100,
                 "attack_damage": 12,
-                "movement_speed": 0.27,
+                "movement_speed": 0.26,
                 "follow_range": 48,
                 "equipment": {},
                 "loot_table": [
                   {
+                    "item": "minecraft:gold_ingot",
+                    "minQty": 1,
+                    "maxQty": 3,
+                    "chance": 60
+                  },
+                  {
                     "item": "roulettechest:key_coffre_mysterieux",
                     "minQty": 1,
                     "maxQty": 1,
-                    "chance": 20
+                    "chance": 12
                   }
-                ]
+                ],
+                "knockback_resistance": 0.5,
+                "override_stats": true
               },
               {
                 "entity_type": "golem_gres",
@@ -1086,15 +1088,6 @@
                 "output": "minecraft:golden_apple",
                 "outputCount": 1,
                 "maxUses": 3
-              },
-              {
-                "input1": "minecraft:emerald",
-                "input1Count": 24,
-                "input2": "minecraft:diamond",
-                "input2Count": 3,
-                "output": "wavesurvivor:voile_desert",
-                "outputCount": 1,
-                "maxUses": 1
               }
             ],
             "effects": [],
@@ -1127,6 +1120,11 @@
                 "effect": "minecraft:speed",
                 "level": 1,
                 "target": "monstres"
+              },
+              {
+                "effect": "minecraft:slowness",
+                "level": 1,
+                "target": "joueurs"
               }
             ],
             "stormShelterMode": "cover",
@@ -1198,7 +1196,7 @@
             ]
           }
         ],
-        "stars": 3,
+        "stars": 4,
         "unlockRequires": [
           {
             "horde": "La Nécropole",

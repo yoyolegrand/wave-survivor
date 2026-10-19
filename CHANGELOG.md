@@ -24,7 +24,7 @@
 - 🦂 **Sekhmet is twice as big** (the Scorpion supports a body size setting, hitbox included), and her tail strike and burrow now throw **sand** instead of white puffs. Skills accept `block:<block id>` as a particle setting, and Blink has a new particle setting.
 - 🪲 **Every desert creature has a custom 3D model** (not recolors): the mummified **Royal Guard** (also Anubis), the sacred **Scarab**, the articulated-tail **Scorpion** (also Sekhmet), the red-eyed pack-hunting **Cursed Jackal** (also the Alpha), the hunched **Sandstone Colossus** with its sun heart and orbiting rocks (also Ra-Atum), plus spawn eggs for all of them.
 - 🧞 The **Djinn** has a custom 3D model (turban, belted robe, smoke tail instead of legs) and summons **Djinn Spirits** instead of vanilla Vexes.
-- 🧣 New **Desert Veil** relic (Elements family, now 4 pieces): immune to sandstorms and quicksand, **faster** (even more on sand). It drops from the bosses and a nomad merchant sells it.
+- 🧣 New **Desert Veil** relic (Elements family, now 4 pieces): immune to sandstorms and quicksand, **faster** (even more on sand). It drops from the bosses.
 
 ### 🌪️ Sandstorms & 🌋 Earthquakes — new chaos events
 - 🌪 The **Storm** event now has a **sand look**, and a new **shelter rule**: get **under cover** (a roof, or in water) instead of near a heat source. An **immunity relic** can be set per storm. All configurable in the editor.
