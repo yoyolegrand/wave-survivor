@@ -429,7 +429,7 @@
             "count_increment": 0,
             "max_health": 52,
             "attack_damage": 4,
-            "movement_speed": 0.5,
+            "movement_speed": 0.36,
             "follow_range": 48,
             "knockback_resistance": 0,
             "equipment": {},
@@ -662,7 +662,7 @@
                 "count": 2,
                 "max_health": 54,
                 "attack_damage": 4,
-                "movement_speed": 0.5,
+                "movement_speed": 0.36,
                 "follow_range": 48,
                 "equipment": {},
                 "loot_table": [
@@ -1521,7 +1521,7 @@
         "knockbackResistance": 0.1,
         "maxHealth": 40,
         "attackDamage": 4,
-        "movementSpeed": 0.5
+        "movementSpeed": 0.36
       },
       "equipment": {
         "mainhand": "",

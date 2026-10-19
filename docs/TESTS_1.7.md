@@ -16,24 +16,24 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [x] Défaite : conséquence configurée appliquée
 - [x] Succès `invasion_1`, `invasion_10`, `invasion_flawless`
 - [x] Commande `/invasion`
-- [ ] `/ws invasion skip` : en préparation (la 1re vague démarre), en combat (envahisseurs retirés, pause puis vague suivante), en pause (vague suivante) ; sur la dernière vague : victoire avec récompenses
+- [x] `/ws invasion skip` : en préparation (la 1re vague démarre), en combat (envahisseurs retirés, pause puis vague suivante), en pause (vague suivante) ; sur la dernière vague : victoire avec récompenses
 - [x] Les 3 invasions par défaut : Pillards, Razzia des Sables, Meute des Neiges
 - [x] Éditeur, mode « Invasion » : textes lisibles, boutons clairs, onglet Événements vide, template « invasion »
 - [x] Pas de horde normale pendant une invasion, ni d'invasion pendant une horde
 
-- [ ] Razzia des Sables : le Djinn (vague 3+) et le Colosse de grès (dernière vague) apparaissent avec leurs modèles
+- [x] Razzia des Sables : le Djinn (vague 3+) et le Colosse de grès (dernière vague) apparaissent avec leurs modèles
 
 ## Horde des Sables ardents
 - [x] Débloquée après la Nécropole
-- [ ] Tempête de sable : l'abri couvert protège, une source de chaleur n'arrête pas la tempête, particules de bloc visibles
-- [ ] Séisme : secousse de caméra, fissures
-- [ ] Relique Voile du Désert : immunité au séisme
-- [ ] Relique Voile du Désert : effet utile, bonus de set à 4 pièces, emplacement Curios
-- [ ] Boss : compétence Sandstorm
-- [ ] Boss : compétence Quicksand
-- [ ] Boss : compétence Dust Devil
-- [ ] Boss : compétence Tremor
-- [ ] Boss : compétence Earthquake
+- [x] Tempête de sable : l'abri couvert protège, une source de chaleur n'arrête pas la tempête, particules de bloc visibles
+- [x] Séisme : secousse de caméra, fissures
+- [x] Relique Voile du Désert : immunité au séisme
+- [x] Relique Voile du Désert : effet utile, bonus de set à 4 pièces, emplacement Curios
+- [x] Boss : compétence Sandstorm
+- [x] Boss : compétence Quicksand
+- [x] Boss : compétence Dust Devil
+- [x] Boss : compétence Tremor
+- [x] Boss : compétence Earthquake
 - [x] Djinn : modèle 3D sur mesure (turban, queue de fumée, yeux lumineux), sorts (orbes de sable, disparition), animation bras levés
 - [x] Djinn : les Vex invoqués sont des Esprits du Djinn (modèle propre)
 - [x] Icône définitive du Voile du Désert (objet, inventaire, Curios)
@@ -42,7 +42,7 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [x] Chacal maudit : yeux rouges, attaque en meute ; Chacal Alpha a le même modèle
 - [x] Colosse de grès : voûté, cœur-soleil, rochers en orbite, hostile ; Rê-Atoum (vague 10) a le même modèle
 - [x] Crocs du Djinn (invoqués par le Djinn) : modèle turquoise et or
-- [ ] Garde royal momifié : modèle sur mesure, coup de Wither ; Anubis (vague 4) a le même modèle
+- [x] Garde royal momifié : modèle sur mesure, coup de Wither ; Anubis (vague 4) a le même modèle
 - [x] Les 6 œufs d'apparition du désert (Djinn, Esprit, Scarabée, Scorpion, Chacal, Colosse) donnent la bonne créature, avec le bon nom FR/EN
 
 ## Correctifs du retour joueur
@@ -59,8 +59,8 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [ ] Multijoueur : statistiques
 - [ ] Multijoueur : vies partagées
 - [ ] Succès « Marathonien »
-- [ ] Les 24 succès s'obtiennent et s'affichent
-- [ ] Reprise d'un monde 1.6 en 1.7 : hordes, Kingdom et sauvegarde/reprise de partie fonctionnent, `invasions` et `sables_ardents` apparaissent dans la liste des hordes
+- [x] Les 24 succès s'obtiennent et s'affichent
+- [x] Reprise d'un monde 1.6 en 1.7 : hordes, Kingdom et sauvegarde/reprise de partie fonctionnent, `invasions` et `sables_ardents` apparaissent dans la liste des hordes
 - [x] Ajouts de Claude Chat rejoués : Brasier d'offrande, Baraquement, coffres roulette
 
 ## Retours joueurs CurseForge (BLaoTea, 2026-10-18)
@@ -68,18 +68,20 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [x] Anomalies / Terrain instable : plus aucune entre deux vagues (Calme, pause, coffres), celles en cours disparaissent
 
 ## Retours de test du désert (2026-10-18)
-- [ ] Cavalier des dunes : le chameau ne s'assoit plus (surtout la nuit), le cavalier n'est plus immobilisé
-- [ ] Séisme et Fissures (Tremor) : fissures en zigzag avec branches, plus de barre droite ; dégâts une seule fois par fissure
+- [x] Cavalier des dunes : le chameau ne s'assoit plus (surtout la nuit), le cavalier n'est plus immobilisé
+- [x] Séisme et Fissures (Tremor) : fissures en zigzag avec branches, plus de barre droite ; dégâts une seule fois par fissure
 
-- [ ] Perdre ou arrêter une horde en plein séisme / sable mouvant / pics de glace : plus aucun bloc d'effet ne reste au sol (essayer aussi `/horde stop`)
+- [x] Perdre ou arrêter une horde en plein séisme / sable mouvant / pics de glace : plus aucun bloc d'effet ne reste au sol (essayer aussi `/horde stop`)
 
-- [ ] Sekhmet (vague 7) : deux fois plus grande (modèle et hitbox, pas bloquée dans les passages), plus de particules blanches : coup de queue et enfouissement lancent du sable
+- [x] Sekhmet (vague 7) : deux fois plus grande (modèle et hitbox, pas bloquée dans les passages), plus de particules blanches : coup de queue et enfouissement lancent du sable
 
-- [ ] Rê-Atoum (vague 10) : plus de Mirage ; puits de sable, geysers, rayon solaire, tourbillon, barrière : uniquement des particules de sable (ni violet ni blanc)
-- [ ] Rayon solaire : le cercle et la colonne restent visibles jusqu'à l'impact, la foudre frappe bien l'endroit visé
-- [ ] Éditeur de compétences : les champs « Particle » ont un bouton « Choisir » (liste avec recherche, sable en tête) ; la valeur choisie est bien appliquée en jeu
+- [x] Rê-Atoum (vague 10) : plus de Mirage ; puits de sable, geysers, rayon solaire, tourbillon, barrière : uniquement des particules de sable (ni violet ni blanc)
+- [x] Rayon solaire : le cercle et la colonne restent visibles jusqu'à l'impact, la foudre frappe bien l'endroit visé
+- [x] Éditeur de compétences : les champs « Particle » ont un bouton « Choisir » (liste avec recherche, sable en tête) ; la valeur choisie est bien appliquée en jeu
 
 - [x] `/ws skill list`, `/ws skill sa_puits_sable`, `/ws skill sa_rayon_solaire`… (EN SURVIE) : un monstre de test lance la compétence sur toi ; `/ws skill <nom> me` : tu la lances toi-même ; complétion des noms
+
+- [ ] Djinn : vitesse de déplacement réduite (0,36 au lieu de 0,5), plus de fonce-dessus (horde, Razzia des Sables, œuf)
 
 ## Éditeur : liste triée en onglets
 - [x] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet

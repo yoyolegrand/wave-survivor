@@ -70,7 +70,8 @@ public class Djinn extends Evoker {
     /** Statistiques de base (œuf, /summon, horde) : 40 PV au lieu des 24 de l'Évocateur. */
     public static net.minecraft.world.entity.ai.attributes.AttributeSupplier.Builder createAttributes() {
         return Evoker.createAttributes()
-                .add(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, 40.0);
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, 40.0)
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED, 0.36); // 0.5 chez l'Évocateur : trop rapide pour un génie qui flotte
     }
 
     @Override

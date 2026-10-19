@@ -329,7 +329,7 @@
             "count_increment": 0,
             "max_health": 52,
             "attack_damage": 4,
-            "movement_speed": 0.5,
+            "movement_speed": 0.36,
             "follow_range": 48,
             "knockback_resistance": 0,
             "equipment": {},
