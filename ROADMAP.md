@@ -24,6 +24,9 @@
 - 🏜 **Desert horde** *(coded, in testing)* — "The Burning Sands": a new themed campaign with its own monsters and three bosses, built around a **Sandstorm** (shelter under cover, or the Desert Veil relic) and **earthquakes**
 - 🏘 **Village invasions** *(coded, in testing)* — Pillager-style raids on real villages, outside of altars: Bad Omen roulette (vanilla raid or the mod's invasions), villager bar, broken doors, Hero of the Village, editor mode
 
+## 🔜 Next: 1.8
+- 🙏 **Blessings editor rework** — a full in-game editor for the blessings (the choice screen, values and rarity), in the same style as the horde editor
+
 ## 🔭 Later
 - 🏛 **Ready-made arenas** — structures generated around the altar (ruins, temple, fortress)
 - 🧩 **Creator API** (KubeJS / datapacks) — add skills, hordes and relics without touching the code
