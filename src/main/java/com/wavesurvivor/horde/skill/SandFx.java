@@ -22,6 +22,24 @@ public final class SandFx {
 
     private SandFx() {}
 
+    /**
+     * Particule d'après un réglage : « minecraft:poof », ou « block:minecraft:sand » (éclats du bloc donné, comme la tempête).
+     * Vide ou inconnu : la particule de secours.
+     */
+    public static net.minecraft.core.particles.ParticleOptions parse(String id, net.minecraft.core.particles.ParticleOptions fallback) {
+        if (id == null || id.isBlank()) return fallback;
+        try {
+            String s = id.trim();
+            if (s.toLowerCase().startsWith("block:")) {
+                var block = BuiltInRegistries.BLOCK.get(new ResourceLocation(s.substring(6).trim()));
+                return new BlockParticleOption(ParticleTypes.BLOCK, block.defaultBlockState());
+            }
+            Object p = BuiltInRegistries.PARTICLE_TYPE.get(new ResourceLocation(s));
+            if (p instanceof net.minecraft.core.particles.ParticleOptions po) return po;
+        } catch (Exception ignored) {}
+        return fallback;
+    }
+
     /** Objet d'après son id (« wavesurvivor:voile_desert »), ou null si vide / inconnu. */
     public static Item item(String id) {
         if (id == null || id.isBlank()) return null;

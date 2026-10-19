@@ -62,7 +62,7 @@ public class SkillUppercut extends BossSkill {
         }
 
         // Particules au point d'impact (pieds de la cible)
-        ParticleOptions particle = resolveParticle(config.uppercutParticle, ParticleTypes.EXPLOSION);
+        ParticleOptions particle = com.wavesurvivor.horde.skill.SandFx.parse(config.uppercutParticle, ParticleTypes.EXPLOSION);
         if (particle != null) {
             level.sendParticles(particle,
                     target.getX(), target.getY(), target.getZ(),

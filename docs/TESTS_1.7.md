@@ -72,6 +72,8 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 
 - [ ] Perdre ou arrêter une horde en plein séisme / sable mouvant / pics de glace : plus aucun bloc d'effet ne reste au sol (essayer aussi `/horde stop`)
 
+- [ ] Sekhmet (vague 7) : deux fois plus grande (modèle et hitbox, pas bloquée dans les passages), plus de particules blanches : coup de queue et enfouissement lancent du sable
+
 ## Éditeur : liste triée en onglets
 - [x] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
 - [x] Créer une horde de chaque type (modèle) puis enregistrer : la liste se rouvre sur le bon onglet

@@ -65,6 +65,10 @@ public class CustomEntityData {
     @SerializedName("skillOverrides")
     public Map<String, com.google.gson.JsonObject> skillOverrides;
 
+    /** Taille du corps (1 = normale, 2 = deux fois plus grand) : prise en charge par le Scorpion (hitbox et rendu). */
+    @SerializedName("scale")
+    public double scale = 1;
+
     public static class Stats {
         @SerializedName("maxHealth")
         public double maxHealth = 20;

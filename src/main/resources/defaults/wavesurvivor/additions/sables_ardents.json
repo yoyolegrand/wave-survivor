@@ -1643,7 +1643,8 @@
         "sa_drain_sekhmet",
         "sa_toile_sable"
       ],
-      "id": "bb37c8799085bb3710604997"
+      "id": "bb37c8799085bb3710604997",
+      "scale": 2.0
     },
     {
       "entityName": "re_atoum_ancien",
@@ -1866,7 +1867,8 @@
       "blinkStrike": true,
       "blinkBonusDamage": 3,
       "blinkSound": "minecraft:block.sand.break",
-      "blinkMessage": "§6§lSekhmet surgit du sable derrière vous !"
+      "blinkMessage": "§6§lSekhmet surgit du sable derrière vous !",
+      "blinkParticle": "block:minecraft:sand"
     },
     {
       "skillName": "sa_coup_queue",
@@ -1879,7 +1881,7 @@
       "uppercutCooldown": 110,
       "uppercutSlownessDuration": 60,
       "uppercutSlownessAmplifier": 1,
-      "uppercutParticle": "minecraft:poof",
+      "uppercutParticle": "block:minecraft:sand",
       "uppercutRange": 5.0,
       "uppercutMessage": "§6§lLa queue de Sekhmet vous fauche !"
     },

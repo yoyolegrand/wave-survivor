@@ -626,6 +626,8 @@ public class CustomSkillData {
     /** Bonus de dégâts de la frappe (s'ajoute à l'attaque). */
     @SerializedName("blinkBonusDamage") public double blinkBonusDamage = 2;
     @SerializedName("blinkSound")     public String blinkSound = "minecraft:entity.enderman.teleport";
+    /** Particule du départ et de l'arrivée (« block:minecraft:sand » = éclats de sable) ; vide = portail. */
+    @SerializedName("blinkParticle")  public String blinkParticle = "";
     @SerializedName("blinkMessage")   public String blinkMessage = "§5§lQuelque chose surgit dans votre dos !";
 
     // ─── irons_spell : lance un sort d'Iron's Spells (si le mod est installé) ───

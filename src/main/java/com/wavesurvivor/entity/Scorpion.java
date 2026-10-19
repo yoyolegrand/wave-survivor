@@ -34,9 +34,55 @@ import javax.annotation.Nullable;
  */
 public class Scorpion extends Spider {
 
+    /** Taille du corps (1 = normale), synchronisée avec le client pour la hitbox et le rendu. */
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Float> SCALE =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(Scorpion.class, net.minecraft.network.syncher.EntityDataSerializers.FLOAT);
+
     public Scorpion(EntityType<? extends Spider> type, Level level) {
         super(type, level);
         this.xpReward = 8;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(SCALE, 1.0f);
+    }
+
+    public float bodyScale() { return this.entityData.get(SCALE); }
+
+    /** Agrandit (ou rétrécit) le scorpion : hitbox, hauteur des yeux et rendu suivent. */
+    public void setBodyScale(float scale) {
+        this.entityData.set(SCALE, Math.max(0.25f, Math.min(6f, scale)));
+        refreshDimensions();
+    }
+
+    @Override
+    public void onSyncedDataUpdated(net.minecraft.network.syncher.EntityDataAccessor<?> key) {
+        if (SCALE.equals(key)) refreshDimensions();
+        super.onSyncedDataUpdated(key);
+    }
+
+    @Override
+    public net.minecraft.world.entity.EntityDimensions getDimensions(net.minecraft.world.entity.Pose pose) {
+        return super.getDimensions(pose).scale(bodyScale());
+    }
+
+    @Override
+    protected float getStandingEyeHeight(net.minecraft.world.entity.Pose pose, net.minecraft.world.entity.EntityDimensions dims) {
+        return 0.65f * bodyScale();
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putFloat("WsScale", bodyScale());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("WsScale")) setBodyScale(tag.getFloat("WsScale"));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

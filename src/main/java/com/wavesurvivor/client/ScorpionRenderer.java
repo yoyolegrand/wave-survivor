@@ -26,6 +26,14 @@ public class ScorpionRenderer extends MobRenderer<Scorpion, ScorpionModel<Scorpi
         });
     }
 
+    /** Taille réglée (ex. Sekhmet ×2) : le modèle et l'ombre suivent. */
+    @Override
+    protected void scale(Scorpion scorpion, com.mojang.blaze3d.vertex.PoseStack poseStack, float partialTick) {
+        float s = scorpion.bodyScale();
+        poseStack.scale(s, s, s);
+        this.shadowRadius = 0.8f * s;
+    }
+
     @Override
     protected float getFlipDegrees(Scorpion scorpion) {
         return 180.0f; // se retourne sur le dos en mourant, comme l'araignée

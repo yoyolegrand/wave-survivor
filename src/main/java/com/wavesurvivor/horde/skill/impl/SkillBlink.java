@@ -54,7 +54,10 @@ public class SkillBlink extends BossSkill {
         }
         if (dest == null) return;
 
-        level.sendParticles(ParticleTypes.PORTAL, from.x, from.y + boss.getBbHeight() * 0.5, from.z, 30, 0.3, 0.6, 0.3, 0.4);
+        // Particule réglable (« block:minecraft:sand » pour un enfouissement dans le sable) ; vide = portail
+        net.minecraft.core.particles.ParticleOptions outFx = com.wavesurvivor.horde.skill.SandFx.parse(config.blinkParticle, ParticleTypes.PORTAL);
+        net.minecraft.core.particles.ParticleOptions inFx = com.wavesurvivor.horde.skill.SandFx.parse(config.blinkParticle, ParticleTypes.REVERSE_PORTAL);
+        level.sendParticles(outFx, from.x, from.y + boss.getBbHeight() * 0.5, from.z, 30, 0.3, 0.6, 0.3, 0.4);
         boss.teleportTo(dest.x, dest.y, dest.z);
         // Face à la cible
         Vec3 dir = target.position().subtract(dest);
@@ -62,7 +65,7 @@ public class SkillBlink extends BossSkill {
         boss.setYRot(yaw);
         boss.setYHeadRot(yaw);
         boss.yBodyRot = yaw;
-        level.sendParticles(ParticleTypes.REVERSE_PORTAL, dest.x, dest.y + boss.getBbHeight() * 0.5, dest.z, 30, 0.3, 0.6, 0.3, 0.1);
+        level.sendParticles(inFx, dest.x, dest.y + boss.getBbHeight() * 0.5, dest.z, 30, 0.3, 0.6, 0.3, 0.1);
         NecroTracker.playSound(level, boss.blockPosition(), config.blinkSound, 1.0f);
         if (target instanceof ServerPlayer p && config.blinkMessage != null && !config.blinkMessage.isBlank()) {
             p.displayClientMessage(Component.literal(config.blinkMessage), true);

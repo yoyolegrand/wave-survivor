@@ -117,6 +117,7 @@ public class CustomEntitySpawner {
 
             if (ent instanceof LivingEntity living) {
                 applyStats(living, ce.stats);
+                applyScale(living, ce);
                 if (hordeOverride != null && hordeOverride.overrideStats) applyHordeStats(living, hordeOverride);
                 applyName(living, ce, customNameOverride, false);
             }
@@ -188,6 +189,7 @@ public class CustomEntitySpawner {
 
         if (ent instanceof LivingEntity living) {
             applyStats(living, ce.stats);
+            applyScale(living, ce);
             applyName(living, ce, bossNameOverride, true);
         }
         if (ent instanceof Mob mob) {
@@ -239,6 +241,11 @@ public class CustomEntitySpawner {
      * (pour que /ws status la compte et que le prune fonctionne).
      * @return l'entité mount créée, ou null en cas d'échec.
      */
+    /** Taille du corps réglée dans la fiche (champ « scale ») : seul le Scorpion la gère pour l'instant. */
+    private static void applyScale(LivingEntity living, CustomEntityData ce) {
+        if (ce.scale > 0 && ce.scale != 1 && living instanceof com.wavesurvivor.entity.Scorpion s) s.setBodyScale((float) ce.scale);
+    }
+
     private static Entity spawnMount(ServerLevel level, CustomEntityData.MountEntity mountCfg, BlockPos pos) {
         if (mountCfg == null || mountCfg.entityType == null || mountCfg.entityType.isBlank()) return null;
         EntityType<?> mountType = resolveEntityType(mountCfg.entityType);
