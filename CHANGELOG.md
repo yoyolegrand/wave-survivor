@@ -13,6 +13,7 @@
 - 🚪 Invaders **open and break doors** and hunt the villagers. Nothing else is destroyed.
 - 🏅 Victory: **Hero of the Village** (level from the omen), **raiders' loot**, Renaissance points, statistics and 3 new achievements.
 - ⚙ Build your own in the editor: the mode button now has a **third state, Invasion**, which reshapes the tabs. Operators can use `/ws invasion start [name]` in the village they stand in.
+- 🏜 The **Sand Raid** now also fields **Djinns** (from wave 3) and a **Sandstone Colossus** (final wave), with their custom models.
 
 ### 🏜️ Burning Sands — new horde
 - 🏜 A new **desert horde**: mummies, scarabs, scorpions, jackals, desert riders, pharaoh guards, sandstone golems and djinns, with special waves and **three bosses** — **Anubis**, **Sekhmet** and **Ra-Atum**, each with 7 to 9 skills.

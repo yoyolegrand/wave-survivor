@@ -321,6 +321,84 @@
             },
             "min_wave": 4,
             "max_wave": 0
+          },
+          {
+            "entity_type": "djinn",
+            "custom_name": "§6§lDjinn",
+            "base_count": 1,
+            "count_increment": 0,
+            "max_health": 52,
+            "attack_damage": 4,
+            "movement_speed": 0.5,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:blaze_powder",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 50
+              },
+              {
+                "item": "minecraft:emerald",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 50
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 14
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 3,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "golem_gres",
+            "custom_name": "§6§lGolem de grès",
+            "base_count": 1,
+            "count_increment": 0,
+            "max_health": 150,
+            "attack_damage": 13,
+            "movement_speed": 0.21,
+            "follow_range": 48,
+            "knockback_resistance": 1.0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:sandstone",
+                "minQty": 4,
+                "maxQty": 8,
+                "chance": 70
+              },
+              {
+                "item": "minecraft:emerald",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 50
+              },
+              {
+                "item": "roulettechest:key_coffre_mysterieux",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 14
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 4,
+            "max_wave": 0
           }
         ],
         "useSpecialWaves": true,

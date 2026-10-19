@@ -20,6 +20,8 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 - [x] Éditeur, mode « Invasion » : textes lisibles, boutons clairs, onglet Événements vide, template « invasion »
 - [x] Pas de horde normale pendant une invasion, ni d'invasion pendant une horde
 
+- [ ] Razzia des Sables : le Djinn (vague 3+) et le Colosse de grès (dernière vague) apparaissent avec leurs modèles
+
 ## Horde des Sables ardents
 - [x] Débloquée après la Nécropole
 - [ ] Tempête de sable : l'abri couvert protège, une source de chaleur n'arrête pas la tempête, particules de bloc visibles
