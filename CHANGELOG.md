@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.7.0 — Endless Mode, Achievements & Statistics
+## 1.7.0 — Endless Mode, Burning Sands, Village Invasions & Achievements
 
-> ♾ **The horde never stops.** Play any horde without limit in the new **Endless mode**, unlock **24 achievements**, and track your career in the new **Statistics** screen.
+> ♾ **The horde never stops.** Play any horde without limit in the new **Endless mode**, cross the new **Burning Sands** desert, defend real villages from **invasions**, unlock **24 achievements** and track your career in the new **Statistics** screen — and the mod now updates its own content without ever touching your config.
 
 ---
 
