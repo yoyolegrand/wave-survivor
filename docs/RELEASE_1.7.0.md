@@ -119,7 +119,7 @@ touching your config.
 8. Desert Veil relic icon and a Royal Guard / Jackal / Scarab / Scorpion lineup (spawn eggs in creative).
 
 ## Release checklist (not done yet)
-- [ ] Merge `dev-1.7` into `main`; `mod_version=1.7.0` is already set.
+- [x] Merge `dev-1.7` into `main`; `mod_version=1.7.0` is already set.
 - [ ] Descriptions (CurseForge + Modrinth) from this file and `CHANGELOG.md`; gallery images.
 - [ ] Tag `v1.7.0` — only with Yoann's explicit go (triggers GitHub + CurseForge + Modrinth upload).
-- [ ] Still untested before release: multiplayer statistics / shared lives, the "Marathoner" achievement, the Djinn's new speed (see `docs/TESTS_1.7.md`).
+- [ ] Left untested on purpose (postponed): multiplayer statistics / shared lives, the "Marathoner" achievement (see `docs/TESTS_1.7.md`).

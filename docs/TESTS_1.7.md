@@ -81,7 +81,7 @@ Déjà validés avant ce fichier : mode sans fin, écran de statistiques, 21 suc
 
 - [x] `/ws skill list`, `/ws skill sa_puits_sable`, `/ws skill sa_rayon_solaire`… (EN SURVIE) : un monstre de test lance la compétence sur toi ; `/ws skill <nom> me` : tu la lances toi-même ; complétion des noms
 
-- [ ] Djinn : vitesse de déplacement réduite (0,36 au lieu de 0,5), plus de fonce-dessus (horde, Razzia des Sables, œuf)
+- [x] Djinn : vitesse de déplacement réduite (0,36 au lieu de 0,5), plus de fonce-dessus (horde, Razzia des Sables, œuf)
 
 ## Éditeur : liste triée en onglets
 - [x] Onglets Hordes / Kingdom / Invasions avec leurs compteurs, chaque horde dans le bon onglet
