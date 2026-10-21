@@ -41,12 +41,13 @@ public class BenedictionProtection {
     /** Début de la protection : les monstres qui visaient le joueur le lâchent. */
     public static void protect(ServerPlayer p) {
         if (p == null || p.getServer() == null) return;
+        boolean already = UNTIL.containsKey(p.getUUID());
         UNTIL.put(p.getUUID(), p.getServer().getTickCount() + MAX_TICKS);
         for (Mob m : p.serverLevel().getEntitiesOfClass(Mob.class, p.getBoundingBox().inflate(64), mob -> mob.getTarget() == p)) {
             m.setTarget(null);
             m.getNavigation().stop();
         }
-        p.sendSystemMessage(Component.literal(WSLang.t("benediction.protect")));
+        if (!already) p.sendSystemMessage(Component.literal(WSLang.t("benediction.protect")));
     }
 
     /** Fin de la protection (choix fait, délai écoulé, déconnexion). */

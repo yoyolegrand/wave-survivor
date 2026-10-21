@@ -78,6 +78,10 @@
   `AttributePickerScreen` alimenté par `ForgeRegistries.ATTRIBUTES`, ↺, créer/dupliquer/supprimer), `BlessingEditorManager` + `BlessingEditorPackets`,
   `CustomBlessingStore` en écriture (patchs champ par champ). Pas de modification pendant une horde ; l'identifiant d'une catégorie ne change jamais.
 
+- [x] **Étape 3 — tirage** (branche `dev-1.8`) : `BlessingDraw` (catégories distinctes, rareté au poids : réglages × vagues × Chance à rendements décroissants),
+  relances / bannissements / choix de famille (`BenedictionActionPacket`, état dans le NBT du joueur, +1 toutes les 5 vagues), réglages dans `blessings.json › settings`
+  (modifiables par la couche du joueur). Reste : Chance sur Brasier / coffres roulette / butin des monstres, bénédictions spéciales, éditeur des réglages.
+
 ## Étapes (inchangées)
 1. Données (catégories → niveaux, couches de config, synchronisation client, ids conservés).
 2. Éditeur en jeu (liste de catégories, ◀ ▶ entre raretés, case « disponible », sélecteur d'attributs de tous les mods, familles).

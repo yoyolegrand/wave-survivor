@@ -38,6 +38,8 @@ public final class BuiltinBuilder {
         public JsonObject rarities = new JsonObject();
         /** Catégories de bénédictions livrées (1.8) : chacune avec ses niveaux de rareté. */
         public JsonArray blessings = new JsonArray();
+        /** Réglages du tirage des bénédictions livrés (poids des raretés, Chance, relances, bannissements). */
+        public JsonObject blessingSettings = new JsonObject();
     }
 
     private BuiltinBuilder() {}
@@ -73,7 +75,10 @@ public final class BuiltinBuilder {
         if (rar != null) r.rarities = rar.deepCopy();
 
         JsonObject bless = parse(src.read("blessings.json"));
-        if (bless != null) r.blessings = arr(bless, "categories", false).deepCopy();
+        if (bless != null) {
+            r.blessings = arr(bless, "categories", false).deepCopy();
+            if (bless.has("settings") && bless.get("settings").isJsonObject()) r.blessingSettings = bless.getAsJsonObject("settings").deepCopy();
+        }
 
         for (String a : additions) {
             JsonObject add = parse(src.read(a));

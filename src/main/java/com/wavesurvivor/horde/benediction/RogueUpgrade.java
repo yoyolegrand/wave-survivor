@@ -16,6 +16,9 @@ import java.util.List;
  * @param color        Couleur du titre (rareté)
  * @param modifiers    Liste des modifiers à appliquer (multipliés par le level)
  * @param healOnApply  Nombre de PV rendus à l'application (0 = pas de heal)
+ * @param category     Identifiant de la catégorie (ex. "VIE") : une catégorie regroupe ses niveaux de rareté (1.8)
+ * @param family       Famille de la catégorie (attack, defense, mobility, utility, team, pact, stats)
+ * @param rarity       Rareté : 0 COMMON, 1 RARE, 2 EPIC, 3 LEGENDARY
  */
 public record RogueUpgrade(
         String id,
@@ -24,7 +27,10 @@ public record RogueUpgrade(
         String icon,
         ChatFormatting color,
         List<AttributeMod> modifiers,
-        int healOnApply
+        int healOnApply,
+        String category,
+        String family,
+        int rarity
 ) {
     /** Nom traduit dans la langue du mod (le texte français sert de clé). */
     @Override

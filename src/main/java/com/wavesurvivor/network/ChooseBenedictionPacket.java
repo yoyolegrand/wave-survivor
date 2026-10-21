@@ -59,7 +59,13 @@ public class ChooseBenedictionPacket {
                 return;
             }
 
+            if (!RogueUpgradeManager.canChoose(player, pkt.id)) {
+                WaveSurvivorMod.LOGGER.warn("[ChooseBenediction] '{}' a choisi une bénédiction qui ne lui était pas proposée : {}",
+                        player.getName().getString(), pkt.id);
+                return;
+            }
             RogueUpgradeManager.addUpgrade(player, pkt.id);
+            RogueUpgradeManager.onChosen(player);
             RogueUpgradeManager.setLastChosenWave(player, currentWave);
             com.wavesurvivor.horde.benediction.BenedictionProtection.release(player); // 1.7 : fin de la protection (multijoueur)
             player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.vous_avez_choisi") + upg.name())

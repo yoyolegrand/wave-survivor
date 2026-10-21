@@ -173,6 +173,10 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, ShakePacket.class,
                 ShakePacket::encode, ShakePacket::decode, ShakePacket::handle);
 
+        // Relances et bannissements des bénédictions (1.8) : client → serveur
+        CHANNEL.registerMessage(id++, BenedictionActionPacket.class,
+                BenedictionActionPacket::encode, BenedictionActionPacket::decode, BenedictionActionPacket::handle);
+
         // Éditeur des bénédictions (1.8)
         CHANNEL.registerMessage(id++, BlessingEditorPackets.Open.class,
                 BlessingEditorPackets.Open::encode, BlessingEditorPackets.Open::decode, BlessingEditorPackets.Open::handle);

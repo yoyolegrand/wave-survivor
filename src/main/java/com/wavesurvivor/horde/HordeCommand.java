@@ -888,7 +888,12 @@ public class HordeCommand {
             player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.vous_avez_deja_choisi_un_don_pour_cette")).withStyle(ChatFormatting.YELLOW));
             return 0;
         }
+        if (!RogueUpgradeManager.canChoose(player, id)) {
+            player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.not_offered")).withStyle(ChatFormatting.RED));
+            return 0;
+        }
         RogueUpgradeManager.addUpgrade(player, id);
+        RogueUpgradeManager.onChosen(player);
         RogueUpgradeManager.setLastChosenWave(player, currentWave);
         com.wavesurvivor.network.EventFeedPacket.toPlayer(player, Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.vous_avez_choisi") + upg.name())
                 .withStyle(upg.color(), ChatFormatting.BOLD), "minecraft:totem_of_undying", 0xFFFFE27A, false);

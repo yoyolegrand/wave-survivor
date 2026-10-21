@@ -31,8 +31,13 @@ public class BenedictionSelectionScreen extends Screen {
 
     private final List<RogueUpgrade> choices;
     private final int currentWave;
+    /** Relances et bannissements restants (1.8). */
+    private final int rerolls, bans;
+    /** Famille choisie pour la prochaine relance : -1 = au hasard (gardée d'un menu à l'autre). */
+    private static int familyIdx = -1;
+    private static final String[] FAMILIES = {"attack", "defense", "mobility", "utility", "team", "pact", "stats"};
 
-    public BenedictionSelectionScreen(List<String> ids, int currentWave) {
+    public BenedictionSelectionScreen(List<String> ids, int currentWave, int rerolls, int bans) {
         super(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.choisissez_un_don")));
         this.choices = new ArrayList<>();
         for (String id : ids) {
@@ -40,6 +45,8 @@ public class BenedictionSelectionScreen extends Screen {
             if (upg != null) this.choices.add(upg);
         }
         this.currentWave = currentWave;
+        this.rerolls = rerolls;
+        this.bans = bans;
     }
 
     @Override
@@ -64,13 +71,41 @@ public class BenedictionSelectionScreen extends Screen {
                     .bounds(x + 15, cardY + CARD_HEIGHT - 30, CARD_WIDTH - 30, 20)
                     .build();
             addRenderableWidget(b);
+
+            // Bannir la catégorie de cette carte pour toute la partie (1.8)
+            Button ban = Button.builder(
+                    Component.literal("§c✖ " + com.wavesurvivor.i18n.WSLang.t("bless.ban", bans)),
+                    btn -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.BenedictionActionPacket(
+                            com.wavesurvivor.network.BenedictionActionPacket.BAN, upg.category())))
+                    .bounds(x + 15, cardY + CARD_HEIGHT + 4, CARD_WIDTH - 30, 14)
+                    .tooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("bless.ban_tip")))
+                    .build();
+            ban.active = bans > 0;
+            addRenderableWidget(ban);
         }
 
-        // Bouton "Fermer" en bas au centre pour skip
+        // Rangée du bas : famille de la relance, relance, fermer
+        int by = height - 30;
+        String famLabel = familyIdx < 0 ? com.wavesurvivor.i18n.WSLang.t("blessed.family.any") : com.wavesurvivor.i18n.WSLang.t("blessed.family." + FAMILIES[familyIdx]);
+        addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.family_btn", famLabel)), btn -> {
+                    familyIdx = familyIdx + 1 >= FAMILIES.length ? -1 : familyIdx + 1;
+                    this.rebuildWidgets();
+                })
+                .bounds(width / 2 - 232, by, 150, 20)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("bless.family_tip")))
+                .build());
+        Button reroll = Button.builder(Component.literal("§b↻ " + com.wavesurvivor.i18n.WSLang.t("bless.reroll", rerolls)),
+                        btn -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.BenedictionActionPacket(
+                                com.wavesurvivor.network.BenedictionActionPacket.REROLL, familyIdx < 0 ? "" : FAMILIES[familyIdx])))
+                .bounds(width / 2 - 78, by, 110, 20)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("bless.reroll_tip")))
+                .build();
+        reroll.active = rerolls > 0;
+        addRenderableWidget(reroll);
         Button close = Button.builder(
                 Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.fermer")).withStyle(ChatFormatting.GRAY),
                 btn -> this.onClose())
-                .bounds(width / 2 - 50, height - 30, 100, 20)
+                .bounds(width / 2 + 40, by, 70, 20)
                 .build();
         addRenderableWidget(close);
     }
@@ -193,6 +228,11 @@ public class BenedictionSelectionScreen extends Screen {
     private static String friendlyAttrName(String descId) {
         // descId est du style "attribute.name.generic.max_health"
         String key = descId != null ? descId.toLowerCase() : "";
+        // Attributs d'autres mods (Apothic, Iron's…) : le nom que le jeu leur donne
+        if (descId != null && !key.startsWith("attribute.name.generic.")) {
+            String t = Component.translatable(descId).getString();
+            if (!t.equals(descId)) return t;
+        }
         if (key.contains("max_health")) return com.wavesurvivor.i18n.WSLang.t("ui.pv_max");
         if (key.contains("armor_toughness")) return com.wavesurvivor.i18n.WSLang.t("ui.robustesse");
         if (key.contains("armor")) return com.wavesurvivor.i18n.WSLang.t("ui.armure");

@@ -539,5 +539,41 @@
         }
       }
     }
-  ]
+  ],
+  "settings": {
+    "choices": 3,
+    "weights": {
+      "COMMON": 60,
+      "RARE": 28,
+      "EPIC": 10,
+      "LEGENDARY": 2
+    },
+    "waveGrowth": {
+      "COMMON": -0.02,
+      "RARE": 0.01,
+      "EPIC": 0.04,
+      "LEGENDARY": 0.06
+    },
+    "luck": {
+      "scale": 12,
+      "maxBonus": 1.0,
+      "shift": {
+        "COMMON": -0.4,
+        "RARE": 0.15,
+        "EPIC": 0.5,
+        "LEGENDARY": 1.0
+      }
+    },
+    "rerolls": {
+      "start": 2,
+      "every": 5,
+      "grant": 1
+    },
+    "bans": {
+      "start": 1,
+      "every": 5,
+      "grant": 1
+    }
+  },
+  "_settings": "Tirage : poids des raretés (weights), évolution avec les vagues (waveGrowth, par vague), effet de la Chance (luck : scale = rendements décroissants, maxBonus, shift = décalage par rareté) ; relances et bannissements (au départ, puis +grant toutes les every vagues)."
 }

@@ -32,6 +32,11 @@ public class BenedictionEvents {
     }
 
     @SubscribeEvent
+    public void onLogout(PlayerEvent.PlayerLoggedOutEvent e) {
+        RogueUpgradeManager.dropPending(e.getEntity().getUUID());
+    }
+
+    @SubscribeEvent
     public void onChangeDim(PlayerEvent.PlayerChangedDimensionEvent e) {
         if (e.getEntity() instanceof ServerPlayer p && com.wavesurvivor.horde.HordeManager.get().isRunning()) RogueUpgradeManager.reapplyAll(p);
     }

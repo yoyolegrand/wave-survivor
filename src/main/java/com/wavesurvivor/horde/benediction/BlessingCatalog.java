@@ -44,6 +44,8 @@ public final class BlessingCatalog {
     /** Catégories effectives (base + joueur) : ce qui est envoyé aux clients et affiché par l'éditeur. */
     private static volatile JsonArray effective = new JsonArray();
     private static volatile boolean loaded = false;
+    /** Réglages du tirage effectifs (base du mod + couche du joueur). */
+    private static volatile JsonObject settings = new JsonObject();
     /** Les bénédictions (avec leurs attributs) sont construites au premier accès : au démarrage du mod, les registres ne sont pas encore remplis. */
     private static volatile boolean built = false;
 
@@ -55,6 +57,7 @@ public final class BlessingCatalog {
     public static synchronized void load() {
         JsonArray base = ConfigLayers.builtin().blessings.deepCopy();
         JsonArray merged = CustomBlessingStore.mergeInto(base);
+        settings = CustomBlessingStore.applySettings(ConfigLayers.builtin().blessingSettings.deepCopy());
         install(merged);
         WaveSurvivorMod.LOGGER.info("[Bénédictions] {} catégories chargées.", merged.size());
     }
@@ -81,6 +84,12 @@ public final class BlessingCatalog {
     }
 
     public static boolean isBuilt() { return built; }
+
+    /** Réglages du tirage (poids, Chance, relances, bannissements). */
+    public static JsonObject settings() {
+        ensureLoaded();
+        return settings;
+    }
 
     /** Construit les bénédictions depuis les catégories effectives (les attributs doivent exister : registres prêts). */
     static synchronized void buildNow() {
@@ -159,7 +168,8 @@ public final class BlessingCatalog {
         String name = t.has("name") && !str(t, "name").isBlank() ? str(t, "name")
                 : str(cat, "name") + " (" + RARITY_LABELS_FR[rarityIndex] + ")";
         String desc = t.has("description") && !str(t, "description").isBlank() ? str(t, "description") : str(cat, "description");
-        return new RogueUpgrade(idOf(cid, RARITIES[rarityIndex]), name, desc, str(cat, "icon"), RARITY_COLORS[rarityIndex], mods, heal);
+        String family = str(cat, "family").isBlank() ? "utility" : str(cat, "family");
+        return new RogueUpgrade(idOf(cid, RARITIES[rarityIndex]), name, desc, str(cat, "icon"), RARITY_COLORS[rarityIndex], mods, heal, cid, family, rarityIndex);
     }
 
     public static Attribute attribute(String id) {

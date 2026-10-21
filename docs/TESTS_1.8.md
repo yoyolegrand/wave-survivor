@@ -3,6 +3,18 @@
 Cocher `[x]` quand c'est validé en jeu. Une ligne en échec : la laisser décochée et noter le souci à côté.
 Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 
+## Étape 3 — tirage par rareté, Chance, relances, bannissements, famille
+- [ ] Fin de vague : 3 cartes de CATÉGORIES différentes ; sur une dizaine de menus, les raretés varient (beaucoup de Commun/Rare, peu d'Épique, rare Légendaire)
+- [ ] Les vagues avancées proposent plus souvent du rare / épique / légendaire qu'au début
+- [ ] Avec des bénédictions de Chance (ou une potion de Chance) : les raretés élevées sortent plus souvent
+- [ ] Bouton « ↻ Relancer (2) » : 3 nouvelles cartes, le compteur baisse ; à 0 le bouton est grisé
+- [ ] Bouton « Famille : … » : choisir une famille puis relancer → les cartes viennent de cette famille (celles qui existent)
+- [ ] « ✖ Bannir (1) » sous une carte : elle est remplacée, et cette catégorie ne ressort plus de toute la partie
+- [ ] +1 relance et +1 bannissement toutes les 5 vagues (message « +1 relance(s), +1 bannissement(s) » à la vague 5, 10…)
+- [ ] Solo : le jeu reste en pause pendant les relances ; multijoueur : le joueur reste protégé (et invulnérable) tant qu'il relance / choisit
+- [ ] Fin de partie : relances et bannissements remis à zéro à la partie suivante
+- [ ] `/ws benediction choose <id>` refuse une bénédiction qui n'est pas proposée (sauf opérateur sans menu en attente)
+
 ## Étape 2 — éditeur des bénédictions
 - [ ] Bouton « 🙏 Bénédictions » dans l'éditeur de hordes (réservé aux opérateurs) ; l'écran s'ouvre avec les 10 catégories de base et leurs niveaux (carrés de couleur)
 - [ ] ◀ ▶ : passer de Commun à Légendaire ; la case « Disponible / Désactivé / N'existe pas » fonctionne (ex. Longévité : Commun et Rare « n'existent pas »)

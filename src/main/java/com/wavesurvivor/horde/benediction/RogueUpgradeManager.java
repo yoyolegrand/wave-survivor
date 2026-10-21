@@ -159,6 +159,8 @@ public class RogueUpgradeManager {
         }
         data.remove(NBT_KEY);
         data.remove(NBT_LAST_WAVE_KEY);
+        data.remove(NBT_STATE);
+        PENDING.remove(p.getUUID());
         p.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.benedictions_dissipees")).withStyle(ChatFormatting.RED));
         WaveSurvivorMod.LOGGER.info("[Benediction] '{}' benedictions clear (horde terminee)",
                 p.getName().getString());
@@ -176,27 +178,154 @@ public class RogueUpgradeManager {
     // Menu de sélection (envoie packet -> GUI client)
     // ================================================================
 
-    /**
-     * Envoie un menu de sélection avec 3 upgrades aléatoires au joueur.
-     * Le client reçoit un OpenBenedictionScreenPacket et affiche BenedictionSelectionScreen.
-     * Peut être ré-appelé via /ws benediction menu.
-     */
-    public static void openMenu(ServerPlayer p) {
-        List<String> ids = RogueUpgradeRegistry.allIds();
-        Collections.shuffle(ids, RNG);
-        // Héritage — Seigneur 3 : +1 choix de bénédiction
-        int n = MENU_CHOICES + (com.wavesurvivor.horde.renaissance.Heritage.has(p, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 3) ? 1 : 0);
-        List<String> choices = new ArrayList<>(ids.subList(0, Math.min(n, ids.size())));
+    // ───────── Relances, bannissements, menus en attente (1.8) ─────────
 
-        int currentWave = com.wavesurvivor.horde.HordeManager.get().getCurrentWave();
+    private static final String NBT_STATE = "wave_survivor_bless_state";
+
+    /** Menu en attente de choix d'un joueur : cartes proposées et vague. */
+    private record Pending(List<String> ids, int wave) {}
+    private static final java.util.Map<UUID, Pending> PENDING = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private static com.google.gson.JsonObject settings() { return BlessingCatalog.settings(); }
+
+    private static int cfgInt(String section, String key, int def) {
+        com.google.gson.JsonObject o = section.isEmpty() ? settings()
+                : settings().has(section) && settings().get(section).isJsonObject() ? settings().getAsJsonObject(section) : new com.google.gson.JsonObject();
+        return com.wavesurvivor.horde.editor.HordeJson.num(o, key, def);
+    }
+
+    /** État du joueur pour la partie (relances, bannissements, catégories bannies) : créé au premier menu, effacé en fin de horde. */
+    private static CompoundTag blessState(ServerPlayer p, int wave) {
+        CompoundTag root = store(p);
+        CompoundTag st = root.getCompound(NBT_STATE);
+        if (!st.contains("init")) {
+            st.putBoolean("init", true);
+            st.putInt("rerolls", Math.max(0, cfgInt("rerolls", "start", 2)));
+            st.putInt("bans", Math.max(0, cfgInt("bans", "start", 1)));
+            // pas de cadeau rétroactif si le joueur arrive en cours de partie
+            st.putInt("rerollStep", wave / Math.max(1, cfgInt("rerolls", "every", 5)));
+            st.putInt("banStep", wave / Math.max(1, cfgInt("bans", "every", 5)));
+        }
+        root.put(NBT_STATE, st);
+        return st;
+    }
+
+    /** +1 relance / +1 bannissement toutes les N vagues (réglable). */
+    private static void grant(ServerPlayer p, int wave) {
+        CompoundTag st = blessState(p, wave);
+        int rs = wave / Math.max(1, cfgInt("rerolls", "every", 5)), bs = wave / Math.max(1, cfgInt("bans", "every", 5));
+        int addR = Math.max(0, rs - st.getInt("rerollStep")) * Math.max(0, cfgInt("rerolls", "grant", 1));
+        int addB = Math.max(0, bs - st.getInt("banStep")) * Math.max(0, cfgInt("bans", "grant", 1));
+        st.putInt("rerollStep", Math.max(rs, st.getInt("rerollStep")));
+        st.putInt("banStep", Math.max(bs, st.getInt("banStep")));
+        if (addR > 0 || addB > 0) {
+            st.putInt("rerolls", st.getInt("rerolls") + addR);
+            st.putInt("bans", st.getInt("bans") + addB);
+            p.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.granted", addR, addB)), false);
+        }
+    }
+
+    public static int rerollsLeft(ServerPlayer p) { return blessState(p, com.wavesurvivor.horde.HordeManager.get().getCurrentWave()).getInt("rerolls"); }
+
+    public static int bansLeft(ServerPlayer p) { return blessState(p, com.wavesurvivor.horde.HordeManager.get().getCurrentWave()).getInt("bans"); }
+
+    /** Catégories bannies par ce joueur pour la partie. */
+    public static java.util.Set<String> banned(ServerPlayer p) {
+        java.util.Set<String> out = new java.util.HashSet<>();
+        net.minecraft.nbt.ListTag l = store(p).getCompound(NBT_STATE).getList("banned", 8);
+        for (int i = 0; i < l.size(); i++) out.add(l.getString(i));
+        return out;
+    }
+
+    /** Peut-il choisir cette bénédiction ? Seulement parmi les cartes proposées ; les opérateurs peuvent tout choisir (commande). */
+    public static boolean canChoose(ServerPlayer p, String id) {
+        Pending pe = PENDING.get(p.getUUID());
+        if (pe != null) return pe.ids().contains(id);
+        return p.hasPermissions(2);
+    }
+
+    /** Choix fait : le menu en attente disparaît. */
+    public static void onChosen(ServerPlayer p) { PENDING.remove(p.getUUID()); }
+
+    public static void dropPending(UUID id) { PENDING.remove(id); }
+
+    private static int menuSize(ServerPlayer p) {
+        // Héritage — Seigneur 3 : +1 choix de bénédiction
+        return Math.max(1, cfgInt("", "choices", MENU_CHOICES)) + (com.wavesurvivor.horde.renaissance.Heritage.has(p,
+                com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 3) ? 1 : 0);
+    }
+
+    private static void sendMenu(ServerPlayer p, List<String> ids, int wave) {
+        PENDING.put(p.getUUID(), new Pending(new ArrayList<>(ids), wave));
         NetworkHandler.CHANNEL.send(
                 PacketDistributor.PLAYER.with(() -> p),
-                new OpenBenedictionScreenPacket(choices, currentWave, (float) difficultyMult()));
+                new OpenBenedictionScreenPacket(ids, wave, (float) difficultyMult(), rerollsLeft(p), bansLeft(p)));
         // Multijoueur : le jeu ne se met pas en pause, le joueur est donc protégé pendant son choix (solo : pause côté client)
         if (BenedictionProtection.needed(p.getServer())) BenedictionProtection.protect(p);
+    }
 
+    /**
+     * Envoie un menu de sélection au joueur : des catégories distinctes, chacune à une rareté tirée au poids (vague, Chance), hors catégories
+     * bannies. Le client reçoit un OpenBenedictionScreenPacket et affiche BenedictionSelectionScreen. Peut être ré-appelé via /ws benediction menu.
+     */
+    public static void openMenu(ServerPlayer p) {
+        int wave = com.wavesurvivor.horde.HordeManager.get().getCurrentWave();
+        grant(p, wave);
+        List<String> choices = BlessingDraw.draw(p, menuSize(p), wave, java.util.List.of(), "");
+        if (choices.isEmpty()) return;
+        sendMenu(p, choices, wave);
         // Petit son pour attirer l'attention
         p.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0f, 1.0f);
+    }
+
+    /** Relance : retire les cartes et en tire de nouvelles (dans la famille demandée, "" = au hasard). */
+    public static void reroll(ServerPlayer p, String family) {
+        Pending pe = PENDING.get(p.getUUID());
+        if (pe == null) return;
+        CompoundTag st = blessState(p, pe.wave());
+        if (st.getInt("rerolls") <= 0) {
+            p.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.no_reroll")), true);
+            return;
+        }
+        st.putInt("rerolls", st.getInt("rerolls") - 1);
+        List<String> choices = BlessingDraw.draw(p, menuSize(p), pe.wave(), java.util.List.of(), family);
+        if (choices.isEmpty()) { st.putInt("rerolls", st.getInt("rerolls") + 1); return; }
+        sendMenu(p, choices, pe.wave());
+        p.playNotifySound(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.6f, 1.2f);
+    }
+
+    /** Bannissement : la catégorie de la carte ne sera plus proposée à ce joueur pendant la partie ; la carte est remplacée. */
+    public static void ban(ServerPlayer p, String category) {
+        Pending pe = PENDING.get(p.getUUID());
+        if (pe == null || category == null || category.isBlank()) return;
+        int idx = -1;
+        for (int i = 0; i < pe.ids().size(); i++) {
+            RogueUpgrade u = RogueUpgradeRegistry.get(pe.ids().get(i));
+            if (u != null && u.category().equals(category)) idx = i;
+        }
+        if (idx < 0) return;
+        CompoundTag st = blessState(p, pe.wave());
+        if (st.getInt("bans") <= 0) {
+            p.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.no_ban")), true);
+            return;
+        }
+        st.putInt("bans", st.getInt("bans") - 1);
+        net.minecraft.nbt.ListTag l = st.getList("banned", 8);
+        l.add(net.minecraft.nbt.StringTag.valueOf(category));
+        st.put("banned", l);
+        // La carte bannie est remplacée par une catégorie qui n'est pas déjà sur la table
+        List<String> next = new ArrayList<>(pe.ids());
+        next.remove(idx);
+        List<String> present = new ArrayList<>();
+        for (String id : next) {
+            RogueUpgrade u = RogueUpgradeRegistry.get(id);
+            if (u != null) present.add(u.category());
+        }
+        List<String> fresh = BlessingDraw.draw(p, 1, pe.wave(), present, "");
+        if (!fresh.isEmpty()) next.add(idx, fresh.get(0));
+        if (next.isEmpty()) return;
+        sendMenu(p, next, pe.wave());
+        p.playNotifySound(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.6f, 0.8f);
     }
 
     /** Ouvre le menu pour tous les joueurs connectés (appelé à la fin de chaque vague). */

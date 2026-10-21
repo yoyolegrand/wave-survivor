@@ -5,7 +5,11 @@
 ### 🙏 Blessings
 - 🧱 Blessings are now **data, not code**: grouped into **categories** (Life, Armor, Force…) that hold their rarity levels (Common, Rare, Epic, Legendary), read from the mod at every launch like the hordes — your own changes will live in `config/wavesurvivor/custom_blessings.json`. 
 - 🛠 New **Blessings editor** (button in the horde editor): categories on the left, and for each one the **◀ ▶ arrows** go from Common to Legendary. Every level has its own **Available** switch (Longevity only at Epic and Legendary, for instance), heal and effects — any attribute of the game or of your mods (Apothic Attributes, Iron's Spells…) through a searchable picker. Changes to the mod's blessings are kept field by field (**[modified · N]**, **↺** restores); you can also create, duplicate and delete categories. Operators only, not during a horde.
-- Next: rarity-weighted draws and Luck, special blessings, rerolls and bans.
+- 🎲 **Rarity now matters in the draw** (it used to be a flat draw, a Legendary as likely as a Common): each of the 3 cards is a **different category** whose rarity is rolled with weights (60 / 28 / 10 / 2 by default) that **shift towards rarer levels as the waves go on**. All of it is configurable (`settings` in your `custom_blessings.json`).
+- 🍀 **Luck matters**: the Luck attribute (Luck blessings, potions, gear) raises the odds of rarer levels, with diminishing returns so it never breaks the game.
+- ↻ **Rerolls and bans**: you start with **2 rerolls and 1 ban**, and win **+1 of each every 5 waves**. *Reroll* redraws the cards — and you can **pick a family** (Attack, Defense, Mobility, Utility, Team, Pact, Statistics) so you are not drowned in options; *Ban* removes a category from your draws for the whole run and replaces the card.
+- 🛡 You can now only pick a blessing that was actually offered (the chat command allowed any).
+- Next: Luck on the Offering Brazier, roulette chests and extra monster loot, then the special blessings (Execution, Dawn Shield, Magnet, Banner, Blood Link, Glass, Berserker, Burden).
 
 ## 1.7.0 — Endless Mode, Burning Sands & Invasions
 

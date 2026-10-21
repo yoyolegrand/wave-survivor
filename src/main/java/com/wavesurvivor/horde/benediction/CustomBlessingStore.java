@@ -38,6 +38,8 @@ public final class CustomBlessingStore {
     private static final Map<String, JsonObject> CUSTOM = new LinkedHashMap<>();
     private static final Map<String, JsonObject> PATCHES = new LinkedHashMap<>();
     private static final Set<String> DELETED = new HashSet<>();
+    /** Réglages du tirage modifiés par le joueur (champs changés seulement). */
+    private static JsonObject settingsPatch = new JsonObject();
     /** Origine de chaque catégorie effective (dernière fusion) : BASE44 (livrée), OVERRIDE (livrée et modifiée), CUSTOM (créée). */
     private static final Map<String, String> SOURCES = new HashMap<>();
 
@@ -54,6 +56,7 @@ public final class CustomBlessingStore {
         CUSTOM.clear();
         PATCHES.clear();
         DELETED.clear();
+        settingsPatch = new JsonObject();
         Path f = filePath();
         if (!Files.exists(f)) return;
         try {
@@ -67,6 +70,7 @@ public final class CustomBlessingStore {
                 }
             }
             if (root.has("deleted")) for (JsonElement e : root.getAsJsonArray("deleted")) DELETED.add(key(e.getAsString()));
+            if (root.has("settings") && root.get("settings").isJsonObject()) settingsPatch = root.getAsJsonObject("settings");
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[Bénédictions] Lecture de {} impossible : {}", FILE_NAME, e.getMessage());
         }
@@ -97,6 +101,11 @@ public final class CustomBlessingStore {
                     CUSTOM.size(), PATCHES.size(), DELETED.size());
         }
         return out;
+    }
+
+    /** Réglages du tirage : base du mod + modifications du joueur. */
+    public static synchronized JsonObject applySettings(JsonObject base) {
+        return Patch.apply(base, settingsPatch);
     }
 
     // ─── API éditeur ───
@@ -173,6 +182,7 @@ public final class CustomBlessingStore {
             JsonArray del = new JsonArray();
             for (String d : DELETED) del.add(d);
             root.add("deleted", del);
+            if (settingsPatch.size() > 0) root.add("settings", settingsPatch);
             Files.writeString(filePath(), GSON.toJson(root), StandardCharsets.UTF_8);
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[Bénédictions] Écriture de {} impossible : {}", FILE_NAME, e.getMessage());
