@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,6 +38,8 @@ public final class CustomBlessingStore {
     private static final Map<String, JsonObject> CUSTOM = new LinkedHashMap<>();
     private static final Map<String, JsonObject> PATCHES = new LinkedHashMap<>();
     private static final Set<String> DELETED = new HashSet<>();
+    /** Origine de chaque catégorie effective (dernière fusion) : BASE44 (livrée), OVERRIDE (livrée et modifiée), CUSTOM (créée). */
+    private static final Map<String, String> SOURCES = new HashMap<>();
 
     private CustomBlessingStore() {}
 
@@ -74,21 +77,106 @@ public final class CustomBlessingStore {
         load();
         JsonArray out = new JsonArray();
         Set<String> used = new HashSet<>();
+        SOURCES.clear();
         for (JsonElement e : base) {
             if (!e.isJsonObject()) continue;
             String k = key(idOf(e));
             if (DELETED.contains(k) && !CUSTOM.containsKey(k)) continue;
-            if (CUSTOM.containsKey(k)) out.add(CUSTOM.get(k).deepCopy());
-            else if (PATCHES.containsKey(k)) out.add(Patch.apply(e.getAsJsonObject(), PATCHES.get(k)));
-            else out.add(e);
+            if (CUSTOM.containsKey(k)) { out.add(CUSTOM.get(k).deepCopy()); SOURCES.put(k, "OVERRIDE"); }
+            else if (PATCHES.containsKey(k)) { out.add(Patch.apply(e.getAsJsonObject(), PATCHES.get(k))); SOURCES.put(k, "OVERRIDE"); }
+            else { out.add(e); SOURCES.put(k, "BASE44"); }
             used.add(k);
         }
-        for (Map.Entry<String, JsonObject> c : CUSTOM.entrySet()) if (!used.contains(c.getKey())) out.add(c.getValue().deepCopy());
+        for (Map.Entry<String, JsonObject> c : CUSTOM.entrySet()) {
+            if (used.contains(c.getKey())) continue;
+            out.add(c.getValue().deepCopy());
+            SOURCES.put(c.getKey(), "CUSTOM");
+        }
         if (!CUSTOM.isEmpty() || !PATCHES.isEmpty() || !DELETED.isEmpty()) {
             WaveSurvivorMod.LOGGER.info("[Bénédictions] {} catégorie(s) à vous, {} de base modifiée(s), {} masquée(s).",
                     CUSTOM.size(), PATCHES.size(), DELETED.size());
         }
         return out;
+    }
+
+    // ─── API éditeur ───
+
+    /** Origine d'une catégorie : BASE44 (livrée), OVERRIDE (livrée et modifiée), CUSTOM (créée par le joueur). */
+    public static synchronized String sourceOf(String id) { return SOURCES.getOrDefault(key(id), "BASE44"); }
+
+    /** Nombre de champs modifiés d'une catégorie livrée (0 = suit entièrement la base). */
+    public static synchronized int modifiedFields(String id) {
+        JsonObject p = PATCHES.get(key(id));
+        return p == null ? 0 : Patch.count(p);
+    }
+
+    private static JsonObject baseOf(String id) {
+        return com.wavesurvivor.config.BuiltinBuilder.find(com.wavesurvivor.config.ConfigLayers.builtin().blessings, "id", id);
+    }
+
+    /** Enregistre une catégorie. Pour une catégorie livrée, seuls les champs modifiés sont gardés ; identique à la base = plus de modification. */
+    public static synchronized void put(JsonObject cat) {
+        String id = idOf(cat), k = key(id);
+        JsonObject base = baseOf(id);
+        if (base != null) {
+            CUSTOM.remove(k);
+            JsonObject p = Patch.diff(base, cat);
+            if (p == null) PATCHES.remove(k); else PATCHES.put(k, p);
+        } else {
+            CUSTOM.put(k, cat);
+            PATCHES.remove(k);
+        }
+        DELETED.remove(k);
+        save();
+    }
+
+    /** Supprime une catégorie : retire la version du joueur et masque la version livrée éventuelle. */
+    public static synchronized void delete(String id) {
+        String k = key(id);
+        String src = sourceOf(id);
+        CUSTOM.remove(k);
+        PATCHES.remove(k);
+        if (!"CUSTOM".equals(src)) DELETED.add(k);
+        save();
+    }
+
+    /** Rétablit la version livrée : retire les modifications et la suppression. */
+    public static synchronized void revert(String id) {
+        String k = key(id);
+        CUSTOM.remove(k);
+        PATCHES.remove(k);
+        DELETED.remove(k);
+        save();
+    }
+
+    /** Catégories livrées que le joueur a supprimées. */
+    public static synchronized List<String> deletedBaseIds() {
+        List<String> out = new ArrayList<>();
+        for (String d : DELETED) {
+            JsonObject b = baseOf(d);
+            if (b != null && !CUSTOM.containsKey(d)) out.add(idOf(b));
+        }
+        return out;
+    }
+
+    private static synchronized void save() {
+        try {
+            Path dir = FMLPaths.CONFIGDIR.get().resolve("wavesurvivor");
+            if (!Files.exists(dir)) Files.createDirectories(dir);
+            JsonObject root = new JsonObject();
+            JsonArray cats = new JsonArray();
+            for (JsonObject o : CUSTOM.values()) cats.add(o);
+            root.add("categories", cats);
+            JsonObject patches = new JsonObject();
+            for (Map.Entry<String, JsonObject> p : PATCHES.entrySet()) patches.add(p.getKey(), p.getValue());
+            root.add("patches", patches);
+            JsonArray del = new JsonArray();
+            for (String d : DELETED) del.add(d);
+            root.add("deleted", del);
+            Files.writeString(filePath(), GSON.toJson(root), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            WaveSurvivorMod.LOGGER.error("[Bénédictions] Écriture de {} impossible : {}", FILE_NAME, e.getMessage());
+        }
     }
 
     /** Identifiants des catégories de la couche du joueur (pour l'éditeur). */

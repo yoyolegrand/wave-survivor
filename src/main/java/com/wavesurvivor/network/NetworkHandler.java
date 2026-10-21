@@ -173,6 +173,18 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, ShakePacket.class,
                 ShakePacket::encode, ShakePacket::decode, ShakePacket::handle);
 
+        // Éditeur des bénédictions (1.8)
+        CHANNEL.registerMessage(id++, BlessingEditorPackets.Open.class,
+                BlessingEditorPackets.Open::encode, BlessingEditorPackets.Open::decode, BlessingEditorPackets.Open::handle);
+        CHANNEL.registerMessage(id++, BlessingEditorPackets.Data.class,
+                BlessingEditorPackets.Data::encode, BlessingEditorPackets.Data::decode, BlessingEditorPackets.Data::handle);
+        CHANNEL.registerMessage(id++, BlessingEditorPackets.Save.class,
+                BlessingEditorPackets.Save::encode, BlessingEditorPackets.Save::decode, BlessingEditorPackets.Save::handle);
+        CHANNEL.registerMessage(id++, BlessingEditorPackets.Delete.class,
+                BlessingEditorPackets.Delete::encode, BlessingEditorPackets.Delete::decode, BlessingEditorPackets.Delete::handle);
+        CHANNEL.registerMessage(id++, BlessingEditorPackets.Revert.class,
+                BlessingEditorPackets.Revert::encode, BlessingEditorPackets.Revert::decode, BlessingEditorPackets.Revert::handle);
+
         // Catalogue des bénédictions (1.8) : serveur → client
         CHANNEL.registerMessage(id++, BlessingCatalogPacket.class,
                 BlessingCatalogPacket::encode, BlessingCatalogPacket::decode, BlessingCatalogPacket::handle);

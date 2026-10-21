@@ -3,7 +3,9 @@
 ## 1.8.0 — Blessings Rework *(in progress)*
 
 ### 🙏 Blessings
-- 🧱 Blessings are now **data, not code**: grouped into **categories** (Life, Armor, Force…) that hold their rarity levels (Common, Rare, Epic, Legendary), read from the mod at every launch like the hordes — your own changes will live in `config/wavesurvivor/custom_blessings.json`. Nothing changes in play yet; the in-game editor, rarity-weighted draws, Luck, special blessings, rerolls and bans come next.
+- 🧱 Blessings are now **data, not code**: grouped into **categories** (Life, Armor, Force…) that hold their rarity levels (Common, Rare, Epic, Legendary), read from the mod at every launch like the hordes — your own changes will live in `config/wavesurvivor/custom_blessings.json`. 
+- 🛠 New **Blessings editor** (button in the horde editor): categories on the left, and for each one the **◀ ▶ arrows** go from Common to Legendary. Every level has its own **Available** switch (Longevity only at Epic and Legendary, for instance), heal and effects — any attribute of the game or of your mods (Apothic Attributes, Iron's Spells…) through a searchable picker. Changes to the mod's blessings are kept field by field (**[modified · N]**, **↺** restores); you can also create, duplicate and delete categories. Operators only, not during a horde.
+- Next: rarity-weighted draws and Luck, special blessings, rerolls and bans.
 
 ## 1.7.0 — Endless Mode, Burning Sands & Invasions
 

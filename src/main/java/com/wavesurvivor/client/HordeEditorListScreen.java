@@ -117,6 +117,10 @@ public class HordeEditorListScreen extends Screen {
         addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.fermer")), b -> onClose())
                 .bounds(left + PANEL_W - 68, top + 26, 60, 18).build());
 
+        addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("blessed.btn")),
+                        b -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.BlessingEditorPackets.Open()))
+                .bounds(left + PANEL_W - 146 - 104, top + 4, 98, 18).build());
+
         addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.entites_competences_b16d")),
                         b -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.EntityEditorPackets.Open()))
                 .bounds(left + PANEL_W - 146, top + 4, 138, 18).build());

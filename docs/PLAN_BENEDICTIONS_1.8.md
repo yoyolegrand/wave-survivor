@@ -74,6 +74,10 @@
   (construit AU PREMIER ACCÈS car les registres d'attributs ne sont pas prêts dans le constructeur du mod) ; `CustomBlessingStore` (couche du joueur,
   lecture seule pour l'instant) ; `RogueUpgradeRegistry` lit le catalogue ; `BlessingCatalogPacket` (serveur → client, à la connexion et au rechargement).
 
+- [x] **Étape 2 — éditeur** (branche `dev-1.8`) : `BlessingEditorScreen` (catégories à gauche, ◀ ▶ entre raretés, case disponible, effets via
+  `AttributePickerScreen` alimenté par `ForgeRegistries.ATTRIBUTES`, ↺, créer/dupliquer/supprimer), `BlessingEditorManager` + `BlessingEditorPackets`,
+  `CustomBlessingStore` en écriture (patchs champ par champ). Pas de modification pendant une horde ; l'identifiant d'une catégorie ne change jamais.
+
 ## Étapes (inchangées)
 1. Données (catégories → niveaux, couches de config, synchronisation client, ids conservés).
 2. Éditeur en jeu (liste de catégories, ◀ ▶ entre raretés, case « disponible », sélecteur d'attributs de tous les mods, familles).

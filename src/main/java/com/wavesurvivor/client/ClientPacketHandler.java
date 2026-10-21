@@ -86,6 +86,7 @@ public class ClientPacketHandler {
         if (mc == null) return;
         if (mc.screen instanceof HordeEditorScreen ed) ed.onResult(pkt);
         else if (mc.screen instanceof CustomEntityEditorScreen ee) ee.onResult(pkt);
+        else if (mc.screen instanceof BlessingEditorScreen be) be.onResult(pkt);
         else if (mc.screen instanceof HordeEditorListScreen list) list.setStatus((pkt.ok ? "§a✔ " : "§c✘ ") + pkt.message);
     }
 
@@ -101,6 +102,15 @@ public class ClientPacketHandler {
         if (data == null) return;
         if (mc.screen instanceof CustomEntityEditorScreen ee) ee.refresh(data);
         else mc.setScreen(new CustomEntityEditorScreen(mc.screen, data));
+    }
+
+    public static void openBlessingEditor(com.wavesurvivor.network.BlessingEditorPackets.Data pkt) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+        com.google.gson.JsonObject data = com.wavesurvivor.horde.editor.HordeJson.parseObject(pkt.json);
+        if (data == null) return;
+        if (mc.screen instanceof BlessingEditorScreen be) be.refresh(data);
+        else mc.setScreen(new BlessingEditorScreen(mc.screen, data));
     }
 
     public static void openRouletteLoot(com.wavesurvivor.network.RouletteLootPacket pkt) {
