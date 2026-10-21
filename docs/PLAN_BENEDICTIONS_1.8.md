@@ -69,6 +69,11 @@
   Pacte, Statistiques) ; en relançant, le joueur peut choisir une famille (ou « au hasard ») pour que les 3 nouvelles cartes viennent de celle-ci.
   Proposition retenue pour la validation : pas de jeton supplémentaire, le choix est inclus dans la relance.
 
+## Avancement
+- [x] **Étape 1 — données** (branche `dev-1.8`) : `defaults/wavesurvivor/blessings.json` (34 bénédictions, 10 catégories, ids inchangés) ; `BlessingCatalog`
+  (construit AU PREMIER ACCÈS car les registres d'attributs ne sont pas prêts dans le constructeur du mod) ; `CustomBlessingStore` (couche du joueur,
+  lecture seule pour l'instant) ; `RogueUpgradeRegistry` lit le catalogue ; `BlessingCatalogPacket` (serveur → client, à la connexion et au rechargement).
+
 ## Étapes (inchangées)
 1. Données (catégories → niveaux, couches de config, synchronisation client, ids conservés).
 2. Éditeur en jeu (liste de catégories, ◀ ▶ entre raretés, case « disponible », sélecteur d'attributs de tous les mods, familles).

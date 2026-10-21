@@ -173,6 +173,10 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, ShakePacket.class,
                 ShakePacket::encode, ShakePacket::decode, ShakePacket::handle);
 
+        // Catalogue des bénédictions (1.8) : serveur → client
+        CHANNEL.registerMessage(id++, BlessingCatalogPacket.class,
+                BlessingCatalogPacket::encode, BlessingCatalogPacket::decode, BlessingCatalogPacket::handle);
+
         // Rétablir la version du mod d'un élément de la config (1.7, couches de configuration)
         CHANNEL.registerMessage(id++, HordeEditorPackets.Revert.class,
                 HordeEditorPackets.Revert::encode, HordeEditorPackets.Revert::decode, HordeEditorPackets.Revert::handle);

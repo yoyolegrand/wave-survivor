@@ -1,0 +1,543 @@
+{
+  "_comment": "Bénédictions du mod (base livrée, relue à chaque lancement). Catégories → niveaux de rareté (COMMON, RARE, EPIC, LEGENDARY). L'identifiant d'une bénédiction est BENEDICTION_DE_<catégorie>_<rareté> (identique aux versions précédentes).",
+  "categories": [
+    {
+      "id": "RESISTANCE",
+      "name": "Bénédiction de Résistance",
+      "icon": "🪨",
+      "description": "Augmente Armure, Robustesse et Résistance de Recul",
+      "family": "defense",
+      "tiers": {
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction de Résistance (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 2,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 1,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.knockback_resistance",
+              "amount": 0.2,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction de Résistance (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 4,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 2,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.knockback_resistance",
+              "amount": 0.4,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        }
+      }
+    },
+    {
+      "id": "LONGEVITE",
+      "name": "Bénédiction de Longévité",
+      "icon": "✨",
+      "description": "Augmente vos PV max fortement",
+      "family": "defense",
+      "tiers": {
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction de Longévité (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": 2,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": 0.1,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 2
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction de Longévité (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": 4,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": 0.2,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 4
+        }
+      }
+    },
+    {
+      "id": "CELERITE",
+      "name": "Bénédiction de Célérité",
+      "icon": "👟⚡",
+      "description": "Augmente Vitesse et Vitesse d'Attaque",
+      "family": "mobility",
+      "tiers": {
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction de Célérité (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": 0.1,
+              "operation": "multiply_base"
+            },
+            {
+              "attribute": "minecraft:generic.attack_speed",
+              "amount": 0.1,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction de Célérité (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": 0.2,
+              "operation": "multiply_base"
+            },
+            {
+              "attribute": "minecraft:generic.attack_speed",
+              "amount": 0.2,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        }
+      }
+    },
+    {
+      "id": "CHANCE",
+      "name": "Bénédiction de Chance",
+      "icon": "🍀",
+      "description": "Augmente votre chance",
+      "family": "utility",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "name": "Bénédiction de Chance (Commun)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.luck",
+              "amount": 2,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "RARE": {
+          "enabled": true,
+          "name": "Bénédiction de Chance (Rare)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.luck",
+              "amount": 4,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction de Chance (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.luck",
+              "amount": 6,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction de Chance (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.luck",
+              "amount": 8,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        }
+      }
+    },
+    {
+      "id": "VITESSE_D_ATTAQUE",
+      "name": "Bénédiction de Vitesse d'Attaque",
+      "icon": "⚡",
+      "description": "Augmente votre Vitesse d'Attaque",
+      "family": "attack",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "name": "Bénédiction de Vitesse d'Attaque (Commun)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_speed",
+              "amount": 0.05,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "RARE": {
+          "enabled": true,
+          "name": "Bénédiction de Vitesse d'Attaque (Rare)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_speed",
+              "amount": 0.1,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction de Vitesse d'Attaque (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_speed",
+              "amount": 0.15,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction de Vitesse d'Attaque (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_speed",
+              "amount": 0.2,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        }
+      }
+    },
+    {
+      "id": "VITESSE",
+      "name": "Bénédiction de Vitesse",
+      "icon": "👟",
+      "description": "Augmente votre Vitesse",
+      "family": "mobility",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "name": "Bénédiction de Vitesse (Commun)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": 0.05,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0
+        },
+        "RARE": {
+          "enabled": true,
+          "name": "Bénédiction de Vitesse (Rare)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": 0.1,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0
+        },
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction de Vitesse (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": 0.15,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction de Vitesse (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": 0.2,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0
+        }
+      }
+    },
+    {
+      "id": "ROBUTESSE",
+      "name": "Bénédiction de Robustesse",
+      "icon": "💎",
+      "description": "Augmente votre Robustesse",
+      "family": "defense",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "name": "Bénédiction de Robustesse (Commun)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 1,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "RARE": {
+          "enabled": true,
+          "name": "Bénédiction de Robustesse (Rare)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 2,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction de Robustesse (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 3,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction de Robustesse (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 4,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        }
+      }
+    },
+    {
+      "id": "ARMURE",
+      "name": "Bénédiction d'Armure",
+      "icon": "🛡",
+      "description": "Augmente votre Armure",
+      "family": "defense",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "name": "Bénédiction d'Armure (Commun)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 2,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "RARE": {
+          "enabled": true,
+          "name": "Bénédiction d'Armure (Rare)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 4,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction d'Armure (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 6,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction d'Armure (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 8,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        }
+      }
+    },
+    {
+      "id": "FORCE",
+      "name": "Bénédiction de Force",
+      "icon": "⚔",
+      "description": "Augmente vos Dégâts",
+      "family": "attack",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "name": "Bénédiction de Force (Commun)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_damage",
+              "amount": 1,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "RARE": {
+          "enabled": true,
+          "name": "Bénédiction de Force (Rare)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_damage",
+              "amount": 2,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction de Force (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_damage",
+              "amount": 3,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction de Force (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_damage",
+              "amount": 4,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0
+        }
+      }
+    },
+    {
+      "id": "VIE",
+      "name": "Bénédiction de Vie",
+      "icon": "❤",
+      "description": "Augmente votre Santé",
+      "family": "defense",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "name": "Bénédiction de Vie (Commun)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": 1,
+              "operation": "addition"
+            }
+          ],
+          "heal": 1
+        },
+        "RARE": {
+          "enabled": true,
+          "name": "Bénédiction de Vie (Rare)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": 2,
+              "operation": "addition"
+            }
+          ],
+          "heal": 2
+        },
+        "EPIC": {
+          "enabled": true,
+          "name": "Bénédiction de Vie (Épique)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": 3,
+              "operation": "addition"
+            }
+          ],
+          "heal": 3
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "name": "Bénédiction de Vie (Légendaire)",
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": 4,
+              "operation": "addition"
+            }
+          ],
+          "heal": 4
+        }
+      }
+    }
+  ]
+}

@@ -36,6 +36,8 @@ public final class BuiltinBuilder {
         public JsonArray shopDisabled = new JsonArray();
         /** Raretés de sacrifice livrées : objet → rareté. */
         public JsonObject rarities = new JsonObject();
+        /** Catégories de bénédictions livrées (1.8) : chacune avec ses niveaux de rareté. */
+        public JsonArray blessings = new JsonArray();
     }
 
     private BuiltinBuilder() {}
@@ -69,6 +71,9 @@ public final class BuiltinBuilder {
 
         JsonObject rar = parse(src.read("renaissance_rarities.json"));
         if (rar != null) r.rarities = rar.deepCopy();
+
+        JsonObject bless = parse(src.read("blessings.json"));
+        if (bless != null) r.blessings = arr(bless, "categories", false).deepCopy();
 
         for (String a : additions) {
             JsonObject add = parse(src.read(a));

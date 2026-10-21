@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0 — Blessings Rework *(in progress)*
+
+### 🙏 Blessings
+- 🧱 Blessings are now **data, not code**: grouped into **categories** (Life, Armor, Force…) that hold their rarity levels (Common, Rare, Epic, Legendary), read from the mod at every launch like the hordes — your own changes will live in `config/wavesurvivor/custom_blessings.json`. Nothing changes in play yet; the in-game editor, rarity-weighted draws, Luck, special blessings, rerolls and bans come next.
+
 ## 1.7.0 — Endless Mode, Burning Sands & Invasions
 
 > ♾ **The horde never stops.** Play any horde without limit in the new **Endless mode**, cross the new **Burning Sands** desert, defend real villages from **invasions**, unlock **24 achievements** and track your career in the new **Statistics** screen — and the mod now updates its own content without ever touching your config.

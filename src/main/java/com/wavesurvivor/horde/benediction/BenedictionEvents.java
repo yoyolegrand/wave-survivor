@@ -25,7 +25,10 @@ public class BenedictionEvents {
 
     @SubscribeEvent
     public void onLogin(PlayerEvent.PlayerLoggedInEvent e) {
-        if (e.getEntity() instanceof ServerPlayer p) refresh(p);
+        if (e.getEntity() instanceof ServerPlayer p) {
+            BlessingCatalog.syncTo(p); // 1.8 : le client reçoit le catalogue effectif du serveur
+            refresh(p);
+        }
     }
 
     @SubscribeEvent

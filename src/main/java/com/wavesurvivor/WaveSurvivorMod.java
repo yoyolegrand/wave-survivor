@@ -155,6 +155,7 @@ public class WaveSurvivorMod {
         com.wavesurvivor.altar.AltarRecipes.load();
         CustomChestStore.load();
         com.wavesurvivor.horde.renaissance.RenaissanceShopStore.load();
+        com.wavesurvivor.horde.benediction.BlessingCatalog.load();
         logConfigSummary();
     }
 
@@ -217,6 +218,8 @@ public class WaveSurvivorMod {
         CustomChestStore.load();
         com.wavesurvivor.horde.renaissance.RenaissanceShopStore.load();
         com.wavesurvivor.altar.AltarRecipes.load();
+        com.wavesurvivor.horde.benediction.BlessingCatalog.load();
+        com.wavesurvivor.horde.benediction.BlessingCatalog.syncAll(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer());
 
         int hordes = newCfg.hordeConfigMulti != null ? newCfg.hordeConfigMulti.size() : 0;
         int entities = newCfg.customEntity != null ? newCfg.customEntity.size() : 0;
