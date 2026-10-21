@@ -82,6 +82,10 @@
   relances / bannissements / choix de famille (`BenedictionActionPacket`, état dans le NBT du joueur, +1 toutes les 5 vagues), réglages dans `blessings.json › settings`
   (modifiables par la couche du joueur). Reste : Chance sur Brasier / coffres roulette / butin des monstres, bénédictions spéciales, éditeur des réglages.
 
+- [x] **Étape 4 — spéciales + Chance étendue** (branche `dev-1.8`) : `RogueUpgrade.effects` / `maxLevel`, `BlessingEffects` (Exécution, Aube, Aimant, Bannière, Lien de sang,
+  Berserker, Bastion, Projectiles, Provocation), 8 catégories dans `blessings.json`, `BlessingLuck` (Brasier, coffres roulette, butin supplémentaire), crochets de début de vague
+  (horde, invasion, assaut Kingdom). Les effets spéciaux ne sont pas encore éditables dans l'éditeur (le JSON est conservé tel quel).
+
 ## Étapes (inchangées)
 1. Données (catégories → niveaux, couches de config, synchronisation client, ids conservés).
 2. Éditeur en jeu (liste de catégories, ◀ ▶ entre raretés, case « disponible », sélecteur d'attributs de tous les mods, familles).

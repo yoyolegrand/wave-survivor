@@ -599,6 +599,7 @@ public final class KingdomManager {
         for (Portal p : PORTALS) { p.budget = p.destroyed ? 0 : budget; p.spawned = 0; }
         // Augure : le présage choisi pendant le Calme modifie les effectifs de cet Assaut
         applyOmen(KingdomOmens.startAssault(level.getServer()));
+        com.wavesurvivor.horde.benediction.BlessingEffects.onWaveStart(level.getServer()); // bénédiction de l'Aube
         // Objectif du Calme précédent : clos ; Purification → Assaut plus fort (aucun foyer) ou plus faible (tous)
         double objMult = KingdomObjectives.onAssault();
         // Héritage — Seigneur 5 : 2 premiers Assauts −15 % de monstres

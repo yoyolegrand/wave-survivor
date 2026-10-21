@@ -65,6 +65,14 @@ public class RogueUpgradeManager {
         return persisted;
     }
 
+    /** Tous les niveaux de bénédiction du joueur (identifiant → niveau). */
+    public static java.util.Map<String, Integer> levels(ServerPlayer p) {
+        CompoundTag b = store(p).getCompound(NBT_KEY);
+        java.util.Map<String, Integer> out = new java.util.HashMap<>();
+        for (String k : b.getAllKeys()) if (b.getInt(k) > 0) out.put(k, b.getInt(k));
+        return out;
+    }
+
     public static int getLevel(ServerPlayer p, String id) {
         return store(p).getCompound(NBT_KEY).getInt(id);
     }
@@ -96,6 +104,7 @@ public class RogueUpgradeManager {
             WaveSurvivorMod.LOGGER.warn("[Benediction] addUpgrade '{}' inconnu", id);
             return;
         }
+        if (upg.maxLevel() > 0 && getLevel(p, id) >= upg.maxLevel()) return; // plafond atteint
         int newLevel = getLevel(p, id) + 1;
         setLevel(p, id, newLevel);
         reapplyAll(p);

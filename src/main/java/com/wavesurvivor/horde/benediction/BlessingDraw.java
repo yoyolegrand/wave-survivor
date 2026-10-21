@@ -41,7 +41,10 @@ public final class BlessingDraw {
 
     private static List<String> draw(ServerPlayer p, int count, int wave, Collection<String> exclude, String family, boolean useBans) {
         Map<String, List<RogueUpgrade>> byCat = new LinkedHashMap<>();
-        for (RogueUpgrade u : RogueUpgradeRegistry.all()) byCat.computeIfAbsent(u.category(), k -> new ArrayList<>()).add(u);
+        for (RogueUpgrade u : RogueUpgradeRegistry.all()) {
+            if (u.maxLevel() > 0 && RogueUpgradeManager.getLevel(p, u.id()) >= u.maxLevel()) continue; // déjà au niveau maximal
+            byCat.computeIfAbsent(u.category(), k -> new ArrayList<>()).add(u);
+        }
         Set<String> banned = useBans ? RogueUpgradeManager.banned(p) : Set.of();
         boolean wantFamily = family != null && !family.isEmpty();
         List<String> pool = new ArrayList<>();
@@ -85,7 +88,7 @@ public final class BlessingDraw {
         JsonObject base = child(s, "weights"), growth = child(s, "waveGrowth");
         JsonObject luck = child(s, "luck"), shift = child(luck, "shift");
         double[] def = {60, 28, 10, 2}, defGrowth = {-0.02, 0.01, 0.04, 0.06}, defShift = {-0.4, 0.15, 0.5, 1.0};
-        double bonus = luckBonus(p, HordeJson.dbl(luck, "scale", 12), HordeJson.dbl(luck, "maxBonus", 1.0));
+        double bonus = BlessingLuck.on("draw") ? luckBonus(p, HordeJson.dbl(luck, "scale", 12), HordeJson.dbl(luck, "maxBonus", 1.0)) : 0;
         double[] w = new double[4];
         for (int i = 0; i < 4; i++) {
             String k = BlessingCatalog.RARITIES[i];

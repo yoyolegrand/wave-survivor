@@ -538,6 +538,630 @@
           "heal": 4
         }
       }
+    },
+    {
+      "id": "EXECUTION",
+      "name": "Bénédiction d'Exécution",
+      "icon": "☠",
+      "description": "Dégâts bonus contre les monstres affaiblis",
+      "family": "attack",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "execution",
+              "threshold": 0.2,
+              "bonus": 0.2
+            }
+          ]
+        },
+        "RARE": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "execution",
+              "threshold": 0.25,
+              "bonus": 0.3
+            }
+          ]
+        },
+        "EPIC": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "execution",
+              "threshold": 0.3,
+              "bonus": 0.45
+            }
+          ]
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "execution",
+              "threshold": 0.35,
+              "bonus": 0.6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUBE",
+      "name": "Bénédiction de l'Aube",
+      "icon": "🌅",
+      "description": "Un bouclier d'absorption se recharge au début de chaque vague",
+      "family": "defense",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "dawn_shield",
+              "absorption": 4
+            }
+          ]
+        },
+        "RARE": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "dawn_shield",
+              "absorption": 6
+            }
+          ]
+        },
+        "EPIC": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "dawn_shield",
+              "absorption": 8
+            }
+          ]
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "dawn_shield",
+              "absorption": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "AIMANT",
+      "name": "Bénédiction de l'Aimant",
+      "icon": "🧲",
+      "description": "Attire les objets et l'expérience au sol vers vous",
+      "family": "utility",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "magnet",
+              "radius": 3
+            }
+          ],
+          "maxLevel": 3
+        },
+        "RARE": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "magnet",
+              "radius": 5
+            }
+          ],
+          "maxLevel": 3
+        },
+        "EPIC": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "magnet",
+              "radius": 7
+            }
+          ],
+          "maxLevel": 3
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "magnet",
+              "radius": 10
+            }
+          ],
+          "maxLevel": 3
+        }
+      }
+    },
+    {
+      "id": "BANNIERE",
+      "name": "Bénédiction de la Bannière",
+      "icon": "🚩",
+      "description": "Vos alliés proches infligent plus de dégâts",
+      "family": "team",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "banner",
+              "bonus": 0.05,
+              "radius": 12
+            }
+          ]
+        },
+        "RARE": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "banner",
+              "bonus": 0.08,
+              "radius": 12
+            }
+          ]
+        },
+        "EPIC": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "banner",
+              "bonus": 0.12,
+              "radius": 12
+            }
+          ]
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "banner",
+              "bonus": 0.18,
+              "radius": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "LIEN_DE_SANG",
+      "name": "Bénédiction du Lien de sang",
+      "icon": "🩸",
+      "description": "Une part de vos soins est partagée avec vos alliés proches",
+      "family": "team",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "blood_link",
+              "share": 0.1,
+              "radius": 16
+            }
+          ]
+        },
+        "RARE": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "blood_link",
+              "share": 0.15,
+              "radius": 16
+            }
+          ]
+        },
+        "EPIC": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "blood_link",
+              "share": 0.25,
+              "radius": 16
+            }
+          ]
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "modifiers": [],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "blood_link",
+              "share": 0.4,
+              "radius": 16
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "VERRE_BRISE",
+      "name": "Pacte du Verre brisé",
+      "icon": "🔮",
+      "description": "Beaucoup plus de dégâts, mais moins de PV max",
+      "family": "pact",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_damage",
+              "amount": 0.2,
+              "operation": "multiply_total"
+            },
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": -0.15,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0,
+          "maxLevel": 3
+        },
+        "RARE": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_damage",
+              "amount": 0.3,
+              "operation": "multiply_total"
+            },
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": -0.2,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0,
+          "maxLevel": 3
+        },
+        "EPIC": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_damage",
+              "amount": 0.45,
+              "operation": "multiply_total"
+            },
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": -0.25,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0,
+          "maxLevel": 3
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.attack_damage",
+              "amount": 0.6,
+              "operation": "multiply_total"
+            },
+            {
+              "attribute": "minecraft:generic.max_health",
+              "amount": -0.3,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0,
+          "maxLevel": 3
+        }
+      }
+    },
+    {
+      "id": "BERSERKER",
+      "name": "Pacte du Berserker",
+      "icon": "💢",
+      "description": "Plus vous êtes blessé, plus vous frappez fort et vite, au prix de votre armure",
+      "family": "pact",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": -2,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "berserker",
+              "damage": 0.4,
+              "attackSpeed": 0.3
+            }
+          ],
+          "maxLevel": 3
+        },
+        "RARE": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": -3,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "berserker",
+              "damage": 0.6,
+              "attackSpeed": 0.45
+            }
+          ],
+          "maxLevel": 3
+        },
+        "EPIC": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": -4,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "berserker",
+              "damage": 0.8,
+              "attackSpeed": 0.6
+            }
+          ],
+          "maxLevel": 3
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": -6,
+              "operation": "addition"
+            }
+          ],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "berserker",
+              "damage": 1.0,
+              "attackSpeed": 0.8
+            }
+          ],
+          "maxLevel": 3
+        }
+      }
+    },
+    {
+      "id": "FARDEAU",
+      "name": "Pacte du Fardeau",
+      "icon": "⛓",
+      "description": "Rôle de tank : armure, robustesse, insensible au recul, Bastion, Provocation, projectiles réduits, mais plus lent",
+      "family": "pact",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 4,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 2,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.knockback_resistance",
+              "amount": 0.3,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": -0.06,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "bastion",
+              "perSecond": 0.03,
+              "maxReduction": 0.2
+            },
+            {
+              "type": "projectile_reduction",
+              "reduction": 0.15
+            },
+            {
+              "type": "taunt",
+              "radius": 16,
+              "chance": 0.35
+            }
+          ],
+          "maxLevel": 3
+        },
+        "RARE": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 6,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 3,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.knockback_resistance",
+              "amount": 0.4,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": -0.08,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "bastion",
+              "perSecond": 0.03,
+              "maxReduction": 0.25
+            },
+            {
+              "type": "projectile_reduction",
+              "reduction": 0.2
+            },
+            {
+              "type": "taunt",
+              "radius": 16,
+              "chance": 0.45
+            }
+          ],
+          "maxLevel": 3
+        },
+        "EPIC": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 9,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 4,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.knockback_resistance",
+              "amount": 0.5,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": -0.1,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "bastion",
+              "perSecond": 0.03,
+              "maxReduction": 0.3
+            },
+            {
+              "type": "projectile_reduction",
+              "reduction": 0.25
+            },
+            {
+              "type": "taunt",
+              "radius": 16,
+              "chance": 0.55
+            }
+          ],
+          "maxLevel": 3
+        },
+        "LEGENDARY": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.armor",
+              "amount": 12,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.armor_toughness",
+              "amount": 6,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.knockback_resistance",
+              "amount": 0.6,
+              "operation": "addition"
+            },
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": -0.12,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0,
+          "effects": [
+            {
+              "type": "bastion",
+              "perSecond": 0.03,
+              "maxReduction": 0.35
+            },
+            {
+              "type": "projectile_reduction",
+              "reduction": 0.3
+            },
+            {
+              "type": "taunt",
+              "radius": 16,
+              "chance": 0.65
+            }
+          ],
+          "maxLevel": 3
+        }
+      }
     }
   ],
   "settings": {
@@ -562,6 +1186,36 @@
         "RARE": 0.15,
         "EPIC": 0.5,
         "LEGENDARY": 1.0
+      },
+      "uses": {
+        "draw": true,
+        "roulette": true,
+        "brazier": true,
+        "extraLoot": true
+      },
+      "roulette": {
+        "shift": {
+          "COMMON": -0.3,
+          "UNCOMMON": -0.1,
+          "RARE": 0.2,
+          "EPIC": 0.6,
+          "LEGENDARY": 1.2
+        }
+      },
+      "brazier": {
+        "shift": {
+          "wood": -0.2,
+          "stone": -0.2,
+          "money": 0.0,
+          "iron": 0.1,
+          "essence": 0.3,
+          "reliquary": 1.0,
+          "blessing": 1.0,
+          "pr": 0.5
+        }
+      },
+      "extraLoot": {
+        "maxChance": 0.5
       }
     },
     "rerolls": {

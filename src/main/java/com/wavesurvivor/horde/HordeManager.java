@@ -829,6 +829,7 @@ public class HordeManager {
     }
 
     private void spawnWave(int wave, HordeConfigMultiData.ConfigDataInner cfg) {
+        com.wavesurvivor.horde.benediction.BlessingEffects.onWaveStart(server); // bénédiction de l'Aube
         if (cfg.hordeEntities == null || cfg.hordeEntities.isEmpty()) {
             WaveSurvivorMod.LOGGER.warn("[Wave {}] hordeEntities vide.", wave);
             return;

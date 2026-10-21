@@ -168,6 +168,16 @@ public class BenedictionListScreen extends Screen {
                     x, cy, 0xFFFF5555, false);
             cy += font.lineHeight + 1;
         }
+        for (RogueUpgrade.Effect fx : upg.effects()) {
+            g.drawString(font, Component.literal("  " + com.wavesurvivor.horde.benediction.BlessingEffects.describe(fx)).withStyle(ChatFormatting.AQUA),
+                    x, cy, 0xFF55FFFF, false);
+            cy += font.lineHeight + 1;
+        }
+        if (upg.maxLevel() > 0) {
+            g.drawString(font, Component.literal("  " + com.wavesurvivor.i18n.WSLang.t("bless.max_level", upg.maxLevel())).withStyle(ChatFormatting.DARK_GRAY),
+                    x, cy, 0xFF777777, false);
+            cy += font.lineHeight + 1;
+        }
         cy += 10;
 
         // Note cumul
@@ -195,6 +205,10 @@ public class BenedictionListScreen extends Screen {
 
     private static String friendlyAttrName(String descId) {
         String key = descId != null ? descId.toLowerCase() : "";
+        if (descId != null && !key.startsWith("attribute.name.generic.")) {
+            String t = Component.translatable(descId).getString();
+            if (!t.equals(descId)) return t;
+        }
         if (key.contains("max_health")) return com.wavesurvivor.i18n.WSLang.t("ui.pv_max");
         if (key.contains("armor_toughness")) return com.wavesurvivor.i18n.WSLang.t("ui.robustesse");
         if (key.contains("armor")) return com.wavesurvivor.i18n.WSLang.t("ui.armure");

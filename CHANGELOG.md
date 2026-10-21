@@ -9,7 +9,8 @@
 - 🍀 **Luck matters**: the Luck attribute (Luck blessings, potions, gear) raises the odds of rarer levels, with diminishing returns so it never breaks the game.
 - ↻ **Rerolls and bans**: you start with **2 rerolls and 1 ban**, and win **+1 of each every 5 waves**. *Reroll* redraws the cards — and you can **pick a family** (Attack, Defense, Mobility, Utility, Team, Pact, Statistics) so you are not drowned in options; *Ban* removes a category from your draws for the whole run and replaces the card.
 - 🛡 You can now only pick a blessing that was actually offered (the chat command allowed any).
-- Next: Luck on the Offering Brazier, roulette chests and extra monster loot, then the special blessings (Execution, Dawn Shield, Magnet, Banner, Blood Link, Glass, Berserker, Burden).
+- 🍀 **Luck goes further**: it also improves the **Offering Brazier** rewards (Kingdom), the **roulette chests** (rarer rewards weigh more) and gives monsters a chance to drop **an extra loot batch** (never more than one extra per monster). Each use can be switched off in the settings.
+- ✨ **8 special blessings** (each with the 4 rarities, stackable): **Execution** (bonus damage on weakened monsters), **Dawn** (absorption shield refilled every wave), **Magnet** (pulls items and XP), **Banner** (nearby allies deal more damage), **Blood Link** (shares part of your healing with allies) and three **Pacts** that trade a drawback for power: **Shattered Glass** (much more damage, less max HP), **Berserker** (hit harder and faster the more hurt you are, less armor) and **Burden** — a full tank kit: high armor and toughness, knockback immunity, **Bastion** (damage reduction that grows while you stand still), **Taunt** (nearby monsters tend to target you — never while you are choosing a blessing) and reduced projectile damage, at the price of speed. Pacts are capped at level 3.
 
 ## 1.7.0 — Endless Mode, Burning Sands & Invasions
 

@@ -203,6 +203,19 @@ public class BenedictionSelectionScreen extends Screen {
             String healLine = "+" + Math.round(upg.healOnApply() * BenedictionClient.mult) + com.wavesurvivor.i18n.WSLang.t("ui.pv_immediats");
             g.drawCenteredString(font, Component.literal(healLine).withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
                     x + CARD_WIDTH / 2, descY, 0xFFFF5555);
+            descY += font.lineHeight + 1;
+        }
+        // Effets spéciaux (Exécution, Aimant, Bastion…) : une ou plusieurs lignes par effet
+        for (RogueUpgrade.Effect fx : upg.effects()) {
+            for (FormattedCharSequence line : font.split(Component.literal(com.wavesurvivor.horde.benediction.BlessingEffects.describe(fx))
+                    .withStyle(ChatFormatting.AQUA), CARD_WIDTH - 16)) {
+                g.drawCenteredString(font, line, x + CARD_WIDTH / 2, descY, 0xFF55FFFF);
+                descY += font.lineHeight + 1;
+            }
+        }
+        if (upg.maxLevel() > 0) {
+            g.drawCenteredString(font, Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.max_level", upg.maxLevel())).withStyle(ChatFormatting.DARK_GRAY),
+                    x + CARD_WIDTH / 2, descY + 2, 0xFF777777);
         }
     }
 

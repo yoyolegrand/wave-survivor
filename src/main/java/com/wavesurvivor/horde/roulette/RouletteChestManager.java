@@ -289,7 +289,7 @@ public class RouletteChestManager {
 
         // Ajuste les rewards par vague en cours
         int currentWave = HordeManager.get().getCurrentWave();
-        List<RouletteReward> adjusted = getAdjustedRewards(config, currentWave);
+        List<RouletteReward> adjusted = com.wavesurvivor.horde.benediction.BlessingLuck.adjustRoulette(getAdjustedRewards(config, currentWave), player); // Chance
 
         // Un tirage pondéré par clé
         List<RouletteReward> rolled = new java.util.ArrayList<>();

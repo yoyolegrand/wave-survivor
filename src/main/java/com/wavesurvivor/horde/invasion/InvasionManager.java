@@ -310,6 +310,7 @@ public class InvasionManager {
     // ─── Vagues ───
 
     private static void startWave(Inv v, int n, long now) {
+        com.wavesurvivor.horde.benediction.BlessingEffects.onWaveStart(v.level.getServer()); // bénédiction de l'Aube
         v.wave = n;
         v.phase = Phase.FIGHT;
         v.waveStart = now;

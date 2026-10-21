@@ -164,12 +164,22 @@ public final class BlessingCatalog {
             }
         }
         int heal = t.has("heal") && t.get("heal").isJsonPrimitive() ? t.get("heal").getAsInt() : 0;
-        if (mods.isEmpty() && heal <= 0) return null;
+        List<RogueUpgrade.Effect> effects = new ArrayList<>();
+        if (t.has("effects") && t.get("effects").isJsonArray()) {
+            for (JsonElement fe : t.getAsJsonArray("effects")) {
+                if (!fe.isJsonObject() || str(fe.getAsJsonObject(), "type").isBlank()) continue;
+                JsonObject params = fe.getAsJsonObject().deepCopy();
+                params.remove("type");
+                effects.add(new RogueUpgrade.Effect(str(fe.getAsJsonObject(), "type"), params));
+            }
+        }
+        int maxLevel = t.has("maxLevel") && t.get("maxLevel").isJsonPrimitive() ? Math.max(0, t.get("maxLevel").getAsInt()) : 0;
+        if (mods.isEmpty() && heal <= 0 && effects.isEmpty()) return null;
         String name = t.has("name") && !str(t, "name").isBlank() ? str(t, "name")
                 : str(cat, "name") + " (" + RARITY_LABELS_FR[rarityIndex] + ")";
         String desc = t.has("description") && !str(t, "description").isBlank() ? str(t, "description") : str(cat, "description");
         String family = str(cat, "family").isBlank() ? "utility" : str(cat, "family");
-        return new RogueUpgrade(idOf(cid, RARITIES[rarityIndex]), name, desc, str(cat, "icon"), RARITY_COLORS[rarityIndex], mods, heal, cid, family, rarityIndex);
+        return new RogueUpgrade(idOf(cid, RARITIES[rarityIndex]), name, desc, str(cat, "icon"), RARITY_COLORS[rarityIndex], mods, heal, cid, family, rarityIndex, effects, maxLevel);
     }
 
     public static Attribute attribute(String id) {

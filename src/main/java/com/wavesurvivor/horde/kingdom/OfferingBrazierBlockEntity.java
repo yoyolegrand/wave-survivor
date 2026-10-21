@@ -156,7 +156,7 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
         int relics = 0, pr = 0;
         boolean blessing = false, repair = false, fervor = false;
         for (int r = 0; r < rolls; r++) {
-            String reward = roll();
+            String reward = roll(p);
             switch (reward) {
                 case "wood" -> res.merge(KingdomTreasury.Res.WOOD, qty(15, 30), Integer::sum);
                 case "stone" -> res.merge(KingdomTreasury.Res.STONE, qty(15, 30), Integer::sum);
@@ -217,7 +217,7 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
     private static int qty(int a, int b) { return a + RNG.nextInt(b - a + 1); }
 
     /** Tirage pondéré selon le niveau et la spécialisation. */
-    private String roll() {
+    private String roll(ServerPlayer luckOwner) {
         int lvl = level();
         boolean relicsSpec = "relics".equals(variant), war = "war".equals(variant);
         // poids ×10 pour garder des décimales (0,7 % → 7)
@@ -227,9 +227,11 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
                 : new int[]{400, 300, 160, 100, 30, 7, 4, 15, 0, 0};
         if (relicsSpec) { w[5] *= 2; w[6] *= 2; }
         if (war) { w[8] = 60; w[9] = 40; }
+        // Chance de celui qui offre : les meilleures récompenses pèsent davantage
+        for (int i = 0; i < w.length; i++) w[i] = (int) Math.round(w[i] * com.wavesurvivor.horde.benediction.BlessingLuck.brazierFactor(luckOwner, ids[i]));
         int sum = 0;
         for (int v : w) sum += v;
-        int r = RNG.nextInt(sum);
+        int r = RNG.nextInt(Math.max(1, sum));
         for (int i = 0; i < w.length; i++) {
             r -= w[i];
             if (r < 0) return ids[i];

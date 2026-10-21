@@ -19,6 +19,8 @@ import java.util.List;
  * @param category     Identifiant de la catégorie (ex. "VIE") : une catégorie regroupe ses niveaux de rareté (1.8)
  * @param family       Famille de la catégorie (attack, defense, mobility, utility, team, pact, stats)
  * @param rarity       Rareté : 0 COMMON, 1 RARE, 2 EPIC, 3 LEGENDARY
+ * @param effects      Effets spéciaux (execution, magnet, bastion… voir BlessingEffects), en plus des attributs
+ * @param maxLevel     Niveau maximal que le joueur peut atteindre avec cette bénédiction (0 = illimité)
  */
 public record RogueUpgrade(
         String id,
@@ -30,8 +32,17 @@ public record RogueUpgrade(
         int healOnApply,
         String category,
         String family,
-        int rarity
+        int rarity,
+        List<Effect> effects,
+        int maxLevel
 ) {
+    /** Effet spécial : type + paramètres (valeurs de base du niveau 1 ; elles croissent avec le niveau de la bénédiction). */
+    public record Effect(String type, com.google.gson.JsonObject params) {
+        public double p(String key, double def) {
+            return params != null && params.has(key) && params.get(key).isJsonPrimitive() ? params.get(key).getAsDouble() : def;
+        }
+    }
+
     /** Nom traduit dans la langue du mod (le texte français sert de clé). */
     @Override
     public String name() {

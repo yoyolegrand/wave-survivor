@@ -116,6 +116,8 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.frost.StormManager()); // 1.6 : tempêtes (chaos et boss)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.RenaissanceRewards()); // 1.5 : PR gagnés en jouant (boss)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BenedictionEvents()); // bénédictions conservées à la mort
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BlessingEffects()); // 1.8 : bénédictions spéciales (Exécution, Bannière, Fardeau…)
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BlessingLuck()); // 1.8 : la Chance sur le butin des monstres
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.KingdomReport()); // bilan de fin d'Assaut (Kingdom)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.skill.IceFx()); // effets de glace en blocs (nettoyage)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.OfferingBrazier()); // Brasier des Offrandes (Ferveur du royaume)

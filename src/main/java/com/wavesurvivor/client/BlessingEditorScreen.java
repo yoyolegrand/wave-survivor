@@ -304,6 +304,14 @@ public class BlessingEditorScreen extends Screen {
         y += 18;
         label(x0, y + 3, WSLang.t("blessed.heal"));
         num(x0 + lw + 20, y, 40, String.valueOf(HordeJson.num(t, "heal", 0)), v -> t.addProperty("heal", (int) Math.round(parse(v))));
+        // Effets spéciaux (Exécution, Bastion…) : conservés tels quels, réglés dans blessings.json / custom_blessings.json
+        if (t.has("effects") && t.get("effects").isJsonArray() && t.getAsJsonArray("effects").size() > 0) {
+            StringBuilder types = new StringBuilder();
+            for (JsonElement fe : t.getAsJsonArray("effects")) {
+                if (fe.isJsonObject()) types.append(types.length() > 0 ? ", " : "").append(HordeJson.str(fe.getAsJsonObject(), "type", "?"));
+            }
+            label(x0 + lw + 66, y + 3, "§b" + WSLang.t("blessed.special_fx", types.toString()));
+        }
         y += 22;
 
         label(x0, y + 3, "§6" + WSLang.t("blessed.mods"));

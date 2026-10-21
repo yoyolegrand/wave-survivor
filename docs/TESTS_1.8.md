@@ -3,6 +3,19 @@
 Cocher `[x]` quand c'est validé en jeu. Une ligne en échec : la laisser décochée et noter le souci à côté.
 Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 
+## Étape 4 — bénédictions spéciales et Chance étendue
+- [ ] Les 8 nouvelles catégories apparaissent dans l'éditeur (familles Attaque, Défense, Utilité, Équipe, Pacte) et dans l'écran de choix avec leurs lignes d'effet (en cyan)
+- [ ] Exécution : dégâts nettement plus forts sur un monstre presque mort (comparer sans / avec)
+- [ ] Aube : au début de la vague suivante, cœurs jaunes d'absorption + message
+- [ ] Aimant : les objets et l'XP au sol viennent vers le joueur (pas ceux qu'on vient de lâcher)
+- [ ] Bannière (2 joueurs) : l'allié proche inflige plus de dégâts ; Lien de sang : les soins du porteur soignent aussi l'allié proche
+- [ ] Verre brisé : dégâts en hausse, PV max en baisse ; plafond de niveau 3 respecté (la carte n'est plus proposée au niveau max)
+- [ ] Berserker : plus fort et plus rapide quand les PV sont bas ; armure réduite
+- [ ] Fardeau : armure / robustesse élevées, pas de recul, plus lent ; immobile = dégâts reçus réduits de plus en plus ; flèches réduites ; les monstres proches te ciblent
+- [ ] Provocation + choix de bénédiction en multijoueur : le joueur qui choisit reste ignoré des monstres (pas de collision)
+- [ ] Chance : plus de lots rares aux coffres roulette et au Brasier (avec de la Chance contre sans) ; de temps en temps un monstre de horde lâche un lot en double
+- [ ] `/ws benediction liste` : les nouvelles catégories s'affichent avec leurs effets
+
 ## Étape 3 — tirage par rareté, Chance, relances, bannissements, famille
 - [ ] Fin de vague : 3 cartes de CATÉGORIES différentes ; sur une dizaine de menus, les raretés varient (beaucoup de Commun/Rare, peu d'Épique, rare Légendaire)
 - [ ] Les vagues avancées proposent plus souvent du rare / épique / légendaire qu'au début
