@@ -130,6 +130,8 @@ public class HordeCommand {
                 // Invasions de village (opérateurs)
                 .then(com.wavesurvivor.horde.invasion.InvasionCommand.build())
                 .then(com.wavesurvivor.horde.skill.SkillTestCommand.build())
+                // Mesure de la performance pendant les vagues (opérateurs)
+                .then(com.wavesurvivor.horde.HordePerf.build())
                 // Mode sans fin : meilleurs scores (ouvert à tous)
                 .then(Commands.literal("endless").executes(ctx -> com.wavesurvivor.horde.endless.Endless.showTop(ctx.getSource())))
                 // Statistiques et succès du joueur (ouvert à tous)

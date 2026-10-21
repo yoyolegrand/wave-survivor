@@ -42,6 +42,11 @@ jobs:
             exit 1
           fi
 
+      - name: Check release title length
+        env:
+          STRICT: '1'
+        run: python3 .github/scripts/check_title.py
+
       - name: Extract changelog section
         id: log
         run: |

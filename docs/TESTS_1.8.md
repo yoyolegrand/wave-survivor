@@ -3,6 +3,11 @@
 Cocher `[x]` quand c'est validé en jeu. Une ligne en échec : la laisser décochée et noter le souci à côté.
 Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 
+## Performance
+- [ ] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
+- [ ] Mesure réelle : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
+- [ ] `/ws perf verbose` : bascule l'affichage des résumés de vague dans le chat des opérateurs
+
 ## Étape 4 — bénédictions spéciales et Chance étendue
 - [ ] Les 8 nouvelles catégories apparaissent dans l'éditeur (familles Attaque, Défense, Utilité, Équipe, Pacte) et dans l'écran de choix avec leurs lignes d'effet (en cyan)
 - [ ] Exécution : dégâts nettement plus forts sur un monstre presque mort (comparer sans / avec)

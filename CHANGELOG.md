@@ -2,6 +2,9 @@
 
 ## 1.8.0 — Blessings Rework *(in progress)*
 
+### ⚡ Performance
+- 📈 New `/ws perf` (operators): what a wave costs — **server tick time**, entities, horde units, visual effects, items on the ground and pending actions — measured every second during a horde or invasion, with the worst of each wave written to the log (and to the operators' chat with `/ws perf verbose`).
+
 ### 🙏 Blessings
 - 🧱 Blessings are now **data, not code**: grouped into **categories** (Life, Armor, Force…) that hold their rarity levels (Common, Rare, Epic, Legendary), read from the mod at every launch like the hordes — your own changes will live in `config/wavesurvivor/custom_blessings.json`. 
 - 🛠 New **Blessings editor** (button in the horde editor): categories on the left, and for each one the **◀ ▶ arrows** go from Common to Legendary. Every level has its own **Available** switch (Longevity only at Epic and Legendary, for instance), heal and effects — any attribute of the game or of your mods (Apothic Attributes, Iron's Spells…) through a searchable picker. Changes to the mod's blessings are kept field by field (**[modified · N]**, **↺** restores); you can also create, duplicate and delete categories. Operators only, not during a horde.

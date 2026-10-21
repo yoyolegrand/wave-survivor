@@ -91,6 +91,9 @@ public final class IceFx {
         d.load(tag);
     }
 
+    /** Nombre de blocs d'effet actuellement affichés (mesure de la performance, /ws perf). */
+    public static int activeCount() { return ACTIVE.size(); }
+
     public static void remove(Display.BlockDisplay d) {
         if (d == null) return;
         ACTIVE.remove(d.getUUID());
