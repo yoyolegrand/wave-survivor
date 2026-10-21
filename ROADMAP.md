@@ -26,9 +26,11 @@
 
 ## 🔜 Next: 1.8
 - 🙏 **Blessings editor rework** — a full in-game editor for the blessings (the choice screen, values and rarity), in the same style as the horde editor
+- 🌐 **Multiplayer reliability** — test and harden statistics, shared lives, the blessing-choice protection and save & resume with several players
+- ⚡ **Performance under load** — measure what a big wave (Endless, advanced hordes) costs and cap or smooth spawns and visual effects if needed
+- 🏛 **Ready-made arenas** — ruins, graveyards, castles generated in the world with a locked altar already bound to one of the existing hordes (built in-game with WorldEdit, converted from `.schem` to structures)
 
 ## 🔭 Later
-- 🏛 **Ready-made arenas** — structures generated around the altar (ruins, temple, fortress)
 - 🧩 **Creator API** (KubeJS / datapacks) — add skills, hordes and relics without touching the code
 - 🆙 **Port to newer versions** — Minecraft 1.21 / NeoForge
 - 🎨 **Custom models** for the bosses
