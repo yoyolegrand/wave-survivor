@@ -34,8 +34,15 @@
    le tirage vers les hautes raretés.
 4. **Spéciales + gameplay de la Chance** (liste à valider).
 
+## Décisions de Yoann (2026-10-21, 2e tour)
+- **4 raretés** (Commun, Rare, Épique, Légendaire) : on garde les 4 actuelles (« Uncommon » = Peu commun, oublié, abandonné).
+- **La Chance** (attribut `Luck`) agit sur : le tirage des bénédictions, l'autel de Renaissance (sacrifice), le Brasier d'offrandes du Kingdom
+  (les récompenses tirées des items offerts), les coffres roulette, et, côté gameplay, du **butin supplémentaire sur les monstres**.
+- Une bénédiction peut **revenir plusieurs fois** pour améliorer sa statistique (niveaux cumulables, déjà le cas).
+- **Relances et bannissements : oui.** **Pas de listes de bénédictions par horde.**
+- Bénédictions spéciales : liste à valider (voir la proposition dans la conversation).
+
 ## À trancher
-- Garder 4 raretés ou ajouter « Peu commun » (Yoann a écrit « Uncommon ») ?
-- Gameplay de la Chance (en plus du tirage) : butin supplémentaire des monstres, relance gratuite, 4e carte, double niveau… ?
-- Liste des bénédictions spéciales (vol de vie, épines, second souffle, explosion à la mort d'un monstre, aura de régénération…).
-- Listes de bénédictions par horde ? Relances / bannissements ?
+- Formule de la Chance (rendements décroissants, plafonds) et réglages : voir la proposition.
+- Liste finale des bénédictions spéciales.
+- Nombre de relances et de bannissements par partie (et comment en gagner).
