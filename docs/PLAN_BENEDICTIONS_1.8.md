@@ -34,15 +34,38 @@
    le tirage vers les hautes raretés.
 4. **Spéciales + gameplay de la Chance** (liste à valider).
 
-## Décisions de Yoann (2026-10-21, 2e tour)
-- **4 raretés** (Commun, Rare, Épique, Légendaire) : on garde les 4 actuelles (« Uncommon » = Peu commun, oublié, abandonné).
-- **La Chance** (attribut `Luck`) agit sur : le tirage des bénédictions, l'autel de Renaissance (sacrifice), le Brasier d'offrandes du Kingdom
-  (les récompenses tirées des items offerts), les coffres roulette, et, côté gameplay, du **butin supplémentaire sur les monstres**.
-- Une bénédiction peut **revenir plusieurs fois** pour améliorer sa statistique (niveaux cumulables, déjà le cas).
-- **Relances et bannissements : oui.** **Pas de listes de bénédictions par horde.**
-- Bénédictions spéciales : liste à valider (voir la proposition dans la conversation).
+## Décisions de Yoann (2026-10-21, validées)
+- **4 raretés** (Commun, Rare, Épique, Légendaire).
+- **La Chance** (attribut `Luck`, rendements décroissants + plafonds, un interrupteur par usage, réglages dans un fichier à couches) agit sur :
+  1. le tirage des bénédictions (poids des hautes raretés) ;
+  2. le Brasier d'offrandes du Kingdom (récompenses tirées des items offerts) ;
+  3. les coffres roulette (poids des lots de haute rareté) ;
+  4. le butin supplémentaire des monstres (au plus un lot de plus par monstre, tiré dans leur propre table).
+  **PAS l'autel de Renaissance** (trop fort, retiré).
+- Une bénédiction revient plusieurs fois pour améliorer sa statistique (niveaux cumulables).
+- **Pas de listes de bénédictions par horde.**
 
-## À trancher
-- Formule de la Chance (rendements décroissants, plafonds) et réglages : voir la proposition.
-- Liste finale des bénédictions spéciales.
-- Nombre de relances et de bannissements par partie (et comment en gagner).
+## Bénédictions spéciales retenues (code nécessaire ; les bénédictions de statistiques passent par l'éditeur)
+- **Attaque** : *Exécution* (dégâts bonus contre les monstres sous un seuil de PV).
+- **Défense** : *Bouclier de l'aube* (absorption rechargée au début de chaque vague).
+- **Utilité** : *Aimant* (attire les objets et l'expérience au sol dans un rayon).
+- **Équipe** : *Bannière* (alliés proches : bonus de dégâts) et *Lien de sang* (part des soins reçus partagée avec les alliés proches).
+- **Pactes** (risque contre bénéfice) : *Verre brisé* (beaucoup plus de dégâts, moins de PV max), *Berserker* (dégâts et vitesse d'attaque qui montent
+  quand les PV baissent), *Fardeau*.
+- **Fardeau doit être un ensemble complet et UNIQUE**, pas « de l'armure en plus » (sinon il fait doublon avec Résistance). Rôle « tank » : vitesse
+  réduite en échange de (a) armure et robustesse élevées, (b) insensibilité au recul, (c) **Bastion** : réduction de dégâts croissante tant qu'on
+  reste immobile, (d) **Provocation** : les monstres proches ont tendance à te cibler (protège l'équipe), (e) projectiles reçus fortement réduits.
+  Chaque niveau renforce l'ensemble ; le malus de vitesse augmente aussi.
+
+## Relances, bannissements, choix de famille
+- 2 relances et 1 bannissement au départ ; **+1 relance et +1 bannissement toutes les 5 vagues** (l'Héritage de Renaissance pourra en ajouter).
+- *Relancer* : retire les 3 cartes et en tire 3 nouvelles. *Bannir* : retire une catégorie du tirage pour toute la partie du joueur.
+- **Choix de la famille** (pour éviter d'être noyé par trop de bénédictions) : chaque catégorie a une famille (Attaque, Défense, Mobilité, Utilité, Équipe,
+  Pacte, Statistiques) ; en relançant, le joueur peut choisir une famille (ou « au hasard ») pour que les 3 nouvelles cartes viennent de celle-ci.
+  Proposition retenue pour la validation : pas de jeton supplémentaire, le choix est inclus dans la relance.
+
+## Étapes (inchangées)
+1. Données (catégories → niveaux, couches de config, synchronisation client, ids conservés).
+2. Éditeur en jeu (liste de catégories, ◀ ▶ entre raretés, case « disponible », sélecteur d'attributs de tous les mods, familles).
+3. Tirage par rareté (poids, Chance, 3 catégories distinctes), relances, bannissements, choix de famille.
+4. Bénédictions spéciales + butin supplémentaire des monstres + Chance sur Brasier et coffres roulette.
