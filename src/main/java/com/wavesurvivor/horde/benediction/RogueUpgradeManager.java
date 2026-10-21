@@ -65,6 +65,12 @@ public class RogueUpgradeManager {
         return persisted;
     }
 
+    /** Envoie au joueur le résumé de ses bénédictions et de leurs bonus cumulés (/ws benediction mine). */
+    public static void sendSummary(ServerPlayer p) {
+        NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> p),
+                new com.wavesurvivor.network.BlessingSummaryPacket(levels(p), (float) difficultyMult()));
+    }
+
     /** Tous les niveaux de bénédiction du joueur (identifiant → niveau). */
     public static java.util.Map<String, Integer> levels(ServerPlayer p) {
         CompoundTag b = store(p).getCompound(NBT_KEY);
@@ -170,9 +176,8 @@ public class RogueUpgradeManager {
         data.remove(NBT_LAST_WAVE_KEY);
         data.remove(NBT_STATE);
         PENDING.remove(p.getUUID());
-        p.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.benedictions_dissipees")).withStyle(ChatFormatting.RED));
-        WaveSurvivorMod.LOGGER.info("[Benediction] '{}' benedictions clear (horde terminee)",
-                p.getName().getString());
+        // Plus de message au joueur (il réapparaissait à chaque connexion) : on nettoie en silence et on le note dans le journal
+        if (!benedictions.isEmpty()) WaveSurvivorMod.LOGGER.info("[Benediction] '{}' benedictions clear (horde terminee)", p.getName().getString());
     }
 
     /** Clear tous les joueurs connectés (appelé à la fin de la horde). */
@@ -268,7 +273,7 @@ public class RogueUpgradeManager {
         PENDING.put(p.getUUID(), new Pending(new ArrayList<>(ids), wave));
         NetworkHandler.CHANNEL.send(
                 PacketDistributor.PLAYER.with(() -> p),
-                new OpenBenedictionScreenPacket(ids, wave, (float) difficultyMult(), rerollsLeft(p), bansLeft(p)));
+                new OpenBenedictionScreenPacket(ids, wave, (float) difficultyMult(), rerollsLeft(p), bansLeft(p), levels(p)));
         // Multijoueur : le jeu ne se met pas en pause, le joueur est donc protégé pendant son choix (solo : pause côté client)
         if (BenedictionProtection.needed(p.getServer())) BenedictionProtection.protect(p);
     }

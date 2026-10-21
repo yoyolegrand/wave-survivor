@@ -173,6 +173,10 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, ShakePacket.class,
                 ShakePacket::encode, ShakePacket::decode, ShakePacket::handle);
 
+        // Résumé des bonus cumulés (1.8) : serveur → client
+        CHANNEL.registerMessage(id++, BlessingSummaryPacket.class,
+                BlessingSummaryPacket::encode, BlessingSummaryPacket::decode, BlessingSummaryPacket::handle);
+
         // Relances et bannissements des bénédictions (1.8) : client → serveur
         CHANNEL.registerMessage(id++, BenedictionActionPacket.class,
                 BenedictionActionPacket::encode, BenedictionActionPacket::decode, BenedictionActionPacket::handle);

@@ -355,6 +355,10 @@ public class HordeCommand {
                 .then(Commands.literal("benediction")
                         .then(Commands.literal("menu").executes(HordeCommand::benedictionMenu))
                         .then(Commands.literal("liste").executes(HordeCommand::benedictionListe))
+                        .then(Commands.literal("mine").executes(ctx -> {
+                            try { RogueUpgradeManager.sendSummary(ctx.getSource().getPlayerOrException()); return 1; }
+                            catch (Exception e) { return 0; }
+                        }))
                         .then(Commands.literal("choose")
                                 .then(Commands.argument("id", StringArgumentType.string())
                                         .suggests(BENEDICTION_IDS)

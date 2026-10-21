@@ -33,11 +33,13 @@ public class BenedictionSelectionScreen extends Screen {
     private final int currentWave;
     /** Relances et bannissements restants (1.8). */
     private final int rerolls, bans;
+    /** Bénédictions déjà obtenues : sert au bouton « Mes bonus ». */
+    private final java.util.Map<String, Integer> owned;
     /** Famille choisie pour la prochaine relance : -1 = au hasard (gardée d'un menu à l'autre). */
     private static int familyIdx = -1;
     private static final String[] FAMILIES = {"attack", "defense", "mobility", "utility", "team", "pact", "stats"};
 
-    public BenedictionSelectionScreen(List<String> ids, int currentWave, int rerolls, int bans) {
+    public BenedictionSelectionScreen(List<String> ids, int currentWave, int rerolls, int bans, java.util.Map<String, Integer> owned) {
         super(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.choisissez_un_don")));
         this.choices = new ArrayList<>();
         for (String id : ids) {
@@ -47,6 +49,7 @@ public class BenedictionSelectionScreen extends Screen {
         this.currentWave = currentWave;
         this.rerolls = rerolls;
         this.bans = bans;
+        this.owned = owned;
     }
 
     @Override
@@ -108,6 +111,9 @@ public class BenedictionSelectionScreen extends Screen {
                 .bounds(width / 2 + 40, by, 70, 20)
                 .build();
         addRenderableWidget(close);
+        addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.mine_btn")),
+                        btn -> minecraft.setScreen(new BlessingSummaryScreen(owned, this)))
+                .bounds(width / 2 + 116, by, 110, 20).build());
     }
 
     @Override
@@ -220,7 +226,7 @@ public class BenedictionSelectionScreen extends Screen {
     }
 
     /** Formate un modifier en chaîne lisible pour l'affichage : "+2 Armure" ou "+15% Vitesse". */
-    private static String formatModifier(RogueUpgrade.AttributeMod mod) {
+    static String formatModifier(RogueUpgrade.AttributeMod mod) {
         String attrName = friendlyAttrName(mod.attribute().getDescriptionId());
         double amount = mod.amount() * BenedictionClient.mult; // valeur réelle (difficulté)
         String sign = amount >= 0 ? "+" : "";

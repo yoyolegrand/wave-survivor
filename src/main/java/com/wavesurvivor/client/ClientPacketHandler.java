@@ -26,11 +26,17 @@ public class ClientPacketHandler {
         }
     }
 
-    public static void openBenedictionScreen(java.util.List<String> ids, int currentWave, float mult, int rerolls, int bans) {
+    public static void openBlessingSummary(java.util.Map<String, Integer> owned, float mult) {
+        BenedictionClient.mult = mult;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc != null) mc.setScreen(new BlessingSummaryScreen(owned, null));
+    }
+
+    public static void openBenedictionScreen(java.util.List<String> ids, int currentWave, float mult, int rerolls, int bans, java.util.Map<String, Integer> owned) {
         BenedictionClient.mult = mult;
         Minecraft mc = Minecraft.getInstance();
         if (mc != null) {
-            mc.setScreen(new BenedictionSelectionScreen(ids, currentWave, rerolls, bans));
+            mc.setScreen(new BenedictionSelectionScreen(ids, currentWave, rerolls, bans, owned));
         }
     }
 

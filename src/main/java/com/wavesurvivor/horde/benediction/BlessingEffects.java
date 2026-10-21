@@ -54,6 +54,59 @@ public class BlessingEffects {
     private static final Map<UUID, double[]> STILL = new HashMap<>();
     private static boolean sharing = false;
 
+    /** Paramètre d'un type d'effet : nom et valeur par défaut. */
+    public record ParamDef(String key, double def) {}
+
+    /** Types d'effets et leurs paramètres (pour l'éditeur). */
+    public static final Map<String, List<ParamDef>> PARAMS = new java.util.LinkedHashMap<>();
+    static {
+        PARAMS.put("execution", List.of(new ParamDef("threshold", 0.25), new ParamDef("bonus", 0.30)));
+        PARAMS.put("dawn_shield", List.of(new ParamDef("absorption", 6)));
+        PARAMS.put("magnet", List.of(new ParamDef("radius", 5)));
+        PARAMS.put("banner", List.of(new ParamDef("bonus", 0.08), new ParamDef("radius", 12)));
+        PARAMS.put("blood_link", List.of(new ParamDef("share", 0.15), new ParamDef("radius", 16)));
+        PARAMS.put("berserker", List.of(new ParamDef("damage", 0.6), new ParamDef("attackSpeed", 0.45)));
+        PARAMS.put("bastion", List.of(new ParamDef("perSecond", 0.03), new ParamDef("maxReduction", 0.25)));
+        PARAMS.put("projectile_reduction", List.of(new ParamDef("reduction", 0.20)));
+        PARAMS.put("taunt", List.of(new ParamDef("radius", 16), new ParamDef("chance", 0.45)));
+    }
+
+    private static final java.util.Set<String> SUMMED = java.util.Set.of("execution.bonus", "dawn_shield.absorption", "magnet.radius", "banner.bonus",
+            "blood_link.share", "berserker.damage", "berserker.attackSpeed", "bastion.perSecond", "bastion.maxReduction",
+            "projectile_reduction.reduction", "taunt.chance");
+    private static final Map<String, Double> CAPS = Map.of("magnet.radius", 14.0, "banner.bonus", 0.6, "blood_link.share", 0.8,
+            "bastion.maxReduction", 0.75, "projectile_reduction.reduction", 0.75, "taunt.chance", 0.9);
+
+    /**
+     * Effets spéciaux CUMULÉS d'un ensemble de bénédictions (identifiant → niveau) : les valeurs s'additionnent (× niveau) sauf les seuils et
+     * rayons, qui prennent le maximum ; plafonds appliqués. Sert à l'affichage « mes bonus ».
+     */
+    public static List<RogueUpgrade.Effect> aggregate(Map<String, Integer> owned) {
+        Map<String, com.google.gson.JsonObject> byType = new java.util.LinkedHashMap<>();
+        for (Map.Entry<String, Integer> e : owned.entrySet()) {
+            RogueUpgrade u = RogueUpgradeRegistry.get(e.getKey());
+            if (u == null) continue;
+            for (RogueUpgrade.Effect fx : u.effects()) {
+                com.google.gson.JsonObject agg = byType.computeIfAbsent(fx.type(), k -> new com.google.gson.JsonObject());
+                if (fx.params() == null) continue;
+                for (String k : fx.params().keySet()) {
+                    double v = fx.p(k, 0);
+                    double old = agg.has(k) ? agg.get(k).getAsDouble() : 0;
+                    agg.addProperty(k, SUMMED.contains(fx.type() + "." + k) ? old + v * e.getValue() : Math.max(old, v));
+                }
+            }
+        }
+        List<RogueUpgrade.Effect> out = new ArrayList<>();
+        for (Map.Entry<String, com.google.gson.JsonObject> e : byType.entrySet()) {
+            for (String k : new ArrayList<>(e.getValue().keySet())) {
+                Double cap = CAPS.get(e.getKey() + "." + k);
+                if (cap != null && e.getValue().get(k).getAsDouble() > cap) e.getValue().addProperty(k, cap);
+            }
+            out.add(new RogueUpgrade.Effect(e.getKey(), e.getValue()));
+        }
+        return out;
+    }
+
     // ─── Accès ───
 
     public static List<Owned> owned(ServerPlayer p, String type) {

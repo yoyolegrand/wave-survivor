@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.wavesurvivor.horde.benediction.BlessingCatalog;
+import com.wavesurvivor.horde.benediction.BlessingEffects;
 import com.wavesurvivor.horde.editor.HordeJson;
 import com.wavesurvivor.i18n.WSLang;
 import com.wavesurvivor.network.BlessingEditorPackets;
@@ -304,15 +305,47 @@ public class BlessingEditorScreen extends Screen {
         y += 18;
         label(x0, y + 3, WSLang.t("blessed.heal"));
         num(x0 + lw + 20, y, 40, String.valueOf(HordeJson.num(t, "heal", 0)), v -> t.addProperty("heal", (int) Math.round(parse(v))));
-        // Effets spéciaux (Exécution, Bastion…) : conservés tels quels, réglés dans blessings.json / custom_blessings.json
-        if (t.has("effects") && t.get("effects").isJsonArray() && t.getAsJsonArray("effects").size() > 0) {
-            StringBuilder types = new StringBuilder();
-            for (JsonElement fe : t.getAsJsonArray("effects")) {
-                if (fe.isJsonObject()) types.append(types.length() > 0 ? ", " : "").append(HordeJson.str(fe.getAsJsonObject(), "type", "?"));
-            }
-            label(x0 + lw + 66, y + 3, "§b" + WSLang.t("blessed.special_fx", types.toString()));
-        }
         y += 22;
+
+        // Effets spéciaux (Exécution, Bastion…) : type, description et paramètres modifiables
+        label(x0, y + 3, "§b" + WSLang.t("blessed.fx.title"));
+        List<String> fxTypes = new ArrayList<>(BlessingEffects.PARAMS.keySet());
+        fxAddIdx = Math.max(0, Math.min(fxAddIdx, fxTypes.size() - 1));
+        button(x0 + lw + 20, y - 1, 150, "§7" + WSLang.t("blessed.fx_type") + " §f" + WSLang.t("blessed.fxname." + fxTypes.get(fxAddIdx)), () -> { fxAddIdx = (fxAddIdx + 1) % fxTypes.size(); init(); })
+                .setTooltip(Tooltip.create(Component.literal(WSLang.t("blessed.fxdesc." + fxTypes.get(fxAddIdx)))));
+        button(x0 + lw + 174, y - 1, 70, "§a+ " + WSLang.t("blessed.fx_add"), () -> {
+            JsonObject fx = new JsonObject();
+            String ty = fxTypes.get(fxAddIdx);
+            fx.addProperty("type", ty);
+            for (BlessingEffects.ParamDef pd : BlessingEffects.PARAMS.get(ty)) fx.addProperty(pd.key(), pd.def());
+            HordeJson.arr(t, "effects").add(fx);
+            changed();
+            init();
+        });
+        y += 20;
+        JsonArray fxs = t.has("effects") && t.get("effects").isJsonArray() ? t.getAsJsonArray("effects") : new JsonArray();
+        for (int fi = 0; fi < fxs.size(); fi++) {
+            if (!fxs.get(fi).isJsonObject()) continue;
+            final int fidx = fi;
+            JsonObject fx = fxs.get(fi).getAsJsonObject();
+            String ty = HordeJson.str(fx, "type", "?");
+            boolean known = BlessingEffects.PARAMS.containsKey(ty);
+            Button hb = button(x0, y - 1, 150, "§b" + (known ? WSLang.t("blessed.fxname." + ty) : ty), () -> {});
+            if (known) hb.setTooltip(Tooltip.create(Component.literal(WSLang.t("blessed.fxdesc." + ty))));
+            if (known) label(x0 + 156, y + 3, "§7" + WSLang.t("blessed.fxshort." + ty));
+            button(x0 + 304, y - 1, 16, "§c✕", () -> { fxs.remove(fidx); if (fxs.size() == 0) t.remove("effects"); changed(); init(); });
+            y += 18;
+            int px = x0;
+            if (known) for (BlessingEffects.ParamDef pd : BlessingEffects.PARAMS.get(ty)) {
+                label(px, y + 3, "§8" + WSLang.t("blessed.fxs." + pd.key()));
+                int lwid = font.width(WSLang.t("blessed.fxs." + pd.key())) + 4;
+                EditBox pb = num(px + lwid, y, 44, fmt(HordeJson.dbl(fx, pd.key(), pd.def())), v -> fx.addProperty(pd.key(), parse(v)));
+                pb.setTooltip(Tooltip.create(Component.literal(WSLang.t("blessed.fxp." + pd.key()))));
+                px += lwid + 50;
+            }
+            y += 20;
+        }
+        y += 2;
 
         label(x0, y + 3, "§6" + WSLang.t("blessed.mods"));
         button(x0 + lw + 20, y - 1, 90, "§a+ " + WSLang.t("blessed.add_mod"), () -> {
@@ -364,6 +397,9 @@ public class BlessingEditorScreen extends Screen {
         }
         if (mods.size() == 0) label(x0, y + 3, "§8" + WSLang.t("blessed.no_mods"));
     }
+
+    /** Type d'effet proposé par le bouton « Ajouter ». */
+    private int fxAddIdx = 0;
 
     private void toggleTier() {
         JsonObject t = tierObj(tier);
