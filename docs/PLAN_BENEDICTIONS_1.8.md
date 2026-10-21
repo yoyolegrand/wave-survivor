@@ -56,6 +56,11 @@
   réduite en échange de (a) armure et robustesse élevées, (b) insensibilité au recul, (c) **Bastion** : réduction de dégâts croissante tant qu'on
   reste immobile, (d) **Provocation** : les monstres proches ont tendance à te cibler (protège l'équipe), (e) projectiles reçus fortement réduits.
   Chaque niveau renforce l'ensemble ; le malus de vitesse augmente aussi.
+- **Contrainte (Yoann) : la Provocation ne doit JAMAIS entrer en collision avec la protection du choix de bénédiction** (`BenedictionProtection` : en
+  multijoueur, pendant son choix, un joueur est ignoré des monstres et invulnérable, 30 s au maximum). Règles : la protection a toujours la priorité
+  (annulation de changement de cible au niveau HIGHEST, la Provocation passe en priorité basse) ; la Provocation ne cible jamais un joueur protégé,
+  créatif ou spectateur ; elle ne s'applique qu'à intervalles réguliers et avec une probabilité (pas un forçage permanent) ; les boss ne sont pas
+  provoqués par défaut ; la fin de la protection reprend la Provocation normalement.
 
 ## Relances, bannissements, choix de famille
 - 2 relances et 1 bannissement au départ ; **+1 relance et +1 bannissement toutes les 5 vagues** (l'Héritage de Renaissance pourra en ajouter).
