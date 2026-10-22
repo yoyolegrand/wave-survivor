@@ -37,6 +37,11 @@ public class BenedictionSelectionScreen extends Screen {
     private final java.util.Map<String, Integer> owned;
     /** Famille choisie pour la prochaine relance : -1 = au hasard (gardée d'un menu à l'autre). */
     private static int familyIdx = -1;
+    /** Cartes gardées lors de la relance (1.8). Vidé à chaque nouvelle vague / choix. */
+    private static final java.util.Set<String> LOCKED = new java.util.HashSet<>();
+    private static int lockWave = -1;
+    /** Total actuel par stat (attribut + opération), pour l'aperçu « avant → après ». */
+    private final java.util.Map<String, Double> totals = new java.util.HashMap<>();
     private static final String[] FAMILIES = {"attack", "defense", "mobility", "utility", "team", "pact", "stats"};
 
     public BenedictionSelectionScreen(List<String> ids, int currentWave, int rerolls, int bans, java.util.Map<String, Integer> owned) {
@@ -50,6 +55,24 @@ public class BenedictionSelectionScreen extends Screen {
         this.rerolls = rerolls;
         this.bans = bans;
         this.owned = owned;
+        if (currentWave != lockWave) { LOCKED.clear(); lockWave = currentWave; }
+        java.util.Set<String> present = new java.util.HashSet<>();
+        for (RogueUpgrade u : choices) present.add(u.id());
+        LOCKED.retainAll(present);
+        for (java.util.Map.Entry<String, Integer> e : owned.entrySet()) {
+            RogueUpgrade u = RogueUpgradeRegistry.get(e.getKey());
+            if (u == null) continue;
+            for (RogueUpgrade.AttributeMod m : u.modifiers()) totals.merge(modKey(m), m.amount() * e.getValue(), Double::sum);
+        }
+    }
+
+    private static String modKey(RogueUpgrade.AttributeMod m) { return m.attribute().getDescriptionId() + "|" + m.operation().name(); }
+
+    /** Valeur d'un bonus sans le nom de la stat : « 6 » ou « 15% ». */
+    private static String fmtVal(AttributeModifier.Operation op, double v) {
+        v *= BenedictionClient.mult;
+        if (op == AttributeModifier.Operation.ADDITION) return v == (long) v ? String.valueOf((long) v) : String.format(java.util.Locale.ROOT, "%.2f", v);
+        return Math.round(v * 100) + "%";
     }
 
     @Override
@@ -69,6 +92,7 @@ public class BenedictionSelectionScreen extends Screen {
                     Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.choisir")).withStyle(upg.color(), ChatFormatting.BOLD),
                     btn -> {
                         NetworkHandler.CHANNEL.sendToServer(new ChooseBenedictionPacket(upg.id()));
+                        LOCKED.clear();
                         this.onClose();
                     })
                     .bounds(x + 15, cardY + CARD_HEIGHT - 30, CARD_WIDTH - 30, 20)
@@ -85,6 +109,19 @@ public class BenedictionSelectionScreen extends Screen {
                     .build();
             ban.active = bans > 0;
             addRenderableWidget(ban);
+
+            // Garder cette carte quand on relance les autres (1.8)
+            boolean locked = LOCKED.contains(upg.id());
+            Button lock = Button.builder(Component.literal(locked ? "§e✔ " + com.wavesurvivor.i18n.WSLang.t("bless.locked") : "§7" + com.wavesurvivor.i18n.WSLang.t("bless.lock")),
+                    btn -> {
+                        if (!LOCKED.remove(upg.id())) LOCKED.add(upg.id());
+                        this.rebuildWidgets();
+                    })
+                    .bounds(x + 15, cardY + CARD_HEIGHT + 20, CARD_WIDTH - 30, 14)
+                    .tooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("bless.lock_tip")))
+                    .build();
+            lock.active = rerolls > 0 && n > 1 && (locked || LOCKED.size() < n - 1);
+            addRenderableWidget(lock);
         }
 
         // Rangée du bas : famille de la relance, relance, fermer
@@ -99,7 +136,7 @@ public class BenedictionSelectionScreen extends Screen {
                 .build());
         Button reroll = Button.builder(Component.literal("§b↻ " + com.wavesurvivor.i18n.WSLang.t("bless.reroll", rerolls)),
                         btn -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.BenedictionActionPacket(
-                                com.wavesurvivor.network.BenedictionActionPacket.REROLL, familyIdx < 0 ? "" : FAMILIES[familyIdx])))
+                                com.wavesurvivor.network.BenedictionActionPacket.REROLL, (familyIdx < 0 ? "" : FAMILIES[familyIdx]) + "|" + String.join(",", LOCKED))))
                 .bounds(width / 2 - 78, by, 110, 20)
                 .tooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("bless.reroll_tip")))
                 .build();
@@ -203,6 +240,13 @@ public class BenedictionSelectionScreen extends Screen {
             g.drawCenteredString(font, Component.literal(statLine).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
                     x + CARD_WIDTH / 2, descY, 0xFF55FF55);
             descY += font.lineHeight + 1;
+            // Aperçu : total actuel → total après ce choix (si la carte a la place)
+            if (!owned.isEmpty() && descY + font.lineHeight < y + CARD_HEIGHT - 36) {
+                double cur = totals.getOrDefault(modKey(mod), 0.0);
+                g.drawCenteredString(font, Component.literal("§8" + fmtVal(mod.operation(), cur) + " → §7" + fmtVal(mod.operation(), cur + mod.amount())),
+                        x + CARD_WIDTH / 2, descY, 0xFF888888);
+                descY += font.lineHeight + 1;
+            }
         }
         // Heal on apply (si applicable)
         if (upg.healOnApply() > 0) {

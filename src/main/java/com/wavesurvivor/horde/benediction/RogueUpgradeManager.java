@@ -293,17 +293,39 @@ public class RogueUpgradeManager {
     }
 
     /** Relance : retire les cartes et en tire de nouvelles (dans la famille demandée, "" = au hasard). */
-    public static void reroll(ServerPlayer p, String family) {
+    public static void reroll(ServerPlayer p, String arg) {
         Pending pe = PENDING.get(p.getUUID());
         if (pe == null) return;
+        // arg = « famille|carte1,carte2 » : les cartes gardées (parmi celles du menu) restent à leur place
+        String family = arg == null ? "" : arg;
+        java.util.Set<String> kept = new java.util.HashSet<>();
+        int bar = family.indexOf('|');
+        if (bar >= 0) {
+            for (String k : family.substring(bar + 1).split(",")) if (pe.ids().contains(k.trim())) kept.add(k.trim());
+            family = family.substring(0, bar);
+        }
+        if (kept.size() >= pe.ids().size()) kept.clear(); // tout garder n'a pas de sens : on relance tout
         CompoundTag st = blessState(p, pe.wave());
         if (st.getInt("rerolls") <= 0) {
             p.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.no_reroll")), true);
             return;
         }
         st.putInt("rerolls", st.getInt("rerolls") - 1);
-        List<String> choices = BlessingDraw.draw(p, menuSize(p), pe.wave(), java.util.List.of(), family);
-        if (choices.isEmpty()) { st.putInt("rerolls", st.getInt("rerolls") + 1); return; }
+        List<String> present = new ArrayList<>();
+        for (String id : kept) {
+            RogueUpgrade u = RogueUpgradeRegistry.get(id);
+            if (u != null) present.add(u.category());
+        }
+        List<String> fresh = BlessingDraw.draw(p, Math.max(1, menuSize(p) - kept.size()), pe.wave(), present, family);
+        if (fresh.isEmpty()) { st.putInt("rerolls", st.getInt("rerolls") + 1); return; }
+        // Les cartes gardées gardent leur emplacement, les autres sont remplacées dans l'ordre
+        List<String> choices = new ArrayList<>();
+        int fi = 0;
+        for (String id : pe.ids()) {
+            if (kept.contains(id)) choices.add(id);
+            else if (fi < fresh.size()) choices.add(fresh.get(fi++));
+        }
+        while (fi < fresh.size() && choices.size() < menuSize(p)) choices.add(fresh.get(fi++));
         sendMenu(p, choices, pe.wave());
         p.playNotifySound(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.6f, 1.2f);
     }

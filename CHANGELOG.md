@@ -6,6 +6,9 @@
 - 📈 New `/ws perf` (operators): what a wave costs — **server tick time**, entities, horde units, visual effects, items on the ground and pending actions — measured every second during a horde or invasion, with the worst of each wave written to the log (and to the operators' chat with `/ws perf verbose`).
 
 ### 🙏 Blessings
+- ⚙️ **Settings screen** in the blessings editor: cards offered, rarity weights, change per wave, Luck, rerolls and bans — saved as differences from the mod's values, with a "Mod defaults" reset.
+- 👁️ **Preview on cards**: each stat shows "current total → total after this pick".
+- 📌 **Keep a card**: lock a card to keep it when you reroll the others.
 - 📊 **My bonuses**: `/ws benediction mine` (and a button in the choice screen) shows every bonus of all your blessings combined for the current run; it empties itself when the horde ends. The "blessings dissipated" message is gone (leftovers are still cleaned silently).
 - ✏️ Special effects (Execution, Bastion, Taunt…) are now fully editable in the blessings editor, each with a description.
 - 🧱 Blessings are now **data, not code**: grouped into **categories** (Life, Armor, Force…) that hold their rarity levels (Common, Rare, Epic, Legendary), read from the mod at every launch like the hordes — your own changes will live in `config/wavesurvivor/custom_blessings.json`. 

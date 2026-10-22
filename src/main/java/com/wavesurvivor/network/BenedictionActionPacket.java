@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 /**
  * Actions du joueur sur son menu de bénédictions (1.8), client → serveur :
- *   REROLL : relancer les cartes (arg = famille voulue, "" = au hasard) ;
+ *   REROLL : relancer les cartes (arg = « famille|carte1,carte2 » : famille voulue, "" = au hasard ; cartes gardées après la barre) ;
  *   SUMMARY: demander le résumé de ses bénédictions (bouton du menu du Monolithe) ;
  *   BAN    : bannir une catégorie pour toute la partie (arg = identifiant de la catégorie de la carte).
  * Le serveur valide (menu en attente, relances / bannissements restants) et renvoie un nouveau menu.
@@ -28,11 +28,11 @@ public class BenedictionActionPacket {
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeByte(type);
-        buf.writeUtf(arg, 64);
+        buf.writeUtf(arg, 1200);
     }
 
     public static BenedictionActionPacket decode(FriendlyByteBuf buf) {
-        return new BenedictionActionPacket(buf.readByte(), buf.readUtf(64));
+        return new BenedictionActionPacket(buf.readByte(), buf.readUtf(1200));
     }
 
     public static void handle(BenedictionActionPacket pkt, Supplier<NetworkEvent.Context> ctx) {

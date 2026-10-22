@@ -62,6 +62,21 @@ public final class BlessingEditorPackets {
         }
     }
 
+    /** C→S : enregistre les réglages du tirage (JSON complet ; vide = revenir aux valeurs du mod). */
+    public static class SaveSettings {
+        public final String json;
+        public SaveSettings(String json) { this.json = json != null ? json : ""; }
+        public void encode(FriendlyByteBuf buf) { HordeEditorPackets.writeJson(buf, json); }
+        public static SaveSettings decode(FriendlyByteBuf buf) { return new SaveSettings(HordeEditorPackets.readJson(buf)); }
+        public static void handle(SaveSettings pkt, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(() -> {
+                ServerPlayer p = ctx.get().getSender();
+                if (p != null) BlessingEditorManager.saveSettings(p, pkt.json);
+            });
+            ctx.get().setPacketHandled(true);
+        }
+    }
+
     public static class Delete {
         public final String id;
         public Delete(String id) { this.id = id != null ? id : ""; }

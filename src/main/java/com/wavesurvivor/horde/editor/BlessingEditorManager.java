@@ -55,6 +55,7 @@ public final class BlessingEditorManager {
         }
         root.add("categories", cats);
         root.add("sources", sources);
+        root.add("settings", BlessingCatalog.settings().deepCopy());
         return root.toString();
     }
 
@@ -105,6 +106,20 @@ public final class BlessingEditorManager {
 
         CustomBlessingStore.put(cat);
         reloadAndSync(p, WSLang.t("blessed.saved", HordeJson.str(cat, "name", id)));
+    }
+
+    /** Réglages du tirage (poids, Chance, relances…) : json vide = valeurs du mod. */
+    public static void saveSettings(ServerPlayer p, String json) {
+        if (!allowed(p)) return;
+        if (json == null || json.isBlank()) {
+            CustomBlessingStore.putSettings(null);
+            reloadAndSync(p, WSLang.t("blessset.reset_done"));
+            return;
+        }
+        JsonObject s = HordeJson.parseObject(json);
+        if (s == null) { result(p, false, WSLang.t("srv.json_invalide")); return; }
+        CustomBlessingStore.putSettings(s);
+        reloadAndSync(p, WSLang.t("blessset.saved"));
     }
 
     public static void delete(ServerPlayer p, String id) {

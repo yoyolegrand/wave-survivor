@@ -10,6 +10,11 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 
 - [ ] Menu du Monolithe (horde ET Kingdom) : bouton « Bénédictions » à gauche de la fenêtre, ouvre le résumé de tes bénédictions ; Fermer revient au menu du Monolithe
 
+## Lot A — réglages, aperçu, garder une carte
+- [ ] Éditeur (op) → bouton « Réglages » : modifier le nombre de cartes (ex. 4), un poids de rareté, les relances au départ ; Enregistrer ; le prochain menu de choix le reflète. « Valeurs du mod » rétablit tout. Bouton grisé tant qu'une catégorie a des modifications non enregistrées
+- [ ] Écran de choix : sous chaque bonus, une ligne grise « total actuel → total après » (vide au premier choix, croît ensuite)
+- [ ] Bouton « Garder » sous chaque carte : une carte gardée reste à sa place après « Relancer » (qui coûte 1 relance) ; impossible de tout garder ; les cartes gardées s'effacent à la vague suivante / après un choix
+
 ## Performance
 - [ ] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [ ] Mesure réelle : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

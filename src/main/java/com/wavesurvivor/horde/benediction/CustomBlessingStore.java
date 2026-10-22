@@ -110,6 +110,17 @@ public final class CustomBlessingStore {
 
     // ─── API éditeur ───
 
+    /** Enregistre les réglages complets envoyés par l'éditeur : seules les différences avec la base du mod sont gardées ("" = tout rétablir). */
+    public static synchronized void putSettings(JsonObject full) {
+        if (full == null) {
+            settingsPatch = new JsonObject();
+        } else {
+            JsonObject p = Patch.diff(com.wavesurvivor.config.ConfigLayers.builtin().blessingSettings, full);
+            settingsPatch = p == null ? new JsonObject() : p;
+        }
+        save();
+    }
+
     /** Origine d'une catégorie : BASE44 (livrée), OVERRIDE (livrée et modifiée), CUSTOM (créée par le joueur). */
     public static synchronized String sourceOf(String id) { return SOURCES.getOrDefault(key(id), "BASE44"); }
 

@@ -231,6 +231,12 @@ public class BlessingEditorScreen extends Screen {
         Button rd = button(left + 120, by, 36, "↺ ✖", () -> NetworkHandler.CHANNEL.sendToServer(new BlessingEditorPackets.Revert("")));
         rd.setTooltip(Tooltip.create(WSLang.c("blessed.restore_tip")));
 
+        // Réglages du tirage (poids, Chance, relances…) : désactivé pendant une modification non enregistrée
+        Button gear = button(left + W - 92, top + 6, 86, "§e⚙ " + WSLang.t("blessset.btn"), () ->
+                minecraft.setScreen(new BlessingSettingsScreen(this, HordeJson.obj(data, "settings").deepCopy())));
+        gear.active = !dirty;
+        gear.setTooltip(Tooltip.create(WSLang.c("blessset.btn_tip")));
+
         // ── Bas de la fiche : enregistrer / fermer
         int x0 = left + 162;
         int fw = left + W - 8 - x0;
