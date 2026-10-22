@@ -27,6 +27,8 @@ import java.util.Set;
 public final class BlessingDraw {
 
     private static final Random RNG = new Random();
+    /** Famille des malédictions : bonus avec un malus, rares, jamais choisies par la famille de relance. */
+    public static final String CURSE = "curse";
 
     private BlessingDraw() {}
 
@@ -50,6 +52,7 @@ public final class BlessingDraw {
         List<String> pool = new ArrayList<>();
         for (Map.Entry<String, List<RogueUpgrade>> e : byCat.entrySet()) {
             if (banned.contains(e.getKey()) || exclude.contains(e.getKey())) continue;
+            if (CURSE.equals(e.getValue().get(0).family())) continue; // les malédictions ne viennent que par maybeCurse
             if (wantFamily && !family.equals(e.getValue().get(0).family())) continue;
             pool.add(e.getKey());
         }
@@ -65,6 +68,36 @@ public final class BlessingDraw {
             if (id != null) out.add(id);
         }
         return out;
+    }
+
+    private static JsonObject cursesCfg() {
+        JsonObject s = BlessingCatalog.settings();
+        return s.has("curses") && s.get("curses").isJsonObject() ? s.getAsJsonObject("curses") : new JsonObject();
+    }
+
+    /**
+     * Malédiction (1.8) : avec une faible probabilité (réglable, 10 % par défaut), l'une des cartes REMPLAÇABLES du menu devient une malédiction
+     * (au plus une par menu). {@code ids} est la liste finale des cartes ; {@code replaceable} les positions qu'on peut remplacer.
+     */
+    public static void maybeCurse(ServerPlayer p, List<String> ids, List<Integer> replaceable, int wave) {
+        JsonObject c = cursesCfg();
+        if (!HordeJson.bool(c, "enabled", true) || ids.size() < 2 || replaceable.isEmpty()) return;
+        if (RNG.nextDouble() >= HordeJson.dbl(c, "chance", 0.10)) return;
+        for (String id : ids) {
+            RogueUpgrade u = RogueUpgradeRegistry.get(id);
+            if (u != null && CURSE.equals(u.family())) return; // déjà une malédiction sur la table
+        }
+        Set<String> banned = RogueUpgradeManager.banned(p);
+        Map<String, List<RogueUpgrade>> byCat = new LinkedHashMap<>();
+        for (RogueUpgrade u : RogueUpgradeRegistry.all()) {
+            if (!CURSE.equals(u.family()) || banned.contains(u.category())) continue;
+            if (u.maxLevel() > 0 && RogueUpgradeManager.getLevel(p, u.id()) >= u.maxLevel()) continue;
+            byCat.computeIfAbsent(u.category(), k -> new ArrayList<>()).add(u);
+        }
+        if (byCat.isEmpty()) return;
+        List<String> cats = new ArrayList<>(byCat.keySet());
+        String id = pickTier(byCat.get(cats.get(RNG.nextInt(cats.size()))), weights(p, wave));
+        if (id != null) ids.set(replaceable.get(RNG.nextInt(replaceable.size())), id);
     }
 
     /** Choisit un niveau de rareté de cette catégorie, au poids. */

@@ -52,6 +52,11 @@ public class BlessingSummaryScreen extends Screen {
         for (Map.Entry<Key, Double> e : sums.entrySet()) {
             totals.add("§a" + BenedictionSelectionScreen.formatModifier(new RogueUpgrade.AttributeMod(e.getKey().attr(), e.getValue(), e.getKey().op())));
         }
+        for (com.wavesurvivor.horde.benediction.BlessingSynergy.Entry e : com.wavesurvivor.horde.benediction.BlessingSynergy.compute(owned)) {
+            if (e.tier() <= 0) continue;
+            totals.add("§d" + WSLang.t("bless.mine_syn", WSLang.t("blessed.family." + e.family()), e.count(), e.tier()));
+            totals.add("§d  " + BenedictionSelectionScreen.formatModifier(new RogueUpgrade.AttributeMod(e.attr(), e.amount(), e.op())));
+        }
         for (RogueUpgrade.Effect fx : BlessingEffects.aggregate(owned)) totals.add("§b" + BlessingEffects.describe(fx));
     }
 

@@ -1163,6 +1163,61 @@
         }
       }
     }
+    ,
+    {
+      "id": "MALEDICTION_SANG",
+      "name": "Malédiction du Sang",
+      "icon": "🩸",
+      "description": "Gros bonus de dégâts, mais le corps s'affaiblit : moins de vie maximale",
+      "family": "curse",
+      "tiers": {
+        "RARE": { "enabled": true, "modifiers": [
+          { "attribute": "minecraft:generic.attack_damage", "amount": 0.2, "operation": "multiply_base" },
+          { "attribute": "minecraft:generic.max_health", "amount": -0.1, "operation": "multiply_base" } ], "heal": 0 },
+        "EPIC": { "enabled": true, "modifiers": [
+          { "attribute": "minecraft:generic.attack_damage", "amount": 0.3, "operation": "multiply_base" },
+          { "attribute": "minecraft:generic.max_health", "amount": -0.15, "operation": "multiply_base" } ], "heal": 0 },
+        "LEGENDARY": { "enabled": true, "modifiers": [
+          { "attribute": "minecraft:generic.attack_damage", "amount": 0.45, "operation": "multiply_base" },
+          { "attribute": "minecraft:generic.max_health", "amount": -0.2, "operation": "multiply_base" } ], "heal": 0 }
+      }
+    },
+    {
+      "id": "MALEDICTION_COURSE",
+      "name": "Malédiction de la Course Folle",
+      "icon": "💨",
+      "description": "Beaucoup plus rapide, mais la peau s'amincit : moins d'armure",
+      "family": "curse",
+      "tiers": {
+        "RARE": { "enabled": true, "modifiers": [
+          { "attribute": "minecraft:generic.movement_speed", "amount": 0.15, "operation": "multiply_base" },
+          { "attribute": "minecraft:generic.armor", "amount": -1, "operation": "addition" } ], "heal": 0 },
+        "EPIC": { "enabled": true, "modifiers": [
+          { "attribute": "minecraft:generic.movement_speed", "amount": 0.25, "operation": "multiply_base" },
+          { "attribute": "minecraft:generic.armor", "amount": -2, "operation": "addition" } ], "heal": 0 },
+        "LEGENDARY": { "enabled": true, "modifiers": [
+          { "attribute": "minecraft:generic.movement_speed", "amount": 0.35, "operation": "multiply_base" },
+          { "attribute": "minecraft:generic.armor", "amount": -3, "operation": "addition" } ], "heal": 0 }
+      }
+    },
+    {
+      "id": "MALEDICTION_FRENESIE",
+      "name": "Malédiction de la Frénésie",
+      "icon": "⚡",
+      "description": "Frappe beaucoup plus vite, mais plus lent à se déplacer",
+      "family": "curse",
+      "tiers": {
+        "RARE": { "enabled": true, "modifiers": [
+          { "attribute": "minecraft:generic.attack_speed", "amount": 0.2, "operation": "multiply_base" },
+          { "attribute": "minecraft:generic.movement_speed", "amount": -0.08, "operation": "multiply_base" } ], "heal": 0 },
+        "EPIC": { "enabled": true, "modifiers": [
+          { "attribute": "minecraft:generic.attack_speed", "amount": 0.35, "operation": "multiply_base" },
+          { "attribute": "minecraft:generic.movement_speed", "amount": -0.12, "operation": "multiply_base" } ], "heal": 0 },
+        "LEGENDARY": { "enabled": true, "modifiers": [
+          { "attribute": "minecraft:generic.attack_speed", "amount": 0.5, "operation": "multiply_base" },
+          { "attribute": "minecraft:generic.movement_speed", "amount": -0.15, "operation": "multiply_base" } ], "heal": 0 }
+      }
+    }
   ],
   "settings": {
     "choices": 3,
@@ -1218,6 +1273,20 @@
         "maxChance": 0.5
       }
     },
+    "synergies": {
+      "enabled": true,
+      "thresholds": [3, 5, 7],
+      "families": {
+        "attack": { "attribute": "minecraft:generic.attack_damage", "operation": "multiply_base", "amounts": [0.05, 0.1, 0.15] },
+        "defense": { "attribute": "minecraft:generic.armor", "operation": "addition", "amounts": [1, 2, 3] },
+        "mobility": { "attribute": "minecraft:generic.movement_speed", "operation": "multiply_base", "amounts": [0.03, 0.06, 0.09] },
+        "utility": { "attribute": "minecraft:generic.luck", "operation": "addition", "amounts": [1, 2, 3] },
+        "team": { "attribute": "minecraft:generic.max_health", "operation": "addition", "amounts": [2, 4, 6] },
+        "pact": { "attribute": "minecraft:generic.attack_speed", "operation": "multiply_base", "amounts": [0.05, 0.1, 0.15] },
+        "stats": { "attribute": "minecraft:generic.armor_toughness", "operation": "addition", "amounts": [0.5, 1, 1.5] }
+      }
+    },
+    "curses": { "enabled": true, "chance": 0.1 },
     "rerolls": {
       "start": 2,
       "every": 5,
@@ -1229,5 +1298,5 @@
       "grant": 1
     }
   },
-  "_settings": "Tirage : poids des raretés (weights), évolution avec les vagues (waveGrowth, par vague), effet de la Chance (luck : scale = rendements décroissants, maxBonus, shift = décalage par rareté) ; relances et bannissements (au départ, puis +grant toutes les every vagues)."
+  "_settings": "Synergies : à 3 / 5 / 7 bénédictions d'une même famille, un bonus par famille (attribut, opération, bonus de chaque palier). Malédictions (famille « curse ») : chance par menu. Tirage : poids des raretés (weights), évolution avec les vagues (waveGrowth, par vague), effet de la Chance (luck : scale = rendements décroissants, maxBonus, shift = décalage par rareté) ; relances et bannissements (au départ, puis +grant toutes les every vagues)."
 }

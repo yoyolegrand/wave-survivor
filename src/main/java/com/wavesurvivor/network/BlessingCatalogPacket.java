@@ -12,16 +12,16 @@ import java.util.function.Supplier;
  */
 public class BlessingCatalogPacket {
 
-    private final String json;
+    private final String json, settings;
 
-    public BlessingCatalogPacket(String json) { this.json = json; }
+    public BlessingCatalogPacket(String json, String settings) { this.json = json; this.settings = settings; }
 
-    public void encode(FriendlyByteBuf buf) { buf.writeUtf(json, 1 << 20); }
+    public void encode(FriendlyByteBuf buf) { buf.writeUtf(json, 1 << 20); buf.writeUtf(settings, 1 << 18); }
 
-    public static BlessingCatalogPacket decode(FriendlyByteBuf buf) { return new BlessingCatalogPacket(buf.readUtf(1 << 20)); }
+    public static BlessingCatalogPacket decode(FriendlyByteBuf buf) { return new BlessingCatalogPacket(buf.readUtf(1 << 20), buf.readUtf(1 << 18)); }
 
     public static void handle(BlessingCatalogPacket pkt, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> BlessingCatalog.loadFromJson(pkt.json));
+        ctx.get().enqueueWork(() -> BlessingCatalog.loadFromJson(pkt.json, pkt.settings));
         ctx.get().setPacketHandled(true);
     }
 }

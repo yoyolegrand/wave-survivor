@@ -35,7 +35,7 @@ public class BlessingEditorScreen extends Screen {
     private static final String[] R = BlessingCatalog.RARITIES;
     private static final String[] R_COLOR = {"§f", "§9", "§d", "§e"};
     private static final int[] R_RGB = {0xFFFFFF, 0x5555FF, 0xFF55FF, 0xFFFF55};
-    private static final String[] FAMILIES = {"attack", "defense", "mobility", "utility", "team", "pact", "stats"};
+    private static final String[] FAMILIES = {"attack", "defense", "mobility", "utility", "team", "pact", "stats", "curse"};
     private static final String[] OPS = {"addition", "multiply_base", "multiply_total"};
     private static final String[] OP_LABEL = {"+", "×base", "×tot."};
     private static final int ROW_H = 12;

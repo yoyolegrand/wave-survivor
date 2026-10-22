@@ -15,6 +15,12 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Écran de choix : sous chaque bonus, une ligne grise « total actuel → total après » (vide au premier choix, croît ensuite)
 - [ ] Bouton « Garder » sous chaque carte : une carte gardée reste à sa place après « Relancer » (qui coûte 1 relance) ; impossible de tout garder ; les cartes gardées s'effacent à la vague suivante / après un choix
 
+## Lot B — synergies et malédictions
+- [ ] Synergies : prendre 3 bénédictions d'une même famille (ex. attaque) -> bonus de palier 1 appliqué (stat visible dans « Mes bonus », ligne « Synergie … ») ; la carte suivante de cette famille affiche « Synergie … : x/5 » puis « PALIER n ! » ; tout disparaît à la fin de la horde
+- [ ] Malédictions : en réglant la chance à 1 (Réglages -> « Chance d'une malédiction par menu »), une carte rouge « ☠ MALÉDICTION » apparaît dans chaque menu (jamais deux) ; la choisir applique bonus ET malus ; elle peut être bannie ; remettre 0,1 ensuite
+- [ ] Réglages : interrupteurs « Synergies de famille actives » et « Malédictions actives » fonctionnent (décochés = plus de synergie, plus de carte rouge)
+- [ ] Éditeur : on peut créer une catégorie de famille « Malédiction » (négatif autorisé dans les montants)
+
 ## Performance
 - [ ] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [ ] Mesure réelle : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

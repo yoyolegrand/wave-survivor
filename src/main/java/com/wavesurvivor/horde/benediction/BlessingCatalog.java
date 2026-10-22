@@ -63,7 +63,11 @@ public final class BlessingCatalog {
     }
 
     /** Côté client : catalogue reçu du serveur. */
-    public static synchronized void loadFromJson(String json) {
+    public static synchronized void loadFromJson(String json, String settingsJson) {
+        try {
+            JsonElement se = JsonParser.parseString(settingsJson == null ? "{}" : settingsJson);
+            if (se.isJsonObject()) settings = se.getAsJsonObject();
+        } catch (Exception ignored) { }
         try {
             JsonElement el = JsonParser.parseString(json);
             if (el.isJsonArray()) install(el.getAsJsonArray());
@@ -114,12 +118,12 @@ public final class BlessingCatalog {
     // ─── Synchronisation vers les clients ───
 
     public static void syncTo(ServerPlayer p) {
-        NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), new BlessingCatalogPacket(toJson()));
+        NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), new BlessingCatalogPacket(toJson(), settings().toString()));
     }
 
     public static void syncAll(MinecraftServer server) {
         if (server == null) return;
-        NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new BlessingCatalogPacket(toJson()));
+        NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new BlessingCatalogPacket(toJson(), settings().toString()));
     }
 
     // ─── Construction des bénédictions ───

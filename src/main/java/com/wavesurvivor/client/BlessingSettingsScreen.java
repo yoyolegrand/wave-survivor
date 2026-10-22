@@ -56,6 +56,10 @@ public class BlessingSettingsScreen extends Screen {
         rows.add("blessset.sec_uses");
         for (String u : USES) rows.add(new Field(new String[]{"luck", "uses", u}, 2, "blessset.use_" + u));
         rows.add(new Field(new String[]{"luck", "extraLoot", "maxChance"}, 1, "blessset.extra_chance"));
+        rows.add("blessset.sec_extra");
+        rows.add(new Field(new String[]{"synergies", "enabled"}, 2, "blessset.syn_enabled"));
+        rows.add(new Field(new String[]{"curses", "enabled"}, 2, "blessset.curse_enabled"));
+        rows.add(new Field(new String[]{"curses", "chance"}, 1, "blessset.curse_chance"));
         rows.add("blessset.sec_rerolls");
         for (String k : new String[]{"start", "every", "grant"}) rows.add(new Field(new String[]{"rerolls", k}, 0, "blessset.r_" + k));
         rows.add("blessset.sec_bans");

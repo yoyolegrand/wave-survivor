@@ -203,6 +203,9 @@ public class BenedictionSelectionScreen extends Screen {
         g.fill(x, y, x + th, y + CARD_HEIGHT, rarityColor);                                // left
         g.fill(x + CARD_WIDTH - th, y, x + CARD_WIDTH, y + CARD_HEIGHT, rarityColor);     // right
 
+        boolean curse = com.wavesurvivor.horde.benediction.BlessingDraw.CURSE.equals(upg.family());
+        if (curse) g.drawCenteredString(font, Component.literal("§c§l" + com.wavesurvivor.i18n.WSLang.t("bless.curse_tag")), x + CARD_WIDTH / 2, y + 6, 0xFFFF5555);
+
         // Icône emoji (grosse) - centre haut
         String icon = upg.icon() != null ? upg.icon() : "★";
         int iconY = y + 20;
@@ -266,6 +269,22 @@ public class BenedictionSelectionScreen extends Screen {
         if (upg.maxLevel() > 0) {
             g.drawCenteredString(font, Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.max_level", upg.maxLevel())).withStyle(ChatFormatting.DARK_GRAY),
                     x + CARD_WIDTH / 2, descY + 2, 0xFF777777);
+            descY += font.lineHeight + 2;
+        }
+        // Synergie de famille : où on en est avec cette carte en plus
+        if (!curse && com.wavesurvivor.horde.benediction.BlessingSynergy.enabled()
+                && com.wavesurvivor.horde.benediction.BlessingSynergy.thresholds().length > 0 && descY + font.lineHeight < y + CARD_HEIGHT - 34) {
+            int cnt = com.wavesurvivor.horde.benediction.BlessingSynergy.countFor(upg.family(), owned) + 1;
+            int next = com.wavesurvivor.horde.benediction.BlessingSynergy.nextAt(cnt - 1);
+            String fam = com.wavesurvivor.i18n.WSLang.t("blessed.family." + upg.family());
+            String line;
+            if (next == 0) line = "§8" + com.wavesurvivor.i18n.WSLang.t("bless.syn_card_max", fam);
+            else if (cnt >= next) {
+                int tier = 0;
+                for (int t : com.wavesurvivor.horde.benediction.BlessingSynergy.thresholds()) if (cnt >= t) tier++;
+                line = "§d" + com.wavesurvivor.i18n.WSLang.t("bless.syn_card_up", fam, tier);
+            } else line = "§5" + com.wavesurvivor.i18n.WSLang.t("bless.syn_card", fam, cnt, next);
+            g.drawCenteredString(font, Component.literal(line), x + CARD_WIDTH / 2, descY + 4, 0xFFAA55FF);
         }
     }
 

@@ -128,6 +128,7 @@ public class RogueUpgradeManager {
      * Retire d'abord chaque modifier existant (par UUID), puis en ajoute un nouveau avec amount * level.
      */
     public static void reapplyAll(ServerPlayer p) {
+        BlessingSynergy.apply(p); // synergies de famille (1.8)
         CompoundTag benedictions = store(p).getCompound(NBT_KEY);
         if (benedictions.isEmpty()) return;
 
@@ -175,6 +176,7 @@ public class RogueUpgradeManager {
         data.remove(NBT_KEY);
         data.remove(NBT_LAST_WAVE_KEY);
         data.remove(NBT_STATE);
+        BlessingSynergy.apply(p); // plus aucune bénédiction : retire les bonus de synergie
         PENDING.remove(p.getUUID());
         // Plus de message au joueur (il réapparaissait à chaque connexion) : on nettoie en silence et on le note dans le journal
         if (!benedictions.isEmpty()) WaveSurvivorMod.LOGGER.info("[Benediction] '{}' benedictions clear (horde terminee)", p.getName().getString());
@@ -287,6 +289,9 @@ public class RogueUpgradeManager {
         grant(p, wave);
         List<String> choices = BlessingDraw.draw(p, menuSize(p), wave, java.util.List.of(), "");
         if (choices.isEmpty()) return;
+        List<Integer> all = new ArrayList<>();
+        for (int i = 0; i < choices.size(); i++) all.add(i);
+        BlessingDraw.maybeCurse(p, choices, all, wave);
         sendMenu(p, choices, wave);
         // Petit son pour attirer l'attention
         p.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0f, 1.0f);
@@ -326,6 +331,9 @@ public class RogueUpgradeManager {
             else if (fi < fresh.size()) choices.add(fresh.get(fi++));
         }
         while (fi < fresh.size() && choices.size() < menuSize(p)) choices.add(fresh.get(fi++));
+        List<Integer> free = new ArrayList<>();
+        for (int i = 0; i < choices.size(); i++) if (!kept.contains(choices.get(i))) free.add(i);
+        BlessingDraw.maybeCurse(p, choices, free, pe.wave());
         sendMenu(p, choices, pe.wave());
         p.playNotifySound(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.6f, 1.2f);
     }
