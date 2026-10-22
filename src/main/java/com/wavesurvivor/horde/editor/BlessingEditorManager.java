@@ -56,6 +56,9 @@ public final class BlessingEditorManager {
         root.add("categories", cats);
         root.add("sources", sources);
         root.add("settings", BlessingCatalog.settings().deepCopy());
+        JsonArray packs = new JsonArray();
+        for (String n : CustomBlessingStore.listPacks()) packs.add(n);
+        root.add("packs", packs);
         return root.toString();
     }
 
@@ -120,6 +123,26 @@ public final class BlessingEditorManager {
         if (s == null) { result(p, false, WSLang.t("srv.json_invalide")); return; }
         CustomBlessingStore.putSettings(s);
         reloadAndSync(p, WSLang.t("blessset.saved"));
+    }
+
+    /** Export / import d'un pack de bénédictions (dossier config/wavesurvivor/blessing_packs). */
+    public static void pack(ServerPlayer p, byte action, String name) {
+        if (!allowed(p) || !idle(p)) return;
+        if (!CustomBlessingStore.validPackName(name)) { result(p, false, WSLang.t("blesspack.err_name")); return; }
+        if (action == BlessingEditorPackets.PackAction.EXPORT) {
+            try {
+                CustomBlessingStore.exportPack(name);
+                result(p, true, WSLang.t("blesspack.exported", name));
+            } catch (Exception e) {
+                result(p, false, WSLang.t("blesspack.err_io", e.getMessage()));
+            }
+            return;
+        }
+        CustomBlessingStore.ImportResult r = CustomBlessingStore.importPack(name, action == BlessingEditorPackets.PackAction.IMPORT_OVERWRITE);
+        if (r.error() != null) { result(p, false, WSLang.t("blesspack.err_import", name, r.error())); return; }
+        String msg = WSLang.t("blesspack.imported", name, r.added(), r.replaced());
+        if (!r.skipped().isEmpty()) msg += WSLang.t("blesspack.skipped", r.skipped().size(), String.join(", ", r.skipped()));
+        reloadAndSync(p, msg);
     }
 
     public static void delete(ServerPlayer p, String id) {

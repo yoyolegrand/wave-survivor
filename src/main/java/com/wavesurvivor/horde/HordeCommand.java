@@ -355,6 +355,19 @@ public class HordeCommand {
                 .then(Commands.literal("benediction")
                         .then(Commands.literal("menu").executes(HordeCommand::benedictionMenu))
                         .then(Commands.literal("liste").executes(HordeCommand::benedictionListe))
+                        .then(Commands.literal("export").requires(src -> src.hasPermission(2))
+                                .then(Commands.argument("name", StringArgumentType.word()).executes(ctx -> blessingPack(ctx, (byte) 0))))
+                        .then(Commands.literal("import").requires(src -> src.hasPermission(2))
+                                .then(Commands.argument("name", StringArgumentType.word())
+                                        .suggests((c, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(com.wavesurvivor.horde.benediction.CustomBlessingStore.listPacks(), b))
+                                        .executes(ctx -> blessingPack(ctx, (byte) 1))
+                                        .then(Commands.literal("overwrite").executes(ctx -> blessingPack(ctx, (byte) 2)))))
+                        .then(Commands.literal("stats").executes(HordeCommand::blessingStats)
+                                .then(Commands.literal("reset").requires(src -> src.hasPermission(2)).executes(ctx -> {
+                                    com.wavesurvivor.horde.benediction.BlessingStats.get(ctx.getSource().getServer()).reset();
+                                    ctx.getSource().sendSuccess(() -> Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.stats_reset")), true);
+                                    return 1;
+                                })))
                         .then(Commands.literal("mine").executes(ctx -> {
                             try { RogueUpgradeManager.sendSummary(ctx.getSource().getPlayerOrException()); return 1; }
                             catch (Exception e) { return 0; }
@@ -867,7 +880,52 @@ public class HordeCommand {
         }
         com.wavesurvivor.network.NetworkHandler.CHANNEL.send(
                 net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> player),
-                new com.wavesurvivor.network.OpenBenedictionListScreenPacket((float) com.wavesurvivor.horde.benediction.RogueUpgradeManager.difficultyMult()));
+                new com.wavesurvivor.network.OpenBenedictionListScreenPacket((float) com.wavesurvivor.horde.benediction.RogueUpgradeManager.difficultyMult(),
+                        com.wavesurvivor.horde.benediction.BlessingStats.get(player.getServer()).snapshot()));
+        return 1;
+    }
+
+    /** /ws benediction export|import <nom> [overwrite] : packs de bénédictions (opérateurs). */
+    private static int blessingPack(CommandContext<CommandSourceStack> ctx, byte action) {
+        try {
+            com.wavesurvivor.horde.editor.BlessingEditorManager.pack(ctx.getSource().getPlayerOrException(), action, StringArgumentType.getString(ctx, "name"));
+            return 1;
+        } catch (Exception e) {
+            ctx.getSource().sendFailure(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.cette_commande_doit_etre_executee_par_un")));
+            return 0;
+        }
+    }
+
+    /** /ws benediction stats : les bénédictions les plus choisies, leur taux de choix et de victoire, et les catégories les plus bannies. */
+    private static int blessingStats(CommandContext<CommandSourceStack> ctx) {
+        java.util.Map<String, int[]> st = com.wavesurvivor.horde.benediction.BlessingStats.get(ctx.getSource().getServer()).snapshot();
+        java.util.List<java.util.Map.Entry<String, int[]>> picks = new java.util.ArrayList<>(), bans = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, int[]> e : st.entrySet()) {
+            if (com.wavesurvivor.horde.benediction.BlessingStats.isCategoryKey(e.getKey())) bans.add(e);
+            else if (e.getValue()[0] > 0) picks.add(e);
+        }
+        if (picks.isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.stats_none")), false);
+            return 1;
+        }
+        picks.sort((a, b) -> Integer.compare(b.getValue()[1], a.getValue()[1]));
+        bans.sort((a, b) -> Integer.compare(b.getValue()[2], a.getValue()[2]));
+        ctx.getSource().sendSuccess(() -> Component.literal("§6" + com.wavesurvivor.i18n.WSLang.t("bless.stats_title")), false);
+        for (int i = 0; i < Math.min(8, picks.size()); i++) {
+            java.util.Map.Entry<String, int[]> e = picks.get(i);
+            RogueUpgrade u = RogueUpgradeRegistry.get(e.getKey());
+            int[] a = e.getValue();
+            String wins = a[3] > 0 ? Math.round(100f * a[4] / a[3]) + " %" : "–";
+            String line = com.wavesurvivor.i18n.WSLang.t("bless.stats_line", u != null ? u.name() : e.getKey(), a[1], Math.round(100f * a[1] / a[0]), wins, a[3]);
+            ctx.getSource().sendSuccess(() -> Component.literal("§7 " + line), false);
+        }
+        if (!bans.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < Math.min(3, bans.size()); i++) {
+                sb.append(i > 0 ? ", " : "").append(com.wavesurvivor.horde.benediction.BlessingStats.categoryOf(bans.get(i).getKey())).append(" (").append(bans.get(i).getValue()[2]).append(")");
+            }
+            ctx.getSource().sendSuccess(() -> Component.literal("§7 " + com.wavesurvivor.i18n.WSLang.t("bless.stats_bans", sb.toString())), false);
+        }
         return 1;
     }
 

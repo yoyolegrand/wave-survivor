@@ -6,6 +6,8 @@
 - 📈 New `/ws perf` (operators): what a wave costs — **server tick time**, entities, horde units, visual effects, items on the ground and pending actions — measured every second during a horde or invasion, with the worst of each wave written to the log (and to the operators' chat with `/ws perf verbose`).
 
 ### 🙏 Blessings
+- 📦 **Blessing packs**: export your own blessings, changes and settings to a file and share it; import someone else's (`/ws benediction export|import <name>` or the "Packs" button of the editor). Conflicts are skipped unless you choose to overwrite.
+- 📊 **Statistics**: per world, how often each blessing is offered and picked, and how many of the runs it was in were won. `/ws benediction stats` shows the top picks and most banned categories, and the catalogue shows the numbers on each blessing.
 - 🔗 **Family synergies**: collect 3 / 5 / 7 blessings of the same family (attack, defense, mobility…) for a bonus tier — shown on the cards ("Attack synergy: 2/3") and in "My bonuses". Fully configurable.
 - ☠️ **Curses**: rare red cards (about 1 menu in 10, never more than one per menu) with a big bonus and a real drawback — Curse of Blood, of the Mad Run, of Frenzy. Chance adjustable or disabled in the settings screen.
 - ⚙️ **Settings screen** in the blessings editor: cards offered, rarity weights, change per wave, Luck, rerolls and bans — saved as differences from the mod's values, with a "Mod defaults" reset.

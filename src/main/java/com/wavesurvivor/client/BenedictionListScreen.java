@@ -180,6 +180,15 @@ public class BenedictionListScreen extends Screen {
         }
         cy += 10;
 
+        // Statistiques du monde (1.8)
+        int[] st = BenedictionClient.stats.get(upg.id());
+        if (st != null && st[0] > 0) {
+            int pick = Math.round(100f * st[1] / st[0]);
+            String line = com.wavesurvivor.i18n.WSLang.t("bless.stats_card", st[0], st[1], pick, st[3] > 0 ? Math.round(100f * st[4] / st[3]) + " %" : "–");
+            g.drawString(font, Component.literal(line).withStyle(ChatFormatting.GOLD), x, cy, 0xFFFFAA00, false);
+            cy += font.lineHeight + 8;
+        }
+
         // Note cumul
         g.drawString(font, Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.cumulable_le_montant_est_multiplie")).withStyle(ChatFormatting.DARK_GRAY),
                 x, cy, 0xFF666666, false);

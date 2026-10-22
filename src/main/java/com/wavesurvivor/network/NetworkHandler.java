@@ -196,6 +196,9 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, BlessingEditorPackets.SaveSettings.class,
                 BlessingEditorPackets.SaveSettings::encode, BlessingEditorPackets.SaveSettings::decode, BlessingEditorPackets.SaveSettings::handle);
 
+        CHANNEL.registerMessage(id++, BlessingEditorPackets.PackAction.class,
+                BlessingEditorPackets.PackAction::encode, BlessingEditorPackets.PackAction::decode, BlessingEditorPackets.PackAction::handle);
+
         // Catalogue des bénédictions (1.8) : serveur → client
         CHANNEL.registerMessage(id++, BlessingCatalogPacket.class,
                 BlessingCatalogPacket::encode, BlessingCatalogPacket::decode, BlessingCatalogPacket::handle);

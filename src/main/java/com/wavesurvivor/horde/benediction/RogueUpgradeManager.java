@@ -113,6 +113,7 @@ public class RogueUpgradeManager {
         if (upg.maxLevel() > 0 && getLevel(p, id) >= upg.maxLevel()) return; // plafond atteint
         int newLevel = getLevel(p, id) + 1;
         setLevel(p, id, newLevel);
+        BlessingStats.chosen(p.getServer(), id);
         reapplyAll(p);
 
         if (upg.healOnApply() > 0) {
@@ -272,6 +273,10 @@ public class RogueUpgradeManager {
     }
 
     private static void sendMenu(ServerPlayer p, List<String> ids, int wave) {
+        Pending old = PENDING.get(p.getUUID());
+        List<String> fresh = new ArrayList<>();
+        for (String id : ids) if (old == null || !old.ids().contains(id)) fresh.add(id);
+        BlessingStats.offered(p.getServer(), fresh); // statistiques : seulement les cartes réellement nouvelles
         PENDING.put(p.getUUID(), new Pending(new ArrayList<>(ids), wave));
         NetworkHandler.CHANNEL.send(
                 PacketDistributor.PLAYER.with(() -> p),
@@ -354,6 +359,7 @@ public class RogueUpgradeManager {
             return;
         }
         st.putInt("bans", st.getInt("bans") - 1);
+        BlessingStats.banned(p.getServer(), category);
         net.minecraft.nbt.ListTag l = st.getList("banned", 8);
         l.add(net.minecraft.nbt.StringTag.valueOf(category));
         st.put("banned", l);

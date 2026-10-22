@@ -272,6 +272,7 @@ public class HordeManager {
         KillTracker.stopTracking();
         HordeHudManager.hide();
         MobRegistry.clear();
+        if (defeat) com.wavesurvivor.horde.benediction.BlessingStats.recordRun(server, false); // statistiques des bénédictions (1.8)
         RogueUpgradeManager.clearAllPlayers(server);
         MerchantSpawner.despawnAll(server);
         RouletteChestSpawner.despawnAll(server);
@@ -483,6 +484,7 @@ public class HordeManager {
         HordeHudManager.hide();
         MobRegistry.clear();
         KillTracker.stopTracking();
+        com.wavesurvivor.horde.benediction.BlessingStats.recordRun(srv, true); // statistiques des bénédictions (1.8)
         RogueUpgradeManager.clearAllPlayers(srv);
         MerchantSpawner.despawnAll(srv);
         RouletteChestSpawner.despawnAll(srv);

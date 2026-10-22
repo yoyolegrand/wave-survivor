@@ -40,8 +40,9 @@ public class ClientPacketHandler {
         }
     }
 
-    public static void openBenedictionListScreen(float mult) {
+    public static void openBenedictionListScreen(float mult, java.util.Map<String, int[]> stats) {
         BenedictionClient.mult = mult;
+        BenedictionClient.stats = stats;
         Minecraft mc = Minecraft.getInstance();
         if (mc != null) {
             mc.setScreen(new BenedictionListScreen());

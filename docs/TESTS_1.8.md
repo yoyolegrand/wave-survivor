@@ -21,6 +21,12 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Réglages : interrupteurs « Synergies de famille actives » et « Malédictions actives » fonctionnent (décochés = plus de synergie, plus de carte rouge)
 - [ ] Éditeur : on peut créer une catégorie de famille « Malédiction » (négatif autorisé dans les montants)
 
+## Lot C — packs et statistiques
+- [ ] Éditeur -> « Packs » : saisir un nom, Exporter -> fichier créé dans `config/wavesurvivor/blessing_packs/<nom>.json` ; modifier ou supprimer une catégorie, Importer le pack -> elle revient (conflits ignorés sans « Remplacer », remplacés avec)
+- [ ] `/ws benediction export test` puis `/ws benediction import test` (tab-complétion des noms) ; `overwrite` en dernier argument
+- [ ] Jouer une partie (choisir, bannir) puis `/ws benediction stats` : top des choisies avec taux de choix et de victoire, catégories les plus bannies ; après une victoire / défaite, les « parties » et « victoires » montent (un arrêt manuel ne compte pas)
+- [ ] Catalogue (`/ws benediction liste`) : une ligne dorée « Proposée … » sous les effets des bénédictions déjà vues ; `/ws benediction stats reset` remet à zéro
+
 ## Performance
 - [ ] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [ ] Mesure réelle : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

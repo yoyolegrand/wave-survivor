@@ -77,6 +77,23 @@ public final class BlessingEditorPackets {
         }
     }
 
+    /** C→S : exporte ta couche dans un pack, ou importe un pack (0 export, 1 import, 2 import en remplaçant les conflits). */
+    public static class PackAction {
+        public static final byte EXPORT = 0, IMPORT = 1, IMPORT_OVERWRITE = 2;
+        public final byte action;
+        public final String name;
+        public PackAction(byte action, String name) { this.action = action; this.name = name != null ? name : ""; }
+        public void encode(FriendlyByteBuf buf) { buf.writeByte(action); buf.writeUtf(name, 64); }
+        public static PackAction decode(FriendlyByteBuf buf) { return new PackAction(buf.readByte(), buf.readUtf(64)); }
+        public static void handle(PackAction pkt, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(() -> {
+                ServerPlayer p = ctx.get().getSender();
+                if (p != null) BlessingEditorManager.pack(p, pkt.action, pkt.name);
+            });
+            ctx.get().setPacketHandled(true);
+        }
+    }
+
     public static class Delete {
         public final String id;
         public Delete(String id) { this.id = id != null ? id : ""; }

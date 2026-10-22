@@ -108,6 +108,100 @@ public final class CustomBlessingStore {
         return Patch.apply(base, settingsPatch);
     }
 
+    // ─── Packs (export / import) ───
+
+    private static final java.util.regex.Pattern PACK_NAME = java.util.regex.Pattern.compile("[A-Za-z0-9_-]{1,40}");
+
+    public static boolean validPackName(String n) { return n != null && PACK_NAME.matcher(n).matches(); }
+
+    private static Path packsDir() { return FMLPaths.CONFIGDIR.get().resolve("wavesurvivor").resolve("blessing_packs"); }
+
+    /** Noms des packs présents dans le dossier. */
+    public static synchronized List<String> listPacks() {
+        List<String> out = new ArrayList<>();
+        try {
+            if (Files.isDirectory(packsDir())) try (var st = Files.list(packsDir())) {
+                st.forEach(f -> {
+                    String n = f.getFileName().toString();
+                    if (n.endsWith(".json") && validPackName(n.substring(0, n.length() - 5))) out.add(n.substring(0, n.length() - 5));
+                });
+            }
+        } catch (Exception ignored) { }
+        java.util.Collections.sort(out);
+        return out;
+    }
+
+    /** Écrit ta couche (catégories créées, modifications, suppressions, réglages) dans un pack. Renvoie le chemin du fichier. */
+    public static synchronized Path exportPack(String name) throws java.io.IOException {
+        Files.createDirectories(packsDir());
+        JsonObject root = new JsonObject();
+        root.addProperty("format", 1);
+        JsonArray cats = new JsonArray();
+        for (JsonObject o : CUSTOM.values()) cats.add(o);
+        root.add("categories", cats);
+        JsonObject patches = new JsonObject();
+        for (Map.Entry<String, JsonObject> p : PATCHES.entrySet()) patches.add(p.getKey(), p.getValue());
+        root.add("patches", patches);
+        JsonArray del = new JsonArray();
+        for (String d : DELETED) del.add(d);
+        root.add("deleted", del);
+        if (settingsPatch.size() > 0) root.add("settings", settingsPatch);
+        Path f = packsDir().resolve(name + ".json");
+        Files.writeString(f, GSON.toJson(root), StandardCharsets.UTF_8);
+        return f;
+    }
+
+    /** Résultat d'un import : éléments ajoutés, remplacés, et ceux ignorés à cause d'un conflit (identifiant déjà à toi). */
+    public record ImportResult(int added, int replaced, List<String> skipped, String error) {}
+
+    /** Fusionne un pack dans ta couche. Sans {@code overwrite}, ce qui existe déjà chez toi est conservé (et listé comme ignoré). */
+    public static synchronized ImportResult importPack(String name, boolean overwrite) {
+        Path f = packsDir().resolve(name + ".json");
+        if (!Files.exists(f)) return new ImportResult(0, 0, List.of(), "introuvable");
+        JsonObject root;
+        try {
+            root = JsonParser.parseString(Files.readString(f, StandardCharsets.UTF_8)).getAsJsonObject();
+        } catch (Exception e) {
+            return new ImportResult(0, 0, List.of(), e.getMessage() == null ? "illisible" : e.getMessage());
+        }
+        load();
+        int added = 0, replaced = 0;
+        List<String> skipped = new ArrayList<>();
+        if (root.has("categories") && root.get("categories").isJsonArray()) for (JsonElement e : root.getAsJsonArray("categories")) {
+            if (!e.isJsonObject() || idOf(e).isBlank() || !e.getAsJsonObject().has("tiers")) continue;
+            String id = idOf(e).trim().toUpperCase(), k = key(id);
+            if (baseOf(id) != null) { skipped.add(id); continue; } // un id livré avec le mod ne peut pas être recréé
+            JsonObject c = e.getAsJsonObject().deepCopy();
+            c.addProperty("id", id);
+            if (CUSTOM.containsKey(k)) {
+                if (!overwrite) { skipped.add(id); continue; }
+                replaced++;
+            } else added++;
+            CUSTOM.put(k, c);
+            DELETED.remove(k);
+        }
+        if (root.has("patches") && root.get("patches").isJsonObject()) for (Map.Entry<String, JsonElement> e : root.getAsJsonObject("patches").entrySet()) {
+            if (!e.getValue().isJsonObject() || baseOf(e.getKey()) == null) continue;
+            String k = key(e.getKey());
+            if (PATCHES.containsKey(k)) {
+                if (!overwrite) { skipped.add(e.getKey()); continue; }
+                replaced++;
+            } else added++;
+            PATCHES.put(k, e.getValue().getAsJsonObject().deepCopy());
+        }
+        if (root.has("deleted") && root.get("deleted").isJsonArray()) for (JsonElement e : root.getAsJsonArray("deleted")) {
+            if (e.isJsonPrimitive() && baseOf(e.getAsString()) != null && DELETED.add(key(e.getAsString()))) added++;
+        }
+        if (root.has("settings") && root.get("settings").isJsonObject() && root.getAsJsonObject("settings").size() > 0) {
+            if (settingsPatch.size() == 0 || overwrite) {
+                settingsPatch = Patch.apply(settingsPatch, root.getAsJsonObject("settings"));
+                added++;
+            } else skipped.add("settings");
+        }
+        save();
+        return new ImportResult(added, replaced, skipped, null);
+    }
+
     // ─── API éditeur ───
 
     /** Enregistre les réglages complets envoyés par l'éditeur : seules les différences avec la base du mod sont gardées ("" = tout rétablir). */
