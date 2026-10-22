@@ -4,19 +4,19 @@ Cocher `[x]` quand c'est validé en jeu. Une ligne en échec : la laisser décoc
 Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 
 ## Finitions bénédictions
-- [ ] Éditeur : un niveau avec effet spécial affiche son nom, sa description (survol) et ses paramètres modifiables ; changer une valeur, enregistrer, le menu de choix la reflète ; ✕ retire l'effet ; « Ajouter » (type ◀) en crée un
-- [ ] `/ws benediction mine` : totaux cumulés (stats + effets spéciaux) et liste des bénédictions ; bouton « Mes bonus » dans l'écran de choix ; vide après la fin de la horde
-- [ ] Plus de message « bénédictions dissipées » en se reconnectant ; après une partie perdue puis reconnexion, aucune bénédiction ne reste
+- [x] Éditeur : un niveau avec effet spécial affiche son nom, sa description (survol) et ses paramètres modifiables ; changer une valeur, enregistrer, le menu de choix la reflète ; ✕ retire l'effet ; « Ajouter » (type ◀) en crée un
+- [x] `/ws benediction mine` : totaux cumulés (stats + effets spéciaux) et liste des bénédictions ; bouton « Mes bonus » dans l'écran de choix ; vide après la fin de la horde
+- [x] Plus de message « bénédictions dissipées » en se reconnectant ; après une partie perdue puis reconnexion, aucune bénédiction ne reste
 
-- [ ] Menu du Monolithe (horde ET Kingdom) : bouton « Bénédictions » à gauche de la fenêtre, ouvre le résumé de tes bénédictions ; Fermer revient au menu du Monolithe
+- [x] Menu du Monolithe (horde ET Kingdom) : bouton « Bénédictions » à gauche de la fenêtre, ouvre le résumé de tes bénédictions ; Fermer revient au menu du Monolithe
 
 ## Lot A — réglages, aperçu, garder une carte
 - [ ] Éditeur (op) → bouton « Réglages » : modifier le nombre de cartes (ex. 4), un poids de rareté, les relances au départ ; Enregistrer ; le prochain menu de choix le reflète. « Valeurs du mod » rétablit tout. Bouton grisé tant qu'une catégorie a des modifications non enregistrées
-- [ ] Écran de choix : sous chaque bonus, une ligne grise « total actuel → total après » (vide au premier choix, croît ensuite)
-- [ ] Bouton « Garder » sous chaque carte : une carte gardée reste à sa place après « Relancer » (qui coûte 1 relance) ; impossible de tout garder ; les cartes gardées s'effacent à la vague suivante / après un choix
+- [x] Écran de choix : sous chaque bonus, une ligne grise « total actuel → total après » (vide au premier choix, croît ensuite)
+- [ ] Bouton « Garder » sous chaque carte : une carte gardée reste à sa place après « Relancer » (qui coûte 1 relance) ; impossible de tout garder [bouton vu en jeu, comportement à tester] ; les cartes gardées s'effacent à la vague suivante / après un choix
 
 ## Lot B — synergies et malédictions
-- [ ] Synergies : prendre 3 bénédictions d'une même famille (ex. attaque) -> bonus de palier 1 appliqué (stat visible dans « Mes bonus », ligne « Synergie … ») ; la carte suivante de cette famille affiche « Synergie … : x/5 » puis « PALIER n ! » ; tout disparaît à la fin de la horde
+- [x] Synergies : prendre 3 bénédictions d'une même famille (ex. attaque) -> bonus de palier 1 appliqué (stat visible dans « Mes bonus », ligne « Synergie … ») ; la carte suivante de cette famille affiche « Synergie … : x/5 » puis « PALIER n ! » ; tout disparaît à la fin de la horde
 - [ ] Malédictions : en réglant la chance à 1 (Réglages -> « Chance d'une malédiction par menu »), une carte rouge « ☠ MALÉDICTION » apparaît dans chaque menu (jamais deux) ; la choisir applique bonus ET malus ; elle peut être bannie ; remettre 0,1 ensuite
 - [ ] Réglages : interrupteurs « Synergies de famille actives » et « Malédictions actives » fonctionnent (décochés = plus de synergie, plus de carte rouge)
 - [ ] Éditeur : on peut créer une catégorie de famille « Malédiction » (négatif autorisé dans les montants)
@@ -28,8 +28,8 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Catalogue (`/ws benediction liste`) : une ligne dorée « Proposée … » sous les effets des bénédictions déjà vues ; `/ws benediction stats reset` remet à zéro
 
 ## Performance
-- [ ] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
-- [ ] Mesure réelle : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
+- [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
+- [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
 - [ ] `/ws perf verbose` : bascule l'affichage des résumés de vague dans le chat des opérateurs
 
 ## Étape 4 — bénédictions spéciales et Chance étendue

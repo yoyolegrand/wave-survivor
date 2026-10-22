@@ -236,11 +236,8 @@ public class BlessingEditorScreen extends Screen {
                 minecraft.setScreen(new BlessingSettingsScreen(this, HordeJson.obj(data, "settings").deepCopy())));
         gear.active = !dirty;
         gear.setTooltip(Tooltip.create(WSLang.c("blessset.btn_tip")));
-        Button packBtn = button(left + W - 182, top + 6, 86, "§b📦 " + WSLang.t("blesspack.btn"), () -> {
-            List<String> names = new ArrayList<>();
-            for (JsonElement pe : HordeJson.arr(data, "packs")) if (pe.isJsonPrimitive()) names.add(pe.getAsString());
-            minecraft.setScreen(new BlessingPackScreen(this, names));
-        });
+        Button packBtn = button(left + W - 182, top + 6, 86, "§b📦 " + WSLang.t("blesspack.btn"), () ->
+                minecraft.setScreen(new BlessingPackScreen(this, data)));
         packBtn.active = !dirty;
         packBtn.setTooltip(Tooltip.create(WSLang.c("blesspack.btn_tip")));
 

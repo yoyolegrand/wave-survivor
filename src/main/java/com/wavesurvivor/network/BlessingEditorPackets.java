@@ -82,13 +82,27 @@ public final class BlessingEditorPackets {
         public static final byte EXPORT = 0, IMPORT = 1, IMPORT_OVERWRITE = 2;
         public final byte action;
         public final String name;
-        public PackAction(byte action, String name) { this.action = action; this.name = name != null ? name : ""; }
-        public void encode(FriendlyByteBuf buf) { buf.writeByte(action); buf.writeUtf(name, 64); }
-        public static PackAction decode(FriendlyByteBuf buf) { return new PackAction(buf.readByte(), buf.readUtf(64)); }
+        /** Éléments à exporter (identifiants de catégories, « @settings », « @deleted ») ; vide = tout. */
+        public final java.util.List<String> ids;
+        public PackAction(byte action, String name, java.util.List<String> ids) { this.action = action; this.name = name != null ? name : ""; this.ids = ids; }
+        public void encode(FriendlyByteBuf buf) {
+            buf.writeByte(action);
+            buf.writeUtf(name, 64);
+            buf.writeVarInt(ids.size());
+            for (String i : ids) buf.writeUtf(i, 64);
+        }
+        public static PackAction decode(FriendlyByteBuf buf) {
+            byte a = buf.readByte();
+            String n = buf.readUtf(64);
+            int c = Math.min(buf.readVarInt(), 500);
+            java.util.List<String> l = new java.util.ArrayList<>();
+            for (int i = 0; i < c; i++) l.add(buf.readUtf(64));
+            return new PackAction(a, n, l);
+        }
         public static void handle(PackAction pkt, Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
                 ServerPlayer p = ctx.get().getSender();
-                if (p != null) BlessingEditorManager.pack(p, pkt.action, pkt.name);
+                if (p != null) BlessingEditorManager.pack(p, pkt.action, pkt.name, pkt.ids);
             });
             ctx.get().setPacketHandled(true);
         }

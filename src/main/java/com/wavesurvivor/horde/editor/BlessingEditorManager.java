@@ -59,6 +59,8 @@ public final class BlessingEditorManager {
         JsonArray packs = new JsonArray();
         for (String n : CustomBlessingStore.listPacks()) packs.add(n);
         root.add("packs", packs);
+        root.addProperty("settingsModified", CustomBlessingStore.settingsModified());
+        root.addProperty("deletedCount", CustomBlessingStore.deletedBaseIds().size());
         return root.toString();
     }
 
@@ -126,12 +128,15 @@ public final class BlessingEditorManager {
     }
 
     /** Export / import d'un pack de bénédictions (dossier config/wavesurvivor/blessing_packs). */
-    public static void pack(ServerPlayer p, byte action, String name) {
+    public static void pack(ServerPlayer p, byte action, String name, java.util.List<String> ids) {
         if (!allowed(p) || !idle(p)) return;
         if (!CustomBlessingStore.validPackName(name)) { result(p, false, WSLang.t("blesspack.err_name")); return; }
         if (action == BlessingEditorPackets.PackAction.EXPORT) {
             try {
-                CustomBlessingStore.exportPack(name);
+                if (CustomBlessingStore.exportPack(name, ids.isEmpty() ? null : new java.util.HashSet<>(ids)) == null) {
+                    result(p, false, WSLang.t("blesspack.err_empty"));
+                    return;
+                }
                 result(p, true, WSLang.t("blesspack.exported", name));
             } catch (Exception e) {
                 result(p, false, WSLang.t("blesspack.err_io", e.getMessage()));

@@ -888,7 +888,7 @@ public class HordeCommand {
     /** /ws benediction export|import <nom> [overwrite] : packs de bénédictions (opérateurs). */
     private static int blessingPack(CommandContext<CommandSourceStack> ctx, byte action) {
         try {
-            com.wavesurvivor.horde.editor.BlessingEditorManager.pack(ctx.getSource().getPlayerOrException(), action, StringArgumentType.getString(ctx, "name"));
+            com.wavesurvivor.horde.editor.BlessingEditorManager.pack(ctx.getSource().getPlayerOrException(), action, StringArgumentType.getString(ctx, "name"), java.util.List.of());
             return 1;
         } catch (Exception e) {
             ctx.getSource().sendFailure(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.cette_commande_doit_etre_executee_par_un")));

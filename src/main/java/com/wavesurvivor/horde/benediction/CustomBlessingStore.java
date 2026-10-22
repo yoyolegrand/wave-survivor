@@ -132,23 +132,35 @@ public final class CustomBlessingStore {
     }
 
     /** Écrit ta couche (catégories créées, modifications, suppressions, réglages) dans un pack. Renvoie le chemin du fichier. */
-    public static synchronized Path exportPack(String name) throws java.io.IOException {
+    public static synchronized boolean settingsModified() { return settingsPatch.size() > 0; }
+
+    /**
+     * Écrit ta couche dans un pack et renvoie le fichier ; {@code only} = éléments retenus (identifiants de catégories, « @settings »,
+     * « @deleted »), null = tout. Renvoie null s'il n'y a rien à exporter (rien créé ni modifié).
+     */
+    public static synchronized Path exportPack(String name, Set<String> only) throws java.io.IOException {
         Files.createDirectories(packsDir());
         JsonObject root = new JsonObject();
         root.addProperty("format", 1);
         JsonArray cats = new JsonArray();
-        for (JsonObject o : CUSTOM.values()) cats.add(o);
+        for (Map.Entry<String, JsonObject> o : CUSTOM.entrySet()) if (only == null || containsKey(only, o.getKey())) cats.add(o.getValue());
         root.add("categories", cats);
         JsonObject patches = new JsonObject();
-        for (Map.Entry<String, JsonObject> p : PATCHES.entrySet()) patches.add(p.getKey(), p.getValue());
+        for (Map.Entry<String, JsonObject> p : PATCHES.entrySet()) if (only == null || containsKey(only, p.getKey())) patches.add(p.getKey(), p.getValue());
         root.add("patches", patches);
         JsonArray del = new JsonArray();
-        for (String d : DELETED) del.add(d);
+        if (only == null || only.contains("@deleted")) for (String d : DELETED) del.add(d);
         root.add("deleted", del);
-        if (settingsPatch.size() > 0) root.add("settings", settingsPatch);
+        if (settingsPatch.size() > 0 && (only == null || only.contains("@settings"))) root.add("settings", settingsPatch);
+        if (cats.size() == 0 && patches.size() == 0 && del.size() == 0 && !root.has("settings")) return null;
         Path f = packsDir().resolve(name + ".json");
         Files.writeString(f, GSON.toJson(root), StandardCharsets.UTF_8);
         return f;
+    }
+
+    private static boolean containsKey(Set<String> ids, String k) {
+        for (String i : ids) if (key(i).equals(k)) return true;
+        return false;
     }
 
     /** Résultat d'un import : éléments ajoutés, remplacés, et ceux ignorés à cause d'un conflit (identifiant déjà à toi). */
