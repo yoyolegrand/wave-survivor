@@ -10,12 +10,13 @@ import java.util.function.Supplier;
 /**
  * Actions du joueur sur son menu de bénédictions (1.8), client → serveur :
  *   REROLL : relancer les cartes (arg = famille voulue, "" = au hasard) ;
+ *   SUMMARY: demander le résumé de ses bénédictions (bouton du menu du Monolithe) ;
  *   BAN    : bannir une catégorie pour toute la partie (arg = identifiant de la catégorie de la carte).
  * Le serveur valide (menu en attente, relances / bannissements restants) et renvoie un nouveau menu.
  */
 public class BenedictionActionPacket {
 
-    public static final byte REROLL = 0, BAN = 1;
+    public static final byte REROLL = 0, BAN = 1, SUMMARY = 2;
 
     private final byte type;
     private final String arg;
@@ -40,6 +41,7 @@ public class BenedictionActionPacket {
             if (p == null) return;
             if (pkt.type == REROLL) RogueUpgradeManager.reroll(p, pkt.arg);
             else if (pkt.type == BAN) RogueUpgradeManager.ban(p, pkt.arg);
+            else if (pkt.type == SUMMARY) RogueUpgradeManager.sendSummary(p);
         });
         ctx.get().setPacketHandled(true);
     }

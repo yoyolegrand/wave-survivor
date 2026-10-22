@@ -8,6 +8,8 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] `/ws benediction mine` : totaux cumulés (stats + effets spéciaux) et liste des bénédictions ; bouton « Mes bonus » dans l'écran de choix ; vide après la fin de la horde
 - [ ] Plus de message « bénédictions dissipées » en se reconnectant ; après une partie perdue puis reconnexion, aucune bénédiction ne reste
 
+- [ ] Menu du Monolithe (horde ET Kingdom) : bouton « Bénédictions » à gauche de la fenêtre, ouvre le résumé de tes bénédictions ; Fermer revient au menu du Monolithe
+
 ## Performance
 - [ ] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [ ] Mesure réelle : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

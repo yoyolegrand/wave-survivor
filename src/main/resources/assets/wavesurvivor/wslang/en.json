@@ -2643,6 +2643,8 @@
   "invasion.omen_vanilla": "§6🔔 The bad omen draws in a classic pillager raid!",
   "invasion.omen_wait": "§6🔔 The village is still on edge: your bad omen will return shortly.",
   "bless.mine_title": "My blessings",
+  "bless.panel_btn": "Blessings",
+  "bless.panel_tip": "See your current blessings and their combined bonuses.",
   "bless.mine_none": "No blessing yet.",
   "bless.mine_btn": "📊 My bonuses",
   "bless.mine_total": "Combined bonuses (this run)",

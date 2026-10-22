@@ -339,6 +339,13 @@ public class MonolithShopScreen extends Screen {
         }
         addRenderableWidget(Button.builder(Component.literal(WSLang.t("ui.fermer")), b -> onClose())
                 .bounds(width / 2 - 40, top + PANEL_H - 24, 80, 18).build());
+        // Bénédictions personnelles (horde et Kingdom) : bouton à gauche de la fenêtre
+        int bx = left >= 104 ? left - 100 : left + 8;
+        addRenderableWidget(Button.builder(Component.literal("§d" + WSLang.t("bless.panel_btn")),
+                        b -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.BenedictionActionPacket(
+                                com.wavesurvivor.network.BenedictionActionPacket.SUMMARY, "")))
+                .bounds(bx, left >= 104 ? top + 8 : top + PANEL_H + 4, 92, 20)
+                .tooltip(Tooltip.create(WSLang.c("bless.panel_tip"))).build());
     }
 
     private boolean creative() {

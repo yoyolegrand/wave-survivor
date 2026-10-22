@@ -29,7 +29,7 @@ public class ClientPacketHandler {
     public static void openBlessingSummary(java.util.Map<String, Integer> owned, float mult) {
         BenedictionClient.mult = mult;
         Minecraft mc = Minecraft.getInstance();
-        if (mc != null) mc.setScreen(new BlessingSummaryScreen(owned, null));
+        if (mc != null) mc.setScreen(new BlessingSummaryScreen(owned, mc.screen instanceof MonolithShopScreen ? mc.screen : null));
     }
 
     public static void openBenedictionScreen(java.util.List<String> ids, int currentWave, float mult, int rerolls, int bans, java.util.Map<String, Integer> owned) {

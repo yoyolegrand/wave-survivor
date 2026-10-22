@@ -2092,6 +2092,8 @@
   "invasion.omen_vanilla": "§6🔔 Le mauvais présage attire un raid de pillards classique !",
   "invasion.omen_wait": "§6🔔 Le village est encore agité : ton mauvais présage reviendra dans un instant.",
   "bless.mine_title": "Mes bénédictions",
+  "bless.panel_btn": "Bénédictions",
+  "bless.panel_tip": "Voir tes bénédictions actuelles et leurs bonus cumulés.",
   "bless.mine_none": "Aucune bénédiction pour l'instant.",
   "bless.mine_btn": "📊 Mes bonus",
   "bless.mine_total": "Bonus cumulés (cette partie)",
