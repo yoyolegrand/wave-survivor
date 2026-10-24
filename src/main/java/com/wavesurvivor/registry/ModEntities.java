@@ -162,6 +162,27 @@ public class ModEntities {
                     .clientTrackingRange(8)
                     .build("royal_guard"));
 
+    /** Horde des Corrompus : Rootling (modèle sur mesure, masque haute résolution). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Rootling>> ROOTLING = ENTITIES.register("rootling",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Rootling>of(com.wavesurvivor.entity.Rootling::new, MobCategory.MONSTER)
+                    .sized(0.6f, 1.1f)
+                    .clientTrackingRange(8)
+                    .build("rootling"));
+
+    /** Horde des Corrompus : Stone Brute (modèle sur mesure, haute résolution). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.StoneBrute>> STONE_BRUTE = ENTITIES.register("stone_brute",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.StoneBrute>of(com.wavesurvivor.entity.StoneBrute::new, MobCategory.MONSTER)
+                    .sized(2.0f, 3.2f)
+                    .clientTrackingRange(10)
+                    .build("stone_brute"));
+
+    /** Néantide : créature du néant insectoïde (modèle sur mesure, haute résolution). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Neantide>> NEANTIDE = ENTITIES.register("neantide",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Neantide>of(com.wavesurvivor.entity.Neantide::new, MobCategory.MONSTER)
+                    .sized(0.8f, 2.4f)
+                    .clientTrackingRange(8)
+                    .build("neantide"));
+
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
     }
@@ -185,5 +206,8 @@ public class ModEntities {
         event.put(JACKAL.get(), com.wavesurvivor.entity.Jackal.createAttributes().build());
         event.put(SANDSTONE_GOLEM.get(), com.wavesurvivor.entity.SandstoneGolem.createAttributes().build());
         event.put(ROYAL_GUARD.get(), com.wavesurvivor.entity.RoyalGuard.createAttributes().build());
+        event.put(ROOTLING.get(), com.wavesurvivor.entity.Rootling.createAttributes().build());
+        event.put(STONE_BRUTE.get(), com.wavesurvivor.entity.StoneBrute.createAttributes().build());
+        event.put(NEANTIDE.get(), com.wavesurvivor.entity.Neantide.createAttributes().build());
     }
 }

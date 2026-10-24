@@ -138,6 +138,14 @@ public class ModItems {
     /** Œuf d'apparition du Garde royal momifié (horde des Sables Ardents). */
     public static final RegistryObject<Item> ROYAL_GUARD_SPAWN_EGG = ITEMS.register("royal_guard_spawn_egg",
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.ROYAL_GUARD, 0xE0B040, 0x1A3A78, new Item.Properties()));
+    /** Œuf d'apparition du Rootling (horde des Corrompus). */
+    public static final RegistryObject<Item> ROOTLING_SPAWN_EGG = ITEMS.register("rootling_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.ROOTLING, 0x4A2E18, 0xFF3CC8, new Item.Properties()));
+    /** Œufs d'apparition du Stone Brute (Corrompus) et du Néantide. */
+    public static final RegistryObject<Item> STONE_BRUTE_SPAWN_EGG = ITEMS.register("stone_brute_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.STONE_BRUTE, 0x8A7A66, 0xFF46C8, new Item.Properties()));
+    public static final RegistryObject<Item> NEANTIDE_SPAWN_EGG = ITEMS.register("neantide_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.NEANTIDE, 0x1A1030, 0xBA5CFF, new Item.Properties()));
 
     /** Relique : Anneau d'Ancrage du Néant (immunité à la Lévitation, compatible Curios « bague »). */
     public static final RegistryObject<Item> ANNEAU_ANCRAGE = ITEMS.register("anneau_ancrage",
@@ -288,6 +296,9 @@ public class ModItems {
                         output.accept(JACKAL_SPAWN_EGG.get());
                         output.accept(SANDSTONE_GOLEM_SPAWN_EGG.get());
                         output.accept(ROYAL_GUARD_SPAWN_EGG.get());
+                        output.accept(ROOTLING_SPAWN_EGG.get());
+                        output.accept(STONE_BRUTE_SPAWN_EGG.get());
+                        output.accept(NEANTIDE_SPAWN_EGG.get());
                         output.accept(ECLAT_NEANT_SPAWN_EGG.get());
                         output.accept(ANNEAU_ANCRAGE.get());
                         output.accept(AMULETTE_BRASIER.get());

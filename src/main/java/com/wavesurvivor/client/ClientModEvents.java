@@ -55,6 +55,9 @@ public class ClientModEvents {
         event.registerLayerDefinition(JackalModel.LAYER, JackalModel::createBodyLayer); // Chacal maudit (modèle sur mesure)
         event.registerLayerDefinition(SandstoneGolemModel.LAYER, SandstoneGolemModel::createBodyLayer); // Colosse de grès (modèle sur mesure)
         event.registerLayerDefinition(RoyalGuardModel.LAYER, RoyalGuardModel::createBodyLayer); // Garde royal momifié (modèle sur mesure)
+        event.registerLayerDefinition(RootlingModel.LAYER, RootlingModel::createBodyLayer); // Rootling (Corrompus, modèle sur mesure)
+        event.registerLayerDefinition(StoneBruteModel.MODEL_LAYER, StoneBruteModel::createBodyLayer); // Stone Brute (Corrompus, haute résolution)
+        event.registerLayerDefinition(NeantideModel.MODEL_LAYER, NeantideModel::createBodyLayer); // Néantide (haute résolution)
     }
 
     @SubscribeEvent
@@ -82,6 +85,9 @@ public class ClientModEvents {
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.JACKAL.get(), JackalRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.SANDSTONE_GOLEM.get(), SandstoneGolemRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ROYAL_GUARD.get(), RoyalGuardRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ROOTLING.get(), RootlingRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.STONE_BRUTE.get(), StoneBruteRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.NEANTIDE.get(), NeantideRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.XALTOR_CRYSTAL.get(),
                 net.minecraft.client.renderer.entity.EndCrystalRenderer::new);
     }
