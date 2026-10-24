@@ -113,9 +113,11 @@ public class Djinn extends Evoker {
     }
 
     private void tickOrbs(ServerLevel sl) {
-        Iterator<Orb> it = orbs.iterator();
-        while (it.hasNext()) {
-            Orb o = it.next();
+        if (orbs.isEmpty()) return;
+        // On parcourt une COPIE : un coup porté peut retirer le Djinn (et vider la liste) pendant la boucle
+        // — épines, mort, nettoyage de vague en mode Sans fin — sans provoquer de ConcurrentModificationException.
+        for (Orb o : new ArrayList<>(orbs)) {
+            if (isRemoved()) { orbs.clear(); return; }
             o.age++;
             Vec3 prev = o.pos;
             if (o.age <= ORBIT) {
@@ -125,7 +127,7 @@ public class Djinn extends Evoker {
                 o.vel = o.pos.subtract(prev);
             } else {
                 // Phase 2 : chasse (virage limité : on peut esquiver)
-                if (o.target == null || !o.target.isAlive()) { burst(sl, o.pos, false); it.remove(); continue; }
+                if (o.target == null || !o.target.isAlive()) { burst(sl, o.pos, false); orbs.remove(o); continue; }
                 Vec3 aim = o.target.position().add(0, o.target.getBbHeight() * 0.6, 0).subtract(o.pos).normalize().scale(ORB_SPEED);
                 Vec3 v = o.vel.lengthSqr() < 1e-4 ? aim : o.vel.scale(0.86).add(aim.scale(0.14));
                 o.vel = v.normalize().scale(ORB_SPEED);
@@ -144,17 +146,18 @@ public class Djinn extends Evoker {
             LivingEntity victim = hit != null ? hit
                     : (o.target.getBoundingBox().inflate(0.3).contains(o.pos) ? o.target : null);
             if (victim != null) {
-                victim.hurt(damageSources().indirectMagic(this, this), ORB_DAMAGE);
-                victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, false, true));
+                orbs.remove(o);
                 burst(sl, o.pos, true);
-                it.remove();
+                victim.hurt(damageSources().indirectMagic(this, this), ORB_DAMAGE);
+                if (victim.isAlive()) victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, false, true));
+                if (isRemoved()) { orbs.clear(); return; }   // le coup a pu retirer le Djinn
                 continue;
             }
             // Mur touché ou fin de vie : l'orbe éclate sur place
             BlockPos bp = BlockPos.containing(o.pos);
             if (!sl.getBlockState(bp).getCollisionShape(sl, bp).isEmpty() || o.age > ORB_LIFE) {
                 burst(sl, o.pos, false);
-                it.remove();
+                orbs.remove(o);
             }
         }
     }
