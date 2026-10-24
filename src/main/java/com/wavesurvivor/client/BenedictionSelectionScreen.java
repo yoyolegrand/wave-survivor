@@ -26,7 +26,7 @@ public class BenedictionSelectionScreen extends Screen {
 
     /** Largeur d'une carte : 170 au plus, réduite pour que 4 choix (Héritage Seigneur 3) tiennent à l'écran. */
     private int CARD_WIDTH = 170;
-    private static final int CARD_HEIGHT = 240;
+    private int CARD_HEIGHT = 240; // s'adapte au contenu de la carte la plus remplie (voir init)
     private static final int CARD_SPACING = 20;
 
     private final List<RogueUpgrade> choices;
@@ -81,6 +81,11 @@ public class BenedictionSelectionScreen extends Screen {
         int n = choices.size();
         if (n == 0) return;
         CARD_WIDTH = Math.max(110, Math.min(170, (width - 20 - (n - 1) * CARD_SPACING) / n));
+        // Hauteur des cartes : assez pour la carte la plus remplie (texte au-dessus du bouton Choisir),
+        // sans dépasser l'écran (titre au-dessus, boutons Bannir / Garder en dessous)
+        int need = 240;
+        for (RogueUpgrade u : choices) need = Math.max(need, bodyStart(u) + measureBody(u) + 38);
+        CARD_HEIGHT = Math.max(200, Math.min(need, height - 96));
         int totalWidth = n * CARD_WIDTH + (n - 1) * CARD_SPACING;
         int startX = (width - totalWidth) / 2;
         int cardY = (height - CARD_HEIGHT) / 2;
@@ -228,6 +233,17 @@ public class BenedictionSelectionScreen extends Screen {
 
         // Description (wrappée)
         int descY = sepY + 10;
+        // Filet de sécurité : si le contenu dépasse malgré tout (petit écran), on réduit légèrement le texte
+        // pour qu'il reste au-dessus du bouton Choisir (et on saute les lignes facultatives).
+        int bodyH = measureBody(upg), availH = (y + CARD_HEIGHT - 34) - descY;
+        boolean squeeze = bodyH > availH;
+        float s = squeeze ? Math.max(0.55f, availH / (float) bodyH) : 1f;
+        if (squeeze) {
+            g.pose().pushPose();
+            g.pose().translate(x + CARD_WIDTH / 2f, descY, 0);
+            g.pose().scale(s, s, 1f);
+            g.pose().translate(-(x + CARD_WIDTH / 2f), -descY, 0);
+        }
         List<FormattedCharSequence> descLines = font.split(
                 Component.literal(upg.description()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
                 CARD_WIDTH - 20);
@@ -244,7 +260,7 @@ public class BenedictionSelectionScreen extends Screen {
                     x + CARD_WIDTH / 2, descY, 0xFF55FF55);
             descY += font.lineHeight + 1;
             // Aperçu : total actuel → total après ce choix (si la carte a la place)
-            if (!owned.isEmpty() && descY + font.lineHeight < y + CARD_HEIGHT - 36) {
+            if (!squeeze && !owned.isEmpty() && descY + font.lineHeight < y + CARD_HEIGHT - 36) {
                 double cur = totals.getOrDefault(modKey(mod), 0.0);
                 g.drawCenteredString(font, Component.literal("§8" + fmtVal(mod.operation(), cur) + " → §7" + fmtVal(mod.operation(), cur + mod.amount())),
                         x + CARD_WIDTH / 2, descY, 0xFF888888);
@@ -271,8 +287,9 @@ public class BenedictionSelectionScreen extends Screen {
                     x + CARD_WIDTH / 2, descY + 2, 0xFF777777);
             descY += font.lineHeight + 2;
         }
+        if (squeeze) g.pose().popPose();
         // Synergie de famille : où on en est avec cette carte en plus
-        if (!curse && com.wavesurvivor.horde.benediction.BlessingSynergy.enabled()
+        if (!squeeze && !curse && com.wavesurvivor.horde.benediction.BlessingSynergy.enabled()
                 && com.wavesurvivor.horde.benediction.BlessingSynergy.thresholds().length > 0 && descY + font.lineHeight < y + CARD_HEIGHT - 34) {
             int cnt = com.wavesurvivor.horde.benediction.BlessingSynergy.countFor(upg.family(), owned) + 1;
             int next = com.wavesurvivor.horde.benediction.BlessingSynergy.nextAt(cnt - 1);
@@ -286,6 +303,25 @@ public class BenedictionSelectionScreen extends Screen {
             } else line = "§5" + com.wavesurvivor.i18n.WSLang.t("bless.syn_card", fam, cnt, next);
             g.drawCenteredString(font, Component.literal(line), x + CARD_WIDTH / 2, descY + 4, 0xFFAA55FF);
         }
+    }
+
+    /** Hauteur depuis le haut de la carte jusqu'au début de la description (icône, nom, séparateur). */
+    private int bodyStart(RogueUpgrade upg) {
+        int nameLines = font.split(Component.literal(upg.name()).withStyle(upg.color(), ChatFormatting.BOLD), CARD_WIDTH - 20).size();
+        return 45 + nameLines * (font.lineHeight + 1) + 8 + 10;
+    }
+
+    /** Hauteur du contenu obligatoire (description, stats, soin, effets, niveau max), comme dans drawCard. */
+    private int measureBody(RogueUpgrade upg) {
+        int lh = font.lineHeight + 1;
+        int h = font.split(Component.literal(upg.description()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), CARD_WIDTH - 20).size() * lh;
+        h += 6 + upg.modifiers().size() * lh;
+        if (upg.healOnApply() > 0) h += lh;
+        for (RogueUpgrade.Effect fx : upg.effects()) {
+            h += font.split(Component.literal(com.wavesurvivor.horde.benediction.BlessingEffects.describe(fx)).withStyle(ChatFormatting.AQUA), CARD_WIDTH - 16).size() * lh;
+        }
+        if (upg.maxLevel() > 0) h += font.lineHeight + 2;
+        return h;
     }
 
     /** Formate un modifier en chaîne lisible pour l'affichage : "+2 Armure" ou "+15% Vitesse". */
