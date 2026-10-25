@@ -62,7 +62,7 @@ public class ArenaStructure extends Structure {
         if (count == 0 || max - min > ArenaSettings.maxSlope()) return Optional.empty();
         int y0 = (int) Math.round(sum / (double) count);
         BlockPos center = new BlockPos(cx, y0, cz);
-        return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1]))));
+        return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1], bp.clearHeight()))));
     }
 
     @Override

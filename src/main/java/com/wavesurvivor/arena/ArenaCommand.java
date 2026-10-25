@@ -22,7 +22,7 @@ import java.util.List;
 public final class ArenaCommand {
 
     /** Arènes livrées avec le mod (data/wavesurvivor/arenas/&lt;id&gt;.json) : ajouter ici chaque nouvelle arène. */
-    public static final List<String> BUILTIN = List.of("necropole_rois_dechus");
+    public static final List<String> BUILTIN = List.of("necropole_rois_dechus", "breche_infernale");
 
     private ArenaCommand() {}
 

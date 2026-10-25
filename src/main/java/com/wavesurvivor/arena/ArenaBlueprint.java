@@ -43,7 +43,7 @@ import java.util.Map;
  */
 public final class ArenaBlueprint {
 
-    /** Hauteur dégagée au-dessus du sol de l'arène. */
+    /** Hauteur minimale dégagée au-dessus du sol de l'arène (plus haut si le plan est plus haut : hauteur du plan + 1). */
     public static final int CLEAR_HEIGHT = 12;
     /** Largeur de l'anneau de raccord autour du cercle. */
     public static final int BLEND_WIDTH = 2;
@@ -53,8 +53,13 @@ public final class ArenaBlueprint {
     private final Map<Character, BlockState> palette;
     private final String[][] layers;
     private final Map<String, List<int[]>> markers;
+    /** Repères portant une table de butin (« loot_table ») : coffre à remplir à la pose. */
+    private final Map<String, String> lootTables;
 
-    private ArenaBlueprint(String id, String horde, String hordeName, int sx, int sy, int sz, Map<Character, BlockState> palette, String[][] layers, Map<String, List<int[]>> markers) {
+    /** Hauteur dégagée au-dessus du sol de cette arène. */
+    public int clearHeight() { return Math.max(CLEAR_HEIGHT, sy + 1); }
+
+    private ArenaBlueprint(String id, String horde, String hordeName, int sx, int sy, int sz, Map<Character, BlockState> palette, String[][] layers, Map<String, List<int[]>> markers, Map<String, String> lootTables) {
         this.id = id;
         this.horde = horde;
         this.hordeName = hordeName;
@@ -64,6 +69,7 @@ public final class ArenaBlueprint {
         this.palette = palette;
         this.layers = layers;
         this.markers = markers;
+        this.lootTables = lootTables;
     }
 
     // ─── Chargement ───
@@ -112,10 +118,14 @@ public final class ArenaBlueprint {
             for (int z = 0; z < rows.size(); z++) layers[y][z] = rows.get(z).getAsString();
         }
         Map<String, List<int[]>> markers = new LinkedHashMap<>();
+        Map<String, String> loot = new HashMap<>();
         if (o.has("markers")) for (Map.Entry<String, JsonElement> e : o.getAsJsonObject("markers").entrySet()) {
             JsonElement v = e.getValue();
             List<int[]> list = new ArrayList<>();
-            if (v.isJsonObject() && v.getAsJsonObject().has("pos")) list.add(pos(v.getAsJsonObject().getAsJsonArray("pos")));
+            if (v.isJsonObject() && v.getAsJsonObject().has("pos")) {
+                list.add(pos(v.getAsJsonObject().getAsJsonArray("pos")));
+                if (v.getAsJsonObject().has("loot_table")) loot.put(e.getKey(), v.getAsJsonObject().get("loot_table").getAsString());
+            }
             else if (v.isJsonArray() && v.getAsJsonArray().size() > 0 && v.getAsJsonArray().get(0).isJsonArray())
                 for (JsonElement p : v.getAsJsonArray()) list.add(pos(p.getAsJsonArray()));
             else continue; // notes et autres textes
@@ -123,7 +133,7 @@ public final class ArenaBlueprint {
         }
         String horde = o.has("horde") ? o.get("horde").getAsString() : "";
         String hordeName = o.has("hordeName") ? o.get("hordeName").getAsString() : "";
-        return new ArenaBlueprint(id, horde, hordeName, sx, Math.max(sy, layers.length), sz, palette, layers, markers);
+        return new ArenaBlueprint(id, horde, hordeName, sx, Math.max(sy, layers.length), sz, palette, layers, markers, loot);
     }
 
     private static int[] pos(JsonArray a) { return new int[]{a.get(0).getAsInt(), a.get(1).getAsInt(), a.get(2).getAsInt()}; }
@@ -246,7 +256,7 @@ public final class ArenaBlueprint {
         // 1. Dégagement du cercle  2. Fondations : sous le sol de l'arène, on comble jusqu'au terrain solide
         for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
             if (Math.hypot(x - cx, z - cz) > radius || !in(clip, ox + x, oz + z)) continue;
-            for (int y = 0; y <= CLEAR_HEIGHT; y++) set(level, new BlockPos(ox + x, y0 + y, oz + z), air);
+            for (int y = 0; y <= clearHeight(); y++) set(level, new BlockPos(ox + x, y0 + y, oz + z), air);
             fill(level, ox + x, y0 - 1, oz + z, y0 - 48);
         }
         // 3. Le plan (l'air du plan est déjà posé par le dégagement)
@@ -262,6 +272,17 @@ public final class ArenaBlueprint {
                 }
             }
         }
+        // Coffres du plan : table de butin tirée au hasard (comme les structures vanilla)
+        for (Map.Entry<String, String> e : lootTables.entrySet()) {
+            List<int[]> ms = markers.get(e.getKey());
+            if (ms == null) continue;
+            for (int[] m : ms) {
+                int[] r = rot(m[0], m[2], rot);
+                BlockPos cp = new BlockPos(ox + r[0], y0 + m[1], oz + r[1]);
+                if (!in(clip, cp.getX(), cp.getZ())) continue;
+                net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity.setLootTable(level, rnd, cp, new net.minecraft.resources.ResourceLocation(e.getValue()));
+            }
+        }
         // 4. Raccord : anneau autour du cercle, qui rejoint peu à peu le terrain naturel
         int rr = (int) Math.ceil(radius + BLEND_WIDTH);
         BlockState[] cover = {Blocks.PODZOL.defaultBlockState(), Blocks.PODZOL.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.MOSS_BLOCK.defaultBlockState()};
@@ -272,7 +293,7 @@ public final class ArenaBlueprint {
             int h = groundY(level, wx, wz, wg);
             double frac = (dist - radius) / BLEND_WIDTH;                    // 0 contre l'arène, 1 au bord du raccord
             int ty = (int) Math.round(y0 + (h - y0) * frac);
-            for (int y = ty + 1; y <= Math.max(h, ty) + 1 + CLEAR_HEIGHT / 2; y++) set(level, new BlockPos(wx, y, wz), air);
+            for (int y = ty + 1; y <= Math.max(h, ty) + 1 + clearHeight() / 2; y++) set(level, new BlockPos(wx, y, wz), air);
             fill(level, wx, ty - 1, wz, ty - 48);
             set(level, new BlockPos(wx, ty, wz), cover[rnd.nextInt(cover.length)]);
         }

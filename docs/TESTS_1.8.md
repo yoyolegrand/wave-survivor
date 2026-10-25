@@ -102,6 +102,11 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Info-bulle d'un équipement amélioré (inventaire, barre d'objets, coffre, Forge, n'importe où) : nom coloré doré « ✦ » (Consacré) ou violet « ☠ » (Profané), ligne « Consacré (2/3) », puis chaque amélioration avec son niveau, ses bonus en vert et ses malus en rouge — sans avoir à passer par la Forge
 - [ ] Forge : la liste de droite ne coupe plus les noms longs (« … » à la place) ; le détail reste dans l'info-bulle
 
+## Arène « La Brèche Infernale » — étape 1 (pose)
+- [ ] `/ws arena list` affiche aussi `breche_infernale` ; `/ws arena place breche_infernale` (et `90`, `180`, `270`) : cratère de netherrack de 33 blocs, parvis de pierre noire avec l'autel au centre, portail géant en ruine au nord (obsidienne, obsidienne pleureuse, or), 5 failles de magma, 3 mares de lave cerclées de pierre noire, 6 colonnes de basalte, forêt carmin à l'ouest, feux ; comparer avec `docs/arenes/breche_infernale/arene_breche_infernale.png`
+- [ ] Coffre du portail (au nord, face au sud avant rotation) rempli avec le butin vanilla `minecraft:chests/ruined_portal`, différent à chaque pose ; il suit la rotation
+- [ ] Terrain : fondations (rien ne flotte), dégagement jusqu'à 15 blocs de haut (le portail ne touche aucun arbre), raccord qui fond le cratère dans le paysage ; la lave ne déborde pas du cercle
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
