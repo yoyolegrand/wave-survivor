@@ -73,3 +73,11 @@ Un **cimetière en ruine** de pierre des abîmes, éclairé au **feu des âmes**
 ## 6. Pour les arènes suivantes
 
 Garder le même format : un `blueprint_<nom>.json` (palette + couches + repères `monolith`, `crypt_spawn`/`boss_spawn`, `spawns`, `entrances`) et une fiche comme celle-ci. Claude chat peut fournir les plans des autres hordes (Sables Ardents, Néant, Pics Gelés, Corrompus…).
+
+## 7. Implémentation (Claude Code)
+
+Code : `com.wavesurvivor.arena` (`ArenaBlueprint` = chargeur et pose du plan, `ArenaCommand` = `/ws arena list|place`, `ArenaStructure` + `ArenaPiece` = génération du monde, `ArenaAltar` = autel verrouillé, `ArenaSession` = apparitions, grille, braseros, coffre, `ArenaSettings` = config).
+- Le plan est lu dans `data/wavesurvivor/arenas/<id>.json` (copie du blueprint) ou `config/wavesurvivor/arenas/<id>.json` (prioritaire). Champ ajouté : `"hordeName": "La Nécropole"` (nom exact de la horde dans la config).
+- Une **nouvelle arène** = un plan JSON + son identifiant dans `ArenaCommand.BUILTIN` + trois fichiers de données (`worldgen/structure/arena_<nom>.json` avec `"arena": "<id>"`, `worldgen/structure_set/arena_<nom>.json`, `tags/worldgen/biome/has_structure/arena_<nom>.json`).
+- Rareté : `structure_set` (spacing 64 / separation 24, à l'écart des villages) ; biomes : le tag ; options : `config/wavesurvivor/arenas.json` (`generation` : enabled, maxSlope, randomRotation, disabled ; `affinity` : cryptWeight, graveWeight, entranceWeight, gateOpens, braziersFade, rewardChest, rewardChestName).
+- L'autel est marqué (identifiant, rotation, origine) à la pose ; à la première utilisation il est lié à la horde du plan et verrouillé (`AltarStore.AltarEntry.locked`).

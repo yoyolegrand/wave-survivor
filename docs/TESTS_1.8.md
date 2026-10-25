@@ -84,6 +84,16 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Jamais sur l'eau, jamais sur une pente de plus de 4 blocs, pas à moins de ~8 tronçons d'un village
 - [ ] Réglages : `config/wavesurvivor/arenas.json` -> `{"generation":{"enabled":false}}` (ou `"disabled":["necropole_rois_dechus"]`, `"maxSlope"`, `"randomRotation"`) puis nouveau monde ; rareté = `spacing` / `separation` dans `data/wavesurvivor/worldgen/structure_set/arena_necropole.json`, biomes = tag `has_structure/arena_necropole`
 
+## Arène « Nécropole des Rois Déchus » — étape 3 (affiliation à la horde)
+- [ ] `/ws arena place necropole_rois_dechus` pose aussi l'autel de horde sur le piédestal ; clic droit : l'écran de lancement de « La Nécropole » s'ouvre directement (pas d'écran de liaison, aucun ingrédient)
+- [ ] Autel verrouillé : shift + clic ne le délie pas (message « verrouillé ») ; en Survie impossible de le casser (pic, TNT, Creeper, piston, Wither / Dragon) ; en Créatif il se casse
+- [ ] Lancer la horde depuis cet autel : les monstres apparaissent dans la crypte (la grille de fer s'ouvre à la première apparition), sur les tombes (terre qui jaillit + son de pelle / mort-vivant) et un peu aux 4 entrées — plus en cercle au hasard
+- [ ] Boss : apparaît dans la crypte, grille ouverte ; en fin de partie (victoire, défaite ou arrêt) la grille est refermée
+- [ ] Braseros : les 4 feux d'âmes s'éteignent un par un au fil des vagues, et se rallument à la fin
+- [ ] Première victoire : environ 5 s après, un coffre roulette (« Reliquaire du Boss ») apparaît dans la crypte avec un message ; aux victoires suivantes, aucun nouveau coffre dans cette arène
+- [ ] Arène générée dans un nouveau monde : même comportement (autel posé et verrouillé au premier clic) ; un autel ordinaire (non arène) se lie toujours par recette
+- [ ] Réglages : `config/wavesurvivor/arenas.json` -> `"affinity": {"cryptWeight":5,"graveWeight":4,"entranceWeight":1,"gateOpens":true,"braziersFade":true,"rewardChest":true,"rewardChestName":"Reliquaire du Boss"}` puis `/ws reload`
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

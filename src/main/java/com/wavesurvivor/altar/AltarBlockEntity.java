@@ -26,6 +26,55 @@ public class AltarBlockEntity extends BlockEntity {
     public float open, oOpen;
     public float rot, oRot, tRot;
 
+    // Arène (1.8) : si l'autel appartient à une arène toute faite, de quoi retrouver ses repères (coin d'origine, rotation, niveau du sol)
+    private String arenaId = null;
+    private int arenaRot, arenaOx, arenaY0, arenaOz;
+    private boolean arenaRewarded = false;
+
+    public String arenaId() { return arenaId; }
+    public int arenaRot() { return arenaRot; }
+    public int arenaOx() { return arenaOx; }
+    public int arenaY0() { return arenaY0; }
+    public int arenaOz() { return arenaOz; }
+    public boolean arenaRewarded() { return arenaRewarded; }
+
+    public void setArena(String id, int rot, int ox, int y0, int oz) {
+        arenaId = id;
+        arenaRot = rot;
+        arenaOx = ox;
+        arenaY0 = y0;
+        arenaOz = oz;
+    }
+
+    public void setArenaRewarded(boolean v) {
+        arenaRewarded = v;
+        setChanged();
+    }
+
+    @Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag) {
+        super.saveAdditional(tag);
+        if (arenaId != null) {
+            tag.putString("ArenaId", arenaId);
+            tag.putInt("ArenaRot", arenaRot);
+            tag.putInt("ArenaOx", arenaOx);
+            tag.putInt("ArenaY0", arenaY0);
+            tag.putInt("ArenaOz", arenaOz);
+            tag.putBoolean("ArenaRewarded", arenaRewarded);
+        }
+    }
+
+    @Override
+    public void load(net.minecraft.nbt.CompoundTag tag) {
+        super.load(tag);
+        arenaId = tag.contains("ArenaId") ? tag.getString("ArenaId") : null;
+        arenaRot = tag.getInt("ArenaRot");
+        arenaOx = tag.getInt("ArenaOx");
+        arenaY0 = tag.getInt("ArenaY0");
+        arenaOz = tag.getInt("ArenaOz");
+        arenaRewarded = tag.getBoolean("ArenaRewarded");
+    }
+
     public AltarBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ALTAR_RUNIC.get(), pos, state);
     }

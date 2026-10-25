@@ -26,6 +26,7 @@ public class AltarManager {
 
     /** Called from AltarBlock.use() when a player right-clicks an altar. */
     public static void onRightClick(ServerPlayer player, ServerLevel level, BlockPos pos, AltarBlock.AltarType type) {
+        com.wavesurvivor.arena.ArenaAltar.adopt(level, pos); // autel d'arène : lié et verrouillé à la première utilisation
         String dim = level.dimension().location().toString();
         AltarStore.AltarEntry entry = AltarStore.get(dim, pos);
 
@@ -269,8 +270,10 @@ public class AltarManager {
             level.playSound(null, altarPos, SoundEvents.ENDER_DRAGON_GROWL, SoundSource.MASTER, 1.0f, 1.2f);
 
             // Lance la horde avec spawn override sur l'altar
+            com.wavesurvivor.arena.ArenaSession.begin(level, altarPos); // autel d'arène : apparitions, grille et braseros
             boolean ok = HordeManager.get().startAt(horde, server, altarPos, level.dimension().location().toString());
             if (!ok) {
+                com.wavesurvivor.arena.ArenaSession.end();
                 player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.autel_impossible_de_demarrer_la_horde_de")));
             }
         }, "altar start horde");
@@ -389,6 +392,10 @@ public class AltarManager {
         AltarStore.AltarEntry entry = AltarStore.get(dim, pos);
         if (entry == null || entry.hordeName == null || entry.hordeName.isBlank()) {
             player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.cet_autel_n_est_lie_a_aucune_horde")));
+            return;
+        }
+        if (entry.locked) {
+            player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("arena.altar_locked", com.wavesurvivor.i18n.WSLang.t(entry.hordeName))));
             return;
         }
         if (HordeManager.get().isRunning()) {

@@ -34,6 +34,8 @@ public class AltarStore {
         public String ownerUuid;          // joueur qui a posé l'autel (null = autel ancien → prochain qui le lie)
         public String ownerName;          // pour l'affichage
         public String particle;           // préréglage de particules (AltarParticles), null = âmes
+        public boolean locked;            // autel d'une arène : lié à sa horde pour toujours (ni délié, ni reconfiguré), incassable
+        public String arenaId;            // arène à laquelle il appartient (null = autel ordinaire)
 
         /** Propriétaire ou op (niveau 2). */
         public boolean canCustomize(net.minecraft.server.level.ServerPlayer p) {

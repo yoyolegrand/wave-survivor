@@ -19,27 +19,32 @@ import java.util.Set;
  * { "generation": { "enabled": true, "maxSlope": 4, "randomRotation": true, "disabled": ["necropole_rois_dechus"] } }
  * </pre>
  * enabled : génération naturelle des arènes ; maxSlope : écart de hauteur maximal toléré sur le cercle ; randomRotation : orientation au hasard ;
- * disabled : arènes à ne pas générer. L'espacement (rareté) et les biomes se règlent dans les données du mod
+ * disabled : arènes à ne pas générer.
+ * Affiliation à la horde (clé « affinity ») : cryptWeight / graveWeight / entranceWeight (poids d'apparition), gateOpens (la grille de la crypte
+ * s'ouvre), braziersFade (les braseros s'éteignent au fil des vagues), rewardChest (coffre à la première victoire) et rewardChestName (nom du
+ * coffre roulette, « Reliquaire du Boss » par défaut). L'espacement (rareté) et les biomes se règlent dans les données du mod
  * (worldgen/structure_set/arena_*.json et tags/worldgen/biome/has_structure/arena_*.json), modifiables par datapack.
  */
 public final class ArenaSettings {
 
-    private static volatile JsonObject gen = null;
+    private static volatile JsonObject gen = null, affinity = null;
 
     private ArenaSettings() {}
 
     public static synchronized void load() {
-        JsonObject g = new JsonObject();
+        JsonObject g = new JsonObject(), a = new JsonObject();
         Path f = FMLPaths.CONFIGDIR.get().resolve("wavesurvivor").resolve("arenas.json");
         if (Files.exists(f)) {
             try {
                 JsonObject root = JsonParser.parseString(Files.readString(f, StandardCharsets.UTF_8)).getAsJsonObject();
                 if (root.has("generation") && root.get("generation").isJsonObject()) g = root.getAsJsonObject("generation");
+                if (root.has("affinity") && root.get("affinity").isJsonObject()) a = root.getAsJsonObject("affinity");
             } catch (Exception e) {
                 WaveSurvivorMod.LOGGER.error("[Arènes] {} illisible : {}", f.getFileName(), e.getMessage());
             }
         }
         gen = g;
+        affinity = a;
         ArenaBlueprint.clearCache();
     }
 
@@ -53,6 +58,25 @@ public final class ArenaSettings {
     public static int maxSlope() { return Math.max(0, HordeJson.num(g(), "maxSlope", 4)); }
 
     public static boolean randomRotation() { return HordeJson.bool(g(), "randomRotation", true); }
+
+    private static JsonObject aff() {
+        if (gen == null) load();
+        return affinity == null ? new JsonObject() : affinity;
+    }
+
+    public static int cryptWeight() { return Math.max(0, HordeJson.num(aff(), "cryptWeight", 5)); }
+
+    public static int graveWeight() { return Math.max(0, HordeJson.num(aff(), "graveWeight", 4)); }
+
+    public static int entranceWeight() { return Math.max(0, HordeJson.num(aff(), "entranceWeight", 1)); }
+
+    public static boolean gateOpens() { return HordeJson.bool(aff(), "gateOpens", true); }
+
+    public static boolean braziersFade() { return HordeJson.bool(aff(), "braziersFade", true); }
+
+    public static boolean rewardChest() { return HordeJson.bool(aff(), "rewardChest", true); }
+
+    public static String rewardChestName() { return HordeJson.str(aff(), "rewardChestName", "Reliquaire du Boss"); }
 
     public static boolean isDisabled(String arena) {
         Set<String> out = new HashSet<>();

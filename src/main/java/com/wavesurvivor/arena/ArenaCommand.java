@@ -77,6 +77,9 @@ public final class ArenaCommand {
         BlockPos center = BlockPos.containing(p.getX() + lx / len * dist, p.getY(), p.getZ() + lz / len * dist);
         long t0 = System.currentTimeMillis();
         ArenaBlueprint.Placement pl = bp.place(p.serverLevel(), center, rot);
+        ArenaAltar.install(p.serverLevel(), bp, pl.origin().getX(), pl.origin().getZ(), pl.groundY(), rot, null);
+        BlockPos altar = pl.marker("monolith");
+        if (altar != null) ArenaAltar.adopt(p.serverLevel(), altar);
         BlockPos c = pl.center();
         src.sendSuccess(() -> Component.literal("§a[Arènes] « " + name + " » posée (rotation " + rotArg + "°) : centre " + c.getX() + " " + pl.groundY() + " " + c.getZ()
                 + " · " + (System.currentTimeMillis() - t0) + " ms"), true);

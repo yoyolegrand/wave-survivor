@@ -79,6 +79,26 @@ public class RouletteChestSpawner {
         WaveSurvivorMod.LOGGER.info("[RouletteSpawner] {} coffre(s) spawn dans la zone d'autel", spawned);
     }
 
+    /** Pose un coffre roulette permanent (non nettoyé en fin de horde) : récompense d'arène. Il se reconnaît à son nom, même après un redémarrage. */
+    public static boolean placePermanent(ServerLevel level, BlockPos pos, RouletteChestConfig cfg) {
+        try {
+            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(RouletteChestManager.resolveChestBlockId(cfg)));
+            if (block == null) return false;
+            level.setBlock(pos, block.defaultBlockState(), 3);
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof BaseContainerBlockEntity container) {
+                container.setCustomName(Component.literal(cfg.chestName()));
+                container.setChanged();
+            }
+            RouletteChestManager.registerIdle(pos, cfg);
+            spawnHologram(level, pos, cfg);
+            return true;
+        } catch (Exception e) {
+            WaveSurvivorMod.LOGGER.error("[RouletteSpawner] Erreur placePermanent @ {} : {}", pos, e.getMessage());
+            return false;
+        }
+    }
+
     /** Spawn UN coffre à la position donnée avec son hologramme. */
     private static boolean spawnOne(ServerLevel level, BlockPos pos, RouletteChestConfig cfg) {
         try {

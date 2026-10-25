@@ -157,6 +157,23 @@ public final class SpawnZone {
      * Tient compte de la hauteur / largeur du monstre et revérifie la position en direct.
      */
     public static BlockPos pick(Level level, BlockPos center, int radius, EntityType<?> type) {
+        if (level instanceof ServerLevel arenaLevel) { // partie dans une arène : crypte, tombes, entrées
+            BlockPos a = com.wavesurvivor.arena.ArenaSession.pick(arenaLevel, center, radius, type);
+            if (a != null) return a;
+        }
+        return pickDefault(level, center, radius, type);
+    }
+
+    /** Apparition du boss : dans une arène, toujours la crypte. */
+    public static BlockPos pickBoss(Level level, BlockPos center, int radius, EntityType<?> type) {
+        if (level instanceof ServerLevel arenaLevel) {
+            BlockPos a = com.wavesurvivor.arena.ArenaSession.pickBoss(arenaLevel, center, radius, type);
+            if (a != null) return a;
+        }
+        return pickDefault(level, center, radius, type);
+    }
+
+    private static BlockPos pickDefault(Level level, BlockPos center, int radius, EntityType<?> type) {
         EntityDimensions dim = type != null ? type.getDimensions() : EntityDimensions.scalable(0.6f, 1.95f);
         int needH = Math.max(2, (int) Math.ceil(dim.height));
         List<Spot> all = spots(level, center, radius);

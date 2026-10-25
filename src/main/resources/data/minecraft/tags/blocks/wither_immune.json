@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "wavesurvivor:seraph_shrine"
+    "wavesurvivor:seraph_shrine",
+    "wavesurvivor:altar_runic"
   ]
 }

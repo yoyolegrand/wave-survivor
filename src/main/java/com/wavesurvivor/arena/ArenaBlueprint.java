@@ -48,15 +48,16 @@ public final class ArenaBlueprint {
     /** Largeur de l'anneau de raccord autour du cercle. */
     public static final int BLEND_WIDTH = 2;
 
-    public final String id, horde;
+    public final String id, horde, hordeName;
     public final int sx, sy, sz;
     private final Map<Character, BlockState> palette;
     private final String[][] layers;
     private final Map<String, List<int[]>> markers;
 
-    private ArenaBlueprint(String id, String horde, int sx, int sy, int sz, Map<Character, BlockState> palette, String[][] layers, Map<String, List<int[]>> markers) {
+    private ArenaBlueprint(String id, String horde, String hordeName, int sx, int sy, int sz, Map<Character, BlockState> palette, String[][] layers, Map<String, List<int[]>> markers) {
         this.id = id;
         this.horde = horde;
+        this.hordeName = hordeName;
         this.sx = sx;
         this.sy = sy;
         this.sz = sz;
@@ -121,7 +122,8 @@ public final class ArenaBlueprint {
             markers.put(e.getKey(), list);
         }
         String horde = o.has("horde") ? o.get("horde").getAsString() : "";
-        return new ArenaBlueprint(id, horde, sx, Math.max(sy, layers.length), sz, palette, layers, markers);
+        String hordeName = o.has("hordeName") ? o.get("hordeName").getAsString() : "";
+        return new ArenaBlueprint(id, horde, hordeName, sx, Math.max(sy, layers.length), sz, palette, layers, markers);
     }
 
     private static int[] pos(JsonArray a) { return new int[]{a.get(0).getAsInt(), a.get(1).getAsInt(), a.get(2).getAsInt()}; }
@@ -208,6 +210,20 @@ public final class ArenaBlueprint {
             world.put(e.getKey(), l);
         }
         return world;
+    }
+
+    /** Positions (monde) de tous les blocs du plan désignés par ce caractère de la palette (rotation comprise). */
+    public List<BlockPos> cellsOf(char c, int ox, int oz, int y0, Rotation rot) {
+        List<BlockPos> out = new ArrayList<>();
+        for (int y = 0; y < layers.length; y++) for (int z = 0; z < layers[y].length; z++) {
+            String row = layers[y][z];
+            for (int x = 0; x < row.length(); x++) {
+                if (row.charAt(x) != c) continue;
+                int[] r = rot(x, z, rot);
+                out.add(new BlockPos(ox + r[0], y0 + y, oz + r[1]));
+            }
+        }
+        return out;
     }
 
     private static boolean in(BoundingBox clip, int x, int z) {

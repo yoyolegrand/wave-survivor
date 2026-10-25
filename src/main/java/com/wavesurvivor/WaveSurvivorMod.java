@@ -70,6 +70,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new SupernovaTracker());
         MinecraftForge.EVENT_BUS.register(new MortarExplosionHandler());
         MinecraftForge.EVENT_BUS.register(new BenedictionEventHandler());
+        MinecraftForge.EVENT_BUS.register(com.wavesurvivor.arena.ArenaSession.class); // arènes : braseros au fil des vagues
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.shrine.ShrineGearEvents()); // équipements améliorés à la Forge du Sanctuaire
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.shrine.ShrineEvents()); // Sanctuaire du Séraphin : foi et événements proches
         MinecraftForge.EVENT_BUS.register(new RouletteChestManager());

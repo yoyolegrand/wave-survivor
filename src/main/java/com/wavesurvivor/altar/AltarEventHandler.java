@@ -61,6 +61,23 @@ public class AltarEventHandler {
                 pos, boundHorde != null ? boundHorde : com.wavesurvivor.i18n.WSLang.t("srv.non_lie"), dim);
     }
 
+    /** Les explosions n'emportent pas l'autel d'une arène. */
+    @SubscribeEvent
+    public void onExplosion(net.minecraftforge.event.level.ExplosionEvent.Detonate event) {
+        if (!(event.getLevel() instanceof ServerLevel sl)) return;
+        event.getAffectedBlocks().removeIf(p -> sl.getBlockState(p).getBlock() == ModBlocks.ALTAR_RUNIC.get() && com.wavesurvivor.arena.ArenaAltar.isLocked(sl, p));
+    }
+
+    /** Les pistons ne déplacent ni ne détruisent l'autel d'une arène. */
+    @SubscribeEvent
+    public void onPiston(net.minecraftforge.event.level.PistonEvent.Pre event) {
+        if (!(event.getLevel() instanceof ServerLevel sl)) return;
+        var helper = event.getStructureHelper();
+        if (helper == null || !helper.resolve()) return;
+        for (BlockPos p : helper.getToPush()) if (sl.getBlockState(p).getBlock() == ModBlocks.ALTAR_RUNIC.get() && com.wavesurvivor.arena.ArenaAltar.isLocked(sl, p)) { event.setCanceled(true); return; }
+        for (BlockPos p : helper.getToDestroy()) if (sl.getBlockState(p).getBlock() == ModBlocks.ALTAR_RUNIC.get() && com.wavesurvivor.arena.ArenaAltar.isLocked(sl, p)) { event.setCanceled(true); return; }
+    }
+
     @SubscribeEvent
     public void onBlockBroken(BlockEvent.BreakEvent event) {
         Level level = (Level) event.getLevel();
@@ -68,6 +85,12 @@ public class AltarEventHandler {
         if (!(level instanceof ServerLevel sl)) return;
         if (event.getState().getBlock() != ModBlocks.ALTAR_RUNIC.get()) return;
 
+        // Autel d'une arène : incassable en Survie
+        if (com.wavesurvivor.arena.ArenaAltar.isLocked(sl, event.getPos()) && !event.getPlayer().getAbilities().instabuild) {
+            event.setCanceled(true);
+            event.getPlayer().displayClientMessage(net.minecraft.network.chat.Component.literal(com.wavesurvivor.i18n.WSLang.t("arena.altar_unbreakable")), true);
+            return;
+        }
         String dim = sl.dimension().location().toString();
         // Autel 2 blocs : la référence est toujours la moitié basse
         AltarStore.unregister(dim, AltarBlock.basePos(event.getState(), event.getPos()));

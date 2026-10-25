@@ -62,7 +62,7 @@ public class BossManager {
                 return false;
             }
 
-            BlockPos pos = com.wavesurvivor.horde.spawn.SpawnZone.pick(level, center, radius, type); // zone de spawn sûre
+            BlockPos pos = com.wavesurvivor.horde.spawn.SpawnZone.pickBoss(level, center, radius, type); // zone de spawn sûre (crypte si arène)
             Entity ent = type.create(level);
             if (ent == null) return false;
 

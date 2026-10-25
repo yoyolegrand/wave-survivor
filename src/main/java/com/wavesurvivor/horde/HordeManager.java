@@ -456,6 +456,7 @@ public class HordeManager {
         broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.horde_59a3") + com.wavesurvivor.i18n.WSLang.t(name) + com.wavesurvivor.i18n.WSLang.t("srv.terminee")).withStyle(ChatFormatting.GREEN));
         if (activeHorde != null && (!com.wavesurvivor.horde.bossrush.BossRush.active() || com.wavesurvivor.horde.bossrush.BossRush.leaderboardRewards())) RewardsDistributor.distribute(activeHorde, srv);
         com.wavesurvivor.horde.bossrush.BossRush.onVictory(srv); // Boss Rush : chrono et classement
+        com.wavesurvivor.arena.ArenaSession.onVictory(srv);      // arène : coffre de récompense (une fois par arène)
         // PR gagnés en jouant (avant l'enregistrement de la victoire : on sait si c'est la première)
         if (activeHorde != null) com.wavesurvivor.horde.renaissance.RenaissanceRewards.payout(srv, activeHorde, true);
         // 1.7 — Statistiques : horde gagnée (ou Boss Rush) pour chaque joueur présent
@@ -953,6 +954,7 @@ public class HordeManager {
         this.pendingSpawns.clear();
         this.fallbackCenter = null;
         com.wavesurvivor.horde.spawn.SpawnZone.clear(); // la zone sera rescannée au prochain lancement
+        com.wavesurvivor.arena.ArenaSession.end();      // arène : grille refermée, braseros rallumés
         this.nextBatchTick = 0L;
     }
 
@@ -1013,6 +1015,9 @@ public class HordeManager {
     public State getState() { return state; }
     public HordeConfigMultiData getActiveHorde() { return activeHorde; }
     public int getCurrentWave() { return currentWave; }
+
+    /** Nombre de vagues de la horde en cours (0 si aucune). */
+    public int getTotalWavesCount() { return activeHorde != null && activeHorde.configData != null ? activeHorde.configData.totalWaves : 0; }
 
     /** Vagues terminées (la vague en cours ne compte pas tant qu'elle n'est pas nettoyée). */
     public int wavesCleared() { return state == State.RUNNING ? Math.max(0, currentWave - 1) : Math.max(0, currentWave); }

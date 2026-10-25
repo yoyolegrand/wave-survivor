@@ -181,7 +181,7 @@ public class CustomEntitySpawner {
             return null;
         }
 
-        BlockPos pos = SpawnZone.pick(level, center, radius, type); // zone de spawn sûre (taille du boss prise en compte)
+        BlockPos pos = SpawnZone.pickBoss(level, center, radius, type); // zone de spawn sûre (taille du boss prise en compte ; crypte si arène)
         Entity ent = type.create(level);
         if (ent == null) return null;
 

@@ -1,6 +1,7 @@
 {
  "name": "necropole_rois_dechus",
  "horde": "necropole",
+ "hordeName": "La Nécropole",
  "size": {
   "x": 31,
   "y": 10,
