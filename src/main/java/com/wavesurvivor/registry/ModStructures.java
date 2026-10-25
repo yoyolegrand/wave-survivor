@@ -29,6 +29,10 @@ public final class ModStructures {
     public static final RegistryObject<StructurePieceType> ARENA_PIECE =
             STRUCTURE_PIECES.register("arena", () -> (StructurePieceType) com.wavesurvivor.arena.ArenaPiece::new);
 
+    /** Greffe d'une arène sur un type de structure vanilla (portails en ruine) : voir BreachGraftStructure. */
+    public static final RegistryObject<StructureType<com.wavesurvivor.arena.BreachGraftStructure>> BREACH_GRAFT =
+            STRUCTURE_TYPES.register("breach_graft", () -> () -> com.wavesurvivor.arena.BreachGraftStructure.CODEC);
+
     private ModStructures() {}
 
     public static void register(IEventBus bus) {

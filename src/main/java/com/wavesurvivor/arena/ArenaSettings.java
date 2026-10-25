@@ -19,7 +19,7 @@ import java.util.Set;
  * { "generation": { "enabled": true, "maxSlope": 4, "randomRotation": true, "disabled": ["necropole_rois_dechus"] } }
  * </pre>
  * enabled : génération naturelle des arènes ; maxSlope : écart de hauteur maximal toléré sur le cercle ; randomRotation : orientation au hasard ;
- * disabled : arènes à ne pas générer.
+ * disabled : arènes à ne pas générer ; graft : part des portails en ruine remplacés par chaque arène greffée, ex. {"breche_infernale": 0.25}.
  * Affiliation à la horde (clé « affinity ») : cryptWeight / graveWeight / entranceWeight (poids d'apparition), gateOpens (la grille de la crypte
  * s'ouvre), braziersFade (les braseros s'éteignent au fil des vagues), rewardChest (coffre à la première victoire) et rewardChestName (nom du
  * coffre roulette, « Reliquaire du Boss » par défaut). L'espacement (rareté) et les biomes se règlent dans les données du mod
@@ -27,24 +27,26 @@ import java.util.Set;
  */
 public final class ArenaSettings {
 
-    private static volatile JsonObject gen = null, affinity = null;
+    private static volatile JsonObject gen = null, affinity = null, graft = null;
 
     private ArenaSettings() {}
 
     public static synchronized void load() {
-        JsonObject g = new JsonObject(), a = new JsonObject();
+        JsonObject g = new JsonObject(), a = new JsonObject(), gr = new JsonObject();
         Path f = FMLPaths.CONFIGDIR.get().resolve("wavesurvivor").resolve("arenas.json");
         if (Files.exists(f)) {
             try {
                 JsonObject root = JsonParser.parseString(Files.readString(f, StandardCharsets.UTF_8)).getAsJsonObject();
                 if (root.has("generation") && root.get("generation").isJsonObject()) g = root.getAsJsonObject("generation");
                 if (root.has("affinity") && root.get("affinity").isJsonObject()) a = root.getAsJsonObject("affinity");
+                if (root.has("graft") && root.get("graft").isJsonObject()) gr = root.getAsJsonObject("graft");
             } catch (Exception e) {
                 WaveSurvivorMod.LOGGER.error("[Arènes] {} illisible : {}", f.getFileName(), e.getMessage());
             }
         }
         gen = g;
         affinity = a;
+        graft = gr;
         ArenaBlueprint.clearCache();
     }
 
@@ -77,6 +79,13 @@ public final class ArenaSettings {
     public static boolean rewardChest() { return HordeJson.bool(aff(), "rewardChest", true); }
 
     public static String rewardChestName() { return HordeJson.str(aff(), "rewardChestName", "Reliquaire du Boss"); }
+
+    /** Part (0 à 1) des portails en ruine éligibles remplacés par cette arène (clé « graft » de arenas.json ; 0,25 par défaut, 0 = désactivé). */
+    public static double graftChance(String arena) {
+        if (gen == null) load();
+        JsonObject g = graft == null ? new JsonObject() : graft;
+        return Math.max(0, Math.min(1, HordeJson.dbl(g, arena, 0.25)));
+    }
 
     public static boolean isDisabled(String arena) {
         Set<String> out = new HashSet<>();

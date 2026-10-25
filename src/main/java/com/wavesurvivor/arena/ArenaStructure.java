@@ -39,6 +39,14 @@ public class ArenaStructure extends Structure {
         ArenaBlueprint bp = ArenaBlueprint.load(arena);
         if (bp == null) return Optional.empty();
         Rotation rot = ArenaSettings.randomRotation() ? Rotation.getRandom(ctx.random()) : Rotation.NONE;
+        return plan(ctx, bp, arena, rot);
+    }
+
+    /**
+     * Emplacement d'une arène centrée sur le milieu du chunk de départ : refuse l'eau et les pentes trop fortes (écart de hauteur toléré :
+     * celui du plan s'il en fixe un, sinon le réglage général). Sert aussi à la greffe sur les portails en ruine (BreachGraftStructure).
+     */
+    public static Optional<GenerationStub> plan(GenerationContext ctx, ArenaBlueprint bp, String arena, Rotation rot) {
         int[] d = bp.size(rot);
         ChunkPos cp = ctx.chunkPos();
         int cx = cp.getMiddleBlockX(), cz = cp.getMiddleBlockZ();
@@ -59,7 +67,7 @@ public class ArenaStructure extends Structure {
             sum += top;
             count++;
         }
-        if (count == 0 || max - min > ArenaSettings.maxSlope()) return Optional.empty();
+        if (count == 0 || max - min > (bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope())) return Optional.empty();
         int y0 = (int) Math.round(sum / (double) count);
         BlockPos center = new BlockPos(cx, y0, cz);
         return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1], bp.clearHeight()))));

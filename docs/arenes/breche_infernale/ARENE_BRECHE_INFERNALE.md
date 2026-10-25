@@ -64,3 +64,10 @@ Caractères : `N` netherrack, `M` bloc de magma, `K` pierre noire, `P` pierre no
 ## 5. Plus tard
 
 Une version **Nether** plus rare et plus difficile, la **Citadelle de Basalte** (au-dessus d'un lac de lave), réutilisera le même format. Claude chat peut en fournir le plan.
+
+## 6. Implémentation de la greffe (Claude Code) — méthode C
+
+La méthode A (structure jumelle + `exclusion_zone`) a été écartée : l'exclusion se calcule sur les emplacements POSSIBLES de l'ensemble jumeau, que sa structure réussisse ou non. Avec une fréquence de 25 %, elle aurait supprimé un quart des portails vanilla dans les biomes non éligibles (océans, jungles, Nether…) et là où le terrain est refusé. La méthode B (mixin) n'est pas nécessaire :
+- les fichiers vanilla `minecraft:ruined_portal` et `ruined_portal_desert` sont **remplacés** (`data/minecraft/worldgen/structure/`) par une structure `wavesurvivor:breach_graft` (`arena/BreachGraftStructure`) ;
+- les originaux sont recopiés sous `wavesurvivor:ruined_portal_standard_original` / `ruined_portal_desert_original` (champ `delegate`) : la greffe génère d'abord le portail vanilla, puis le remplace par la Brèche seulement si il est en surface, dans un biome éligible, tiré à 25 % (déterministe : graine du monde + position) et si le terrain convient (`maxSlope` du plan = 5) ; sinon le portail vanilla reste tel quel ;
+- réglages : `arenas.json` › `graft` (proportion), `generation` (activer / désactiver) ; biomes : tag `has_structure/infernal_breach`.

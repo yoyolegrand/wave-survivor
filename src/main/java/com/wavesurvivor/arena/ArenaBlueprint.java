@@ -56,6 +56,11 @@ public final class ArenaBlueprint {
     /** Repères portant une table de butin (« loot_table ») : coffre à remplir à la pose. */
     private final Map<String, String> lootTables;
 
+    /** Écart de hauteur toléré sous l'arène à la génération (-1 = réglage général de arenas.json). */
+    private int maxSlope = -1;
+
+    public int maxSlope() { return maxSlope; }
+
     /** Hauteur dégagée au-dessus du sol de cette arène. */
     public int clearHeight() { return Math.max(CLEAR_HEIGHT, sy + 1); }
 
@@ -133,7 +138,9 @@ public final class ArenaBlueprint {
         }
         String horde = o.has("horde") ? o.get("horde").getAsString() : "";
         String hordeName = o.has("hordeName") ? o.get("hordeName").getAsString() : "";
-        return new ArenaBlueprint(id, horde, hordeName, sx, Math.max(sy, layers.length), sz, palette, layers, markers, loot);
+        ArenaBlueprint bp = new ArenaBlueprint(id, horde, hordeName, sx, Math.max(sy, layers.length), sz, palette, layers, markers, loot);
+        if (o.has("maxSlope")) bp.maxSlope = o.get("maxSlope").getAsInt();
+        return bp;
     }
 
     private static int[] pos(JsonArray a) { return new int[]{a.get(0).getAsInt(), a.get(1).getAsInt(), a.get(2).getAsInt()}; }

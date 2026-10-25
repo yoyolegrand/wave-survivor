@@ -107,6 +107,12 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Coffre du portail (au nord, face au sud avant rotation) rempli avec le butin vanilla `minecraft:chests/ruined_portal`, différent à chaque pose ; il suit la rotation
 - [ ] Terrain : fondations (rien ne flotte), dégagement jusqu'à 15 blocs de haut (le portail ne touche aucun arbre), raccord qui fond le cratère dans le paysage ; la lave ne déborde pas du cercle
 
+## Arène « La Brèche Infernale » — étape 2 (greffe sur les portails en ruine)
+- [ ] Nouveau monde : en parcourant des plaines, forêts, taïgas, savanes, déserts, badlands (`/locate structure minecraft:ruined_portal` ou `minecraft:ruined_portal_desert`), environ un portail de surface sur quatre est une Brèche Infernale (cratère, portail géant, autel, coffre) ; les autres sont des portails vanilla inchangés
+- [ ] Les portails souterrains, ceux des océans, jungles, marais, montagnes et du Nether restent vanilla (aucun n'a disparu) ; le portail vanilla n'est remplacé que si la Brèche se génère vraiment (terrain plat à 5 blocs près, pas d'eau)
+- [ ] Rotation au hasard, plan centré sur le milieu du chunk du portail, terrain fondu dans le paysage
+- [ ] Réglages : `config/wavesurvivor/arenas.json` -> `{"graft":{"breche_infernale":0.25}}` (0 = désactivé, 1 = tous les portails éligibles) ; `generation.enabled` / `disabled` coupent aussi la greffe ; biomes éligibles = tag `data/wavesurvivor/tags/worldgen/biome/has_structure/infernal_breach.json`
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

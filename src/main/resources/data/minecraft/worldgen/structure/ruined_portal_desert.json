@@ -1,0 +1,8 @@
+{
+  "type": "wavesurvivor:breach_graft",
+  "biomes": "#minecraft:has_structure/ruined_portal_desert",
+  "arena": "breche_infernale",
+  "delegate": "wavesurvivor:ruined_portal_desert_original",
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}

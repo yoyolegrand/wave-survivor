@@ -2,6 +2,7 @@
  "name": "breche_infernale",
  "horde": "nether",
  "hordeName": "Les Terres Brûlées",
+ "maxSlope": 5,
  "size": {
   "x": 33,
   "y": 14,
