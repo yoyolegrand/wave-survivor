@@ -24,6 +24,7 @@ public class ClientModEvents {
     public static void onClientSetupMenus(net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.WORKSHOP.get(), WorkshopScreen::new);
+            net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.SERAPH_SHRINE.get(), SeraphShrineScreen::new);
             net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.OFFERING_BRAZIER.get(), OfferingBrazierScreen::new);
             net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.RAMPART.get(), RampartScreen::new);
             net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.GLEANER.get(), GleanerScreen::new);

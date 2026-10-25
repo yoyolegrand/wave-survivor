@@ -32,17 +32,13 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 
 /**
- * SANCTUAIRE DU SÉRAPHIN (bloc posable, modèle 3D sur mesure affiché par SeraphShrineRenderer).
- * Pour l'instant (aperçu), on change son état à la main :
- *  - offrandes PURES (lingot d'or, fleurs, miel, perle de l'Ender) : clic droit = purifie d'une étape ;
- *  - sacrifices IMPURS (chair putréfiée, œil d'araignée, os) : clic droit = corrompt d'une étape ;
- *  - accroupi, main vide : fait défiler les 5 étapes.
+ * SANCTUAIRE DU SÉRAPHIN (bloc incassable, modèle 3D sur mesure affiché par SeraphShrineRenderer). Le clic droit ouvre l'écran de la statue ;
+ * la jauge de foi et l'étape sont gardées par SeraphShrineBlockEntity.
  */
 public class SeraphShrineBlock extends BaseEntityBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
-    private static final String[] STAGE_NAMES = {"§e✦ Pure", "§f✧ Apaisée", "§7◇ Neutre", "§d✕ Souillée", "§5☠ Corrompue"};
 
     public SeraphShrineBlock(Properties props) {
         super(props);
@@ -76,44 +72,13 @@ public class SeraphShrineBlock extends BaseEntityBlock {
         return new SeraphShrineBlockEntity(pos, state);
     }
 
+    /** Clic droit : ouvre l'écran du Sanctuaire (offrandes, récolte, fusion, forge). */
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof SeraphShrineBlockEntity shrine)) return InteractionResult.PASS;
-        ItemStack held = player.getItemInHand(hand);
-        int delta;
-        if (held.isEmpty() && player.isShiftKeyDown()) delta = 99;                       // défilement des étapes
-        else if (isPure(held)) delta = -1;
-        else if (isImpure(held)) delta = 1;
-        else return InteractionResult.PASS;
         if (level.isClientSide) return InteractionResult.SUCCESS;
-
-        int before = shrine.getStage();
-        int after = delta == 99 ? (before + 1) % (SeraphShrineBlockEntity.MAX_STAGE + 1) : before + delta;
-        shrine.setStage(after);
-        if (delta != 99 && shrine.getStage() != before && !player.getAbilities().instabuild) held.shrink(1);
-
-        ServerLevel sl = (ServerLevel) level;
-        boolean purer = shrine.getStage() < before || (delta == 99 && after == 0);
-        double cx = pos.getX() + 0.5, cy = pos.getY() + 3.0, cz = pos.getZ() + 0.5;
-        if (purer) {
-            sl.sendParticles(new DustParticleOptions(new Vector3f(1f, 0.88f, 0.45f), 1.4f), cx, cy, cz, 40, 1.2, 1.4, 1.2, 0);
-            sl.sendParticles(ParticleTypes.END_ROD, cx, cy, cz, 15, 1.0, 1.5, 1.0, 0.02);
-            sl.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.5f, 1.4f);
-        } else {
-            sl.sendParticles(new DustParticleOptions(new Vector3f(1f, 0.27f, 0.78f), 1.4f), cx, cy, cz, 40, 1.2, 1.4, 1.2, 0);
-            sl.sendParticles(ParticleTypes.SMOKE, cx, cy, cz, 20, 1.0, 1.5, 1.0, 0.02);
-            sl.playSound(null, pos, SoundEvents.WITHER_AMBIENT, SoundSource.BLOCKS, 0.6f, 1.6f);
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp && level.getBlockEntity(pos) instanceof SeraphShrineBlockEntity be) {
+            net.minecraftforge.network.NetworkHooks.openScreen(sp, be, buf -> buf.writeBlockPos(pos));
         }
-        player.displayClientMessage(Component.literal("Sanctuaire du Séraphin : " + STAGE_NAMES[shrine.getStage()]), true);
         return InteractionResult.CONSUME;
-    }
-
-    private static boolean isPure(ItemStack s) {
-        return s.is(Items.GOLD_INGOT) || s.is(Items.HONEY_BOTTLE) || s.is(Items.ENDER_PEARL)
-                || s.is(net.minecraft.tags.ItemTags.FLOWERS);
-    }
-
-    private static boolean isImpure(ItemStack s) {
-        return s.is(Items.ROTTEN_FLESH) || s.is(Items.SPIDER_EYE) || s.is(Items.BONE);
     }
 }

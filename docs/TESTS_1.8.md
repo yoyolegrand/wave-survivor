@@ -33,6 +33,15 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Nouveau monde (la génération ne s'applique qu'aux chunks pas encore générés) ; la ruine n'est pas dans l'eau ni dans le vide
 - [ ] Réglages : `spacing` / `separation` dans `data/wavesurvivor/worldgen/structure_set/seraph_shrine.json`, biomes dans `data/wavesurvivor/tags/worldgen/biome/has_structure/seraph_shrine.json`
 
+## Sanctuaire du Séraphin — étape 2 (jauge de foi, offrandes, écran)
+- [ ] Clic droit sur le Sanctuaire : l'écran s'ouvre (4 onglets, seul « Offrandes » actif ; les autres sont grisés) ; thème doré / argenté / violet selon l'état de la statue
+- [ ] Poser une fleur (ou du miel, de l'or…) dans la case « Offrande » puis « Offrir » : la jauge monte (curseur vers l'or), l'objet est consommé ; la valeur s'affiche au-dessus du bouton et dans l'info-bulle de l'objet
+- [ ] Chair putréfiée, os, œil d'araignée… : la jauge descend (curseur vers le violet) ; les paliers (foi ≥ 400 Pure, ≥ 100 Apaisée, -99..99 Neutre, -100..-399 Souillée, ≤ -400 Corrompue) font changer le modèle 3D et la texture, avec message « Le Sanctuaire devient : … »
+- [ ] À la limite (±600) : l'offrande qui dépasserait est refusée / le surplus reste dans la case ; fermer l'écran rend l'objet restant
+- [ ] Événements à moins de 16 blocs : tuer un monstre de horde = +1 ; un animal paisible = -3 ; un villageois = -50 (message au tueur) ; rien si la statue est plus loin
+- [ ] Multijoueur : deux joueurs voient et modifient la même jauge ; l'écran se met à jour en direct
+- [ ] Rééquilibrage : créer `config/wavesurvivor/shrine_offerings.json` avec p. ex. `{"events":{"villagerKill":-10}}` puis `/ws reload` : la valeur change
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

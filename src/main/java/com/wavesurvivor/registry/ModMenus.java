@@ -29,6 +29,10 @@ public class ModMenus {
     public static final RegistryObject<MenuType<com.wavesurvivor.horde.kingdom.GleanerMenu>> GLEANER =
             MENUS.register("kingdom_gleaner", () -> IForgeMenuType.create(com.wavesurvivor.horde.kingdom.GleanerMenu::fromNetwork));
 
+    /** Sanctuaire du Séraphin : offrandes, récolte, fusion et forge (4 onglets). */
+    public static final RegistryObject<MenuType<com.wavesurvivor.shrine.SeraphShrineMenu>> SERAPH_SHRINE =
+            MENUS.register("seraph_shrine", () -> IForgeMenuType.create(com.wavesurvivor.shrine.SeraphShrineMenu::fromNetwork));
+
     public static void register(IEventBus bus) {
         MENUS.register(bus);
     }
