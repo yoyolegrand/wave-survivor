@@ -64,6 +64,13 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Les bonus disparaissent quand on retire l'équipement ou change d'arme en main (attributs), et au changement de monde / reconnexion tout est recalculé
 - [ ] Équilibrage : `config/wavesurvivor/shrine_upgrades.json` (coûts, plafond, valeurs par niveau) puis `/ws reload`
 
+## Sanctuaire du Séraphin — étape 5 (Corrompus)
+- [ ] Statue Souillée (étape 3) avec un joueur à moins de 32 blocs : environ toutes les 3 minutes, 2-3 Rootlings apparaissent autour (5 à 12 blocs, particules d'âmes) ; aucun Stone Brute à cette étape
+- [ ] Statue Corrompue (étape 4) : groupes plus fréquents (~90 s), jusqu'à 4 créatures, et parfois un Stone Brute (25 %)
+- [ ] Aucun joueur à moins de 32 blocs : rien n'apparaît, le groupe est prêt et sort dès qu'un joueur approche ; étapes 0-2 : jamais de Corrompus
+- [ ] Plafond : pas plus de 8 Corrompus de la statue en même temps (`maxAlive`) ; remonter la statue à Neutre arrête les apparitions ; changer d'étape relance le délai
+- [ ] Réglages : bloc `corruption` de `config/wavesurvivor/shrine_offerings.json` (délais, nombre, `bruteChance`, rayons, plafond) puis `/ws reload`
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

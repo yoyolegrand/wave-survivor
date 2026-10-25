@@ -142,6 +142,33 @@ public final class ShrineConfig {
     /** Chance qu'un boss lâche un Cœur (de grâce ou de souillure) à sa mort. */
     public static double bossHeartChance() { return Math.max(0, Math.min(1, HordeJson.dbl(prod(), "bossHeartChance", 0.05))); }
 
+    // ─── Corrompus (étapes 3 et 4) ───
+
+    private static JsonObject corr() { return sub("corruption"); }
+
+    private static JsonObject corrStage(int stage) {
+        JsonObject c = corr();
+        String k = stage >= 4 ? "stage4" : "stage3";
+        return c.has(k) && c.get(k).isJsonObject() ? c.getAsJsonObject(k) : new JsonObject();
+    }
+
+    /** Délai entre deux groupes de Corrompus, en ticks (0 = aucun). */
+    public static int corruptionInterval(int stage) { return stage < 3 ? 0 : Math.max(0, HordeJson.num(corrStage(stage), "intervalSeconds", 180)) * 20; }
+
+    public static int corruptionMin(int stage) { return Math.max(1, HordeJson.num(corrStage(stage), "min", 2)); }
+
+    public static int corruptionMax(int stage) { return Math.max(corruptionMin(stage), HordeJson.num(corrStage(stage), "max", 3)); }
+
+    public static double bruteChance(int stage) { return Math.max(0, Math.min(1, HordeJson.dbl(corrStage(stage), "bruteChance", 0))); }
+
+    public static int corruptionPlayerRange() { return Math.max(8, HordeJson.num(corr(), "playerRange", 32)); }
+
+    public static int corruptionRadiusMin() { return Math.max(2, HordeJson.num(corr(), "spawnRadiusMin", 5)); }
+
+    public static int corruptionRadiusMax() { return Math.max(corruptionRadiusMin(), HordeJson.num(corr(), "spawnRadiusMax", 12)); }
+
+    public static int corruptionMaxAlive() { return Math.max(1, HordeJson.num(corr(), "maxAlive", 8)); }
+
     // ─── Offrandes ───
 
     /** Valeur d'UNE unité de cet objet (positive : grâce, négative : souillure, 0 : refusé). */

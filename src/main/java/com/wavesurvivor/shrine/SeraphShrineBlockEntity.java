@@ -104,6 +104,7 @@ public class SeraphShrineBlockEntity extends BlockEntity implements MenuProvider
         int before = stage;
         boolean changed = setFaith(faith + delta);
         lastDelta = delta;
+        if (changed) spawnTimer = 0;   // un changement d'étape relance le délai des Corrompus
         if (changed && level instanceof ServerLevel sl) announceStage(sl, before);
         return changed;
     }
@@ -146,6 +147,61 @@ public class SeraphShrineBlockEntity extends BlockEntity implements MenuProvider
 
     public static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, SeraphShrineBlockEntity be) {
         be.tickProduction();
+        be.tickCorruption();
+    }
+
+    // ─── Prix de la corruption : des Corrompus apparaissent autour de la statue aux étapes 3 et 4 ───
+
+    private int spawnTimer = 0;
+
+    private void tickCorruption() {
+        int iv = ShrineConfig.corruptionInterval(stage);
+        if (iv <= 0 || !(level instanceof ServerLevel sl)) { spawnTimer = 0; return; }
+        if (spawnTimer < iv) { spawnTimer++; return; }
+        if (sl.getGameTime() % 20 != 0) return;                           // prêt : on attend qu'un joueur soit assez près
+        double r = ShrineConfig.corruptionPlayerRange();
+        boolean near = false;
+        for (ServerPlayer p : sl.players()) {
+            if (!p.isSpectator() && p.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY(), worldPosition.getZ() + 0.5) <= r * r) { near = true; break; }
+        }
+        if (!near) return;
+        spawnTimer = 0;
+        spawnCorrupted(sl);
+    }
+
+    private void spawnCorrupted(ServerLevel sl) {
+        AABB area = new AABB(worldPosition).inflate(40);
+        int alive = sl.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, area, m -> m.getPersistentData().getBoolean("ws_shrine_spawn")).size();
+        int room = ShrineConfig.corruptionMaxAlive() - alive;
+        if (room <= 0) return;
+        int n = Math.min(room, ShrineConfig.corruptionMin(stage) + sl.random.nextInt(ShrineConfig.corruptionMax(stage) - ShrineConfig.corruptionMin(stage) + 1));
+        boolean brute = sl.random.nextDouble() < ShrineConfig.bruteChance(stage);
+        for (int i = 0; i < n; i++) {
+            net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.Mob> type =
+                    (brute && i == 0) ? com.wavesurvivor.registry.ModEntities.STONE_BRUTE.get() : com.wavesurvivor.registry.ModEntities.ROOTLING.get();
+            spawnAround(sl, type);
+        }
+    }
+
+    private void spawnAround(ServerLevel sl, net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.Mob> type) {
+        int rmin = ShrineConfig.corruptionRadiusMin(), rmax = ShrineConfig.corruptionRadiusMax();
+        for (int attempt = 0; attempt < 12; attempt++) {
+            double ang = sl.random.nextDouble() * Math.PI * 2, d = rmin + sl.random.nextDouble() * (rmax - rmin);
+            int x = worldPosition.getX() + (int) Math.round(Math.cos(ang) * d), z = worldPosition.getZ() + (int) Math.round(Math.sin(ang) * d);
+            int y = sl.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            BlockPos bp = new BlockPos(x, y, z);
+            if (!sl.getBlockState(bp.below()).getFluidState().isEmpty() || !sl.getBlockState(bp.below()).isSolid()) continue;
+            if (!sl.noCollision(type.getAABB(x + 0.5, y, z + 0.5))) continue;
+            net.minecraft.world.entity.Mob mob = type.create(sl);
+            if (mob == null) return;
+            mob.moveTo(x + 0.5, y, z + 0.5, sl.random.nextFloat() * 360f, 0f);
+            mob.finalizeSpawn(sl, sl.getCurrentDifficultyAt(bp), net.minecraft.world.entity.MobSpawnType.EVENT, null, null);
+            mob.getPersistentData().putBoolean("ws_shrine_spawn", true);
+            sl.addFreshEntity(mob);
+            sl.sendParticles(ParticleTypes.SOUL, x + 0.5, y + 0.3, z + 0.5, 12, 0.4, 0.3, 0.4, 0.03);
+            sl.playSound(null, bp, SoundEvents.SOUL_ESCAPE, SoundSource.HOSTILE, 0.7f, 0.6f);
+            return;
+        }
     }
 
     private void tickProduction() {

@@ -21,6 +21,15 @@
     "fusionCost": 9,
     "bossHeartChance": 0.05
   },
+  "corruption": {
+    "_comment": "Prix de la corruption : aux étapes Souillée (3) et Corrompue (4), des Corrompus (Rootlings, parfois un Stone Brute) apparaissent autour de la statue, tant qu'un joueur est à moins de playerRange blocs. bruteChance = chance qu'un Stone Brute se joigne au groupe (au plus un par groupe).",
+    "playerRange": 32,
+    "spawnRadiusMin": 5,
+    "spawnRadiusMax": 12,
+    "maxAlive": 8,
+    "stage3": { "intervalSeconds": 180, "min": 2, "max": 3, "bruteChance": 0.0 },
+    "stage4": { "intervalSeconds": 90, "min": 2, "max": 4, "bruteChance": 0.25 }
+  },
   "offerings": [
     { "item": "#minecraft:flowers", "value": 1 },
     { "item": "minecraft:glow_berries", "value": 1 },
