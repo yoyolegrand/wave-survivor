@@ -22,7 +22,8 @@ import java.util.Set;
  * disabled : arènes à ne pas générer ; graft : part des portails en ruine remplacés par chaque arène greffée, ex. {"breche_infernale": 0.25}.
  * Affiliation à la horde (clé « affinity ») : cryptWeight / graveWeight / entranceWeight (poids d'apparition), gateOpens (la grille de la crypte
  * s'ouvre), braziersFade (les braseros s'éteignent au fil des vagues), rewardChest (coffre à la première victoire) et rewardChestName (nom du
- * coffre roulette, « Reliquaire du Boss » par défaut). L'espacement (rareté) et les biomes se règlent dans les données du mod
+ * coffre roulette ; ou rewardChests {"<arène>": "<nom>"} par arène : « Reliquaire du Boss » pour la Nécropole, « Reliquaire du Nether » pour la Brèche),
+ * firesRekindle (les feux du plan reprennent à chaque vague) et magmaCools (une partie du magma refroidit à la victoire). L'espacement (rareté) et les biomes se règlent dans les données du mod
  * (worldgen/structure_set/arena_*.json et tags/worldgen/biome/has_structure/arena_*.json), modifiables par datapack.
  */
 public final class ArenaSettings {
@@ -78,7 +79,19 @@ public final class ArenaSettings {
 
     public static boolean rewardChest() { return HordeJson.bool(aff(), "rewardChest", true); }
 
-    public static String rewardChestName() { return HordeJson.str(aff(), "rewardChestName", "Reliquaire du Boss"); }
+    /** Nom du coffre roulette de récompense de cette arène (affinity.rewardChests.<arène>, sinon rewardChestName, sinon une valeur par défaut). */
+    public static String rewardChestName(String arena) {
+        JsonObject per = aff().has("rewardChests") && aff().get("rewardChests").isJsonObject() ? aff().getAsJsonObject("rewardChests") : new JsonObject();
+        if (per.has(arena)) return HordeJson.str(per, arena, "Reliquaire du Boss");
+        if (aff().has("rewardChestName")) return HordeJson.str(aff(), "rewardChestName", "Reliquaire du Boss");
+        return arena.startsWith("breche") ? "Reliquaire du Nether" : "Reliquaire du Boss";
+    }
+
+    /** Les feux du plan reprennent à chaque vague. */
+    public static boolean firesRekindle() { return HordeJson.bool(aff(), "firesRekindle", true); }
+
+    /** Une partie du magma refroidit en pierre noire à la victoire. */
+    public static boolean magmaCools() { return HordeJson.bool(aff(), "magmaCools", true); }
 
     /** Part (0 à 1) des portails en ruine éligibles remplacés par cette arène (clé « graft » de arenas.json ; 0,25 par défaut, 0 = désactivé). */
     public static double graftChance(String arena) {

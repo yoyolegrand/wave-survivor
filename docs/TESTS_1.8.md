@@ -113,6 +113,14 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Rotation au hasard, plan centré sur le milieu du chunk du portail, terrain fondu dans le paysage
 - [ ] Réglages : `config/wavesurvivor/arenas.json` -> `{"graft":{"breche_infernale":0.25}}` (0 = désactivé, 1 = tous les portails éligibles) ; `generation.enabled` / `disabled` coupent aussi la greffe ; biomes éligibles = tag `data/wavesurvivor/tags/worldgen/biome/has_structure/infernal_breach.json`
 
+## Arène « La Brèche Infernale » — étape 3 (affiliation à la horde du Nether)
+- [ ] `/ws arena place breche_infernale` pose l'autel au centre du parvis ; clic droit : l'écran de lancement de « Les Terres Brûlées » (horde du Nether, variantes Vanilla / Moddée) s'ouvre sans recette ; shift + clic ne le délie pas ; incassable en Survie (pic, TNT, piston, Wither / Dragon)
+- [ ] Partie lancée depuis cet autel : apparitions surtout devant le portail (estrade, particules violettes), dans les 5 failles de magma (lave, fumée, son) et quelques-unes au bord du cratère ; jamais à moins de 3 blocs d'une mare de lave
+- [ ] Boss : apparaît au cœur du portail, qui s'embrase de particules violettes pendant le combat (son de portail) puis s'éteint à la fin
+- [ ] Les feux du plan reprennent à chaque vague quand ils se sont éteints ; à la victoire environ la moitié du magma refroidit en pierre noire
+- [ ] Première victoire : environ 5 s après, un coffre roulette « Reliquaire du Nether » apparaît sur l'estrade du portail (une seule fois par arène) ; le coffre vanilla du portail est déjà là
+- [ ] Réglages : `arenas.json` › `affinity` : `cryptWeight` (apparition principale : portail), `graveWeight` (failles), `entranceWeight` (bord), `firesRekindle`, `magmaCools`, `rewardChests` : `{"breche_infernale":"Reliquaire du Nether"}`
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

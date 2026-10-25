@@ -2094,7 +2094,7 @@
   "bless.mine_title": "Mes bénédictions",
   "arena.altar_locked": "Cet autel est verrouillé : il est lié pour toujours à {0}.",
   "arena.altar_unbreakable": "Cet autel est incassable.",
-  "arena.reward_chest": "§6Un coffre est apparu dans la crypte !",
+  "arena.reward_chest": "§6Un coffre est apparu dans l'arène !",
   "shrine.stock_short": "Stock",
   "shrine.every": "1 / {0}",
   "shrine.sleeping": "Dormant",

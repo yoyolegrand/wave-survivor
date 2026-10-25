@@ -2645,7 +2645,7 @@
   "bless.mine_title": "My blessings",
   "arena.altar_locked": "This altar is locked: it is bound to {0} forever.",
   "arena.altar_unbreakable": "This altar cannot be broken.",
-  "arena.reward_chest": "§6A chest has appeared in the crypt!",
+  "arena.reward_chest": "§6A chest has appeared in the arena!",
   "shrine.stock_short": "Stock",
   "shrine.every": "1 / {0}",
   "shrine.sleeping": "Dormant",

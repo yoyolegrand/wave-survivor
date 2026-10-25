@@ -243,6 +243,15 @@ public final class ArenaBlueprint {
         return out;
     }
 
+    /** Positions (monde) de tous les blocs du plan qui sont de ce type de bloc (quel que soit le caractère de la palette). */
+    public List<BlockPos> cellsOfBlock(net.minecraft.world.level.block.Block block, int ox, int oz, int y0, Rotation rot) {
+        List<BlockPos> out = new ArrayList<>();
+        for (Map.Entry<Character, BlockState> e : palette.entrySet()) {
+            if (e.getValue().is(block)) out.addAll(cellsOf(e.getKey(), ox, oz, y0, rot));
+        }
+        return out;
+    }
+
     private static boolean in(BoundingBox clip, int x, int z) {
         return clip == null || (x >= clip.minX() && x <= clip.maxX() && z >= clip.minZ() && z <= clip.maxZ());
     }
