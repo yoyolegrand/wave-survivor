@@ -32,6 +32,7 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] `/locate structure wavesurvivor:seraph_shrine` renvoie une position (région de ~1 500 blocs) ; s'y téléporter : plate-forme de quartz / calcite, 4 colonnes brisées, mousse, et le Sanctuaire à l'étape Neutre au centre
 - [ ] Nouveau monde (la génération ne s'applique qu'aux chunks pas encore générés) ; la ruine n'est pas dans l'eau ni dans le vide
 - [ ] Réglages : `spacing` / `separation` dans `data/wavesurvivor/worldgen/structure_set/seraph_shrine.json`, biomes dans `data/wavesurvivor/tags/worldgen/biome/has_structure/seraph_shrine.json`
+- [ ] Ruine du Sanctuaire : jamais enfouie dans une colline (le volume autour de la statue est dégagé : terre, arbres) ni suspendue au bord d'une falaise (terrain refusé si l'écart de hauteur dépasse 3 blocs sous la ruine) ; plate-forme posée sur des fondations jusqu'au relief
 
 ## Sanctuaire du Séraphin — étape 2 (jauge de foi, offrandes, écran)
 - [ ] Clic droit sur le Sanctuaire : l'écran s'ouvre (4 onglets, seul « Offrandes » actif ; les autres sont grisés) ; thème doré / argenté / violet selon l'état de la statue

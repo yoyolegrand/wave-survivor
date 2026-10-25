@@ -36,6 +36,16 @@ public class SeraphShrineStructure extends Structure {
         NoiseColumn col = ctx.chunkGenerator().getBaseColumn(x, z, ctx.heightAccessor(), ctx.randomState());
         BlockState ground = col.getBlock(y - 1);
         if (!ground.getFluidState().isEmpty() || ground.isAir()) return Optional.empty();
+        // Terrain assez plat sous la ruine (rayon 5) : pas de statue à moitié enterrée dans une colline ou suspendue au bord d'une falaise
+        int min = y, max = y;
+        for (int dx = -5; dx <= 5; dx += 5) for (int dz = -5; dz <= 5; dz += 5) {
+            int h = ctx.chunkGenerator().getFirstOccupiedHeight(x + dx, z + dz, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState());
+            NoiseColumn c = ctx.chunkGenerator().getBaseColumn(x + dx, z + dz, ctx.heightAccessor(), ctx.randomState());
+            if (!c.getBlock(h - 1).getFluidState().isEmpty()) return Optional.empty();
+            min = Math.min(min, h);
+            max = Math.max(max, h);
+        }
+        if (max - min > 3) return Optional.empty();
         BlockPos center = new BlockPos(x, y, z);
         return Optional.of(new GenerationStub(center, builder -> builder.addPiece(new SeraphShrinePiece(center, ctx.random().nextInt(4)))));
     }

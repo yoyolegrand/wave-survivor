@@ -28,8 +28,8 @@ public class SeraphShrinePiece extends StructurePiece {
     private final int facing;
 
     public SeraphShrinePiece(BlockPos center, int facing) {
-        super(ModStructures.SERAPH_SHRINE_PIECE.get(), 0, new BoundingBox(center.getX() - 5, center.getY() - 3, center.getZ() - 5,
-                center.getX() + 5, center.getY() + 8, center.getZ() + 5));
+        super(ModStructures.SERAPH_SHRINE_PIECE.get(), 0, new BoundingBox(center.getX() - 5, center.getY() - 14, center.getZ() - 5,
+                center.getX() + 5, center.getY() + 12, center.getZ() + 5));
         this.baseY = center.getY();
         this.facing = facing;
     }
@@ -58,6 +58,15 @@ public class SeraphShrinePiece extends StructurePiece {
         BlockState[] floor = {Blocks.SMOOTH_QUARTZ.defaultBlockState(), Blocks.CALCITE.defaultBlockState(), Blocks.QUARTZ_BRICKS.defaultBlockState(),
                 Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), Blocks.CRACKED_STONE_BRICKS.defaultBlockState()};
 
+        // Dégagement : tout le volume autour de la statue (arbres et terre compris) pour qu'elle ne soit jamais enfouie dans une colline
+        for (int dx = -5; dx <= 5; dx++) for (int dz = -5; dz <= 5; dz++) {
+            if (Math.sqrt(dx * dx + dz * dz) > 5.3) continue;
+            for (int yy = y; yy <= y + 11; yy++) {
+                BlockPos p = new BlockPos(cx + dx, yy, cz + dz);
+                if (!level.getBlockState(p).isAir()) put(level, Blocks.AIR.defaultBlockState(), p.getX(), p.getY(), p.getZ());
+            }
+        }
+
         // Plate-forme ronde (remplace le sol), avec des trous et de la mousse
         for (int dx = -4; dx <= 4; dx++) for (int dz = -4; dz <= 4; dz++) {
             double d = Math.sqrt(dx * dx + dz * dz);
@@ -67,7 +76,7 @@ public class SeraphShrinePiece extends StructurePiece {
             int gy = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1;
             if (d <= 3.6) {
                 if (rand.nextInt(9) == 0) continue; // trou
-                for (int yy = Math.min(gy, y - 1); yy < y; yy++) put(level, Blocks.STONE_BRICKS.defaultBlockState(), x, yy, z); // fondation
+                for (int yy = Math.min(gy, y - 1) - 1; yy < y; yy++) put(level, Blocks.STONE_BRICKS.defaultBlockState(), x, yy, z); // fondation (jusqu'au relief)
                 put(level, floor[rand.nextInt(floor.length)], x, y - 1, z);
                 if (rand.nextInt(4) == 0) put(level, Blocks.MOSS_CARPET.defaultBlockState(), x, y, z);
             } else if (rand.nextInt(3) == 0) {
