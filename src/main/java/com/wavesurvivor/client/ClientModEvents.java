@@ -58,6 +58,7 @@ public class ClientModEvents {
         event.registerLayerDefinition(RootlingModel.LAYER, RootlingModel::createBodyLayer); // Rootling (Corrompus, modèle sur mesure)
         event.registerLayerDefinition(StoneBruteModel.MODEL_LAYER, StoneBruteModel::createBodyLayer); // Stone Brute (Corrompus, haute résolution)
         event.registerLayerDefinition(NeantideModel.MODEL_LAYER, NeantideModel::createBodyLayer); // Néantide (haute résolution)
+        event.registerLayerDefinition(SeraphShrineModel.MODEL_LAYER, SeraphShrineModel::createBodyLayer); // Sanctuaire du Séraphin (bloc, HD)
     }
 
     @SubscribeEvent
@@ -65,6 +66,7 @@ public class ClientModEvents {
         event.registerBlockEntityRenderer(ModBlockEntities.ALTAR_RUNIC.get(), AltarBookRenderer::new);
         // Mode Kingdom : structures 3D des défenses (tours, sanctuaire, baraquement)
         event.registerBlockEntityRenderer(ModBlockEntities.DEFENSE.get(), DefenseRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.SERAPH_SHRINE.get(), SeraphShrineRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DIABLOTIN.get(), DiablotinRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.BRECHE.get(), BrecheRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ECLAT_NEANT.get(),

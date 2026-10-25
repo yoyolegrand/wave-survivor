@@ -60,6 +60,27 @@ public class ModItems {
     /** Kingdom : Brasier des Offrandes. */
     public static final RegistryObject<Item> OFFERING_BRAZIER_ITEM = ITEMS.register("offering_brazier",
             () -> new BlockItem(ModBlocks.OFFERING_BRAZIER.get(), new Item.Properties().stacksTo(16)));
+    /** Sanctuaire du Séraphin (bloc posable, modèle 3D). */
+    public static final RegistryObject<Item> SERAPH_SHRINE_ITEM = ITEMS.register("seraph_shrine",
+            () -> new BlockItem(ModBlocks.SERAPH_SHRINE.get(), new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)));
+
+    /** Fragments du Sanctuaire du Séraphin : grâce (bénédiction) et souillure (corruption), 3 niveaux. Fusion 9 → 1. */
+    public static final RegistryObject<Item> GRACE_SHARD = ITEMS.register("grace_shard",
+            () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> GRACE_FRAGMENT = ITEMS.register("grace_fragment",
+            () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> GRACE_HEART = ITEMS.register("grace_heart",
+            () -> new Item(new Item.Properties().stacksTo(16).rarity(net.minecraft.world.item.Rarity.EPIC)) {
+                @Override public boolean isFoil(ItemStack stack) { return true; }   // reflet scintillant
+            });
+    public static final RegistryObject<Item> TAINT_SHARD = ITEMS.register("taint_shard",
+            () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> TAINT_FRAGMENT = ITEMS.register("taint_fragment",
+            () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> TAINT_HEART = ITEMS.register("taint_heart",
+            () -> new Item(new Item.Properties().stacksTo(16).rarity(net.minecraft.world.item.Rarity.EPIC)) {
+                @Override public boolean isFoil(ItemStack stack) { return true; }
+            });
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
     public static final RegistryObject<Item> RELIQUAIRE_SCELLE = ITEMS.register("reliquaire_scelle",
             () -> new com.wavesurvivor.item.RelicCacheItem(new Item.Properties()));
@@ -342,6 +363,13 @@ public class ModItems {
                         output.accept(KINGDOM_COLLECTOR_ITEM.get());
                         output.accept(KINGDOM_WORKSHOP_ITEM.get());
                         output.accept(OFFERING_BRAZIER_ITEM.get());
+                        output.accept(SERAPH_SHRINE_ITEM.get());
+                        output.accept(GRACE_SHARD.get());
+                        output.accept(GRACE_FRAGMENT.get());
+                        output.accept(GRACE_HEART.get());
+                        output.accept(TAINT_SHARD.get());
+                        output.accept(TAINT_FRAGMENT.get());
+                        output.accept(TAINT_HEART.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());

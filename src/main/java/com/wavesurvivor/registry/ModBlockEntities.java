@@ -27,6 +27,13 @@ public class ModBlockEntities {
                     () -> BlockEntityType.Builder.of(com.wavesurvivor.horde.roulette.RouletteChestBlockEntity::new,
                             ModBlocks.ROULETTE_CHEST.get()).build(null));
 
+    /** Sanctuaire du Séraphin : étape de corruption (0 à 4) synchronisée, rendu 3D animé. */
+    @SuppressWarnings("DataFlowIssue")
+    public static final RegistryObject<BlockEntityType<com.wavesurvivor.shrine.SeraphShrineBlockEntity>> SERAPH_SHRINE =
+            BLOCK_ENTITIES.register("seraph_shrine",
+                    () -> BlockEntityType.Builder.of(com.wavesurvivor.shrine.SeraphShrineBlockEntity::new,
+                            ModBlocks.SERAPH_SHRINE.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

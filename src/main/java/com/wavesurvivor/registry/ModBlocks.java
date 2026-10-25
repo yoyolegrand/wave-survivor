@@ -82,6 +82,12 @@ public class ModBlocks {
             () -> new com.wavesurvivor.horde.kingdom.OfferingBrazierBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK).strength(3.0f, 1200.0f).sound(SoundType.STONE).noOcclusion().lightLevel(s -> 12)));
 
+    /** Sanctuaire du Séraphin : statue à trois paires d'ailes (modèle 3D), purifiée ou corrompue par les offrandes. */
+    public static final RegistryObject<Block> SERAPH_SHRINE = BLOCKS.register("seraph_shrine",
+            () -> new com.wavesurvivor.shrine.SeraphShrineBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ).strength(-1.0f, 3600000.0f).sound(SoundType.STONE).noOcclusion().lightLevel(s -> 10)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
+
     /** Mode Kingdom : bloc de collision invisible des défenses (corps physique des tours et du baraquement). */
     public static final RegistryObject<Block> KINGDOM_COLLIDER = BLOCKS.register("kingdom_collider",
             () -> new com.wavesurvivor.horde.kingdom.ColliderBlock(BlockBehaviour.Properties.of()

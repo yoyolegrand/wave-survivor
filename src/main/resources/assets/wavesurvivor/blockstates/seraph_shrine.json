@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "wavesurvivor:block/seraph_shrine" },
+    "facing=south": { "model": "wavesurvivor:block/seraph_shrine" },
+    "facing=east":  { "model": "wavesurvivor:block/seraph_shrine" },
+    "facing=west":  { "model": "wavesurvivor:block/seraph_shrine" }
+  }
+}
