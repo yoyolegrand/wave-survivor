@@ -13,6 +13,14 @@
     "animalKill": -3,
     "villagerKill": -50
   },
+  "production": {
+    "_comment": "Secondes pour produire 1 Éclat, selon l'étape : Pure, Apaisée, Neutre (0 = rien), Souillée, Corrompue. Les Éclats de grâce viennent des étapes 0-1, ceux de souillure des étapes 3-4.",
+    "intervalSeconds": [120, 300, 0, 300, 120],
+    "stockCap": 64,
+    "killBonusSeconds": 10,
+    "fusionCost": 9,
+    "bossHeartChance": 0.05
+  },
   "offerings": [
     { "item": "#minecraft:flowers", "value": 1 },
     { "item": "minecraft:glow_berries", "value": 1 },

@@ -72,6 +72,14 @@ public class SeraphShrineBlock extends BaseEntityBlock {
         return new SeraphShrineBlockEntity(pos, state);
     }
 
+    @Nullable
+    @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state,
+            net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        return level.isClientSide ? null
+                : createTickerHelper(type, com.wavesurvivor.registry.ModBlockEntities.SERAPH_SHRINE.get(), SeraphShrineBlockEntity::serverTick);
+    }
+
     /** Clic droit : ouvre l'écran du Sanctuaire (offrandes, récolte, fusion, forge). */
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {

@@ -33,12 +33,16 @@ public class SeraphShrineBlockEntity extends BlockEntity implements MenuProvider
 
     public static final int MAX_STAGE = 4;
     /** Nombre de valeurs synchronisées avec le menu (voir menuData). */
-    public static final int DATA_SIZE = 9;
+    public static final int DATA_SIZE = 14;
 
     private int faith = 0;
     private int stage = 2;       // neutre au départ
     /** Dernière variation de la jauge (offrande ou événement), affichée dans l'écran ; non sauvegardée. */
     private int lastDelta = 0;
+    /** Éclats produits et gardés dans la statue (récoltés par le joueur). */
+    private int graceStock = 0, taintStock = 0;
+    /** Avancement du cycle de production (ticks) et sens de production du dernier tick (-1 aucun, 0 grâce, 1 souillure). */
+    private int progress = 0, direction = -1;
 
     public SeraphShrineBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SERAPH_SHRINE.get(), pos, state);
@@ -135,9 +139,78 @@ public class SeraphShrineBlockEntity extends BlockEntity implements MenuProvider
         }
     }
 
+    // ─── Production et récolte de fragments ───
+
+    /** Sens de production selon l'étape : 0 = grâce (étapes 0-1), 1 = souillure (étapes 3-4), -1 = rien (neutre). */
+    private int directionOf(int st) { return st <= 1 ? 0 : st >= 3 ? 1 : -1; }
+
+    public static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, SeraphShrineBlockEntity be) {
+        be.tickProduction();
+    }
+
+    private void tickProduction() {
+        int dir = directionOf(stage), iv = ShrineConfig.intervalTicks(stage);
+        if (dir != direction) { direction = dir; progress = 0; }
+        if (dir < 0 || iv <= 0) { progress = 0; return; }
+        int cap = ShrineConfig.stockCap();
+        if (stock(dir) >= cap) { progress = Math.min(progress, iv); return; } // plein : on attend la récolte
+        if (++progress >= iv) produce(dir, iv);
+    }
+
+    private int stock(int dir) { return dir == 0 ? graceStock : taintStock; }
+
+    private void produce(int dir, int iv) {
+        progress = Math.max(0, progress - iv);
+        if (dir == 0) graceStock = Math.min(ShrineConfig.stockCap(), graceStock + 1);
+        else taintStock = Math.min(ShrineConfig.stockCap(), taintStock + 1);
+        setChanged();
+        if (level instanceof ServerLevel sl) {
+            double cx = worldPosition.getX() + 0.5, cy = worldPosition.getY() + 1.6, cz = worldPosition.getZ() + 0.5;
+            sl.sendParticles(dir == 0 ? ParticleTypes.END_ROD : ParticleTypes.SOUL, cx, cy, cz, 6, 0.4, 0.5, 0.4, 0.01);
+        }
+    }
+
+    /** Avance la production (monstre de horde tué à proximité), dans le sens de l'étape. */
+    public void advance(int ticks) {
+        int dir = directionOf(stage), iv = ShrineConfig.intervalTicks(stage);
+        if (dir < 0 || iv <= 0 || ticks <= 0 || stock(dir) >= ShrineConfig.stockCap()) return;
+        if (dir != direction) { direction = dir; progress = 0; }
+        progress += ticks;
+        while (progress >= iv && stock(dir) < ShrineConfig.stockCap()) produce(dir, iv);
+        progress = Math.min(progress, iv);
+    }
+
+    public int getGraceStock() { return graceStock; }
+
+    public int getTaintStock() { return taintStock; }
+
+    /** Donne au joueur tous les Éclats stockés (ce qui ne rentre pas dans l'inventaire tombe à ses pieds). */
+    public void harvest(ServerPlayer p) {
+        if (graceStock <= 0 && taintStock <= 0) {
+            p.displayClientMessage(Component.literal(WSLang.t("shrine.harvest_empty")), true);
+            return;
+        }
+        give(p, new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.GRACE_SHARD.get()), graceStock);
+        give(p, new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.TAINT_SHARD.get()), taintStock);
+        p.displayClientMessage(Component.literal(WSLang.t("shrine.harvested", graceStock, taintStock)), true);
+        graceStock = 0;
+        taintStock = 0;
+        setChanged();
+        p.level().playSound(null, worldPosition, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.8f, 1.6f);
+    }
+
+    private static void give(ServerPlayer p, net.minecraft.world.item.ItemStack proto, int count) {
+        while (count > 0) {
+            net.minecraft.world.item.ItemStack st = proto.copy();
+            st.setCount(Math.min(count, st.getMaxStackSize()));
+            count -= st.getCount();
+            if (!p.getInventory().add(st)) p.drop(st, false);
+        }
+    }
+
     // ─── Menu ───
 
-    /** Valeurs envoyées au menu : 0 foi · 1 dernière variation · 2 étape · 3 maximum · 4-7 seuils (pure, apaisée, souillée, corrompue) · 8 réservé. */
+    /** Valeurs envoyées au menu : 0 foi · 1 dernière variation · 2 étape · 3 maximum · 4-7 seuils (pure, apaisée, souillée, corrompue) · 8-9 stocks (grâce, souillure) · 10-11 production (secondes) · 12 plafond · 13 coût de fusion. */
     public ContainerData menuData() {
         return new ContainerData() {
             @Override
@@ -151,6 +224,12 @@ public class SeraphShrineBlockEntity extends BlockEntity implements MenuProvider
                     case 5 -> ShrineConfig.calm();
                     case 6 -> ShrineConfig.soiled();
                     case 7 -> ShrineConfig.corrupted();
+                    case 8 -> graceStock;
+                    case 9 -> taintStock;
+                    case 10 -> progress / 20;
+                    case 11 -> ShrineConfig.intervalTicks(stage) / 20;
+                    case 12 -> ShrineConfig.stockCap();
+                    case 13 -> ShrineConfig.fusionCost();
                     default -> 0;
                 };
             }
@@ -180,6 +259,9 @@ public class SeraphShrineBlockEntity extends BlockEntity implements MenuProvider
         super.saveAdditional(tag);
         tag.putInt("Stage", stage);
         tag.putInt("Faith", faith);
+        tag.putInt("GraceStock", graceStock);
+        tag.putInt("TaintStock", taintStock);
+        tag.putInt("Progress", progress);
     }
 
     @Override
@@ -188,6 +270,9 @@ public class SeraphShrineBlockEntity extends BlockEntity implements MenuProvider
         stage = Math.max(0, Math.min(MAX_STAGE, tag.getInt("Stage")));
         // Anciennes statues (étape seule) : la foi est calée au milieu de l'étape
         faith = tag.contains("Faith") ? tag.getInt("Faith") : ShrineConfig.defaultFaithOf(stage);
+        graceStock = Math.max(0, tag.getInt("GraceStock"));
+        taintStock = Math.max(0, tag.getInt("TaintStock"));
+        progress = Math.max(0, tag.getInt("Progress"));
     }
 
     @Override

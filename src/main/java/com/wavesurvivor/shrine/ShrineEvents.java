@@ -43,9 +43,18 @@ public class ShrineEvents {
             return;
         }
         if (delta == 0) return;
+        // Boss tué : petite chance de lâcher un Cœur de grâce ou de souillure
+        if (MobRegistry.get(v.getUUID()) != null && com.wavesurvivor.horde.boss.BossManager.isBoss(v.getUUID())
+                && sl.random.nextDouble() < ShrineConfig.bossHeartChance()) {
+            net.minecraft.world.item.Item heart = sl.random.nextBoolean() ? com.wavesurvivor.registry.ModItems.GRACE_HEART.get() : com.wavesurvivor.registry.ModItems.TAINT_HEART.get();
+            v.spawnAtLocation(new net.minecraft.world.item.ItemStack(heart));
+        }
         List<SeraphShrineBlockEntity> near = ShrineRegistry.nearby(sl, v.position(), ShrineConfig.eventRadius());
         if (near.isEmpty()) return;
-        for (SeraphShrineBlockEntity be : near) be.addFaith(delta);
+        for (SeraphShrineBlockEntity be : near) {
+            be.addFaith(delta);
+            if (key == null) be.advance(ShrineConfig.killBonusTicks()); // un monstre de horde de plus : la production avance
+        }
         if (key != null && killer != null) {
             killer.displayClientMessage(Component.literal(WSLang.t(key, (delta > 0 ? "+" : "") + delta)), true);
         }

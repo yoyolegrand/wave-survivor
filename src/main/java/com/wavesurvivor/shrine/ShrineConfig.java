@@ -119,6 +119,29 @@ public final class ShrineConfig {
     public static int animalKill() { return HordeJson.num(sub("events"), "animalKill", -3); }
     public static int villagerKill() { return HordeJson.num(sub("events"), "villagerKill", -50); }
 
+    // ─── Production de fragments ───
+
+    private static JsonObject prod() { return sub("production"); }
+
+    /** Durée d'un cycle de production, en ticks, pour cette étape (0 = aucune production). */
+    public static int intervalTicks(int stage) {
+        JsonObject p = prod();
+        if (!p.has("intervalSeconds") || !p.get("intervalSeconds").isJsonArray()) return 0;
+        var a = p.getAsJsonArray("intervalSeconds");
+        if (stage < 0 || stage >= a.size()) return 0;
+        return Math.max(0, a.get(stage).getAsInt()) * 20;
+    }
+
+    public static int stockCap() { return Math.max(1, HordeJson.num(prod(), "stockCap", 64)); }
+
+    /** Production avancée par un monstre de horde tué à proximité, en ticks. */
+    public static int killBonusTicks() { return Math.max(0, HordeJson.num(prod(), "killBonusSeconds", 10)) * 20; }
+
+    public static int fusionCost() { return Math.max(2, HordeJson.num(prod(), "fusionCost", 9)); }
+
+    /** Chance qu'un boss lâche un Cœur (de grâce ou de souillure) à sa mort. */
+    public static double bossHeartChance() { return Math.max(0, Math.min(1, HordeJson.dbl(prod(), "bossHeartChance", 0.05))); }
+
     // ─── Offrandes ───
 
     /** Valeur d'UNE unité de cet objet (positive : grâce, négative : souillure, 0 : refusé). */

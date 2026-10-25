@@ -19,13 +19,13 @@ import java.util.List;
 /**
  * Écran du SANCTUAIRE DU SÉRAPHIN, dans le style de l'Atelier du Kingdom (aplats g.fill, liséré de couleur en haut, cases à fin contour) décliné en
  * trois thèmes : doré (étapes pure / apaisée), argenté (neutre), violet (souillée / corrompue). Fenêtre 176 × 234 ; onglets en haut (y 0-26) ;
- * panneau à partir de y = 24. Étape en cours : onglet Offrandes (jauge, offrande, état). Les autres onglets sont grisés.
+ * panneau à partir de y = 24. Onglets actifs : Offrandes (jauge, offrande, état), Récolte (stocks et production), Fusion. Forge : à venir.
  */
 @OnlyIn(Dist.CLIENT)
 public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu> {
 
     /** Onglets déjà actifs (les suivants arrivent aux étapes 3 et 4 du développement). */
-    private static final boolean[] TAB_ENABLED = {true, false, false, false};
+    private static final boolean[] TAB_ENABLED = {true, true, true, false};
     private static final int[] TAB_X = {4, 34, 64, 94};
     private static final int PANEL_Y = 24;
 
@@ -87,13 +87,87 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
         g.fill(x + 2, py + 2, x + imageWidth - 2, y + imageHeight - 2, th[1]);
         g.fill(x, py, x + imageWidth, py + 2, th[2]);
         // Cases d'inventaire
-        for (int i = 1; i < menu.slots.size(); i++) {
+        for (int i = 3; i < menu.slots.size(); i++) {
             Slot s = menu.slots.get(i);
             int sx = x + s.x - 1, sy = y + s.y - 1;
             g.fill(sx, sy, sx + 18, sy + 18, th[3]);
             g.fill(sx + 1, sy + 1, sx + 17, sy + 17, th[4]);
         }
-        if (menu.tab == SeraphShrineMenu.TAB_OFFER) drawOffering(g, x, py);
+        switch (menu.tab) {
+            case SeraphShrineMenu.TAB_OFFER -> drawOffering(g, x, py);
+            case SeraphShrineMenu.TAB_HARVEST -> drawHarvest(g, x, py);
+            case SeraphShrineMenu.TAB_FUSION -> drawFusion(g, x, py);
+            default -> { }
+        }
+        g.drawString(font, WSLang.t("shrine.inventory"), x + 8, py + 113, th[9], false);
+    }
+
+    /** Case spéciale (plus vive) : emplacement d'offrande, de fusion… */
+    private void specialSlot(GuiGraphics g, Slot s) {
+        int sx = leftPos + s.x - 1, sy = topPos + s.y - 1;
+        g.fill(sx - 1, sy - 1, sx + 19, sy + 19, th[5]);
+        g.fill(sx, sy, sx + 18, sy + 18, th[6]);
+    }
+
+    private void drawHarvest(GuiGraphics g, int x, int py) {
+        boolean[] grace = {true, false};
+        for (int k = 0; k < 2; k++) {
+            boolean isGrace = grace[k];
+            int bx = x + (isGrace ? 7 : 89), by = py + 20;
+            g.fill(bx, by, bx + 80, by + 64, th[0]);
+            g.fill(bx + 1, by + 1, bx + 79, by + 63, th[4]);
+            g.fill(bx + 1, by + 1, bx + 79, by + 2, isGrace ? 0xFFF2C14E : 0xFFB54BFF);
+            g.drawString(font, (isGrace ? "§e" : "§d") + WSLang.t(isGrace ? "shrine.grace_box" : "shrine.taint_box"), bx + 5, by + 5, 0xFFFFFFFF, false);
+            // Case de sortie (affichage : on récolte avec le bouton)
+            g.fill(bx + 8, by + 15, bx + 26, by + 33, th[5]);
+            g.fill(bx + 9, by + 16, bx + 25, by + 32, th[6]);
+            int n = isGrace ? menu.graceStock() : menu.taintStock();
+            ItemStack shard = new ItemStack(isGrace ? ModItems.GRACE_SHARD.get() : ModItems.TAINT_SHARD.get(), Math.max(1, Math.min(n, 64)));
+            if (n > 0) {
+                g.renderItem(shard, bx + 9, by + 16);
+                g.renderItemDecorations(font, shard, bx + 9, by + 16);
+            }
+            g.drawString(font, WSLang.t("shrine.stock", n, menu.stockCap()), bx + 5, by + 38, th[8], false);
+            // Barre de production : seulement dans le sens actif de la statue
+            int stage = menu.stage();
+            boolean active = isGrace ? stage <= 1 : stage >= 3;
+            int bw = 70, barX = bx + 5, barY = by + 52;
+            g.fill(barX - 1, barY - 1, barX + bw + 1, barY + 7, th[0]);
+            g.fill(barX, barY, barX + bw, barY + 6, th[4]);
+            int iv = menu.intervalSeconds();
+            if (active && iv > 0) {
+                int fill = n >= menu.stockCap() ? bw : (int) Math.min(bw, bw * (long) menu.progressSeconds() / iv);
+                g.fill(barX, barY, barX + fill, barY + 6, isGrace ? 0xFFF2C14E : 0xFFB54BFF);
+            }
+            String info = active && iv > 0 ? WSLang.t("shrine.every", fmtTime(iv)) : WSLang.t(active ? "shrine.no_production" : "shrine.sleeping");
+            g.drawString(font, info, bx + 5, by + 43, active ? th[7] : th[8], false);
+        }
+        boolean any = menu.graceStock() + menu.taintStock() > 0;
+        drawButton(g, x + 56, py + 90, 64, 14, WSLang.t("shrine.harvest"), any);
+    }
+
+    private static String fmtTime(int sec) {
+        return sec % 60 == 0 ? (sec / 60) + " min" : sec >= 60 ? (sec / 60) + " min " + (sec % 60) + " s" : sec + " s";
+    }
+
+    private void drawFusion(GuiGraphics g, int x, int py) {
+        specialSlot(g, menu.slots.get(1));
+        specialSlot(g, menu.slots.get(2));
+        g.drawCenteredString(font, WSLang.t("shrine.fuse_in", menu.fusionCost()), x + 46, py + 31, th[7]);
+        // Flèche
+        int ax = x + 62, ay = py + 44;
+        g.fill(ax, ay + 4, ax + 26, ay + 6, th[2]);
+        for (int i = 0; i < 5; i++) g.fill(ax + 26 + i, ay + 5 - (4 - i), ax + 27 + i, ay + 5 + (4 - i) + 1, th[2]);
+        ItemStack in = menu.fusionInput();
+        net.minecraft.world.item.Item next = SeraphShrineMenu.nextLevel(in.getItem());
+        int n = next == null ? 0 : in.getCount() / menu.fusionCost();
+        drawButton(g, x + 56, py + 70, 64, 14, WSLang.t("shrine.fuse"), n > 0);
+        String sum;
+        if (in.isEmpty()) sum = WSLang.t("shrine.fuse_hint");
+        else if (next == null) sum = WSLang.t("shrine.fuse_heart");
+        else if (n <= 0) sum = WSLang.t("shrine.fuse_nothing", menu.fusionCost());
+        else sum = WSLang.t("shrine.fuse_summary", n * menu.fusionCost(), in.getHoverName().getString(), n, new ItemStack(next).getHoverName().getString());
+        g.drawString(font, font.plainSubstrByWidth(sum, 162), x + 7, py + 94, th[8], false);
     }
 
     private static int darker(int c) {
@@ -151,8 +225,6 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
         int d = menu.lastDelta();
         String msg = d == 0 ? WSLang.t("shrine.hint") : WSLang.t("shrine.last", (d > 0 ? "§a+" : "§c") + d);
         g.drawString(font, msg, x + 8, py + 100, th[8], false);
-        // Libellé inventaire
-        g.drawString(font, WSLang.t("shrine.inventory"), x + 8, py + 113, th[9], false);
     }
 
     private void drawButton(GuiGraphics g, int bx, int by, int bw, int bh, String label, boolean enabled) {
@@ -197,15 +269,25 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
                     return true;
                 }
             }
-            if (menu.tab == SeraphShrineMenu.TAB_OFFER) {
-                int bx = leftPos + 11, by = topPos + PANEL_Y + 66;
-                if (mx >= bx && mx < bx + 44 && my >= by && my < by + 14) {
-                    minecraft.gameMode.handleInventoryButtonClick(menu.containerId, SeraphShrineMenu.BTN_OFFER);
-                    return true;
-                }
+            int py = topPos + PANEL_Y;
+            if (menu.tab == SeraphShrineMenu.TAB_OFFER && hit(mx, my, leftPos + 11, py + 66, 44, 14)) {
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, SeraphShrineMenu.BTN_OFFER);
+                return true;
+            }
+            if (menu.tab == SeraphShrineMenu.TAB_HARVEST && hit(mx, my, leftPos + 56, py + 90, 64, 14)) {
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, SeraphShrineMenu.BTN_HARVEST);
+                return true;
+            }
+            if (menu.tab == SeraphShrineMenu.TAB_FUSION && hit(mx, my, leftPos + 56, py + 70, 64, 14)) {
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, SeraphShrineMenu.BTN_FUSE);
+                return true;
             }
         }
         return super.mouseClicked(mx, my, button);
+    }
+
+    private static boolean hit(double mx, double my, int x, int y, int w, int h) {
+        return mx >= x && mx < x + w && my >= y && my < y + h;
     }
 
     @Override

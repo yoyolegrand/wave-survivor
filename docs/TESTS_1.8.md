@@ -42,6 +42,15 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Multijoueur : deux joueurs voient et modifient la même jauge ; l'écran se met à jour en direct
 - [ ] Rééquilibrage : créer `config/wavesurvivor/shrine_offerings.json` avec p. ex. `{"events":{"villagerKill":-10}}` puis `/ws reload` : la valeur change
 
+## Sanctuaire du Séraphin — étape 3 (production, récolte, fusion)
+- [ ] Offrir de quoi passer la statue en Pure (foi ≥ 400) : après 2 minutes, 1 Éclat de grâce apparaît (particules), visible dans l'onglet « Récolte » avec la barre de production qui se remplit ; Apaisée : 1 toutes les 5 min ; Neutre : aucune production ; Souillée / Corrompue : Éclats de souillure (5 min / 2 min)
+- [ ] Tuer des monstres de horde à moins de 16 blocs : la barre de production avance plus vite (+10 s par monstre, en plus de +1 de foi)
+- [ ] « Récolter » : les Éclats vont dans l'inventaire (ou tombent au sol si plein), le stock revient à 0 ; le stock plafonne à 64 et la production attend
+- [ ] Onglet « Fusion » : 9 Éclats de grâce → 1 Fragment de grâce (idem souillure, et Fragments → Cœurs) ; par lots (27 → 3) ; la case de sortie est en prise seulement ; les Cœurs ne sont pas acceptés ; sortie occupée par un autre objet = refus avec message
+- [ ] Fermer l'écran rend les objets restés dans les cases (offrande, fusion)
+- [ ] Un boss tué dans une horde lâche parfois un Cœur de grâce ou de souillure (5 %, `bossHeartChance`) ; la production et la foi se sauvegardent (quitter / recharger le monde)
+- [ ] Rééquilibrage : `production.intervalSeconds`, `stockCap`, `killBonusSeconds`, `fusionCost`, `bossHeartChance` dans `config/wavesurvivor/shrine_offerings.json` puis `/ws reload`
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
