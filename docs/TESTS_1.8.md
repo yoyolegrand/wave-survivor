@@ -71,6 +71,13 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Plafond : pas plus de 8 Corrompus de la statue en même temps (`maxAlive`) ; remonter la statue à Neutre arrête les apparitions ; changer d'étape relance le délai
 - [ ] Réglages : bloc `corruption` de `config/wavesurvivor/shrine_offerings.json` (délais, nombre, `bruteChance`, rayons, plafond) puis `/ws reload`
 
+## Arène « Nécropole des Rois Déchus » — étape 1 (chargeur de plan et pose)
+- [ ] `/ws arena list` affiche `necropole_rois_dechus` ; `/ws arena place necropole_rois_dechus` pose l'arène devant toi (message avec le centre et la durée)
+- [ ] Forme : cercle de 31 blocs, 10 de haut au plus ; piédestal central (sculpté), 4 braseros d'âmes allumés, couronne de 14 tombes, crypte au nord (portail en barreaux de fer, 2 statues d'os), enceinte en ruine avec 4 entrées, 8 colonnes à lanternes, 3 arbres morts — comparer avec `docs/arenes/necropole/arene_necropole.png`
+- [ ] Terrain : sur une pente et sur un relief boisé : arbres et herbes dégagés dans le cercle, fondations comblées (rien ne flotte), anneau de 2 blocs de podzol / terre stérile / mousse qui fond l'arène dans le paysage
+- [ ] Rotations `90`, `180`, `270` : la crypte se retrouve à l'est / au sud / à l'ouest, les colonnes, barreaux et bûches restent bien orientés
+- [ ] Pas d'eau : poser l'arène sur un lac n'est pas prévu (à éviter pour l'instant)
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
