@@ -70,6 +70,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new SupernovaTracker());
         MinecraftForge.EVENT_BUS.register(new MortarExplosionHandler());
         MinecraftForge.EVENT_BUS.register(new BenedictionEventHandler());
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.shrine.ShrineGearEvents()); // équipements améliorés à la Forge du Sanctuaire
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.shrine.ShrineEvents()); // Sanctuaire du Séraphin : foi et événements proches
         MinecraftForge.EVENT_BUS.register(new RouletteChestManager());
         MinecraftForge.EVENT_BUS.register(new RouletteChestEventHandler());
@@ -224,6 +225,7 @@ public class WaveSurvivorMod {
         com.wavesurvivor.horde.renaissance.RenaissanceShopStore.load();
         com.wavesurvivor.altar.AltarRecipes.load();
         com.wavesurvivor.shrine.ShrineConfig.load();
+        com.wavesurvivor.shrine.ShrineUpgrades.load();
         com.wavesurvivor.horde.benediction.BlessingCatalog.load();
         com.wavesurvivor.horde.benediction.BlessingCatalog.syncAll(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer());
 

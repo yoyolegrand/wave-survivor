@@ -3,6 +3,8 @@ package com.wavesurvivor.client;
 import com.wavesurvivor.i18n.WSLang;
 import com.wavesurvivor.registry.ModItems;
 import com.wavesurvivor.shrine.SeraphShrineMenu;
+import com.wavesurvivor.shrine.ShrineGear;
+import com.wavesurvivor.shrine.ShrineUpgrades;
 import com.wavesurvivor.shrine.ShrineConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -19,13 +21,13 @@ import java.util.List;
 /**
  * Écran du SANCTUAIRE DU SÉRAPHIN, dans le style de l'Atelier du Kingdom (aplats g.fill, liséré de couleur en haut, cases à fin contour) décliné en
  * trois thèmes : doré (étapes pure / apaisée), argenté (neutre), violet (souillée / corrompue). Fenêtre 176 × 234 ; onglets en haut (y 0-26) ;
- * panneau à partir de y = 24. Onglets actifs : Offrandes (jauge, offrande, état), Récolte (stocks et production), Fusion. Forge : à venir.
+ * panneau à partir de y = 24. Onglets : Offrandes (jauge, offrande, état), Récolte (stocks et production), Fusion, Forge (améliorer un équipement).
  */
 @OnlyIn(Dist.CLIENT)
 public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu> {
 
     /** Onglets déjà actifs (les suivants arrivent aux étapes 3 et 4 du développement). */
-    private static final boolean[] TAB_ENABLED = {true, true, true, false};
+    private static final boolean[] TAB_ENABLED = {true, true, true, true};
     private static final int[] TAB_X = {4, 34, 64, 94};
     private static final int PANEL_Y = 24;
 
@@ -63,7 +65,13 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
 
     @Override
     protected void renderBg(GuiGraphics g, float pt, int mx, int my) {
-        th = THEMES[theme(menu.stage())];
+        int themeIdx = theme(menu.stage());
+        if (menu.tab == SeraphShrineMenu.TAB_FORGE) { // dans la Forge, le thème suit l'alignement de l'objet posé
+            String al = ShrineGear.alignOf(menu.forgeEquipment());
+            if (ShrineGear.CONSECRATED.equals(al)) themeIdx = 0;
+            else if (ShrineGear.PROFANED.equals(al)) themeIdx = 2;
+        }
+        th = THEMES[themeIdx];
         int x = leftPos, y = topPos;
         // Onglets
         for (int i = 0; i < 4; i++) {
@@ -87,7 +95,7 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
         g.fill(x + 2, py + 2, x + imageWidth - 2, y + imageHeight - 2, th[1]);
         g.fill(x, py, x + imageWidth, py + 2, th[2]);
         // Cases d'inventaire
-        for (int i = 3; i < menu.slots.size(); i++) {
+        for (int i = 5; i < menu.slots.size(); i++) {
             Slot s = menu.slots.get(i);
             int sx = x + s.x - 1, sy = y + s.y - 1;
             g.fill(sx, sy, sx + 18, sy + 18, th[3]);
@@ -97,6 +105,7 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
             case SeraphShrineMenu.TAB_OFFER -> drawOffering(g, x, py);
             case SeraphShrineMenu.TAB_HARVEST -> drawHarvest(g, x, py);
             case SeraphShrineMenu.TAB_FUSION -> drawFusion(g, x, py);
+            case SeraphShrineMenu.TAB_FORGE -> drawForge(g, x, py);
             default -> { }
         }
         g.drawString(font, WSLang.t("shrine.inventory"), x + 8, py + 113, th[9], false);
@@ -110,37 +119,38 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
     }
 
     private void drawHarvest(GuiGraphics g, int x, int py) {
-        boolean[] grace = {true, false};
         for (int k = 0; k < 2; k++) {
-            boolean isGrace = grace[k];
+            boolean isGrace = k == 0;
             int bx = x + (isGrace ? 7 : 89), by = py + 20;
             g.fill(bx, by, bx + 80, by + 64, th[0]);
             g.fill(bx + 1, by + 1, bx + 79, by + 63, th[4]);
             g.fill(bx + 1, by + 1, bx + 79, by + 2, isGrace ? 0xFFF2C14E : 0xFFB54BFF);
             g.drawString(font, (isGrace ? "§e" : "§d") + WSLang.t(isGrace ? "shrine.grace_box" : "shrine.taint_box"), bx + 5, by + 5, 0xFFFFFFFF, false);
             // Case de sortie (affichage : on récolte avec le bouton)
-            g.fill(bx + 8, by + 15, bx + 26, by + 33, th[5]);
-            g.fill(bx + 9, by + 16, bx + 25, by + 32, th[6]);
+            g.fill(bx + 5, by + 15, bx + 23, by + 33, th[5]);
+            g.fill(bx + 6, by + 16, bx + 22, by + 32, th[6]);
             int n = isGrace ? menu.graceStock() : menu.taintStock();
             ItemStack shard = new ItemStack(isGrace ? ModItems.GRACE_SHARD.get() : ModItems.TAINT_SHARD.get(), Math.max(1, Math.min(n, 64)));
             if (n > 0) {
-                g.renderItem(shard, bx + 9, by + 16);
-                g.renderItemDecorations(font, shard, bx + 9, by + 16);
+                g.renderItem(shard, bx + 6, by + 16);
+                g.renderItemDecorations(font, shard, bx + 6, by + 16);
             }
-            g.drawString(font, WSLang.t("shrine.stock", n, menu.stockCap()), bx + 5, by + 38, th[8], false);
-            // Barre de production : seulement dans le sens actif de la statue
+            // Stock à droite de la case
+            g.drawString(font, WSLang.t("shrine.stock_short"), bx + 28, by + 17, th[8], false);
+            g.drawString(font, n + " / " + menu.stockCap(), bx + 28, by + 26, n >= menu.stockCap() ? MALUS : th[7], false);
+            // Production : durée du cycle puis barre (seulement dans le sens actif de la statue)
             int stage = menu.stage();
             boolean active = isGrace ? stage <= 1 : stage >= 3;
+            int iv = menu.intervalSeconds();
+            String info = active && iv > 0 ? WSLang.t("shrine.every", fmtTime(iv)) : WSLang.t(active ? "shrine.no_production" : "shrine.sleeping");
+            g.drawString(font, font.plainSubstrByWidth(info, 72), bx + 5, by + 39, active ? th[7] : th[8], false);
             int bw = 70, barX = bx + 5, barY = by + 52;
             g.fill(barX - 1, barY - 1, barX + bw + 1, barY + 7, th[0]);
             g.fill(barX, barY, barX + bw, barY + 6, th[4]);
-            int iv = menu.intervalSeconds();
             if (active && iv > 0) {
                 int fill = n >= menu.stockCap() ? bw : (int) Math.min(bw, bw * (long) menu.progressSeconds() / iv);
                 g.fill(barX, barY, barX + fill, barY + 6, isGrace ? 0xFFF2C14E : 0xFFB54BFF);
             }
-            String info = active && iv > 0 ? WSLang.t("shrine.every", fmtTime(iv)) : WSLang.t(active ? "shrine.no_production" : "shrine.sleeping");
-            g.drawString(font, info, bx + 5, by + 43, active ? th[7] : th[8], false);
         }
         boolean any = menu.graceStock() + menu.taintStock() > 0;
         drawButton(g, x + 56, py + 90, 64, 14, WSLang.t("shrine.harvest"), any);
@@ -167,7 +177,89 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
         else if (next == null) sum = WSLang.t("shrine.fuse_heart");
         else if (n <= 0) sum = WSLang.t("shrine.fuse_nothing", menu.fusionCost());
         else sum = WSLang.t("shrine.fuse_summary", n * menu.fusionCost(), in.getHoverName().getString(), n, new ItemStack(next).getHoverName().getString());
-        g.drawString(font, font.plainSubstrByWidth(sum, 162), x + 7, py + 94, th[8], false);
+        g.drawWordWrap(font, net.minecraft.network.chat.FormattedText.of(sum), x + 7, py + 89, 162, th[8]);
+    }
+
+    // ─── Forge ───
+
+    private void diamond(GuiGraphics g, int cx, int cy, int color, boolean filled) {
+        for (int dy = -6; dy <= 5; dy++) {
+            int w = 6 - (dy < 0 ? -dy - 1 : dy);
+            if (filled) g.fill(cx - w, cy + dy, cx + w + 1, cy + dy + 1, color);
+            else { g.fill(cx - w, cy + dy, cx - w + 1, cy + dy + 1, color); g.fill(cx + w, cy + dy, cx + w + 1, cy + dy + 1, color); }
+        }
+    }
+
+    private void drawForge(GuiGraphics g, int x, int py) {
+        specialSlot(g, menu.slots.get(3));
+        specialSlot(g, menu.slots.get(4));
+        small(g, WSLang.t("shrine.forge_equipment"), x + 14, py + 18, 0.75f, false, 60);
+        small(g, WSLang.t("shrine.forge_fragment"), x + 14, py + 50, 0.75f, false, 60);
+        ItemStack eq = menu.forgeEquipment();
+        java.util.List<ShrineGear.Applied> ups = ShrineGear.upgradesOf(eq);
+        String align = ShrineGear.alignOf(eq);
+        boolean cons = ShrineGear.CONSECRATED.equals(align);
+        int accent = align == null ? th[2] : cons ? 0xFFF2C14E : 0xFFB54BFF;
+        String alignText = align == null ? WSLang.t("shrine.align.none") : (cons ? "§e" : "§d") + WSLang.t("shrine.align." + align);
+        small(g, alignText, x + 62 - (int) (font.width(alignText) * 0.375f), py + 28, 0.75f, false, 80);
+        // Trois emplacements d'amélioration (losanges)
+        int max = ShrineUpgrades.maxSlots();
+        for (int i = 0; i < Math.min(3, max); i++) {
+            int cx = x + 52 + i * 16, cy = py + 46;
+            diamond(g, cx, cy, i < ups.size() ? accent : th[3], i < ups.size());
+        }
+        String count = ups.size() + " / " + max;
+        small(g, count, x + 62 - (int) (font.width(count) * 0.375f), py + 56, 0.75f, false, 40);
+        // Prochain coût
+        if (!eq.isEmpty() && ups.size() < max) {
+            String cost = WSLang.t("shrine.forge_next", ShrineUpgrades.slotCost(ups.size()));
+            small(g, cost, x + 62 - (int) (font.width(cost) * 0.375f), py + 66, 0.75f, false, 80);
+        }
+        // Liste des améliorations de l'objet (le détail complet est dans l'info-bulle)
+        int lx = x + 96, ly = py + 20;
+        g.fill(lx, ly, lx + 73, ly + 66, th[0]);
+        g.fill(lx + 1, ly + 1, lx + 72, ly + 65, th[4]);
+        if (ups.isEmpty()) {
+            g.drawWordWrap(font, net.minecraft.network.chat.FormattedText.of(WSLang.t(eq.isEmpty() ? "shrine.forge_put" : "shrine.forge_empty")), lx + 4, ly + 5, 66, th[8]);
+        }
+        for (int i = 0; i < ups.size(); i++) {
+            ShrineUpgrades.Def d = ShrineUpgrades.get(ups.get(i).id());
+            int ry = ly + 3 + i * 21;
+            String nm = (cons ? "§e" : "§d") + (d == null ? ups.get(i).id() : WSLang.t("shrine.up." + d.id())) + " §7" + ShrineGear.roman(ups.get(i).tier());
+            small(g, font.plainSubstrByWidth(nm, 92), lx + 4, ry, 0.8f, false, 70);
+            if (d != null) {
+                java.util.List<String> lines = ShrineGear.effectLines(d, ups.get(i).tier());
+                for (int k = 0; k < Math.min(2, lines.size()); k++) small(g, font.plainSubstrByWidth(lines.get(k), 96), lx + 4, ry + 7 + k * 6, 0.6f, false, 70);
+            }
+        }
+        boolean canInsert = !eq.isEmpty() && !menu.forgeFragment().isEmpty();
+        drawButton(g, x + 36, py + 90, 48, 14, WSLang.t("shrine.forge_remove"), !ups.isEmpty() && !menu.forgeFragment().isEmpty());
+        drawButton(g, x + 100, py + 90, 64, 14, WSLang.t("shrine.forge_insert"), canInsert && ups.size() < max);
+    }
+
+    /** Info-bulle des améliorations de l'objet posé dans la Forge. */
+    private void forgeTooltip(GuiGraphics g, int mx, int my) {
+        int lx = leftPos + 96, ly = topPos + PANEL_Y + 20;
+        if (mx < lx || mx >= lx + 73 || my < ly || my >= ly + 66) return;
+        java.util.List<ShrineGear.Applied> ups = ShrineGear.upgradesOf(menu.forgeEquipment());
+        int i = (my - ly - 3) / 21;
+        if (i < 0 || i >= ups.size()) return;
+        ShrineUpgrades.Def d = ShrineUpgrades.get(ups.get(i).id());
+        if (d == null) return;
+        java.util.List<Component> tip = new java.util.ArrayList<>();
+        tip.add(Component.literal((d.align().equals(ShrineGear.CONSECRATED) ? "§e" : "§d") + WSLang.t("shrine.up." + d.id()) + " §7" + ShrineGear.roman(ups.get(i).tier())));
+        for (String l : ShrineGear.effectLines(d, ups.get(i).tier())) tip.add(Component.literal(l));
+        g.renderComponentTooltip(font, tip, mx, my);
+    }
+
+    /** Texte réduit (échelle {@code sc}), aligné à gauche en x ou, si {@code right}, à droite de x. */
+    private void small(GuiGraphics g, String text, int x, int y, float sc, boolean right, int maxW) {
+        int w = (int) (font.width(text) * sc);
+        g.pose().pushPose();
+        g.pose().translate(right ? x - w : x, y, 0);
+        g.pose().scale(sc, sc, 1f);
+        g.drawString(font, text, 0, 0, 0xFFFFFFFF, false);
+        g.pose().popPose();
     }
 
     private static int darker(int c) {
@@ -192,9 +284,8 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
 
         // Jauge pure ↔ corrompue : 104 × 10, dorée à gauche, violette à droite, curseur blanc
         int gx = x + 64, gy = py + 32, gw = 104, gh = 10;
-        g.drawString(font, "§e" + WSLang.t("shrine.pure_label"), gx, py + 21, th[7], false);
-        String corr = WSLang.t("shrine.corrupt_label");
-        g.drawString(font, "§d" + corr, gx + gw - font.width(corr), py + 21, th[7], false);
+        small(g, "§e" + WSLang.t("shrine.pure_label"), gx, py + 21, 0.75f, false, gw);
+        small(g, "§d" + WSLang.t("shrine.corrupt_label"), gx + gw, py + 21, 0.75f, true, gw);
         g.fill(gx - 1, gy - 1, gx + gw + 1, gy + gh + 1, th[0]);
         for (int i = 0; i < gw; i++) g.fill(gx + i, gy, gx + i + 1, gy + gh, gaugeColor(i / (double) (gw - 1)));
         int max = menu.maxFaith();
@@ -244,6 +335,7 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
         renderBackground(g);
         super.render(g, mx, my, pt);
         renderTooltip(g, mx, my);
+        if (menu.tab == SeraphShrineMenu.TAB_FORGE) forgeTooltip(g, mx, my);
         // Info-bulle des onglets
         for (int i = 0; i < 4; i++) {
             int tx = leftPos + TAB_X[i];
@@ -276,6 +368,14 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
             }
             if (menu.tab == SeraphShrineMenu.TAB_HARVEST && hit(mx, my, leftPos + 56, py + 90, 64, 14)) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, SeraphShrineMenu.BTN_HARVEST);
+                return true;
+            }
+            if (menu.tab == SeraphShrineMenu.TAB_FORGE && hit(mx, my, leftPos + 100, py + 90, 64, 14)) {
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, SeraphShrineMenu.BTN_INSERT);
+                return true;
+            }
+            if (menu.tab == SeraphShrineMenu.TAB_FORGE && hit(mx, my, leftPos + 36, py + 90, 48, 14)) {
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, SeraphShrineMenu.BTN_REMOVE);
                 return true;
             }
             if (menu.tab == SeraphShrineMenu.TAB_FUSION && hit(mx, my, leftPos + 56, py + 70, 64, 14)) {

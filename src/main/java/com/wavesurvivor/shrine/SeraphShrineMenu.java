@@ -22,26 +22,28 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Menu du SANCTUAIRE DU SÉRAPHIN (4 onglets : 0 Offrandes · 1 Récolte · 2 Fusion · 3 Forge).
- * Emplacements : 0 = offrande · 1 = fusion (entrée) · 2 = fusion (sortie, prise seulement) · 3-29 = inventaire · 30-38 = barre d'objets.
+ * Emplacements : 0 = offrande · 1 = fusion (entrée) · 2 = fusion (sortie, prise seulement) · 3 = forge (équipement) · 4 = forge (fragment) · 5-31 = inventaire · 32-40 = barre d'objets.
  * Les emplacements d'un autre onglet sont désactivés (isActive).
- * Boutons (clickMenuButton) : 0-3 = changer d'onglet · 10 = Offrir · 11 = Récolter · 12 = Fusionner.
+ * Boutons (clickMenuButton) : 0-3 = changer d'onglet · 10 = Offrir · 11 = Récolter · 12 = Fusionner · 13 = Insérer · 14 = Retirer.
  * Données synchronisées : voir SeraphShrineBlockEntity.menuData.
  */
 public class SeraphShrineMenu extends AbstractContainerMenu {
 
     public static final int TAB_OFFER = 0, TAB_HARVEST = 1, TAB_FUSION = 2, TAB_FORGE = 3;
-    public static final int BTN_OFFER = 10, BTN_HARVEST = 11, BTN_FUSE = 12;
+    public static final int BTN_OFFER = 10, BTN_HARVEST = 11, BTN_FUSE = 12, BTN_INSERT = 13, BTN_REMOVE = 14;
     /** Positions (relatives à la fenêtre 176 × 234) : le panneau commence à y = 24, voir SeraphShrineScreen. */
-    public static final int OFFER_X = 25, OFFER_Y = 65, FUSE_IN_X = 37, FUSE_OUT_X = 109, FUSE_Y = 65;
+    public static final int OFFER_X = 25, OFFER_Y = 65, FUSE_IN_X = 37, FUSE_OUT_X = 109, FUSE_Y = 65, FORGE_X = 15, EQUIP_Y = 53, FRAG_Y = 85;
     public static final int INV_X = 8, INV_Y = 149, HOT_Y = 207;
-    private static final int FIRST_INV = 3, HOT_START = 30, END = 39;
+    private static final int FIRST_INV = 5, HOT_START = 32, END = 41;
 
     private final ContainerData data;
     private final BlockPos pos;
     private final Container offer = new SimpleContainer(1);
     private final Container fuseIn = new SimpleContainer(1);
     private final Container fuseOut = new SimpleContainer(1);
-    private final Slot offerSlot, fuseInSlot, fuseOutSlot;
+    private final Container forgeEquip = new SimpleContainer(1);
+    private final Container forgeFrag = new SimpleContainer(1);
+    private final Slot offerSlot, fuseInSlot, fuseOutSlot, equipSlot, fragSlot;
     /** Onglet affiché (client et serveur : décide quels emplacements sont actifs). */
     public int tab = TAB_OFFER;
 
@@ -71,6 +73,15 @@ public class SeraphShrineMenu extends AbstractContainerMenu {
             @Override public boolean mayPlace(ItemStack st) { return false; }
             @Override public boolean isActive() { return tab == TAB_FUSION; }
         });
+        equipSlot = addSlot(new Slot(forgeEquip, 0, FORGE_X, EQUIP_Y) {
+            @Override public boolean mayPlace(ItemStack st) { return !ShrineGear.typesOf(st).isEmpty(); }
+            @Override public int getMaxStackSize() { return 1; }
+            @Override public boolean isActive() { return tab == TAB_FORGE; }
+        });
+        fragSlot = addSlot(new Slot(forgeFrag, 0, FORGE_X, FRAG_Y) {
+            @Override public boolean mayPlace(ItemStack st) { return ShrineGear.campOf(st.getItem()) != null; }
+            @Override public boolean isActive() { return tab == TAB_FORGE; }
+        });
         for (int r = 0; r < 3; r++) for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c + r * 9 + 9, INV_X + c * 18, INV_Y + r * 18));
         for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, INV_X + c * 18, HOT_Y));
         addDataSlots(data);
@@ -97,6 +108,8 @@ public class SeraphShrineMenu extends AbstractContainerMenu {
     public ItemStack offered() { return offerSlot.getItem(); }
     public ItemStack fusionInput() { return fuseInSlot.getItem(); }
     public ItemStack fusionOutput() { return fuseOutSlot.getItem(); }
+    public ItemStack forgeEquipment() { return equipSlot.getItem(); }
+    public ItemStack forgeFragment() { return fragSlot.getItem(); }
 
     /** Niveau supérieur d'un fragment (Éclat → Fragment → Cœur), ou null (Cœur, autre objet). */
     public static Item nextLevel(Item it) {
@@ -120,6 +133,8 @@ public class SeraphShrineMenu extends AbstractContainerMenu {
             case BTN_OFFER -> offer(sp, be);
             case BTN_HARVEST -> be.harvest(sp);
             case BTN_FUSE -> fuse(sp);
+            case BTN_INSERT -> insertUpgrade(sp);
+            case BTN_REMOVE -> removeUpgrade(sp);
             default -> { return false; }
         }
         return true;
@@ -174,6 +189,62 @@ public class SeraphShrineMenu extends AbstractContainerMenu {
         broadcastChanges();
     }
 
+    // ─── Forge ───
+
+    private void say(ServerPlayer sp, String key, Object... args) {
+        sp.displayClientMessage(Component.literal(WSLang.t(key, args)), true);
+    }
+
+    /** Insère une amélioration tirée au sort dans l'équipement (coût croissant en fragments, un seul alignement par objet). */
+    private void insertUpgrade(ServerPlayer sp) {
+        ItemStack eq = forgeEquip.getItem(0), fr = forgeFrag.getItem(0);
+        if (eq.isEmpty()) { say(sp, "shrine.forge_no_item"); return; }
+        if (fr.isEmpty()) { say(sp, "shrine.forge_no_frag"); return; }
+        java.util.Set<String> types = ShrineGear.typesOf(eq);
+        String camp = ShrineGear.campOf(fr.getItem());
+        int tier = ShrineGear.tierOf(fr.getItem());
+        if (types.isEmpty() || camp == null || tier <= 0) return;
+        String align = ShrineGear.alignOf(eq);
+        if (align != null && !align.equals(camp)) { say(sp, "shrine.forge_align", WSLang.t("shrine.align." + align)); return; }
+        java.util.List<ShrineGear.Applied> cur = ShrineGear.upgradesOf(eq);
+        if (cur.size() >= ShrineUpgrades.maxSlots()) { say(sp, "shrine.forge_full"); return; }
+        int cost = ShrineUpgrades.slotCost(cur.size());
+        if (fr.getCount() < cost) { say(sp, "shrine.forge_need", cost); return; }
+        java.util.List<String> owned = new java.util.ArrayList<>();
+        for (ShrineGear.Applied a : cur) owned.add(a.id());
+        ShrineUpgrades.Def d = ShrineGear.draw(types, camp, owned, sp.getRandom());
+        if (d == null) { say(sp, "shrine.forge_none"); return; }
+        fr.shrink(cost);
+        ShrineGear.add(eq, camp, d.id(), tier);
+        forgeEquip.setChanged();
+        forgeFrag.setChanged();
+        sp.level().playSound(null, pos, camp.equals(ShrineGear.CONSECRATED) ? SoundEvents.AMETHYST_BLOCK_CHIME : SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS,
+                camp.equals(ShrineGear.CONSECRATED) ? 1.2f : 0.35f, camp.equals(ShrineGear.CONSECRATED) ? 1.0f : 1.6f);
+        say(sp, "shrine.forge_done", WSLang.t("shrine.up." + d.id()), ShrineGear.roman(tier));
+        ShrineGear.refresh(sp);
+        broadcastChanges();
+    }
+
+    /** Retire la dernière amélioration (coûte des fragments du même camp, ne les rend pas) : on peut ensuite en tirer une nouvelle. */
+    private void removeUpgrade(ServerPlayer sp) {
+        ItemStack eq = forgeEquip.getItem(0), fr = forgeFrag.getItem(0);
+        if (eq.isEmpty() || ShrineGear.upgradesOf(eq).isEmpty()) { say(sp, "shrine.forge_nothing"); return; }
+        String align = ShrineGear.alignOf(eq);
+        int cost = ShrineUpgrades.removeCost();
+        if (fr.isEmpty() || align == null || !align.equals(ShrineGear.campOf(fr.getItem())) || fr.getCount() < cost) {
+            say(sp, "shrine.forge_remove_need", cost, WSLang.t("shrine.align." + align));
+            return;
+        }
+        fr.shrink(cost);
+        ShrineGear.removeLast(eq);
+        forgeEquip.setChanged();
+        forgeFrag.setChanged();
+        sp.level().playSound(null, pos, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.8f, 1.0f);
+        say(sp, "shrine.forge_removed");
+        ShrineGear.refresh(sp);
+        broadcastChanges();
+    }
+
     // ─── Déplacements rapides ───
 
     @Override
@@ -187,6 +258,10 @@ public class SeraphShrineMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(s, 0, 1, false)) return ItemStack.EMPTY;
         } else if (tab == TAB_FUSION && fuseInSlot.mayPlace(s)) {
             if (!moveItemStackTo(s, 1, 2, false)) return ItemStack.EMPTY;
+        } else if (tab == TAB_FORGE && equipSlot.mayPlace(s) && !equipSlot.hasItem()) {
+            if (!moveItemStackTo(s, 3, 4, false)) return ItemStack.EMPTY;
+        } else if (tab == TAB_FORGE && fragSlot.mayPlace(s)) {
+            if (!moveItemStackTo(s, 4, 5, false)) return ItemStack.EMPTY;
         } else if (index < HOT_START) {
             if (!moveItemStackTo(s, HOT_START, END, false)) return ItemStack.EMPTY;
         } else if (!moveItemStackTo(s, FIRST_INV, HOT_START, false)) {
@@ -205,6 +280,8 @@ public class SeraphShrineMenu extends AbstractContainerMenu {
             clearContainer(player, offer);
             clearContainer(player, fuseIn);
             clearContainer(player, fuseOut);
+            clearContainer(player, forgeEquip);
+            clearContainer(player, forgeFrag);
         }
     }
 

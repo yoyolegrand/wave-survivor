@@ -1,0 +1,54 @@
+{
+  "_comment": "Forge du Sanctuaire du Séraphin. 'slots' : weapon (arme de mêlée), armor (toute pièce d'armure), chest (plastron), boots (bottes), all (tout). Chaque effet : 'key' (voir le code), 'tiers' = valeur aux niveaux I / II / III du fragment, 'bad' = malus (affiché en rouge). Les effets de même clé s'additionnent sur tout l'équipement porté (le plus petit / le plus grand pour blade_kills, pact_minutes / blade_heal, poison_seconds, regen_tier). Un bonus positif cumulé ne dépasse pas 'cap' (+30 %), sauf s'il vient d'un seul objet plus fort. Pour personnaliser : config/wavesurvivor/shrine_upgrades.json avec seulement les champs à changer (le tableau 'upgrades' est remplacé en entier), puis /ws reload.",
+  "maxSlots": 3,
+  "slotCosts": [1, 2, 3],
+  "removeCost": 1,
+  "cap": 0.30,
+  "cappedKeys": ["damage_pct", "atkspeed_pct", "armor_pct", "toughness_pct", "speed_pct", "kb_res", "undead_dmg_pct", "exec_bonus_pct",
+                 "lifesteal_pct", "xp_pct", "thorns_pct", "night_dmg_pct", "fall_reduction_pct"],
+  "gear": {
+    "regenIntervalTicks": [100, 60, 30],
+    "outOfCombatTicks": 200,
+    "executionThreshold": 0.30
+  },
+  "upgrades": [
+    { "id": "holy_might", "align": "consecrated", "slots": ["weapon"], "effects": [ { "key": "damage_pct", "tiers": [0.03, 0.06, 0.10] } ] },
+    { "id": "celerity", "align": "consecrated", "slots": ["weapon"], "effects": [ { "key": "atkspeed_pct", "tiers": [0.03, 0.06, 0.10] } ] },
+    { "id": "smite", "align": "consecrated", "slots": ["weapon"], "effects": [ { "key": "undead_dmg_pct", "tiers": [0.08, 0.15, 0.25] } ] },
+    { "id": "blessed_blade", "align": "consecrated", "slots": ["weapon"], "effects": [
+        { "key": "blade_heal", "tiers": [1, 1, 2] }, { "key": "blade_kills", "tiers": [7, 5, 3] } ] },
+    { "id": "wisdom", "align": "consecrated", "slots": ["weapon"], "effects": [ { "key": "xp_pct", "tiers": [0.05, 0.10, 0.15] } ] },
+    { "id": "aegis", "align": "consecrated", "slots": ["armor"], "effects": [ { "key": "armor_pct", "tiers": [0.03, 0.06, 0.10] } ] },
+    { "id": "vitality", "align": "consecrated", "slots": ["armor"], "effects": [ { "key": "maxhp", "tiers": [2, 4, 6] } ] },
+    { "id": "anchor", "align": "consecrated", "slots": ["armor"], "effects": [ { "key": "kb_res", "tiers": [0.05, 0.10, 0.20] } ] },
+    { "id": "light_step", "align": "consecrated", "slots": ["boots"], "effects": [ { "key": "speed_pct", "tiers": [0.03, 0.05, 0.08] } ] },
+    { "id": "breath_of_life", "align": "consecrated", "slots": ["chest"], "effects": [ { "key": "regen_tier", "tiers": [1, 2, 3] } ] },
+    { "id": "feather", "align": "consecrated", "slots": ["boots"], "effects": [ { "key": "fall_reduction_pct", "tiers": [0.15, 0.30, 0.50] } ] },
+    { "id": "enduring", "align": "consecrated", "slots": ["all"], "effects": [ { "key": "durability_pct", "tiers": [0.15, 0.30, 0.50] } ] },
+
+    { "id": "blind_rage", "align": "profaned", "slots": ["weapon"], "effects": [
+        { "key": "damage_pct", "tiers": [0.10, 0.18, 0.30] }, { "key": "atkspeed_pct", "tiers": [-0.05, -0.10, -0.15], "bad": true } ] },
+    { "id": "frenzy", "align": "profaned", "slots": ["weapon"], "effects": [
+        { "key": "atkspeed_pct", "tiers": [0.12, 0.20, 0.35] }, { "key": "dmg_taken_pct", "tiers": [0.05, 0.10, 0.15], "bad": true } ] },
+    { "id": "bloodthirst", "align": "profaned", "slots": ["weapon"], "effects": [
+        { "key": "lifesteal_pct", "tiers": [0.03, 0.05, 0.08] }, { "key": "maxhp", "tiers": [-2, -4, -6], "bad": true } ] },
+    { "id": "executioner", "align": "profaned", "slots": ["weapon"], "effects": [
+        { "key": "exec_bonus_pct", "tiers": [0.20, 0.35, 0.60] }, { "key": "exec_malus_pct", "tiers": [-0.05, -0.08, -0.12], "bad": true } ] },
+    { "id": "venom", "align": "profaned", "slots": ["weapon"], "effects": [
+        { "key": "poison_seconds", "tiers": [2, 3, 4] }, { "key": "hunger_per_hit", "tiers": [0.5, 0.8, 1.2], "bad": true } ] },
+    { "id": "cursed_shell", "align": "profaned", "slots": ["armor"], "effects": [
+        { "key": "armor_pct", "tiers": [0.10, 0.18, 0.30] }, { "key": "speed_pct", "tiers": [-0.05, -0.10, -0.15], "bad": true } ] },
+    { "id": "tainted_flesh", "align": "profaned", "slots": ["armor"], "effects": [
+        { "key": "maxhp", "tiers": [4, 8, 12] }, { "key": "heal_received_pct", "tiers": [-0.10, -0.20, -0.30], "bad": true } ] },
+    { "id": "taint_thorns", "align": "profaned", "slots": ["armor"], "effects": [
+        { "key": "thorns_pct", "tiers": [0.10, 0.20, 0.30] }, { "key": "toughness_pct", "tiers": [-0.05, -0.10, -0.15], "bad": true } ] },
+    { "id": "rampart", "align": "profaned", "slots": ["chest"], "effects": [
+        { "key": "kb_res", "tiers": [0.15, 0.30, 0.60] }, { "key": "atkspeed_pct", "tiers": [-0.05, -0.10, -0.15], "bad": true } ] },
+    { "id": "shadow", "align": "profaned", "slots": ["boots"], "effects": [
+        { "key": "speed_pct", "tiers": [0.08, 0.12, 0.20] }, { "key": "armor_pct", "tiers": [-0.05, -0.10, -0.15], "bad": true } ] },
+    { "id": "survival_pact", "align": "profaned", "slots": ["chest"], "effects": [
+        { "key": "pact_minutes", "tiers": [10, 7, 5] }, { "key": "maxhp", "tiers": [-2, -4, -6], "bad": true } ] },
+    { "id": "mark_of_the_beast", "align": "profaned", "slots": ["all"], "effects": [
+        { "key": "night_dmg_pct", "tiers": [0.15, 0.25, 0.40] }, { "key": "day_dmg_pct", "tiers": [-0.10, -0.15, -0.25], "bad": true } ] }
+  ]
+}

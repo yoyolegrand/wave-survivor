@@ -51,6 +51,19 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Un boss tué dans une horde lâche parfois un Cœur de grâce ou de souillure (5 %, `bossHeartChance`) ; la production et la foi se sauvegardent (quitter / recharger le monde)
 - [ ] Rééquilibrage : `production.intervalSeconds`, `stockCap`, `killBonusSeconds`, `fusionCost`, `bossHeartChance` dans `config/wavesurvivor/shrine_offerings.json` puis `/ws reload`
 
+## Sanctuaire du Séraphin — étape 4 (Forge)
+- [ ] Retouches de texte : jauge (« Pure » / « Corrompue » ne se chevauchent plus), onglet Récolte (stock, cycle « 1 / 2 min », « Dormant » lisibles), onglet Fusion (message sur deux lignes, plus coupé)
+- [ ] Onglet Forge : poser une arme ou une pièce d'armure + des Éclats de grâce, « Insérer » : une amélioration Consacré est tirée (message), le losange se remplit, le thème devient doré ; la liste à droite montre son nom, son niveau et ses lignes (bonus en vert, malus en rouge) ; survol de la ligne = info-bulle complète
+- [ ] Coût croissant : 1er emplacement = 1 fragment, 2e = 2, 3e = 3 (« Prochain : n frag. ») ; 4e insertion refusée (« emplacements pleins »)
+- [ ] Un seul alignement : un objet Consacré refuse les fragments de souillure (et inversement) ; avec des Éclats de souillure, une arme neuve devient Profanée (thème violet)
+- [ ] Le niveau du fragment fixe la force : Éclat (I) < Fragment (II) < Cœur (III) (comparer les valeurs affichées)
+- [ ] « Retirer » : coûte 1 fragment du même camp, enlève la dernière amélioration (les fragments ne sont pas rendus) ; plus aucune amélioration = plus d'alignement ; on peut alors retirer / réinsérer pour relancer
+- [ ] Effets en jeu (équipement porté / arme en main) : Force sacrée / Rage aveugle (dégâts), Célérité / Frénésie (vitesse d'attaque), Égide / Carapace maudite (armure), Vitalité / Chair corrompue (cœurs max), Ancrage / Rempart (résistance au recul), Pas léger / Ombre (vitesse), Plume (dégâts de chute), Souffle de vie (régénération hors combat), Bénédiction durable (l'usure monte moins vite)
+- [ ] Effets sur événement : Châtiment (morts-vivants + Corrompus), Lame bénie (soin toutes les N victimes), Grâce du savoir (+XP), Soif de sang (vol de vie), Bourreau (dégâts sous 30 % de vie), Venin (Poison + faim), Épines (renvoi), Pacte de survie (survit à un coup mortel, recharge), Marque de la Bête (nuit / jour)
+- [ ] Plafond : plusieurs pièces avec la même amélioration de pourcentage ne dépassent pas +30 % cumulés (sauf un objet seul plus fort) ; les malus, eux, s'additionnent
+- [ ] Les bonus disparaissent quand on retire l'équipement ou change d'arme en main (attributs), et au changement de monde / reconnexion tout est recalculé
+- [ ] Équilibrage : `config/wavesurvivor/shrine_upgrades.json` (coûts, plafond, valeurs par niveau) puis `/ws reload`
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
