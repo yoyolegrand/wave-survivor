@@ -27,6 +27,12 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Jouer une partie (choisir, bannir) puis `/ws benediction stats` : top des choisies avec taux de choix et de victoire, catégories les plus bannies ; après une victoire / défaite, les « parties » et « victoires » montent (un arrêt manuel ne compte pas)
 - [ ] Catalogue (`/ws benediction liste`) : une ligne dorée « Proposée … » sous les effets des bénédictions déjà vues ; `/ws benediction stats reset` remet à zéro
 
+## Sanctuaire du Séraphin — étape 1 (bloc incassable + ruine)
+- [ ] En Survie : le Sanctuaire ne se casse pas (au pic, à la TNT, au Creeper) ; un piston ne le pousse pas ; Dragon et Wither ne le détruisent pas ; en Créatif il se casse
+- [ ] `/locate structure wavesurvivor:seraph_shrine` renvoie une position (région de ~1 500 blocs) ; s'y téléporter : plate-forme de quartz / calcite, 4 colonnes brisées, mousse, et le Sanctuaire à l'étape Neutre au centre
+- [ ] Nouveau monde (la génération ne s'applique qu'aux chunks pas encore générés) ; la ruine n'est pas dans l'eau ni dans le vide
+- [ ] Réglages : `spacing` / `separation` dans `data/wavesurvivor/worldgen/structure_set/seraph_shrine.json`, biomes dans `data/wavesurvivor/tags/worldgen/biome/has_structure/seraph_shrine.json`
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

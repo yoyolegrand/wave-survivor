@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "wavesurvivor:seraph_shrine",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 94,
+    "separation": 32,
+    "salt": 1741226401
+  }
+}

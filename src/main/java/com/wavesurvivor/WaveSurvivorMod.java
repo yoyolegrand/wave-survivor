@@ -57,6 +57,7 @@ public class WaveSurvivorMod {
         com.wavesurvivor.config.DefaultConfigInstaller.installMissing();
         com.wavesurvivor.registry.ModEntities.register(modEventBus);
         com.wavesurvivor.registry.ModBlockEntities.register(modEventBus);
+        com.wavesurvivor.registry.ModStructures.register(modEventBus); // ruine du Sanctuaire du Séraphin (génération naturelle)
         com.wavesurvivor.registry.ModMenus.register(modEventBus); // menus personnalisés (Atelier de Réparation)
 
         MinecraftForge.EVENT_BUS.register(this);

@@ -1,0 +1,7 @@
+{
+  "type": "wavesurvivor:seraph_shrine",
+  "biomes": "#wavesurvivor:has_structure/seraph_shrine",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}
