@@ -9,6 +9,9 @@ import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
@@ -142,14 +145,14 @@ public final class ArenaBlueprint {
 
     // ─── Terrain ───
 
-    private static boolean solidGround(ServerLevel level, BlockPos p) {
+    private static boolean solidGround(LevelReader level, BlockPos p) {
         BlockState st = level.getBlockState(p);
         return !st.isAir() && st.getFluidState().isEmpty() && !st.is(BlockTags.LEAVES) && !st.is(BlockTags.LOGS) && !st.canBeReplaced();
     }
 
-    /** Altitude du dernier bloc de sol (arbres, herbes et eau ignorés) à cet endroit. */
-    public static int groundY(ServerLevel level, int x, int z) {
-        int y = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z) - 1;
+    /** Altitude du dernier bloc de sol (arbres, herbes et eau ignorés) à cet endroit. {@code wg} : relief d'origine (génération du monde). */
+    public static int groundY(LevelReader level, int x, int z, boolean wg) {
+        int y = level.getHeight(wg ? Heightmap.Types.WORLD_SURFACE_WG : Heightmap.Types.WORLD_SURFACE, x, z) - 1;
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos(x, y, z);
         while (m.getY() > level.getMinBuildHeight() && !solidGround(level, m)) m.move(0, -1, 0);
         return m.getY();
@@ -169,34 +172,65 @@ public final class ArenaBlueprint {
         public BlockPos center() { return origin.offset(width / 2, 0, depth / 2); }
     }
 
+    /** Largeur et profondeur de l'arène une fois tournée. */
+    public int[] size(Rotation rot) { return dims(rot); }
+
+    /** Rayon du cercle de l'arène. */
+    public double radius() { return Math.max(sx, sz) / 2.0; }
+
     /**
-     * Pose l'arène centrée sur (center.x, center.z) : dégage le cercle jusqu'à 12 blocs, comble les fondations jusqu'au terrain solide,
-     * pose le plan (rotation comprise), puis fond un anneau de 2 blocs de podzol / terre stérile / mousse dans le paysage.
+     * Pose l'arène centrée sur (center.x, center.z) (commande de test) : niveau du sol = moyenne des altitudes du terrain sur le cercle,
+     * puis {@link #build}. Renvoie l'emplacement et les repères en coordonnées du monde.
      */
     public Placement place(ServerLevel level, BlockPos center, Rotation rot) {
         int[] d = dims(rot);
-        int w = d[0], dep = d[1];
-        int ox = center.getX() - w / 2, oz = center.getZ() - dep / 2;
-        double cx = (w - 1) / 2.0, cz = (dep - 1) / 2.0, radius = Math.max(w, dep) / 2.0;
-
-        // Niveau du sol de l'arène : moyenne des altitudes du terrain sur le cercle
+        int ox = center.getX() - d[0] / 2, oz = center.getZ() - d[1] / 2;
+        double cx = (d[0] - 1) / 2.0, cz = (d[1] - 1) / 2.0, radius = radius();
         long sum = 0;
         int count = 0;
-        for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
-            if (Math.hypot(x - cx, z - cz) <= radius) { sum += groundY(level, ox + x, oz + z); count++; }
+        for (int x = 0; x < d[0]; x++) for (int z = 0; z < d[1]; z++) {
+            if (Math.hypot(x - cx, z - cz) <= radius) { sum += groundY(level, ox + x, oz + z, false); count++; }
         }
         int y0 = (int) Math.round(sum / (double) Math.max(1, count));
+        build(level, ox, oz, y0, rot, null, false);
+        return new Placement(this, rot, new BlockPos(ox, y0, oz), d[0], d[1], y0, worldMarkers(ox, oz, y0, rot));
+    }
+
+    /** Repères du plan en coordonnées du monde pour une arène dont le coin nord-ouest (après rotation) est (ox, y0, oz). */
+    public Map<String, List<BlockPos>> worldMarkers(int ox, int oz, int y0, Rotation rot) {
+        Map<String, List<BlockPos>> world = new LinkedHashMap<>();
+        for (Map.Entry<String, List<int[]>> e : markers.entrySet()) {
+            List<BlockPos> l = new ArrayList<>();
+            for (int[] p : e.getValue()) {
+                int[] r = rot(p[0], p[2], rot);
+                l.add(new BlockPos(ox + r[0], y0 + p[1], oz + r[1]));
+            }
+            world.put(e.getKey(), l);
+        }
+        return world;
+    }
+
+    private static boolean in(BoundingBox clip, int x, int z) {
+        return clip == null || (x >= clip.minX() && x <= clip.maxX() && z >= clip.minZ() && z <= clip.maxZ());
+    }
+
+    /**
+     * Construit l'arène : dégage le cercle jusqu'à 12 blocs, comble les fondations jusqu'au terrain solide, pose le plan (rotation comprise),
+     * puis fond un anneau de 2 blocs de podzol / terre stérile / mousse dans le paysage.
+     * {@code clip} : si non nul, seules les colonnes de cette zone sont touchées (génération du monde, chunk par chunk) ; {@code wg} : relief d'origine.
+     * Le niveau du sol {@code y0} est fixé une fois pour toutes par l'appelant (il doit être le même pour tous les chunks).
+     */
+    public void build(WorldGenLevel level, int ox, int oz, int y0, Rotation rot, BoundingBox clip, boolean wg) {
+        int[] d = dims(rot);
+        int w = d[0], dep = d[1];
+        double cx = (w - 1) / 2.0, cz = (dep - 1) / 2.0, radius = radius();
         RandomSource rnd = level.getRandom();
         BlockState air = Blocks.AIR.defaultBlockState();
 
-        // 1. Dégagement du cercle
+        // 1. Dégagement du cercle  2. Fondations : sous le sol de l'arène, on comble jusqu'au terrain solide
         for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
-            if (Math.hypot(x - cx, z - cz) > radius) continue;
+            if (Math.hypot(x - cx, z - cz) > radius || !in(clip, ox + x, oz + z)) continue;
             for (int y = 0; y <= CLEAR_HEIGHT; y++) set(level, new BlockPos(ox + x, y0 + y, oz + z), air);
-        }
-        // 2. Fondations : sous le sol de l'arène, on comble jusqu'au terrain solide
-        for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
-            if (Math.hypot(x - cx, z - cz) > radius) continue;
             fill(level, ox + x, y0 - 1, oz + z, y0 - 48);
         }
         // 3. Le plan (l'air du plan est déjà posé par le dégagement)
@@ -207,6 +241,7 @@ public final class ArenaBlueprint {
                     BlockState st = palette.get(row.charAt(x));
                     if (st == null || st.isAir()) continue;
                     int[] r = rot(x, z, rot);
+                    if (!in(clip, ox + r[0], oz + r[1])) continue;
                     set(level, new BlockPos(ox + r[0], y0 + y, oz + r[1]), st.rotate(rot));
                 }
             }
@@ -216,35 +251,23 @@ public final class ArenaBlueprint {
         BlockState[] cover = {Blocks.PODZOL.defaultBlockState(), Blocks.PODZOL.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.MOSS_BLOCK.defaultBlockState()};
         for (int x = (int) -(rr - cx); x <= w - 1 + (rr - cx); x++) for (int z = (int) -(rr - cz); z <= dep - 1 + (rr - cz); z++) {
             double dist = Math.hypot(x - cx, z - cz);
-            if (dist <= radius || dist > radius + BLEND_WIDTH) continue;
+            if (dist <= radius || dist > radius + BLEND_WIDTH || !in(clip, ox + x, oz + z)) continue;
             int wx = ox + x, wz = oz + z;
-            int h = groundY(level, wx, wz);
+            int h = groundY(level, wx, wz, wg);
             double frac = (dist - radius) / BLEND_WIDTH;                    // 0 contre l'arène, 1 au bord du raccord
             int ty = (int) Math.round(y0 + (h - y0) * frac);
             for (int y = ty + 1; y <= Math.max(h, ty) + 1 + CLEAR_HEIGHT / 2; y++) set(level, new BlockPos(wx, y, wz), air);
             fill(level, wx, ty - 1, wz, ty - 48);
             set(level, new BlockPos(wx, ty, wz), cover[rnd.nextInt(cover.length)]);
         }
-
-        // Repères en coordonnées du monde
-        Map<String, List<BlockPos>> world = new LinkedHashMap<>();
-        for (Map.Entry<String, List<int[]>> e : markers.entrySet()) {
-            List<BlockPos> l = new ArrayList<>();
-            for (int[] p : e.getValue()) {
-                int[] r = rot(p[0], p[2], rot);
-                l.add(new BlockPos(ox + r[0], y0 + p[1], oz + r[1]));
-            }
-            world.put(e.getKey(), l);
-        }
-        return new Placement(this, rot, new BlockPos(ox, y0, oz), w, dep, y0, world);
     }
 
-    private static void set(ServerLevel level, BlockPos p, BlockState st) {
+    private static void set(WorldGenLevel level, BlockPos p, BlockState st) {
         if (level.getBlockState(p) != st) level.setBlock(p, st, 2);
     }
 
     /** Comble la colonne vers le bas depuis y jusqu'au premier bloc de sol solide (au plus jusqu'à minY) : terre stérile puis abîmes concassés. */
-    private static void fill(ServerLevel level, int x, int y, int z, int minY) {
+    private static void fill(WorldGenLevel level, int x, int y, int z, int minY) {
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos(x, y, z);
         int depth = 0;
         while (m.getY() >= Math.max(minY, level.getMinBuildHeight()) && !solidGround(level, m)) {

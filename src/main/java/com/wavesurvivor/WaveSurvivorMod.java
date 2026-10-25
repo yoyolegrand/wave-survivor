@@ -225,6 +225,7 @@ public class WaveSurvivorMod {
         com.wavesurvivor.horde.renaissance.RenaissanceShopStore.load();
         com.wavesurvivor.altar.AltarRecipes.load();
         com.wavesurvivor.shrine.ShrineConfig.load();
+        com.wavesurvivor.arena.ArenaSettings.load();
         com.wavesurvivor.shrine.ShrineUpgrades.load();
         com.wavesurvivor.horde.benediction.BlessingCatalog.load();
         com.wavesurvivor.horde.benediction.BlessingCatalog.syncAll(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer());

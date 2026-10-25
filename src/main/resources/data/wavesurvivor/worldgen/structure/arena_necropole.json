@@ -1,0 +1,8 @@
+{
+  "type": "wavesurvivor:arena",
+  "arena": "necropole_rois_dechus",
+  "biomes": "#wavesurvivor:has_structure/arena_necropole",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}

@@ -78,6 +78,12 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Rotations `90`, `180`, `270` : la crypte se retrouve à l'est / au sud / à l'ouest, les colonnes, barreaux et bûches restent bien orientés
 - [ ] Pas d'eau : poser l'arène sur un lac n'est pas prévu (à éviter pour l'instant)
 
+## Arène « Nécropole des Rois Déchus » — étape 2 (génération dans le monde)
+- [ ] Nouveau monde : `/locate structure wavesurvivor:arena_necropole` renvoie une position (forêt sombre, marais, mangrove, taïga ancienne ou plaines) ; s'y rendre : l'arène est complète, même à cheval sur plusieurs chunks (aucune coupure aux limites de chunk)
+- [ ] Rotation au hasard : plusieurs arènes (ou `/locate` répété sur d'autres mondes) n'ont pas toutes la crypte au nord
+- [ ] Jamais sur l'eau, jamais sur une pente de plus de 4 blocs, pas à moins de ~8 tronçons d'un village
+- [ ] Réglages : `config/wavesurvivor/arenas.json` -> `{"generation":{"enabled":false}}` (ou `"disabled":["necropole_rois_dechus"]`, `"maxSlope"`, `"randomRotation"`) puis nouveau monde ; rareté = `spacing` / `separation` dans `data/wavesurvivor/worldgen/structure_set/arena_necropole.json`, biomes = tag `has_structure/arena_necropole`
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

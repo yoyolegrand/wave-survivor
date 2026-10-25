@@ -23,6 +23,12 @@ public final class ModStructures {
     public static final RegistryObject<StructurePieceType> SERAPH_SHRINE_PIECE =
             STRUCTURE_PIECES.register("seraph_shrine", () -> (StructurePieceType) SeraphShrinePiece::new);
 
+    /** Arènes toutes faites (com.wavesurvivor.arena) : une seule classe de structure, une entrée de données par arène. */
+    public static final RegistryObject<StructureType<com.wavesurvivor.arena.ArenaStructure>> ARENA =
+            STRUCTURE_TYPES.register("arena", () -> () -> com.wavesurvivor.arena.ArenaStructure.CODEC);
+    public static final RegistryObject<StructurePieceType> ARENA_PIECE =
+            STRUCTURE_PIECES.register("arena", () -> (StructurePieceType) com.wavesurvivor.arena.ArenaPiece::new);
+
     private ModStructures() {}
 
     public static void register(IEventBus bus) {
