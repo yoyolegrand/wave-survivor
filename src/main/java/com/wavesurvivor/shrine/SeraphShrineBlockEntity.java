@@ -205,6 +205,8 @@ public class SeraphShrineBlockEntity extends BlockEntity implements MenuProvider
     }
 
     private void tickProduction() {
+        if (level != null && level.getGameTime() % 100 == 7) SeraphShrineBlock.placeColliders(level, worldPosition); // statues anciennes, ruines générées
+
         int dir = directionOf(stage), iv = ShrineConfig.intervalTicks(stage);
         if (dir != direction) { direction = dir; progress = 0; }
         if (dir < 0 || iv <= 0) { progress = 0; return; }

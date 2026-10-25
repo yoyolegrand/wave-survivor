@@ -94,6 +94,13 @@ public class ModBlocks {
                     .strength(-1.0f, 3600000.0f).noOcclusion().noLootTable()
                     .isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
 
+    /** Sanctuaire du Séraphin : corps physique invisible de la statue (colonne et socle), voir ShrineColliderBlock. */
+    public static final RegistryObject<Block> SHRINE_COLLIDER = BLOCKS.register("shrine_collider",
+            () -> new com.wavesurvivor.shrine.ShrineColliderBlock(BlockBehaviour.Properties.of()
+                    .strength(-1.0f, 3600000.0f).noOcclusion().noLootTable()
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)
+                    .isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
+
     /** Cristal de la Mairie : bloc d'affichage uniquement (modèle 3D facetté), jamais posé dans le monde. */
     public static final RegistryObject<Block> TOWN_CRYSTAL = BLOCKS.register("town_crystal",
             () -> new Block(BlockBehaviour.Properties.of().strength(-1.0f, 3600000.0f).noOcclusion().noLootTable()));

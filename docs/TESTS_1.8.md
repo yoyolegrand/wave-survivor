@@ -94,6 +94,13 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Arène générée dans un nouveau monde : même comportement (autel posé et verrouillé au premier clic) ; un autel ordinaire (non arène) se lie toujours par recette
 - [ ] Réglages : `config/wavesurvivor/arenas.json` -> `"affinity": {"cryptWeight":5,"graveWeight":4,"entranceWeight":1,"gateOpens":true,"braziersFade":true,"rewardChest":true,"rewardChestName":"Reliquaire du Boss"}` puis `/ws reload`
 
+## Sanctuaire du Séraphin — corps physique et info-bulles
+- [ ] La statue est solide : impossible de la traverser (colonne de 5 blocs de haut + socle bas autour), ni pour les joueurs, ni pour les monstres, ni pour les flèches ; les ailes, elles, ne bloquent pas
+- [ ] Clic droit sur le « corps » de la statue (au-dessus du bloc ou sur le socle) ouvre l'écran comme sur le bloc ; les blocs de collision sont invisibles et incassables en Survie
+- [ ] Casser le Sanctuaire en Créatif retire aussi son corps ; une statue posée avant cette mise à jour récupère son corps au bout de quelques secondes ; une ruine générée en a un dès sa génération
+- [ ] Info-bulle d'un équipement amélioré (inventaire, barre d'objets, coffre, Forge, n'importe où) : nom coloré doré « ✦ » (Consacré) ou violet « ☠ » (Profané), ligne « Consacré (2/3) », puis chaque amélioration avec son niveau, ses bonus en vert et ses malus en rouge — sans avoir à passer par la Forge
+- [ ] Forge : la liste de droite ne coupe plus les noms longs (« … » à la place) ; le détail reste dans l'info-bulle
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

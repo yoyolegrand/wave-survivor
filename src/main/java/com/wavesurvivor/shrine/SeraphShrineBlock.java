@@ -72,6 +72,61 @@ public class SeraphShrineBlock extends BaseEntityBlock {
         return new SeraphShrineBlockEntity(pos, state);
     }
 
+    // ─── Corps physique (blocs de collision invisibles) ───
+
+    /** Hauteur de la colonne de collision au-dessus du Sanctuaire (la statue fait environ 5 blocs de haut avec son socle). */
+    public static final int COLLIDER_HEIGHT = 4;
+
+    /** Pose le corps physique : socle autour du Sanctuaire et colonne au-dessus, seulement là où c'est libre (air, herbes). */
+    public static void placeColliders(net.minecraft.world.level.LevelAccessor level, BlockPos pos) {
+        BlockState ring = com.wavesurvivor.registry.ModBlocks.SHRINE_COLLIDER.get().defaultBlockState().setValue(ShrineColliderBlock.RING, true);
+        BlockState column = com.wavesurvivor.registry.ModBlocks.SHRINE_COLLIDER.get().defaultBlockState().setValue(ShrineColliderBlock.RING, false);
+        for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
+            if (dx == 0 && dz == 0) continue;
+            put(level, pos.offset(dx, 0, dz), ring);
+        }
+        for (int dy = 1; dy <= COLLIDER_HEIGHT; dy++) put(level, pos.above(dy), column);
+    }
+
+    private static void put(net.minecraft.world.level.LevelAccessor level, BlockPos p, BlockState st) {
+        BlockState cur = level.getBlockState(p);
+        if ((cur.isAir() || cur.canBeReplaced()) && !cur.is(st.getBlock())) level.setBlock(p, st, 2);
+    }
+
+    /** Retire le corps physique (le Sanctuaire disparaît). */
+    public static void removeColliders(net.minecraft.world.level.LevelAccessor level, BlockPos pos) {
+        for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
+            for (int dy = 0; dy <= COLLIDER_HEIGHT; dy++) {
+                BlockPos p = pos.offset(dx, dy, dz);
+                if (level.getBlockState(p).getBlock() instanceof ShrineColliderBlock) level.setBlock(p, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+            }
+        }
+    }
+
+    /** Sanctuaire auquel appartient un bloc de collision (au plus 1 bloc autour, 4 en dessous), ou null. */
+    @Nullable
+    public static BlockPos findShrine(Level level, BlockPos pos) {
+        for (int dy = 0; dy <= COLLIDER_HEIGHT; dy++) for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
+            BlockPos p = pos.offset(dx, -dy, dz);
+            if (level.getBlockState(p).getBlock() instanceof SeraphShrineBlock) return p;
+        }
+        return null;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moved) {
+        super.onPlace(state, level, pos, old, moved);
+        if (!level.isClientSide && !old.is(state.getBlock())) placeColliders(level, pos);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.is(newState.getBlock()) && !level.isClientSide) removeColliders(level, pos);
+        super.onRemove(state, level, pos, newState, moved);
+    }
+
     @Nullable
     @Override
     public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state,

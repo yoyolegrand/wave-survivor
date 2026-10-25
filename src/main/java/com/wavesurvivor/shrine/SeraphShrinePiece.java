@@ -93,5 +93,6 @@ public class SeraphShrinePiece extends StructurePiece {
         Direction dir = Direction.from2DDataValue(facing);
         BlockState shrine = ModBlocks.SERAPH_SHRINE.get().defaultBlockState().setValue(com.wavesurvivor.shrine.SeraphShrineBlock.FACING, dir);
         put(level, shrine, cx, y, cz);
+        SeraphShrineBlock.placeColliders(level, new BlockPos(cx, y, cz));
     }
 }

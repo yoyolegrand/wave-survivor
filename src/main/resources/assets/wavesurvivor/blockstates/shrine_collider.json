@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "ring=false": {
+      "model": "wavesurvivor:block/shrine_collider"
+    },
+    "ring=true": {
+      "model": "wavesurvivor:block/shrine_collider"
+    }
+  }
+}

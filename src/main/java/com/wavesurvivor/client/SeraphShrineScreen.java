@@ -226,10 +226,10 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
             ShrineUpgrades.Def d = ShrineUpgrades.get(ups.get(i).id());
             int ry = ly + 3 + i * 21;
             String nm = (cons ? "§e" : "§d") + (d == null ? ups.get(i).id() : WSLang.t("shrine.up." + d.id())) + " §7" + ShrineGear.roman(ups.get(i).tier());
-            small(g, font.plainSubstrByWidth(nm, 92), lx + 4, ry, 0.8f, false, 70);
+            small(g, fit(nm, 80), lx + 4, ry, 0.8f, false, 70);
             if (d != null) {
                 java.util.List<String> lines = ShrineGear.effectLines(d, ups.get(i).tier());
-                for (int k = 0; k < Math.min(2, lines.size()); k++) small(g, font.plainSubstrByWidth(lines.get(k), 96), lx + 4, ry + 7 + k * 6, 0.6f, false, 70);
+                for (int k = 0; k < Math.min(2, lines.size()); k++) small(g, fit(lines.get(k), 112), lx + 4, ry + 7 + k * 6, 0.6f, false, 70);
             }
         }
         boolean canInsert = !eq.isEmpty() && !menu.forgeFragment().isEmpty();
@@ -260,6 +260,12 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
         g.pose().scale(sc, sc, 1f);
         g.drawString(font, text, 0, 0, 0xFFFFFFFF, false);
         g.pose().popPose();
+    }
+
+    /** Texte tronqué à {@code w} pixels (avant réduction), avec « … » s'il est coupé. */
+    private String fit(String t, int w) {
+        if (font.width(t) <= w) return t;
+        return font.plainSubstrByWidth(t, w - font.width("…")) + "…";
     }
 
     private static int darker(int c) {
