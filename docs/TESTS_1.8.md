@@ -135,6 +135,16 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] `/ws codex` : les pages « Sanctuaire du Séraphin » et « Arènes toutes faites » apparaissent dans le sommaire (après « Reliques & Forge »), défilent et se lisent bien en français et en anglais
 - [ ] Config : `shrine_offerings.json` (offrandes, paliers, événements, production, Corrompus) et `shrine_upgrades.json` (améliorations, coûts, plafond) dans `config/wavesurvivor/`, avec seulement les champs à changer, puis `/ws reload`
 
+## Cinq nouvelles arènes — pose (`/ws arena place <arène> [rotation]`)
+Comparer chaque pose avec les images de `docs/arenes/<arène>/` ; essayer aussi les rotations 90 / 180 / 270.
+- [ ] `/ws arena list` : `ilot_du_neant`, `recif_englouti`, `temple_de_re`, `bastion_de_givre` ; `cercle_des_arcanes` seulement si Iron's Spells 'n Spellbooks est installé (sans le mod : « demande le mod » et aucune erreur)
+- [ ] **Îlot du Néant** : île flottante (dessous en cône, arche de cité de l'End au nord, 2 piliers d'obsidienne pleureuse en cage, chorus, barres de l'End), posée à ta hauteur + 2, sans dégagement ni fondations ni raccord ; le bord reste sans barrière
+- [ ] **Récif englouti** : île de sable dans un lagon, au niveau de la mer (y 62), fondations de sable jusqu'au fond, temple de prismarine au nord, épave, canaux, coraux dans l'eau ; coffre du temple avec `minecraft:chests/underwater_ruin_big` ; à tester près d'une plage ou d'un océan chaud
+- [ ] **Temple de Rê** : façade à colonnes, 4 obélisques à pointe d'or, 2 sarcophages, palmiers, cercle de terre cuite bleue, oasis au sud-est et 2 kiosques à toit plat
+- [ ] **Bastion de Givre** : bastion en ruine pris dans la glace, 2 tours creuses (porte au sud, toit à y = 5), surplomb de glace sur 2 piliers, crevasses de glace bleue, sapins morts enneigés
+- [ ] **Cercle des Arcanes** : grand cercle runique (améthyste, or, calcite), tour de mage en ruine au nord-ouest, 4 pylônes arcaniques
+- [ ] Pour chacune : fondations (rien ne flotte, sauf l'Îlot), dégagement des arbres, autel de horde posé au centre sur son piédestal (clic droit : l'écran de lancement de la bonne horde)
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
