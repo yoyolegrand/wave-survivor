@@ -114,7 +114,7 @@ Toutes les valeurs dans un JSON (`shrine_upgrades.json`) pour l'équilibrage.
   - niveau du cadre = **nombre d'améliorations** (1, 2, 3) ;
   - Consacré : `consecrated_N`, **scintillement** (luminosité 0,85 → 1,1) ; dès N=2 **lueur dorée** floutée derrière l'objet ; N=3 **reflet** diagonal qui balaie l'icône (≈ 1 fois / 2,5 s) ;
   - Profané : `profaned_N`, **pulsation** (alpha 0,6 → 1) ; dès N=2 **lueur violette** derrière ; N=3 **tressaillement** : l'icône se dédouble en violet 2-3 images sur 12 ;
-  - **Ne jamais rien dessiner dans le centre 14×14** de la texture (quelques pixels égarés dans `profaned_3`).
+  - **Cadres AFFINÉS** (version actuelle) : tout le dessin tient dans une bande de **5 px sur 32 contre le bord** (2,5 px à l'écran), l'intérieur est vide. Les lueurs dessinées par le code doivent rester **discrètes et sur les bords** : l'icône de l'objet doit rester entièrement lisible (retour de Yoann : les anciens cadres prenaient trop de place).
 - Technique : effets par-dessus l'icône via `RegisterItemDecorationsEvent` (`IItemDecorator`) ; lueur derrière l'icône = petite injection dans le rendu des objets en GUI (mixin `GuiGraphics.renderItem` ou équivalent).
 - Barre d'objets : version plus légère (pas de reflet ni de tressaillement).
 - **Option client** pour désactiver / atténuer les effets.

@@ -128,6 +128,7 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Barre d'objets : cadre et scintillement / pulsation seulement (pas de lueur, de reflet ni de tressaillement)
 - [ ] Un objet sans amélioration n'a aucun cadre ; pas de ralentissement visible avec un inventaire plein d'objets améliorés
 - [ ] Option client : `config/wavesurvivor/client_options.json` -> `{"slotFx":"light"}` (version légère partout) ou `"off"` (aucun cadre animé), puis relancer le jeu
+- Cadres affinés (bande de 5 px sur 32 contre le bord, centre vide) étirés sur tout l'emplacement 16×16 ; la lueur (2 px, opacité ~0,2), le reflet et le tressaillement restent sur le pourtour / très discrets : l'icône reste entièrement lisible (aperçu simulé : `docs/maquettes_sanctuaire/apercu_cadres_simulation.png`)
 - Remarque : la lueur est dessinée par-dessus l'icône avec une opacité faible (pas derrière) ; l'info-bulle et le nom coloré des objets sont déjà en place
 
 ## Sanctuaire du Séraphin — étape 7 (Codex, CHANGELOG, config)
