@@ -37,7 +37,7 @@ public class ArenaStructure extends Structure {
     protected Optional<GenerationStub> findGenerationPoint(GenerationContext ctx) {
         if (!ArenaSettings.enabled() || ArenaSettings.isDisabled(arena)) return Optional.empty();
         ArenaBlueprint bp = ArenaBlueprint.load(arena);
-        if (bp == null) return Optional.empty();
+        if (bp == null || !bp.available()) return Optional.empty(); // arène liée à un mod absent (Cercle des Arcanes) : rien ne se génère, rien ne casse
         Rotation rot = ArenaSettings.randomRotation() ? Rotation.getRandom(ctx.random()) : Rotation.NONE;
         return plan(ctx, bp, arena, rot);
     }
@@ -53,22 +53,42 @@ public class ArenaStructure extends Structure {
         int ox = cx - d[0] / 2, oz = cz - d[1] / 2;
         double mx = (d[0] - 1) / 2.0, mz = (d[1] - 1) / 2.0, radius = bp.radius();
 
-        // Relief sous le cercle : pas d'eau, pas de pente trop forte
+        // Relief sous le cercle : pas d'eau, pas de pente trop forte (île flottante : on se place au-dessus du relief ; arène sur l'eau : niveau de la mer)
         int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE, count = 0;
         long sum = 0;
         for (int x = 0; x < d[0]; x += 3) for (int z = 0; z < d[1]; z += 3) {
             if (Math.hypot(x - mx, z - mz) > radius) continue;
             int wx = ox + x, wz = oz + z;
+            if (bp.aquatic()) { // fond de l'océan ou de la plage
+                int floor = ctx.chunkGenerator().getFirstOccupiedHeight(wx, wz, Heightmap.Types.OCEAN_FLOOR_WG, ctx.heightAccessor(), ctx.randomState()) - 1;
+                min = Math.min(min, floor);
+                max = Math.max(max, floor);
+                count++;
+                continue;
+            }
             int top = ctx.chunkGenerator().getFirstOccupiedHeight(wx, wz, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState()) - 1;
-            NoiseColumn col = ctx.chunkGenerator().getBaseColumn(wx, wz, ctx.heightAccessor(), ctx.randomState());
-            if (!col.getBlock(top).getFluidState().isEmpty()) return Optional.empty();
+            if (!bp.floating()) {
+                NoiseColumn col = ctx.chunkGenerator().getBaseColumn(wx, wz, ctx.heightAccessor(), ctx.randomState());
+                if (!col.getBlock(top).getFluidState().isEmpty()) return Optional.empty();
+            }
             min = Math.min(min, top);
             max = Math.max(max, top);
             sum += top;
             count++;
         }
-        if (count == 0 || max - min > (bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope())) return Optional.empty();
-        int y0 = (int) Math.round(sum / (double) count);
+        if (count == 0) return Optional.empty();
+        int y0;
+        if (bp.floating()) {
+            // le dessous du plan (cône) doit rester au-dessus de l'île la plus haute de la zone, avec 3 blocs de marge
+            y0 = Math.max(bp.floatY(), max + bp.planGroundY() + 3);
+        } else if (bp.aquatic()) {
+            y0 = ctx.chunkGenerator().getSeaLevel() - 1;
+            if (y0 - min > 8) return Optional.empty();       // trop profond : le Récif ne se pose que sur des fonds peu profonds
+            if (max > y0 + 6) return Optional.empty();       // et pas contre une falaise
+        } else {
+            if (max - min > (bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope())) return Optional.empty();
+            y0 = (int) Math.round(sum / (double) count);
+        }
         BlockPos center = new BlockPos(cx, y0, cz);
         return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1], bp.clearHeight(), bp.floating() ? bp.planGroundY() + 3 : bp.planGroundY() + 48))));
     }
