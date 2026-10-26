@@ -152,6 +152,7 @@ Nouveau monde (ou zone inexplorée) ; chaque arène : rotation au hasard, pente 
 - [ ] **Récif englouti** : sur les plages et dans les océans chauds / tièdes peu profonds (`/locate structure wavesurvivor:arena_recif`), sol au niveau de la mer, fondations de sable jusqu'au fond, pas de falaise ; coffre du temple rempli (`underwater_ruin_big`) ; apparitions dans les bassins (dans l'eau)
 - [ ] **Temple de Rê** : dans le désert (`/locate structure wavesurvivor:arena_temple`), pas sur un temple vanilla ; autel de la horde des Sables Ardents ; oasis et kiosques protègent de la tempête de sable
 - [ ] **Bastion de Givre** : dans les plaines enneigées, pics de glace et pentes enneigées (`/locate structure wavesurvivor:arena_bastion`) ; autel de la horde des Pics Gelés ; tours et surplomb protègent de la tempête
+- [ ] **Cercle des Arcanes** : dans les forêts, bouleaux, forêts sombres, plaines et prairies (`/locate structure wavesurvivor:arena_cercle`) SEULEMENT si Iron's Spells 'n Spellbooks est installé ; sans le mod : aucune génération, aucune erreur
 
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)

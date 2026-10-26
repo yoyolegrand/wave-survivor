@@ -1,0 +1,8 @@
+{
+  "type": "wavesurvivor:arena",
+  "arena": "cercle_des_arcanes",
+  "biomes": "#wavesurvivor:has_structure/arena_cercle",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}
