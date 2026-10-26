@@ -29,7 +29,9 @@ public final class ArenaCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> build() {
         return Commands.literal("arena").requires(s -> s.hasPermission(2))
                 .then(Commands.literal("list").executes(ctx -> {
-                    ctx.getSource().sendSuccess(() -> Component.literal("§6[Arènes] §f" + String.join(", ", BUILTIN)), false);
+                    List<String> ok = new java.util.ArrayList<>();
+                    for (String id : BUILTIN) { ArenaBlueprint b = ArenaBlueprint.load(id); if (b != null && b.available()) ok.add(id); }
+                    ctx.getSource().sendSuccess(() -> Component.literal("§6[Arènes] §f" + String.join(", ", ok)), false);
                     return 1;
                 }))
                 .then(Commands.literal("place")
@@ -64,6 +66,10 @@ public final class ArenaCommand {
             src.sendFailure(Component.literal("Arène introuvable ou illisible : « " + name + " » (voir le journal, /ws arena list)."));
             return 0;
         }
+        if (!bp.available()) {
+            src.sendFailure(Component.literal("Cette arène demande le mod « " + bp.requiresMod() + " » : il n'est pas installé."));
+            return 0;
+        }
         ServerPlayer p;
         try { p = src.getPlayerOrException(); } catch (Exception e) {
             src.sendFailure(Component.literal("Cette commande doit être lancée par un joueur."));
@@ -74,7 +80,7 @@ public final class ArenaCommand {
         double lx = look.x, lz = look.z, len = Math.hypot(lx, lz);
         if (len < 1e-3) { lx = 0; lz = 1; len = 1; }
         double dist = Math.max(bp.sx, bp.sz) / 2.0 + 4;
-        BlockPos center = BlockPos.containing(p.getX() + lx / len * dist, p.getY(), p.getZ() + lz / len * dist);
+        BlockPos center = BlockPos.containing(p.getX() + lx / len * dist, bp.floating() ? p.getY() + 2 : p.getY(), p.getZ() + lz / len * dist); // île flottante : le sol est à ta hauteur + 2
         long t0 = System.currentTimeMillis();
         ArenaBlueprint.Placement pl = bp.place(p.serverLevel(), center, rot);
         ArenaAltar.install(p.serverLevel(), bp, pl.origin().getX(), pl.origin().getZ(), pl.groundY(), rot, null);

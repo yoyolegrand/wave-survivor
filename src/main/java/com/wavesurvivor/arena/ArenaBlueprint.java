@@ -58,6 +58,31 @@ public final class ArenaBlueprint {
 
     /** Écart de hauteur toléré sous l'arène à la génération (-1 = réglage général de arenas.json). */
     private int maxSlope = -1;
+    /** Couche du plan qui est le SOL de l'arène (« ground_y » : 0 par défaut) ; les couches du dessous (cône, fond de lagon) sont posées telles quelles. */
+    private int planGroundY = 0;
+    /** Île flottante : ni dégagement, ni fondations, ni raccord ; sol à une altitude fixée par l'appelant (« floatY » par défaut). */
+    private boolean floating = false;
+    private int floatY = 70;
+    /** Arène sur l'eau : sol au niveau de la mer, fondations de sable, pas de raccord ; les apparitions peuvent se faire dans l'eau. */
+    private boolean aquatic = false;
+    /** Identifiant d'un mod sans lequel l'arène n'existe pas (ni génération, ni pose) ; vide = aucune condition. */
+    private String requiresMod = "";
+    /** Type de chaque repère d'une liste d'objets (« shelters » : oasis, kiosque, tour, surplomb), dans l'ordre de la liste. */
+    private final Map<String, List<String>> markerTypes = new HashMap<>();
+
+    public int planGroundY() { return planGroundY; }
+    public boolean floating() { return floating; }
+    public int floatY() { return floatY; }
+    public boolean aquatic() { return aquatic; }
+    public String requiresMod() { return requiresMod; }
+
+    /** Cette arène peut-elle exister ici ? (mod requis installé) */
+    public boolean available() {
+        return requiresMod.isBlank() || net.minecraftforge.fml.ModList.get().isLoaded(requiresMod);
+    }
+
+    /** Types des repères d'une liste (même ordre que {@link #worldMarkers}). */
+    public List<String> markerTypes(String name) { return markerTypes.getOrDefault(name, List.of()); }
 
     public int maxSlope() { return maxSlope; }
 
@@ -124,6 +149,7 @@ public final class ArenaBlueprint {
         }
         Map<String, List<int[]>> markers = new LinkedHashMap<>();
         Map<String, String> loot = new HashMap<>();
+        Map<String, List<String>> typesByMarker = new HashMap<>();
         if (o.has("markers")) for (Map.Entry<String, JsonElement> e : o.getAsJsonObject("markers").entrySet()) {
             JsonElement v = e.getValue();
             List<int[]> list = new ArrayList<>();
@@ -133,6 +159,15 @@ public final class ArenaBlueprint {
             }
             else if (v.isJsonArray() && v.getAsJsonArray().size() > 0 && v.getAsJsonArray().get(0).isJsonArray())
                 for (JsonElement p : v.getAsJsonArray()) list.add(pos(p.getAsJsonArray()));
+            else if (v.isJsonArray() && v.getAsJsonArray().size() > 0 && v.getAsJsonArray().get(0).isJsonObject()) { // liste d'objets {type, pos}
+                List<String> types = new ArrayList<>();
+                for (JsonElement p : v.getAsJsonArray()) {
+                    JsonObject po = p.getAsJsonObject();
+                    list.add(pos(po.getAsJsonArray("pos")));
+                    types.add(po.has("type") ? po.get("type").getAsString() : "");
+                }
+                typesByMarker.put(e.getKey(), types);
+            }
             else continue; // notes et autres textes
             markers.put(e.getKey(), list);
         }
@@ -140,6 +175,12 @@ public final class ArenaBlueprint {
         String hordeName = o.has("hordeName") ? o.get("hordeName").getAsString() : "";
         ArenaBlueprint bp = new ArenaBlueprint(id, horde, hordeName, sx, Math.max(sy, layers.length), sz, palette, layers, markers, loot);
         if (o.has("maxSlope")) bp.maxSlope = o.get("maxSlope").getAsInt();
+        if (o.has("ground_y")) bp.planGroundY = o.get("ground_y").getAsInt();
+        if (o.has("floating")) bp.floating = o.get("floating").getAsBoolean();
+        if (o.has("floatY")) bp.floatY = o.get("floatY").getAsInt();
+        if (o.has("aquatic")) bp.aquatic = o.get("aquatic").getAsBoolean();
+        if (o.has("requiresMod")) bp.requiresMod = o.get("requiresMod").getAsString();
+        bp.markerTypes.putAll(typesByMarker);
         return bp;
     }
 
@@ -211,6 +252,8 @@ public final class ArenaBlueprint {
             if (Math.hypot(x - cx, z - cz) <= radius) { sum += groundY(level, ox + x, oz + z, false); count++; }
         }
         int y0 = (int) Math.round(sum / (double) Math.max(1, count));
+        if (floating) y0 = center.getY();                       // île flottante : au niveau demandé
+        else if (aquatic) y0 = level.getSeaLevel() - 1;         // arène sur l'eau : sol au niveau de la mer
         build(level, ox, oz, y0, rot, null, false);
         return new Placement(this, rot, new BlockPos(ox, y0, oz), d[0], d[1], y0, worldMarkers(ox, oz, y0, rot));
     }
@@ -222,7 +265,7 @@ public final class ArenaBlueprint {
             List<BlockPos> l = new ArrayList<>();
             for (int[] p : e.getValue()) {
                 int[] r = rot(p[0], p[2], rot);
-                l.add(new BlockPos(ox + r[0], y0 + p[1], oz + r[1]));
+                l.add(new BlockPos(ox + r[0], y0 - planGroundY + p[1], oz + r[1]));
             }
             world.put(e.getKey(), l);
         }
@@ -237,7 +280,7 @@ public final class ArenaBlueprint {
             for (int x = 0; x < row.length(); x++) {
                 if (row.charAt(x) != c) continue;
                 int[] r = rot(x, z, rot);
-                out.add(new BlockPos(ox + r[0], y0 + y, oz + r[1]));
+                out.add(new BlockPos(ox + r[0], y0 - planGroundY + y, oz + r[1]));
             }
         }
         return out;
@@ -269,11 +312,12 @@ public final class ArenaBlueprint {
         RandomSource rnd = level.getRandom();
         BlockState air = Blocks.AIR.defaultBlockState();
 
-        // 1. Dégagement du cercle  2. Fondations : sous le sol de l'arène, on comble jusqu'au terrain solide
-        for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
+        int base = y0 - planGroundY;   // altitude de la couche 0 du plan (le sol de l'arène est à y0)
+        // 1. Dégagement du cercle  2. Fondations : sous le plan, on comble jusqu'au terrain solide (île flottante : rien de tout cela)
+        if (!floating) for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
             if (Math.hypot(x - cx, z - cz) > radius || !in(clip, ox + x, oz + z)) continue;
-            for (int y = 0; y <= clearHeight(); y++) set(level, new BlockPos(ox + x, y0 + y, oz + z), air);
-            fill(level, ox + x, y0 - 1, oz + z, y0 - 48);
+            for (int y = aquatic ? 1 : 0; y <= clearHeight(); y++) set(level, new BlockPos(ox + x, y0 + y, oz + z), air);
+            fill(level, ox + x, base - 1, oz + z, base - 48, aquatic);
         }
         // 3. Le plan (l'air du plan est déjà posé par le dégagement)
         for (int y = 0; y < layers.length; y++) {
@@ -284,7 +328,7 @@ public final class ArenaBlueprint {
                     if (st == null || st.isAir()) continue;
                     int[] r = rot(x, z, rot);
                     if (!in(clip, ox + r[0], oz + r[1])) continue;
-                    set(level, new BlockPos(ox + r[0], y0 + y, oz + r[1]), st.rotate(rot));
+                    set(level, new BlockPos(ox + r[0], base + y, oz + r[1]), st.rotate(rot));
                 }
             }
         }
@@ -294,7 +338,7 @@ public final class ArenaBlueprint {
             if (ms == null) continue;
             for (int[] m : ms) {
                 int[] r = rot(m[0], m[2], rot);
-                BlockPos cp = new BlockPos(ox + r[0], y0 + m[1], oz + r[1]);
+                BlockPos cp = new BlockPos(ox + r[0], base + m[1], oz + r[1]);
                 if (!in(clip, cp.getX(), cp.getZ())) continue;
                 net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity.setLootTable(level, rnd, cp, new net.minecraft.resources.ResourceLocation(e.getValue()));
             }
@@ -302,7 +346,7 @@ public final class ArenaBlueprint {
         // 4. Raccord : anneau autour du cercle, qui rejoint peu à peu le terrain naturel
         int rr = (int) Math.ceil(radius + BLEND_WIDTH);
         BlockState[] cover = {Blocks.PODZOL.defaultBlockState(), Blocks.PODZOL.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.MOSS_BLOCK.defaultBlockState()};
-        for (int x = (int) -(rr - cx); x <= w - 1 + (rr - cx); x++) for (int z = (int) -(rr - cz); z <= dep - 1 + (rr - cz); z++) {
+        if (!floating && !aquatic) for (int x = (int) -(rr - cx); x <= w - 1 + (rr - cx); x++) for (int z = (int) -(rr - cz); z <= dep - 1 + (rr - cz); z++) {
             double dist = Math.hypot(x - cx, z - cz);
             if (dist <= radius || dist > radius + BLEND_WIDTH || !in(clip, ox + x, oz + z)) continue;
             int wx = ox + x, wz = oz + z;
@@ -310,7 +354,7 @@ public final class ArenaBlueprint {
             double frac = (dist - radius) / BLEND_WIDTH;                    // 0 contre l'arène, 1 au bord du raccord
             int ty = (int) Math.round(y0 + (h - y0) * frac);
             for (int y = ty + 1; y <= Math.max(h, ty) + 1 + clearHeight() / 2; y++) set(level, new BlockPos(wx, y, wz), air);
-            fill(level, wx, ty - 1, wz, ty - 48);
+            fill(level, wx, ty - 1, wz, ty - 48, false);
             set(level, new BlockPos(wx, ty, wz), cover[rnd.nextInt(cover.length)]);
         }
     }
@@ -320,11 +364,11 @@ public final class ArenaBlueprint {
     }
 
     /** Comble la colonne vers le bas depuis y jusqu'au premier bloc de sol solide (au plus jusqu'à minY) : terre stérile puis abîmes concassés. */
-    private static void fill(WorldGenLevel level, int x, int y, int z, int minY) {
+    private static void fill(WorldGenLevel level, int x, int y, int z, int minY, boolean sandy) {
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos(x, y, z);
         int depth = 0;
         while (m.getY() >= Math.max(minY, level.getMinBuildHeight()) && !solidGround(level, m)) {
-            level.setBlock(m, (depth++ < 2 ? Blocks.COARSE_DIRT : Blocks.COBBLED_DEEPSLATE).defaultBlockState(), 2);
+            level.setBlock(m, (sandy ? (depth++ < 2 ? Blocks.SAND : Blocks.SANDSTONE) : (depth++ < 2 ? Blocks.COARSE_DIRT : Blocks.COBBLED_DEEPSLATE)).defaultBlockState(), 2);
             m.move(0, -1, 0);
         }
     }

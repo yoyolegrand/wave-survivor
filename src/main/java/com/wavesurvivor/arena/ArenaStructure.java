@@ -70,7 +70,7 @@ public class ArenaStructure extends Structure {
         if (count == 0 || max - min > (bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope())) return Optional.empty();
         int y0 = (int) Math.round(sum / (double) count);
         BlockPos center = new BlockPos(cx, y0, cz);
-        return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1], bp.clearHeight()))));
+        return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1], bp.clearHeight(), bp.floating() ? bp.planGroundY() + 3 : bp.planGroundY() + 48))));
     }
 
     @Override
