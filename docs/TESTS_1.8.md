@@ -121,6 +121,14 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Première victoire : environ 5 s après, un coffre roulette « Reliquaire du Nether » apparaît sur l'estrade du portail (une seule fois par arène) ; le coffre vanilla du portail est déjà là
 - [ ] Réglages : `arenas.json` › `affinity` : `cryptWeight` (apparition principale : portail), `graveWeight` (failles), `entranceWeight` (bord), `firesRekindle`, `magmaCools`, `rewardChests` : `{"breche_infernale":"Reliquaire du Nether"}`
 
+## Sanctuaire du Séraphin — étape 6 (cadres d'emplacement animés)
+- [ ] Un équipement amélioré (1, 2 ou 3 améliorations) a un cadre autour de son emplacement dans l'inventaire, les coffres et la Forge : doré scintillant (Consacré) ou violet qui pulse (Profané) ; le cadre change de modèle avec le nombre d'améliorations (`consecrated_1..3`, `profaned_1..3`) ; rien n'est dessiné au centre de l'icône
+- [ ] À 2 améliorations : lueur douce (dorée ou violette) sur l'emplacement ; à 3 : Consacré = reflet blanc diagonal qui balaie l'icône toutes les 2,5 s ; Profané = l'icône tressaille en violet (2-3 images sur 12)
+- [ ] Barre d'objets : cadre et scintillement / pulsation seulement (pas de lueur, de reflet ni de tressaillement)
+- [ ] Un objet sans amélioration n'a aucun cadre ; pas de ralentissement visible avec un inventaire plein d'objets améliorés
+- [ ] Option client : `config/wavesurvivor/client_options.json` -> `{"slotFx":"light"}` (version légère partout) ou `"off"` (aucun cadre animé), puis relancer le jeu
+- Remarque : la lueur est dessinée par-dessus l'icône avec une opacité faible (pas derrière) ; l'info-bulle et le nom coloré des objets sont déjà en place
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
