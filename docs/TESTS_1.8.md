@@ -53,24 +53,24 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Rééquilibrage : `production.intervalSeconds`, `stockCap`, `killBonusSeconds`, `fusionCost`, `bossHeartChance` dans `config/wavesurvivor/shrine_offerings.json` puis `/ws reload`
 
 ## Sanctuaire du Séraphin — étape 4 (Forge)
-- [ ] Retouches de texte : jauge (« Pure » / « Corrompue » ne se chevauchent plus), onglet Récolte (stock, cycle « 1 / 2 min », « Dormant » lisibles), onglet Fusion (message sur deux lignes, plus coupé)
-- [ ] Onglet Forge : poser une arme ou une pièce d'armure + des Éclats de grâce, « Insérer » : une amélioration Consacré est tirée (message), le losange se remplit, le thème devient doré ; la liste à droite montre son nom, son niveau et ses lignes (bonus en vert, malus en rouge) ; survol de la ligne = info-bulle complète
-- [ ] Coût croissant : 1er emplacement = 1 fragment, 2e = 2, 3e = 3 (« Prochain : n frag. ») ; 4e insertion refusée (« emplacements pleins »)
-- [ ] Un seul alignement : un objet Consacré refuse les fragments de souillure (et inversement) ; avec des Éclats de souillure, une arme neuve devient Profanée (thème violet)
-- [ ] Le niveau du fragment fixe la force : Éclat (I) < Fragment (II) < Cœur (III) (comparer les valeurs affichées)
-- [ ] « Retirer » : coûte 1 fragment du même camp, enlève la dernière amélioration (les fragments ne sont pas rendus) ; plus aucune amélioration = plus d'alignement ; on peut alors retirer / réinsérer pour relancer
-- [ ] Effets en jeu (équipement porté / arme en main) : Force sacrée / Rage aveugle (dégâts), Célérité / Frénésie (vitesse d'attaque), Égide / Carapace maudite (armure), Vitalité / Chair corrompue (cœurs max), Ancrage / Rempart (résistance au recul), Pas léger / Ombre (vitesse), Plume (dégâts de chute), Souffle de vie (régénération hors combat), Bénédiction durable (l'usure monte moins vite)
-- [ ] Effets sur événement : Châtiment (morts-vivants + Corrompus), Lame bénie (soin toutes les N victimes), Grâce du savoir (+XP), Soif de sang (vol de vie), Bourreau (dégâts sous 30 % de vie), Venin (Poison + faim), Épines (renvoi), Pacte de survie (survit à un coup mortel, recharge), Marque de la Bête (nuit / jour)
-- [ ] Plafond : plusieurs pièces avec la même amélioration de pourcentage ne dépassent pas +30 % cumulés (sauf un objet seul plus fort) ; les malus, eux, s'additionnent
-- [ ] Les bonus disparaissent quand on retire l'équipement ou change d'arme en main (attributs), et au changement de monde / reconnexion tout est recalculé
-- [ ] Équilibrage : `config/wavesurvivor/shrine_upgrades.json` (coûts, plafond, valeurs par niveau) puis `/ws reload`
+- [x] Retouches de texte : jauge (« Pure » / « Corrompue » ne se chevauchent plus), onglet Récolte (stock, cycle « 1 / 2 min », « Dormant » lisibles), onglet Fusion (message sur deux lignes, plus coupé)
+- [x] Onglet Forge : poser une arme ou une pièce d'armure + des Éclats de grâce, « Insérer » : une amélioration Consacré est tirée (message), le losange se remplit, le thème devient doré ; la liste à droite montre son nom, son niveau et ses lignes (bonus en vert, malus en rouge) ; survol de la ligne = info-bulle complète
+- [x] Coût croissant : 1er emplacement = 1 fragment, 2e = 2, 3e = 3 (« Prochain : n frag. ») ; 4e insertion refusée (« emplacements pleins »)
+- [x] Un seul alignement : un objet Consacré refuse les fragments de souillure (et inversement) ; avec des Éclats de souillure, une arme neuve devient Profanée (thème violet)
+- [x] Le niveau du fragment fixe la force : Éclat (I) < Fragment (II) < Cœur (III) (comparer les valeurs affichées)
+- [x] « Retirer » : coûte 1 fragment du même camp, enlève la dernière amélioration (les fragments ne sont pas rendus) ; plus aucune amélioration = plus d'alignement ; on peut alors retirer / réinsérer pour relancer
+- [x] Effets en jeu (équipement porté / arme en main) : Force sacrée / Rage aveugle (dégâts), Célérité / Frénésie (vitesse d'attaque), Égide / Carapace maudite (armure), Vitalité / Chair corrompue (cœurs max), Ancrage / Rempart (résistance au recul), Pas léger / Ombre (vitesse), Plume (dégâts de chute), Souffle de vie (régénération hors combat), Bénédiction durable (l'usure monte moins vite)
+- [x] Effets sur événement : Châtiment (morts-vivants + Corrompus), Lame bénie (soin toutes les N victimes), Grâce du savoir (+XP), Soif de sang (vol de vie), Bourreau (dégâts sous 30 % de vie), Venin (Poison + faim), Épines (renvoi), Pacte de survie (survit à un coup mortel, recharge), Marque de la Bête (nuit / jour)
+- [x] Plafond : plusieurs pièces avec la même amélioration de pourcentage ne dépassent pas +30 % cumulés (sauf un objet seul plus fort) ; les malus, eux, s'additionnent
+- [x] Les bonus disparaissent quand on retire l'équipement ou change d'arme en main (attributs), et au changement de monde / reconnexion tout est recalculé
+- [x] Équilibrage : `config/wavesurvivor/shrine_upgrades.json` (coûts, plafond, valeurs par niveau) puis `/ws reload`
 
 ## Sanctuaire du Séraphin — étape 5 (Corrompus)
-- [ ] Statue Souillée (étape 3) avec un joueur à moins de 32 blocs : environ toutes les 3 minutes, 2-3 Rootlings apparaissent autour (5 à 12 blocs, particules d'âmes) ; aucun Stone Brute à cette étape
-- [ ] Statue Corrompue (étape 4) : groupes plus fréquents (~90 s), jusqu'à 4 créatures, et parfois un Stone Brute (25 %)
-- [ ] Aucun joueur à moins de 32 blocs : rien n'apparaît, le groupe est prêt et sort dès qu'un joueur approche ; étapes 0-2 : jamais de Corrompus
-- [ ] Plafond : pas plus de 8 Corrompus de la statue en même temps (`maxAlive`) ; remonter la statue à Neutre arrête les apparitions ; changer d'étape relance le délai
-- [ ] Réglages : bloc `corruption` de `config/wavesurvivor/shrine_offerings.json` (délais, nombre, `bruteChance`, rayons, plafond) puis `/ws reload`
+- [x] Statue Souillée (étape 3) avec un joueur à moins de 32 blocs : environ toutes les 3 minutes, 2-3 Rootlings apparaissent autour (5 à 12 blocs, particules d'âmes) ; aucun Stone Brute à cette étape
+- [x] Statue Corrompue (étape 4) : groupes plus fréquents (~90 s), jusqu'à 4 créatures, et parfois un Stone Brute (25 %)
+- [x] Aucun joueur à moins de 32 blocs : rien n'apparaît, le groupe est prêt et sort dès qu'un joueur approche ; étapes 0-2 : jamais de Corrompus
+- [x] Plafond : pas plus de 8 Corrompus de la statue en même temps (`maxAlive`) ; remonter la statue à Neutre arrête les apparitions ; changer d'étape relance le délai
+- [x] Réglages : bloc `corruption` de `config/wavesurvivor/shrine_offerings.json` (délais, nombre, `bruteChance`, rayons, plafond) puis `/ws reload`
 
 ## Arène « Nécropole des Rois Déchus » — étape 1 (chargeur de plan et pose)
 - [ ] `/ws arena list` affiche `necropole_rois_dechus` ; `/ws arena place necropole_rois_dechus` pose l'arène devant toi (message avec le centre et la durée)
@@ -123,11 +123,11 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Réglages : `arenas.json` › `affinity` : `cryptWeight` (apparition principale : portail), `graveWeight` (failles), `entranceWeight` (bord), `firesRekindle`, `magmaCools`, `rewardChests` : `{"breche_infernale":"Reliquaire du Nether"}`
 
 ## Sanctuaire du Séraphin — étape 6 (cadres d'emplacement animés)
-- [ ] Un équipement amélioré (1, 2 ou 3 améliorations) a un cadre autour de son emplacement dans l'inventaire, les coffres et la Forge : doré scintillant (Consacré) ou violet qui pulse (Profané) ; le cadre change de modèle avec le nombre d'améliorations (`consecrated_1..3`, `profaned_1..3`) ; rien n'est dessiné au centre de l'icône
-- [ ] À 2 améliorations : lueur douce (dorée ou violette) sur l'emplacement ; à 3 : Consacré = reflet blanc diagonal qui balaie l'icône toutes les 2,5 s ; Profané = l'icône tressaille en violet (2-3 images sur 12)
-- [ ] Barre d'objets : cadre et scintillement / pulsation seulement (pas de lueur, de reflet ni de tressaillement)
-- [ ] Un objet sans amélioration n'a aucun cadre ; pas de ralentissement visible avec un inventaire plein d'objets améliorés
-- [ ] Option client : `config/wavesurvivor/client_options.json` -> `{"slotFx":"light"}` (version légère partout) ou `"off"` (aucun cadre animé), puis relancer le jeu
+- [x] Un équipement amélioré (1, 2 ou 3 améliorations) a un cadre autour de son emplacement dans l'inventaire, les coffres et la Forge : doré scintillant (Consacré) ou violet qui pulse (Profané) ; le cadre change de modèle avec le nombre d'améliorations (`consecrated_1..3`, `profaned_1..3`) ; rien n'est dessiné au centre de l'icône
+- [x] À 2 améliorations : lueur douce (dorée ou violette) sur l'emplacement ; à 3 : Consacré = reflet blanc diagonal qui balaie l'icône toutes les 2,5 s ; Profané = l'icône tressaille en violet (2-3 images sur 12)
+- [x] Barre d'objets : cadre et scintillement / pulsation seulement (pas de lueur, de reflet ni de tressaillement)
+- [x] Un objet sans amélioration n'a aucun cadre ; pas de ralentissement visible avec un inventaire plein d'objets améliorés
+- [x] Option client : `config/wavesurvivor/client_options.json` -> `{"slotFx":"light"}` (version légère partout) ou `"off"` (aucun cadre animé), puis relancer le jeu
 - Cadres affinés (bande de 5 px sur 32 contre le bord, centre vide) étirés sur tout l'emplacement 16×16 ; la lueur (2 px, opacité ~0,2), le reflet et le tressaillement restent sur le pourtour / très discrets : l'icône reste entièrement lisible (aperçu simulé : `docs/maquettes_sanctuaire/apercu_cadres_simulation.png`)
 - Remarque : la lueur est dessinée par-dessus l'icône avec une opacité faible (pas derrière) ; l'info-bulle et le nom coloré des objets sont déjà en place
 
