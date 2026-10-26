@@ -2,6 +2,19 @@
 
 ## 1.8.0 — Blessings Rework *(in progress)*
 
+### 🕊 Seraph Shrine
+- 🗿 **A new structure**: the **Seraph Shrine**, an unbreakable statue with three pairs of wings that appears in rare ruins of the temperate and desert biomes. One shared **faith** gauge (-600 to +600) takes it from **Pure** to **Corrupted** — and the statue changes with it (3D model, textures, wings, halo). It is solid, with an invisible body.
+- 🎁 **Offerings**: flowers, honey, gold, golden apples… raise the gauge; rotten flesh, bones, sculk, skulls… lower it. Monsters of a horde killed nearby help, **killing a villager costs 50**. Every value is in `shrine_offerings.json`.
+- 💎 **Shards of grace and taint** are produced by the statue according to its state (6 new items, 3 levels: Shard → Fragment → Heart, fused 9 → 1; Hearts can drop from bosses). Harvest and fusion tabs.
+- ⚒ **The Forge**: weapons and armor get up to **3 upgrades** (cost 1, 2, 3 fragments), always **Consecrated** (positive only) or **Profaned** (strong bonus, real drawback) — never both. **12 blessings and 12 corruptions** (Holy Might, Smite, Blessed Blade, Aegis, Vitality, Survival Pact, Bloodthirst, Executioner, Mark of the Beast…), bonuses capped at +30%, all in `shrine_upgrades.json`. Upgraded gear has a **colored name**, a full **tooltip** and an **animated frame** on its slot.
+- 💀 **The price of corruption**: a tainted statue calls **Rootlings**, a corrupted one more of them and sometimes a **Stone Brute**.
+- 📖 New Codex pages: "Seraph Shrine" and "Ready-made arenas".
+
+### 🏟 Ready-made arenas
+- ⚰ **Necropolis of the Fallen Kings** and 🔥 **The Infernal Breach**: pre-built arenas generated in the world (rare, rotated at random, never on water or steep ground), each with its horde's **locked, unbreakable altar** already placed. The Breach **replaces about 1 ruined portal in 4** on the surface — nothing else is lost.
+- During the game monsters appear at **the arena's own spots** (crypt, graves, rifts, portal), the boss at its own place; the crypt gate opens, braziers fade, the portal blazes, fires come back each wave and magma cools on victory. A **reward chest** appears on the first victory.
+- Settings in `arenas.json`; `/ws arena list` and `/ws arena place <arena> [rotation]` for operators. The plan format is reusable for more arenas.
+
 ### ⚡ Performance
 - 📈 New `/ws perf` (operators): what a wave costs — **server tick time**, entities, horde units, visual effects, items on the ground and pending actions — measured every second during a horde or invasion, with the worst of each wave written to the log (and to the operators' chat with `/ws perf verbose`).
 

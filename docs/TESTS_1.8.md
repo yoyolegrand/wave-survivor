@@ -129,6 +129,10 @@ Branche de travail : `dev-1.8` (`mod_version=1.8.0`).
 - [ ] Option client : `config/wavesurvivor/client_options.json` -> `{"slotFx":"light"}` (version légère partout) ou `"off"` (aucun cadre animé), puis relancer le jeu
 - Remarque : la lueur est dessinée par-dessus l'icône avec une opacité faible (pas derrière) ; l'info-bulle et le nom coloré des objets sont déjà en place
 
+## Sanctuaire du Séraphin — étape 7 (Codex, CHANGELOG, config)
+- [ ] `/ws codex` : les pages « Sanctuaire du Séraphin » et « Arènes toutes faites » apparaissent dans le sommaire (après « Reliques & Forge »), défilent et se lisent bien en français et en anglais
+- [ ] Config : `shrine_offerings.json` (offrandes, paliers, événements, production, Corrompus) et `shrine_upgrades.json` (améliorations, coûts, plafond) dans `config/wavesurvivor/`, avec seulement les champs à changer, puis `/ws reload`
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd
