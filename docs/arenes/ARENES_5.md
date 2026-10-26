@@ -19,10 +19,11 @@ Chaque arène a son dossier `docs/arenes/<nom>/` avec : `blueprint_<nom>.json` (
 - **Repères** : `boss_spawn` sous l'arche ; `spawns` = 5 **failles du vide** (anneaux d'obsidienne au centre noir) : particules de portail + son d'Enderman.
 - **Danger voulu** : le **bord de l'île** (chute dans le vide). Ne pas ajouter de barrière.
 
-## 2. Le Récif englouti — horde aquatique (`docs/arenes/recif_englouti/`)
-- **Où** : **plages** et bords d'**océans chauds / tièdes** (`beach`, `warm_ocean`, `lukewarm_ocean` peu profonds). L'île doit affleurer : `ground_y` au niveau de la mer (y = 62-63).
-- **Contenu** : île de sable dans un **lagon**, temple de prismarine en ruine (nord) à lanternes aquatiques, **épave** (sud-est), canaux en croix, coraux et varech **dans l'eau** (les coraux hors de l'eau meurent : ils sont placés dans le lagon et les bassins).
-- **Repères** : `boss_spawn` dans le temple ; `chest` dans le temple, table **`minecraft:chests/underwater_ruin_big`** ; `spawns` = 4 **bassins de marée** (gerbe d'eau + son de noyé).
+## 2. Le Récif englouti — horde aquatique (`docs/arenes/recif_englouti/`) — **VERSION 2** (35 × 35)
+- **Où** : **plages** et bords d'**océans chauds / tièdes** (`beach`, `warm_ocean`, `lukewarm_ocean` peu profonds). L'eau du lagon est au niveau de la mer : `ground_y` = niveau de la mer (y = 62-63).
+- **Contenu (v2)** : une vraie **île en relief** (dunes, plage en pente douce, rochers moussus, 4 palmiers penchés) entourée d'un **lagon de 2 blocs de profondeur** avec **récifs de corail, herbiers, varech et cornichons de mer, tous SOUS l'eau** (vivants) ; autel sur une **estrade à marches** de prismarine (4 lanternes aquatiques) ; **temple en ruine** (nord) sur une estrade à marches, colonnes inégales, arche effondrée, blocs tombés ; 3 **chenaux de marée** vers le lagon ; une **épave** (sud-est) au bord du lagon : coque creuse qui s'évase, château arrière, proue relevée et beaupré, brèche dans le flanc, pont crevé, mât avec vergue et voile déchirée, légère gîte. Gros plan : `epave_gros_plan.png`.
+- **Repères** : `monolith` sur l'estrade (y plus haut que dans les autres arènes, lire la position) ; `boss_spawn` dans le temple ; `chest` dans le temple, table **`minecraft:chests/underwater_ruin_big`** ; `wreck_chest` dans la cale de l'épave, table **`minecraft:chests/shipwreck_treasure`** ; `spawns` = bout des 3 **chenaux de marée** (gerbe d'eau + son de noyé).
+- **À vérifier à la pose** : varech (`kelp` sur `kelp` doit devenir `kelp_plant` en dessous), cornichons de mer immergés, aucun corail hors de l'eau.
 
 ## 3. Le Temple de Rê ensablé — Sables Ardents (`docs/arenes/temple_de_re/`)
 - **Où** : **désert** (`desert`). Option : greffer sur une partie des **temples du désert** vanilla, même méthode que la Brèche sur les portails en ruine (voir `docs/arenes/breche_infernale/ARENE_BRECHE_INFERNALE.md` §3).

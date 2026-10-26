@@ -328,6 +328,11 @@ public final class ArenaBlueprint {
                     if (st == null || st.isAir()) continue;
                     int[] r = rot(x, z, rot);
                     if (!in(clip, ox + r[0], oz + r[1])) continue;
+                    // varech : le sommet d'une colonne de « kelp_plant » devient une tête de varech (sinon la tige reste sans pointe)
+                    if (st.is(Blocks.KELP_PLANT) && !(y + 1 < layers.length && z < layers[y + 1].length && x < layers[y + 1][z].length()
+                            && palette.get(layers[y + 1][z].charAt(x)) != null && palette.get(layers[y + 1][z].charAt(x)).is(Blocks.KELP_PLANT))) {
+                        st = Blocks.KELP.defaultBlockState().setValue(net.minecraft.world.level.block.KelpBlock.AGE, 25);
+                    }
                     set(level, new BlockPos(ox + r[0], base + y, oz + r[1]), st.rotate(rot));
                 }
             }
