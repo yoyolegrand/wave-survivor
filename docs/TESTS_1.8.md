@@ -146,6 +146,10 @@ Comparer chaque pose avec les images de `docs/arenes/<arène>/` ; essayer aussi 
 - [ ] **Cercle des Arcanes** : grand cercle runique (améthyste, or, calcite), tour de mage en ruine au nord-ouest, 4 pylônes arcaniques
 - [ ] Pour chacune : fondations (rien ne flotte, sauf l'Îlot), dégagement des arbres, autel de horde posé au centre sur son piédestal (clic droit : l'écran de lancement de la bonne horde)
 
+## Cinq nouvelles arènes — génération dans le monde
+Nouveau monde (ou zone inexplorée) ; chaque arène : rotation au hasard, pente tolérée de 5 blocs, réglages dans `arenas.json` (`generation`), rareté dans `worldgen/structure_set/arena_*.json`, biomes dans `tags/worldgen/biome/has_structure/arena_*.json`.
+- [ ] **Îlot du Néant** : dans les îles extérieures de l'End (`/locate structure wavesurvivor:arena_ilot`), une île flottante au-dessus des îles (jamais dans l'île centrale, jamais sur une cité de l'End), sans fondations ; son autel (horde du Néant Éternel) est posé et verrouillé
+
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
 - [x] Mesure réelle (grosse vague testée : OK) : lancer une grosse horde (ou le mode sans fin jusqu'à la vague 30+) en multijoueur ou avec beaucoup de monstres, noter le tick moyen / max (≤ 50 ms = 20 TPS) et dire ce qui est trop lourd

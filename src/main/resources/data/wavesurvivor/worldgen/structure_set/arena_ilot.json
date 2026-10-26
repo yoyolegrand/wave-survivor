@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "wavesurvivor:arena_ilot",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 28,
+    "separation": 12,
+    "salt": 1741226601,
+    "exclusion_zone": {
+      "other_set": "minecraft:end_cities",
+      "chunk_count": 3
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "wavesurvivor:arena",
+  "arena": "ilot_du_neant",
+  "biomes": "#wavesurvivor:has_structure/arena_ilot",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}
