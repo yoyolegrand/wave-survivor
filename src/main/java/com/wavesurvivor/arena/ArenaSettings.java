@@ -84,7 +84,14 @@ public final class ArenaSettings {
         JsonObject per = aff().has("rewardChests") && aff().get("rewardChests").isJsonObject() ? aff().getAsJsonObject("rewardChests") : new JsonObject();
         if (per.has(arena)) return HordeJson.str(per, arena, "Reliquaire du Boss");
         if (aff().has("rewardChestName")) return HordeJson.str(aff(), "rewardChestName", "Reliquaire du Boss");
-        return arena.startsWith("breche") ? "Reliquaire du Nether" : "Reliquaire du Boss";
+        return switch (arena) {
+            case "breche_infernale" -> "Reliquaire du Nether";
+            case "ilot_du_neant" -> "Reliquaire de l'End";
+            case "recif_englouti" -> "Reliquaire des Abysses";
+            case "temple_de_re", "bastion_de_givre" -> "Reliquaire des Trésors";
+            case "cercle_des_arcanes" -> "Reliquaire Arcanique";
+            default -> "Reliquaire du Boss";
+        };
     }
 
     /** Les feux du plan reprennent à chaque vague. */
