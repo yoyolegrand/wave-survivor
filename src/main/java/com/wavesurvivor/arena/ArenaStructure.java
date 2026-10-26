@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.wavesurvivor.registry.ModStructures;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.QuartPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.block.Rotation;
@@ -38,6 +39,13 @@ public class ArenaStructure extends Structure {
         if (!ArenaSettings.enabled() || ArenaSettings.isDisabled(arena)) return Optional.empty();
         ArenaBlueprint bp = ArenaBlueprint.load(arena);
         if (bp == null || !bp.available()) return Optional.empty(); // arène liée à un mod absent (Cercle des Arcanes) : rien ne se génère, rien ne casse
+        // Biome d'abord (une seule mesure) : les candidats hors des biomes de l'arène sont écartés sans échantillonner tout le terrain
+        // (sinon /locate et la génération paient une centaine de mesures de relief par chunk candidat, très lourd avec des mondes moddés)
+        ChunkPos c0 = ctx.chunkPos();
+        int mx0 = c0.getMiddleBlockX(), mz0 = c0.getMiddleBlockZ();
+        int my0 = ctx.chunkGenerator().getFirstOccupiedHeight(mx0, mz0, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState());
+        var biome = ctx.biomeSource().getNoiseBiome(QuartPos.fromBlock(mx0), QuartPos.fromBlock(my0), QuartPos.fromBlock(mz0), ctx.randomState().sampler());
+        if (!ctx.validBiome().test(biome)) return Optional.empty();
         Rotation rot = ArenaSettings.randomRotation() ? Rotation.getRandom(ctx.random()) : Rotation.NONE;
         return plan(ctx, bp, arena, rot);
     }
