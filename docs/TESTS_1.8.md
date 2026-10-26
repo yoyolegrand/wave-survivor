@@ -143,7 +143,7 @@ Comparer chaque pose avec les images de `docs/arenes/<arène>/` ; essayer aussi 
 - [x] **Temple de Rê** : façade à colonnes, 4 obélisques à pointe d'or, 2 sarcophages, palmiers, cercle de terre cuite bleue, oasis au sud-est et 2 kiosques à toit plat
 - [x] **Bastion de Givre** (nouveau plan : pics effilés et inclinés avec pic secondaire, sapins en cônes étagés avec couches de neige, arbre mort aux branches nues ; 14 blocs de haut) : bastion en ruine pris dans la glace, 2 tours creuses (porte au sud, toit à y = 5), surplomb de glace sur 2 piliers, crevasses de glace bleue ; les couches de neige (`snow[layers=2]`) et les branches horizontales (`spruce_log[axis=x/z]`) sont bien posées, et les branches restent bien orientées après rotation
 - [ ] **Abris du Bastion** : lancer la horde des Pics Gelés depuis son autel, attendre la tempête : sous le toit d'une tour ou du surplomb on est « à l'abri » (message), dehors on est exposé ; même chose pour le Temple de Rê (oasis, kiosques) avec la tempête de sable
-- [ ] **Cercle des Arcanes** : grand cercle runique (améthyste, or, calcite), tour de mage en ruine au nord-ouest, 4 pylônes arcaniques
+- [x] **Cercle des Arcanes** : grand cercle runique (améthyste, or, calcite), tour de mage en ruine au nord-ouest, 4 pylônes arcaniques
 - [ ] Pour chacune : fondations (rien ne flotte, sauf l'Îlot), dégagement des arbres, autel de horde posé au centre sur son piédestal (clic droit : l'écran de lancement de la bonne horde)
 
 ## Cinq nouvelles arènes — génération dans le monde
