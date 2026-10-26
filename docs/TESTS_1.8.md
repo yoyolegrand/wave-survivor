@@ -149,6 +149,7 @@ Comparer chaque pose avec les images de `docs/arenes/<arène>/` ; essayer aussi 
 ## Cinq nouvelles arènes — génération dans le monde
 Nouveau monde (ou zone inexplorée) ; chaque arène : rotation au hasard, pente tolérée de 5 blocs, réglages dans `arenas.json` (`generation`), rareté dans `worldgen/structure_set/arena_*.json`, biomes dans `tags/worldgen/biome/has_structure/arena_*.json`.
 - [ ] **Îlot du Néant** : dans les îles extérieures de l'End (`/locate structure wavesurvivor:arena_ilot`), une île flottante au-dessus des îles (jamais dans l'île centrale, jamais sur une cité de l'End), sans fondations ; son autel (horde du Néant Éternel) est posé et verrouillé
+- [ ] **Récif englouti** : sur les plages et dans les océans chauds / tièdes peu profonds (`/locate structure wavesurvivor:arena_recif`), sol au niveau de la mer, fondations de sable jusqu'au fond, pas de falaise ; coffre du temple rempli (`underwater_ruin_big`) ; apparitions dans les bassins (dans l'eau)
 
 ## Performance
 - [x] `/ws perf` hors horde : affiche les mesures actuelles ; pendant une horde, après quelques vagues : le résumé de chaque vague apparaît (et dans `logs/latest.log` : lignes « [Perf] vague N … »)
