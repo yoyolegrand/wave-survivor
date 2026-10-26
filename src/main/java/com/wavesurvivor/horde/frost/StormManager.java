@@ -230,6 +230,7 @@ public class StormManager {
             }
             // Abri : à couvert (toit ou eau) ou près d'une source de chaleur, selon le réglage de la tempête
             boolean safe = s.cover ? covered(level, p) : (sr > 0 && sheltered(level, p.blockPosition(), sr, s.shelterBlocks));
+            if (!safe) safe = com.wavesurvivor.arena.ArenaSession.isSheltered(level, p); // abris d'une arène (tours, surplomb, kiosques, oasis)
             if (safe) {
                 p.displayClientMessage(Component.literal(WSLang.t(mk + "sheltered")), true);
                 continue;

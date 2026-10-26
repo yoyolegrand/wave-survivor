@@ -132,8 +132,8 @@ public final class ArenaSession {
         if (p == null) return null;
         s.openGate();
         s.bossLit = true;
-        s.effect(p, s.marker("boss_spawn") != null ? 3 : 0);
-        if (s.marker("boss_spawn") != null) { // le portail s'embrase à l'arrivée du boss
+        s.effect(p, s.marker("boss_spawn") != null ? s.spawnKind() : 0);
+        if (s.bp.id.equals("breche_infernale")) { // le portail s'embrase à l'arrivée du boss
             s.level.sendParticles(ParticleTypes.PORTAL, p.getX() + 0.5, p.getY() + 1.5, p.getZ() + 0.5, 240, 1.2, 1.8, 1.2, 0.6);
             s.level.playSound(null, p, SoundEvents.END_PORTAL_SPAWN, SoundSource.HOSTILE, 0.8f, 0.7f);
         }
@@ -154,12 +154,12 @@ public final class ArenaSession {
             BlockPos p;
             int kind;
             if (roll < wc) {
-                BlockPos base = firstMarker("crypt_spawn", "portal_spawn");
-                kind = marker("crypt_spawn") != null ? 0 : 3;
+                BlockPos base = firstMarker("crypt_spawn", "portal_spawn", "boss_spawn");
+                kind = marker("crypt_spawn") != null ? 0 : marker("portal_spawn") != null ? 3 : spawnKind();
                 p = base == null ? null : spotNear(base, type, 2, 1);
             } else if (roll < wc + wg) {
-                String list = markers.containsKey("grave_spawns") ? "grave_spawns" : "rift_spawns";
-                kind = list.equals("grave_spawns") ? 1 : 4;
+                String list = markers.containsKey("grave_spawns") ? "grave_spawns" : markers.containsKey("rift_spawns") ? "rift_spawns" : "spawns";
+                kind = list.equals("grave_spawns") ? 1 : list.equals("rift_spawns") ? 4 : spawnKind();
                 p = fromList(list, type);
             } else {
                 kind = 2;
@@ -218,11 +218,23 @@ public final class ArenaSession {
             BlockPos q = p.above(dy);
             if (!level.getBlockState(q.below()).isSolid()) continue;
             if (!level.getBlockState(q).getCollisionShape(level, q).isEmpty() || !level.getBlockState(q.above()).getCollisionShape(level, q.above()).isEmpty()) continue;
-            if (!level.getFluidState(q).isEmpty()) continue;
+            if (!bp.aquatic() && !level.getFluidState(q).isEmpty()) continue;
             if (type != null && !level.noCollision(type.getAABB(q.getX() + 0.5, q.getY(), q.getZ() + 0.5))) continue;
             return q;
         }
         return null;
+    }
+
+    /** Effet d'apparition propre à l'arène pour ses repères « spawns » : 5 faille du vide, 6 bassin de marée, 7 sarcophage, 8 crevasse de glace, 9 cercle d'invocation. */
+    private int spawnKind() {
+        return switch (bp.id) {
+            case "ilot_du_neant" -> 5;
+            case "recif_englouti" -> 6;
+            case "temple_de_re" -> 7;
+            case "bastion_de_givre" -> 8;
+            case "cercle_des_arcanes" -> 9;
+            default -> 2;
+        };
     }
 
     /** Effets d'apparition : 0 crypte (âmes), 1 tombe (terre, pelle, mort-vivant), 2 bord (rien), 3 portail (particules violettes), 4 faille (lave, fumée). */
@@ -247,8 +259,51 @@ public final class ArenaSession {
                 level.sendParticles(ParticleTypes.LARGE_SMOKE, x, y + 0.5, z, 8, 0.3, 0.4, 0.3, 0.03);
                 level.playSound(null, p, SoundEvents.LAVA_EXTINGUISH, SoundSource.HOSTILE, 0.8f, 0.6f);
             }
+            case 5 -> {
+                level.sendParticles(ParticleTypes.PORTAL, x, y + 1.0, z, 50, 0.5, 1.0, 0.5, 0.6);
+                level.playSound(null, p, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 0.8f, 0.7f);
+            }
+            case 6 -> {
+                level.sendParticles(ParticleTypes.SPLASH, x, y + 0.6, z, 40, 0.4, 0.5, 0.4, 0.2);
+                level.sendParticles(ParticleTypes.BUBBLE, x, y + 0.4, z, 20, 0.3, 0.3, 0.3, 0.1);
+                level.playSound(null, p, SoundEvents.DROWNED_AMBIENT_WATER, SoundSource.HOSTILE, 0.9f, 0.7f);
+            }
+            case 7 -> {
+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SAND.defaultBlockState()), x, y + 0.5, z, 30, 0.4, 0.4, 0.4, 0.08);
+                level.playSound(null, p, SoundEvents.STONE_BREAK, SoundSource.HOSTILE, 1.0f, 0.5f);
+                level.playSound(null, p, SoundEvents.HUSK_AMBIENT, SoundSource.HOSTILE, 0.6f, 0.6f);
+            }
+            case 8 -> {
+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLUE_ICE.defaultBlockState()), x, y + 0.4, z, 30, 0.4, 0.3, 0.4, 0.1);
+                level.sendParticles(ParticleTypes.SNOWFLAKE, x, y + 0.6, z, 20, 0.4, 0.5, 0.4, 0.05);
+                level.playSound(null, p, SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 0.8f, 0.7f);
+            }
+            case 9 -> {
+                level.sendParticles(ParticleTypes.ENCHANT, x, y + 1.0, z, 50, 0.5, 0.8, 0.5, 0.8);
+                level.playSound(null, p, SoundEvents.EVOKER_CAST_SPELL, SoundSource.HOSTILE, 0.8f, 1.0f);
+            }
             default -> { }
         }
+    }
+
+    // ─── Abris contre les tempêtes (repères « shelters » du plan) ───
+
+    /**
+     * Le joueur est-il à l'abri d'une tempête grâce à un abri de l'arène ? Oui s'il est à moins de 5 blocs d'un repère « shelters » (oasis, kiosque,
+     * tour, surplomb) ET à couvert : dans l'eau, ou avec un toit au-dessus de lui. Appelé par la tempête (StormManager), en plus de sa propre règle.
+     */
+    public static boolean isSheltered(ServerLevel lvl, ServerPlayer p) {
+        ArenaSession s = cur;
+        if (s == null || s.level != lvl) return false;
+        List<BlockPos> sh = s.markers.get("shelters");
+        if (sh == null || sh.isEmpty()) return false;
+        boolean covered = p.isInWaterOrBubble() || !lvl.canSeeSky(p.blockPosition().above());
+        if (!covered) return false;
+        for (BlockPos b : sh) {
+            double dx = p.getX() - (b.getX() + 0.5), dz = p.getZ() - (b.getZ() + 0.5);
+            if (dx * dx + dz * dz <= 25 && Math.abs(p.getY() - b.getY()) <= 6) return true;
+        }
+        return false;
     }
 
     // ─── Grille de la crypte ───
