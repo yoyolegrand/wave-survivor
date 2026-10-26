@@ -2,6 +2,7 @@ package com.wavesurvivor.arena;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.wavesurvivor.WaveSurvivorMod;
 import com.wavesurvivor.registry.ModStructures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
@@ -64,13 +65,27 @@ public class BreachGraftStructure extends Structure {
         Random r = new Random(ctx.seed() ^ (cp.x * 341873128712L) ^ (cp.z * 132897987541L) ^ arena.hashCode());
         if (r.nextDouble() >= chance) return vanilla;
         int cx = cp.getMiddleBlockX(), cz = cp.getMiddleBlockZ();
+        // À partir d'ici le tirage a désigné ce portail : on dit dans le journal pourquoi il est remplacé ou non
         int surface = ctx.chunkGenerator().getFirstOccupiedHeight(cx, cz, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState());
-        if (vanilla.get().position().getY() < surface - 10) return vanilla; // portail souterrain : jamais remplacé
+        int py = vanilla.get().position().getY();
+        if (py < surface - 16) { // portail souterrain : jamais remplacé (les portails « à moitié enterrés » du désert restent éligibles)
+            WaveSurvivorMod.LOGGER.info("[Arènes] Greffe « {} » refusée en {},{} : portail souterrain (y {} pour une surface à {}).", arena, cp.x, cp.z, py, surface);
+            return vanilla;
+        }
         var biome = ctx.biomeSource().getNoiseBiome(QuartPos.fromBlock(cx), QuartPos.fromBlock(surface), QuartPos.fromBlock(cz), ctx.randomState().sampler());
-        if (!biome.is(ELIGIBLE)) return vanilla;
+        if (!biome.is(ELIGIBLE)) {
+            WaveSurvivorMod.LOGGER.info("[Arènes] Greffe « {} » refusée en {},{} : biome non éligible ({}).", arena, cp.x, cp.z, biome.unwrapKey().map(k -> k.location().toString()).orElse("?"));
+            return vanilla;
+        }
         Rotation rot = ArenaSettings.randomRotation() ? Rotation.values()[r.nextInt(4)] : Rotation.NONE;
         Optional<GenerationStub> breach = ArenaStructure.plan(ctx, bp, arena, rot);
-        return breach.isPresent() ? breach : vanilla;
+        if (breach.isEmpty()) {
+            WaveSurvivorMod.LOGGER.info("[Arènes] Greffe « {} » refusée en {},{} : terrain refusé (eau ou pente de plus de {} blocs).", arena, cp.x, cp.z,
+                    bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope());
+            return vanilla;
+        }
+        WaveSurvivorMod.LOGGER.info("[Arènes] « {} » greffée à la place du portail en ruine, chunk {},{} (x {} z {}).", arena, cp.x, cp.z, cx, cz);
+        return breach;
     }
 
     @Override
