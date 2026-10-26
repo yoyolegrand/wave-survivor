@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "wavesurvivor:arena_temple",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 40,
+    "separation": 14,
+    "salt": 1741226801,
+    "exclusion_zone": {
+      "other_set": "minecraft:desert_pyramids",
+      "chunk_count": 4
+    }
+  }
+}
