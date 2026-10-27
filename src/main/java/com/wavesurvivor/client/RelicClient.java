@@ -16,6 +16,9 @@ public final class RelicClient {
         return p == null ? 0 : RelicSets.countNow(p, f);
     }
 
+    /** Maj enfoncée ? (infobulles détaillées) */
+    public static boolean shift() { return net.minecraft.client.gui.screens.Screen.hasShiftDown(); }
+
     /** Le joueur local a-t-il cette relique équipée (Curios ou autel) ? */
     public static boolean equipped(net.minecraft.world.item.Item item) {
         var p = Minecraft.getInstance().player;

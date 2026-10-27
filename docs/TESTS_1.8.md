@@ -217,3 +217,9 @@ Nouveau monde (ou zone inexplorée) ; chaque arène : rotation au hasard, pente 
 - [ ] Nouveau monde, s'y téléporter : l'arène se génère d'un coup sans trou ni coin flottant, talus d'herbe, camps à plat, Monolithe au centre
 - [ ] Clic droit sur le Monolithe de l'arène naturelle : mode Kingdom, 4 Portes aux camps
 - [ ] Val de la Couronne naturel : jamais par-dessus une autre structure (Nécropole, manoir, avant-poste, temples, village) ; vérifier sur plusieurs /locate
+
+## Reliques — infobulles et Forge
+- [ ] Relique niveau II / III : les chiffres de l'effet sont recalculés dans la description (ex. Os Sacré : +25 → +37,5 → +50 %), plus seulement « effets ×1,5 »
+- [ ] Relique légendaire : ligne grise « Maj : détail… » ; avec Maj, les effets réels des deux reliques d'origine au niveau II (chiffres ×1,5)
+- [ ] Forge : une relique de niveau III ne peut plus servir de sacrifice pour monter une I ou une II (message « il faut un doublon »)
+- [ ] Forge : III + I → impossible ; II + I → la II monte, la I est consommée ; I + I → OK

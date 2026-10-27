@@ -10,7 +10,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * RELIQUE générique : objet unique (stack 1), reflet enchanté, résistant au feu, non fabricable.
@@ -32,6 +35,40 @@ public class RelicItem extends Item {
         this.effects = List.of(effects);
     }
 
+    /** Marqueurs de chiffres dans les textes d'effets : {25} = 25 × multiplicateur du niveau ; {1+1} = 1 + 1 × multiplicateur (ex. « ×2 » → ×2 / ×2,5 / ×3). */
+    private static final Pattern MARK = Pattern.compile("[{]([0-9]+(?:[.][0-9]+)?)(?:[+]([0-9]+(?:[.][0-9]+)?))?[}]");
+
+    /** Remplace les marqueurs par les valeurs réelles au multiplicateur {@code m}. */
+    public static String scale(String text, float m) {
+        Matcher mt = MARK.matcher(text);
+        StringBuilder sb = new StringBuilder();
+        while (mt.find()) {
+            double v = mt.group(2) == null ? Double.parseDouble(mt.group(1)) * m : Double.parseDouble(mt.group(1)) + Double.parseDouble(mt.group(2)) * m;
+            v = Math.round(v * 10) / 10.0;
+            String num = v == Math.rint(v) ? String.valueOf((long) v) : String.valueOf(v);
+            if ("fr".equals(WSLang.get())) num = num.replace('.', ',');
+            mt.appendReplacement(sb, Matcher.quoteReplacement(num));
+        }
+        mt.appendTail(sb);
+        return sb.toString();
+    }
+
+    /** Effets traduits, chiffres calculés pour ce niveau (I ×1, II ×1,5, III ×2). */
+    public List<String> effectTexts(int lvl) {
+        float m = RelicEffects.mult(lvl);
+        List<String> out = new ArrayList<>();
+        for (String e : effects) out.add(scale(WSLang.t(e), m));
+        return out;
+    }
+
+    /** Maj enfoncée (côté client seulement). */
+    protected static boolean shiftDown() {
+        return net.minecraftforge.fml.loading.FMLEnvironment.dist.isClient() && com.wavesurvivor.client.RelicClient.shift();
+    }
+
+    /** Lignes en plus après les effets (la légendaire y détaille ses deux reliques d'origine). */
+    protected void appendDetails(ItemStack stack, List<Component> tooltip) {}
+
     @Override
     public boolean isFoil(ItemStack stack) {
         return true;
@@ -50,7 +87,8 @@ public class RelicItem extends Item {
         tooltip.add(Component.literal(WSLang.t(title)).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
         int lvl = RelicEffects.levelOf(stack);
         if (lvl > 1) tooltip.add(Component.literal(WSLang.t("relic.level", lvl == 2 ? "II" : "III", lvl == 2 ? "×1,5" : "×2")).withStyle(ChatFormatting.AQUA));
-        for (String e : effects) tooltip.add(Component.literal("✦ " + WSLang.t(e)).withStyle(ChatFormatting.LIGHT_PURPLE));
+        for (String e : effectTexts(lvl)) tooltip.add(Component.literal("✦ " + e).withStyle(ChatFormatting.LIGHT_PURPLE));
+        appendDetails(stack, tooltip);
         tooltip.add(Component.literal(WSLang.t("relic.active_in", WSLang.t(slot))).withStyle(ChatFormatting.GRAY));
         // 1.5 : seules les reliques équipées agissent
         if (level != null && level.isClientSide && !com.wavesurvivor.client.RelicClient.equipped(this)) {

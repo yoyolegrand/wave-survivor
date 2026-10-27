@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * FORGE DE L'AUTEL DE RENAISSANCE (1.5) — code COMMUN client / serveur (l'écran affiche exactement ce que le serveur fera).
  * Amélioration : la meilleure copie (niveau < III) monte d'un niveau ; une AUTRE copie de la même relique (la plus
- * faible) est consommée ; coût en PR : 15 pour le niveau II, 30 pour le niveau III.
+ * faible, jamais de niveau supérieur à la cible) est consommée ; coût en PR : 15 pour le niveau II, 30 pour le niveau III.
  */
 public final class RelicForge {
 
@@ -28,24 +28,26 @@ public final class RelicForge {
     /** Plan d'amélioration pour cette relique dans l'inventaire principal (36 cases), ou null (pas de doublon / d\u00e9j\u00e0 III). */
     public static Plan planUpgrade(List<ItemStack> inv, Item item) {
         if (item instanceof LegendaryRelicItem) return null; // les légendaires n'ont pas de niveau
-        int target = -1, tLvl = 0;
-        for (int i = 0; i < Math.min(36, inv.size()); i++) {
-            ItemStack st = inv.get(i);
-            if (!st.is(item)) continue;
-            int l = RelicEffects.levelOf(st);
-            if (l < 3 && l > tLvl) { target = i; tLvl = l; }
+        // La copie qui monte : la meilleure (niveau < III) pour laquelle il existe une copie sacrifiable. Le sacrifice ne peut JAMAIS être de niveau
+        // supérieur à la relique améliorée (une III ne sert pas à monter une I) : on consomme la plus faible des autres copies de niveau ≤ à la cible.
+        int bestT = -1, bestTLvl = 0, bestC = -1;
+        for (int t = 0; t < Math.min(36, inv.size()); t++) {
+            ItemStack ts = inv.get(t);
+            if (!ts.is(item)) continue;
+            int tl = RelicEffects.levelOf(ts);
+            if (tl >= 3 || tl <= bestTLvl) continue;
+            int consume = -1, cLvl = 99;
+            for (int i = 0; i < Math.min(36, inv.size()); i++) {
+                if (i == t) continue;
+                ItemStack st = inv.get(i);
+                if (!st.is(item)) continue;
+                int l = RelicEffects.levelOf(st);
+                if (l <= tl && l < cLvl) { consume = i; cLvl = l; }
+            }
+            if (consume >= 0) { bestT = t; bestTLvl = tl; bestC = consume; }
         }
-        if (target < 0) return null;
-        int consume = -1, cLvl = 99;
-        for (int i = 0; i < Math.min(36, inv.size()); i++) {
-            if (i == target) continue;
-            ItemStack st = inv.get(i);
-            if (!st.is(item)) continue;
-            int l = RelicEffects.levelOf(st);
-            if (l < cLvl) { consume = i; cLvl = l; }
-        }
-        if (consume < 0) return null;
-        return new Plan(target, consume, tLvl, upgradeCost(tLvl));
+        if (bestT < 0) return null;
+        return new Plan(bestT, bestC, bestTLvl, upgradeCost(bestTLvl));
     }
 
     /** Reliques présentes dans l'inventaire principal → niveaux de chaque copie (ordre d'apparition). */

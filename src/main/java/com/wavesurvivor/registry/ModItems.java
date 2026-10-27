@@ -190,69 +190,69 @@ public class ModItems {
     // ─── Reliques R2 (combat) ───
     public static final RegistryObject<Item> OS_SACRE = ITEMS.register("os_sacre",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique de la Nécropole", "Charme",
-                    "Béni contre ce qui refuse de mourir.", "+25 % de dégâts contre les morts-vivants"));
+                    "Béni contre ce qui refuse de mourir.", "+{25} % de dégâts contre les morts-vivants"));
     public static final RegistryObject<Item> ECLAT_BRECHE = ITEMS.register("eclat_breche",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique des Terres Brûlées", "Bague",
-                    "Une faille se referme mieux de l'intérieur.", "Dégâts ×2 contre les Brèches",
-                    "Chaque Brèche détruite te soigne de 4 PV"));
+                    "Une faille se referme mieux de l'intérieur.", "Dégâts ×{1+1} contre les Brèches",
+                    "Chaque Brèche détruite te soigne de {4} PV"));
     public static final RegistryObject<Item> MARQUE_CHASSEUR = ITEMS.register("marque_chasseur",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique du Chasseur", "Bracelet",
-                    "Ce que tu touches ne peut plus se cacher.", "Tes coups font briller la cible pendant 5 s"));
+                    "Ce que tu touches ne peut plus se cacher.", "Tes coups font briller la cible pendant {5} s"));
     public static final RegistryObject<Item> COEUR_ASSOIFFE = ITEMS.register("coeur_assoiffe",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique du Bastion", "Collier",
-                    "Chaque victoire te nourrit.", "Chaque monstre tué te soigne de 1 PV"));
+                    "Chaque victoire te nourrit.", "Chaque monstre tué te soigne de {1} PV"));
 
     // ─── Reliques R3 (survie) ───
     public static final RegistryObject<Item> TALISMAN_SOUFFLE = ITEMS.register("talisman_souffle",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique légendaire", "Charme",
                     "Pas encore. Pas cette fois.", "Une fois par vague : un coup fatal te laisse à 1 PV",
-                    "+ 3 s d'invulnérabilité (hors horde : toutes les 5 min)"));
+                    "+ {3} s d'invulnérabilité (hors horde : toutes les 5 min)"));
     public static final RegistryObject<Item> SCEAU_GARDIEN = ITEMS.register("sceau_gardien",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique du Monolithe", "Ceinture",
-                    "Tant que tu veilles, la pierre tient.", "À moins de 8 blocs du Monolithe : il subit −30 % de dégâts"));
+                    "Tant que tu veilles, la pierre tient.", "À moins de 8 blocs du Monolithe : il subit −{30} % de dégâts"));
     public static final RegistryObject<Item> BANNIERE_RALLIEMENT = ITEMS.register("banniere_ralliement",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique de l'équipe", "Dos",
-                    "Ensemble, jusqu'à la dernière vague.", "Joueurs à moins de 8 blocs (toi compris) : +2 armure",
-                    "Régénération I toutes les 10 s"));
+                    "Ensemble, jusqu'à la dernière vague.", "Joueurs à moins de 8 blocs (toi compris) : +{2} armure",
+                    "Régénération I pendant {5} s, toutes les 10 s"));
 
     // ─── Reliques R4 (économie) ───
     public static final RegistryObject<Item> ANNEAU_PROSPECTEUR = ITEMS.register("anneau_prospecteur",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique du Prospecteur", "Bague",
-                    "La roche s'ouvre à qui sait l'écouter.", "Gisements : chaque coup de pioche compte double",
-                    "+50 % de butin à la destruction d'un gisement"));
+                    "La roche s'ouvre à qui sait l'écouter.", "Gisements : chaque coup de pioche compte ×{1+1}",
+                    "+{50} % de butin à la destruction d'un gisement"));
     public static final RegistryObject<Item> CLE_GARDIEN = ITEMS.register("cle_gardien",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique légendaire", "Charme",
-                    "Chaque serrure finit par céder.", "Pendant une horde : 10 % de chance qu'un monstre tué",
+                    "Chaque serrure finit par céder.", "Pendant une horde : {10} % de chance qu'un monstre tué",
                     "lâche une clé de Reliquaire"));
     public static final RegistryObject<Item> LANGUE_ARGENT = ITEMS.register("langue_argent",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique du Marchand", "Collier",
-                    "Chaque prix est une proposition.", "−25 % sur les prix des marchands de la horde"));
+                    "Chaque prix est une proposition.", "−{25} % sur les prix des marchands de la horde"));
 
     // ─── Reliques 1.5 (familles : Rempart, Traque, Abîme, Éléments, Fortune) ───
     public static final RegistryObject<Item> PIERRE_FONDATION = ITEMS.register("pierre_fondation",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique du Rempart", "Ceinture",
-                    "Ce qui est bâti avec soin ne cède pas.", "Kingdom : constructions et défenses +15 % de PV",
-                    "Réparations des défenses −25 %"));
+                    "Ce qui est bâti avec soin ne cède pas.", "Kingdom : constructions et défenses +{15} % de PV",
+                    "Réparations des défenses −{25} %"));
     public static final RegistryObject<Item> CROC_ALPHA = ITEMS.register("croc_alpha",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique de la Traque", "Collier",
-                    "Le chef de meute tombe toujours le premier.", "+30 % de dégâts aux élites, champions, gardiens et boss"));
+                    "Le chef de meute tombe toujours le premier.", "+{30} % de dégâts aux élites, champions, gardiens et boss"));
     public static final RegistryObject<Item> PRISME_CATALYSEUR = ITEMS.register("prisme_catalyseur",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique de l'Abîme", "Tête",
-                    "La lumière révèle ce que l'abîme cache.", "Dégâts ×2 aux Catalyseurs",
+                    "La lumière révèle ce que l'abîme cache.", "Dégâts ×{1+1} aux Catalyseurs",
                     "Une colonne de lumière révèle chaque Catalyseur"));
     public static final RegistryObject<Item> FRAGMENT_PORTE = ITEMS.register("fragment_porte",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique de l'Abîme", "Bracelet",
-                    "Un éclat arraché à sa propre Porte.", "+25 % de dégâts aux Portes"));
+                    "Un éclat arraché à sa propre Porte.", "+{25} % de dégâts aux Portes"));
     public static final RegistryObject<Item> CRISTAL_GIVRE = ITEMS.register("cristal_givre",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique des Éléments", "Bague",
                     "Le froid ne mord pas celui qui le porte.", "Immunité à la Lenteur et au gel"));
     public static final RegistryObject<Item> VOILE_DESERT = ITEMS.register("voile_desert",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique des Éléments", "Tête",
                     "Le sable glisse sur celui qui sait le lire.", "Immunité à la tempête de sable et aux sables mouvants",
-                    "+6 % de vitesse, +14 % de plus sur le sable"));
+                    "+{6} % de vitesse, +{14} % de plus sur le sable"));
     public static final RegistryObject<Item> BOURSE_COLPORTEUR = ITEMS.register("bourse_colporteur",
             () -> new com.wavesurvivor.item.RelicItem(net.minecraft.world.item.Rarity.EPIC, "Relique de la Fortune", "Ceinture",
-                    "Une pièce de plus, toujours.", "+15 % de monnaie lâchée par tes victimes",
+                    "Une pièce de plus, toujours.", "+{15} % de monnaie lâchée par tes victimes",
                     "Marchands : chaque offre épuisée se recharge d'un achat"));
 
     /** Onglet créatif dédié. */
