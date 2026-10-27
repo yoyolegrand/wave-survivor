@@ -51,20 +51,31 @@ public class ArenaStructure extends Structure {
         return plan(ctx, bp, arena, rot);
     }
 
+    /** Demi-largeur d'un terrain complet raccord compris (91 + 12 blocs ≈ 7 chunks) et écart minimal exigé avec toute autre structure de surface. */
+    private static final int HALF_CHUNKS = 7, GAP_CHUNKS = 4;
+    /** Structures sous terre, sous l'eau ou dans d'autres dimensions : sans risque de chevauchement. */
+    private static final java.util.Set<String> IGNORED = java.util.Set.of("mineshafts", "buried_treasures", "ocean_ruins", "shipwrecks", "ancient_cities", "nether_complexes",
+            "nether_fossils", "bastion_remnants", "end_cities", "ocean_monuments", "strongholds", "trail_ruins");
+
     /**
-     * Une autre grande structure (nos arènes, manoir, avant-poste, temples, igloo, cabane, monument) peut-elle démarrer assez près pour chevaucher un terrain complet ?
-     * On regarde le chunk de départ POSSIBLE de chaque structure concernée dans les cases voisines (même calcul que le jeu, à partir de la graine) : par prudence,
-     * on s'écarte même si le terrain refuse finalement cette structure (seul son biome est vérifié). Les villages sont déjà tenus à distance par le structure_set.
+     * Une autre structure de surface peut-elle démarrer à moins de 4 chunks du bord du terrain complet ? On regarde le chunk de départ POSSIBLE de chaque
+     * structure (même calcul que le jeu, à partir de la graine), avec sa demi-taille estimée : par prudence, on s'écarte même si le terrain refuse finalement
+     * cette structure (seul son biome est vérifié). Concerne toutes les structures réparties au hasard : vanilla, nos arènes et celles des autres mods.
      */
     private static boolean nearOtherStructure(GenerationContext ctx, ChunkPos c) {
         var reg = ctx.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE_SET);
         for (var e : reg.entrySet()) {
             net.minecraft.resources.ResourceLocation id = e.getKey().location();
             String ns = id.getNamespace(), path = id.getPath();
-            int range;
-            if (ns.equals("wavesurvivor") && (path.startsWith("arena_") && !path.equals("arena_val") || path.equals("seraph_shrine"))) range = 8;
-            else if (ns.equals("minecraft") && java.util.Set.of("woodland_mansions", "pillager_outposts", "desert_pyramids", "jungle_temples", "igloos", "swamp_huts", "ocean_monuments").contains(path)) range = 7;
-            else continue;
+            if (ns.equals("wavesurvivor") && path.equals("arena_val") || IGNORED.contains(path)) continue;
+            int size = switch (path) { // demi-taille estimée de la structure, en chunks
+                case "villages" -> 5;
+                case "woodland_mansions" -> 5;
+                case "igloos", "swamp_huts", "ruined_portals" -> 2;
+                case "pillager_outposts", "desert_pyramids", "jungle_temples" -> 3;
+                default -> ns.equals("wavesurvivor") && path.startsWith("arena_") ? 4 : 3;
+            };
+            int range = HALF_CHUNKS + GAP_CHUNKS + size;
             if (!(e.getValue().placement() instanceof net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement rs)) continue;
             int sp = rs.spacing();
             for (int cx = Math.floorDiv(c.x - range, sp); cx <= Math.floorDiv(c.x + range, sp); cx++) {
