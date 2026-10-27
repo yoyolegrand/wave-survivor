@@ -68,12 +68,11 @@ public class ArenaStructure extends Structure {
             net.minecraft.resources.ResourceLocation id = e.getKey().location();
             String ns = id.getNamespace(), path = id.getPath();
             if (ns.equals("wavesurvivor") && path.equals("arena_val") || IGNORED.contains(path)) continue;
-            int size = switch (path) { // demi-taille estimée de la structure, en chunks
-                case "villages" -> 5;
-                case "woodland_mansions" -> 5;
-                case "igloos", "swamp_huts", "ruined_portals" -> 2;
-                case "pillager_outposts", "desert_pyramids", "jungle_temples" -> 3;
-                default -> ns.equals("wavesurvivor") && path.startsWith("arena_") ? 4 : 3;
+            int size = switch (path) { // demi-taille estimée de la structure, en chunks (valeurs serrées : sinon plus aucun emplacement n'est libre)
+                case "villages" -> 3;
+                case "woodland_mansions" -> 4;
+                case "igloos", "swamp_huts", "ruined_portals" -> 1;
+                default -> ns.equals("wavesurvivor") && path.startsWith("arena_") ? 4 : 2;
             };
             int range = HALF_CHUNKS + GAP_CHUNKS + size;
             if (!(e.getValue().placement() instanceof net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement rs)) continue;
