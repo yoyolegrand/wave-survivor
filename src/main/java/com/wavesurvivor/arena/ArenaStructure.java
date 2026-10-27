@@ -78,6 +78,14 @@ public class ArenaStructure extends Structure {
      * structure (même calcul que le jeu, à partir de la graine), avec sa demi-taille estimée : par prudence, on s'écarte même si le terrain refuse finalement
      * cette structure (seul son biome est vérifié). Concerne toutes les structures réparties au hasard : vanilla, nos arènes et celles des autres mods.
      */
+    /** Seules les structures posées en surface comptent : celles de l'étape souterraine (grottes, cabanes enterrées, donjons de mods) ne gênent pas une arène. */
+    private static boolean enSurface(Structure st) {
+        var step = st.step();
+        return step == net.minecraft.world.level.levelgen.GenerationStep.Decoration.SURFACE_STRUCTURES
+                || step == net.minecraft.world.level.levelgen.GenerationStep.Decoration.RAW_GENERATION
+                || step == net.minecraft.world.level.levelgen.GenerationStep.Decoration.TOP_LAYER_MODIFICATION;
+    }
+
     private static String nearOtherStructure(GenerationContext ctx, ChunkPos c) {
         var reg = ctx.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE_SET);
         for (var e : reg.entrySet()) {
@@ -99,7 +107,7 @@ public class ArenaStructure extends Structure {
                     if (Math.abs(p.x - c.x) > range || Math.abs(p.z - c.z) > range) continue;
                     // seulement si cette structure peut vraiment démarrer là : son biome doit lui convenir
                     var biome = ctx.biomeSource().getNoiseBiome(QuartPos.fromBlock(p.getMiddleBlockX()), QuartPos.fromBlock(70), QuartPos.fromBlock(p.getMiddleBlockZ()), ctx.randomState().sampler());
-                    for (var sel : e.getValue().structures()) if (sel.structure().value().biomes().contains(biome)) return id.toString() + " (chunk " + p + ")";
+                    for (var sel : e.getValue().structures()) if (enSurface(sel.structure().value()) && sel.structure().value().biomes().contains(biome)) return id.toString() + " (chunk " + p + ")";
                 }
             }
         }
