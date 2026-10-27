@@ -11,6 +11,11 @@
     "minecraft:dark_forest",
     "minecraft:savanna",
     "minecraft:savanna_plateau",
-    "minecraft:windswept_savanna"
+    "minecraft:windswept_savanna",
+    "minecraft:taiga",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:snowy_taiga",
+    "minecraft:cherry_grove"
   ]
 }
