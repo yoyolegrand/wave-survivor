@@ -371,6 +371,7 @@ public final class ArenaBlueprint {
         if (kingdom()) ominousBanners(level, ox, oz, y0, rot, clip);
         // 4. Raccord : anneau autour du cercle, qui rejoint peu à peu le terrain naturel
         int bw = blendWidth();
+        int[][] edgeTop = square ? topMap(rot, w, dep) : null;
         int rr = (int) Math.ceil(radius + bw);
         double ext = square ? bw + 1 : rr - cx;   // débord du raccord autour du plan
         BlockState[] cover = {Blocks.PODZOL.defaultBlockState(), Blocks.PODZOL.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.MOSS_BLOCK.defaultBlockState()};
@@ -380,7 +381,9 @@ public final class ArenaBlueprint {
             int wx = ox + x, wz = oz + z;
             int h = groundY(level, wx, wz, wg);
             double frac = dist / bw;                    // 0 contre l'arène, 1 au bord du raccord
-            int ty = (int) Math.round(y0 + (h - y0) * frac);
+            int from0 = y0;
+            if (square && edgeTop != null) from0 = base + edgeTop[Math.max(0, Math.min(w - 1, x))][Math.max(0, Math.min(dep - 1, z))]; // le talus part du vrai bord du plan
+            int ty = (int) Math.round(from0 + (h - from0) * frac);
             int hi = Math.max(h, ty) + 1 + clearHeight() / 2;
             if (square) hi = Math.max(hi, level.getHeight(Heightmap.Types.WORLD_SURFACE, wx, wz) + 1); // arbres coupés compris
             for (int y = ty + 1; y <= hi; y++) set(level, new BlockPos(wx, y, wz), air);
@@ -393,6 +396,23 @@ public final class ArenaBlueprint {
             fill(level, wx, ty - 1, wz, ty - 48, false);
             set(level, new BlockPos(wx, ty, wz), cover[rnd.nextInt(cover.length)]);
         }
+    }
+
+    /** Hauteur (couche) du dernier bloc solide de chaque colonne du plan, dans le repère tourné. */
+    private int[][] topMap(Rotation rot, int w, int dep) {
+        int[][] t = new int[w][dep];
+        for (int px = 0; px < sx; px++) for (int pz = 0; pz < sz; pz++) {
+            int top = planGroundY;
+            for (int y = layers.length - 1; y >= 0; y--) {
+                if (pz < layers[y].length && px < layers[y][pz].length()) {
+                    BlockState st = palette.get(layers[y][pz].charAt(px));
+                    if (st != null && !st.isAir() && !st.is(Blocks.WATER)) { top = y; break; }
+                }
+            }
+            int[] r = rot(px, pz, rot);
+            if (r[0] >= 0 && r[0] < w && r[1] >= 0 && r[1] < dep) t[r[0]][r[1]] = top;
+        }
+        return t;
     }
 
     /** Largeur du raccord : 12 blocs pour un terrain complet, 2 pour une arène ronde. */
