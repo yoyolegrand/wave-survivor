@@ -107,7 +107,7 @@ public class ArenaStructure extends Structure {
                 continue;
             }
             int top = ctx.chunkGenerator().getFirstOccupiedHeight(wx, wz, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState()) - 1;
-            if (!bp.floating()) {
+            if (!bp.floating() && !bp.square()) { // terrain complet : l'eau ne l'arrête pas (le lac est comblé à la pose)
                 NoiseColumn col = ctx.chunkGenerator().getBaseColumn(wx, wz, ctx.heightAccessor(), ctx.randomState());
                 if (!col.getBlock(top).getFluidState().isEmpty()) return Optional.empty();
             }
@@ -128,10 +128,8 @@ public class ArenaStructure extends Structure {
             if (max > y0 + 6) return Optional.empty();       // et pas contre une falaise
         } else {
             int slope = bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope();
-            if (bp.square()) { // terrain complet : médiane pour le niveau du sol, écart entre les 10 % et 90 % des hauteurs (les extrêmes sont rabotés)
+            if (bp.square()) { // terrain complet : posé de force (ni pente ni eau refusées), niveau du sol = médiane des hauteurs, le relief autour est remodelé
                 java.util.Collections.sort(tops);
-                int lo = tops.get(tops.size() / 10), hi = tops.get(tops.size() - 1 - tops.size() / 10);
-                if (hi - lo > slope) return Optional.empty();
                 y0 = tops.get(tops.size() / 2);
             } else {
                 if (max - min > slope) return Optional.empty();
