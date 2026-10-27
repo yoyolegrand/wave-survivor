@@ -65,6 +65,10 @@ public final class ArenaBlueprint {
     private int floatY = 70;
     /** Arène sur l'eau : sol au niveau de la mer, fondations de sable, pas de raccord ; les apparitions peuvent se faire dans l'eau. */
     private boolean aquatic = false;
+    /** Emprise carrée (terrain de mode Kingdom) : dégagement, fondations et raccord suivent le rectangle du plan au lieu du cercle. */
+    private boolean square = false;
+    /** Mode de jeu du plan ("kingdom" : l'autel lance le mode Kingdom, portes fixes du plan). */
+    private String mode = "";
     /** Identifiant d'un mod sans lequel l'arène n'existe pas (ni génération, ni pose) ; vide = aucune condition. */
     private String requiresMod = "";
     /** Type de chaque repère d'une liste d'objets (« shelters » : oasis, kiosque, tour, surplomb), dans l'ordre de la liste. */
@@ -74,6 +78,12 @@ public final class ArenaBlueprint {
     public boolean floating() { return floating; }
     public int floatY() { return floatY; }
     public boolean aquatic() { return aquatic; }
+    public boolean kingdom() { return "kingdom".equalsIgnoreCase(mode); }
+
+    /** Distance au bord de l'emprise (≤ 0 = dedans) : cercle de rayon {@link #radius()}, ou rectangle du plan si « square ». */
+    private double edge(double x, double z, double cx, double cz, double radius) {
+        return square ? Math.max(Math.abs(x - cx) - cx, Math.abs(z - cz) - cz) : Math.hypot(x - cx, z - cz) - radius;
+    }
     public String requiresMod() { return requiresMod; }
 
     /** Cette arène peut-elle exister ici ? (mod requis installé) */
@@ -179,6 +189,8 @@ public final class ArenaBlueprint {
         if (o.has("floating")) bp.floating = o.get("floating").getAsBoolean();
         if (o.has("floatY")) bp.floatY = o.get("floatY").getAsInt();
         if (o.has("aquatic")) bp.aquatic = o.get("aquatic").getAsBoolean();
+        if (o.has("square")) bp.square = o.get("square").getAsBoolean();
+        if (o.has("mode")) bp.mode = o.get("mode").getAsString();
         if (o.has("requiresMod")) bp.requiresMod = o.get("requiresMod").getAsString();
         bp.markerTypes.putAll(typesByMarker);
         return bp;
@@ -249,7 +261,7 @@ public final class ArenaBlueprint {
         long sum = 0;
         int count = 0;
         for (int x = 0; x < d[0]; x++) for (int z = 0; z < d[1]; z++) {
-            if (Math.hypot(x - cx, z - cz) <= radius) { sum += groundY(level, ox + x, oz + z, false); count++; }
+            if (edge(x, z, cx, cz, radius) <= 0) { sum += groundY(level, ox + x, oz + z, false); count++; }
         }
         int y0 = (int) Math.round(sum / (double) Math.max(1, count));
         if (floating) y0 = center.getY();                       // île flottante : au niveau demandé
@@ -315,7 +327,7 @@ public final class ArenaBlueprint {
         int base = y0 - planGroundY;   // altitude de la couche 0 du plan (le sol de l'arène est à y0)
         // 1. Dégagement du cercle  2. Fondations : sous le plan, on comble jusqu'au terrain solide (île flottante : rien de tout cela)
         if (!floating) for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
-            if (Math.hypot(x - cx, z - cz) > radius || !in(clip, ox + x, oz + z)) continue;
+            if (edge(x, z, cx, cz, radius) > 0 || !in(clip, ox + x, oz + z)) continue;
             for (int y = aquatic ? 1 : 0; y <= clearHeight(); y++) set(level, new BlockPos(ox + x, y0 + y, oz + z), air);
             fill(level, ox + x, base - 1, oz + z, base - 48, aquatic);
         }
@@ -350,13 +362,14 @@ public final class ArenaBlueprint {
         }
         // 4. Raccord : anneau autour du cercle, qui rejoint peu à peu le terrain naturel
         int rr = (int) Math.ceil(radius + BLEND_WIDTH);
+        double ext = square ? BLEND_WIDTH + 1 : rr - cx;   // débord du raccord autour du plan
         BlockState[] cover = {Blocks.PODZOL.defaultBlockState(), Blocks.PODZOL.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.MOSS_BLOCK.defaultBlockState()};
-        if (!floating && !aquatic) for (int x = (int) -(rr - cx); x <= w - 1 + (rr - cx); x++) for (int z = (int) -(rr - cz); z <= dep - 1 + (rr - cz); z++) {
-            double dist = Math.hypot(x - cx, z - cz);
-            if (dist <= radius || dist > radius + BLEND_WIDTH || !in(clip, ox + x, oz + z)) continue;
+        if (!floating && !aquatic) for (int x = (int) -ext; x <= w - 1 + ext; x++) for (int z = (int) -ext; z <= dep - 1 + ext; z++) {
+            double dist = edge(x, z, cx, cz, radius);
+            if (dist <= 0 || dist > BLEND_WIDTH || !in(clip, ox + x, oz + z)) continue;
             int wx = ox + x, wz = oz + z;
             int h = groundY(level, wx, wz, wg);
-            double frac = (dist - radius) / BLEND_WIDTH;                    // 0 contre l'arène, 1 au bord du raccord
+            double frac = dist / BLEND_WIDTH;                    // 0 contre l'arène, 1 au bord du raccord
             int ty = (int) Math.round(y0 + (h - y0) * frac);
             for (int y = ty + 1; y <= Math.max(h, ty) + 1 + clearHeight() / 2; y++) set(level, new BlockPos(wx, y, wz), air);
             fill(level, wx, ty - 1, wz, ty - 48, false);
