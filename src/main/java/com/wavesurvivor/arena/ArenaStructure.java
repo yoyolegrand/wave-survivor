@@ -65,7 +65,8 @@ public class ArenaStructure extends Structure {
         int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE, count = 0;
         long sum = 0;
         java.util.List<Integer> tops = new java.util.ArrayList<>();
-        for (int x = 0; x < d[0]; x += 3) for (int z = 0; z < d[1]; z += 3) {
+        int step = bp.square() ? 12 : 3; // terrain complet : un échantillon tous les 12 blocs suffit (≈ 225 mesures au lieu de 3 600, /locate bien plus rapide)
+        for (int x = 0; x < d[0]; x += step) for (int z = 0; z < d[1]; z += step) {
             if (!bp.square() && Math.hypot(x - mx, z - mz) > radius) continue;
             int wx = ox + x, wz = oz + z;
             if (bp.aquatic()) { // fond de l'océan ou de la plage
@@ -97,9 +98,9 @@ public class ArenaStructure extends Structure {
             if (max > y0 + 6) return Optional.empty();       // et pas contre une falaise
         } else {
             int slope = bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope();
-            if (bp.square()) { // terrain complet : médiane pour le niveau du sol, écart entre les 5 % et 95 % des hauteurs (les extrêmes sont rabotés)
+            if (bp.square()) { // terrain complet : médiane pour le niveau du sol, écart entre les 10 % et 90 % des hauteurs (les extrêmes sont rabotés)
                 java.util.Collections.sort(tops);
-                int lo = tops.get(tops.size() / 20), hi = tops.get(tops.size() - 1 - tops.size() / 20);
+                int lo = tops.get(tops.size() / 10), hi = tops.get(tops.size() - 1 - tops.size() / 10);
                 if (hi - lo > slope) return Optional.empty();
                 y0 = tops.get(tops.size() / 2);
             } else {
