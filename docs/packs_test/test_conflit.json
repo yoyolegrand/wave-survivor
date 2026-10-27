@@ -1,0 +1,49 @@
+{
+  "format": 1,
+  "categories": [
+    {
+      "id": "TEST_VITESSE_PLUS",
+      "name": "Souffle du vent (test)",
+      "icon": "💨",
+      "description": "Test : vitesse de déplacement",
+      "family": "mobility",
+      "tiers": {
+        "COMMON": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": 0.08,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0
+        },
+        "RARE": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": 0.16,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0
+        },
+        "EPIC": {
+          "enabled": true,
+          "modifiers": [
+            {
+              "attribute": "minecraft:generic.movement_speed",
+              "amount": 0.24,
+              "operation": "multiply_base"
+            }
+          ],
+          "heal": 0
+        }
+      }
+    }
+  ],
+  "patches": {},
+  "deleted": []
+}
