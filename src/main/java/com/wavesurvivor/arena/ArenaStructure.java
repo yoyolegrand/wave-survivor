@@ -46,8 +46,35 @@ public class ArenaStructure extends Structure {
         int my0 = ctx.chunkGenerator().getFirstOccupiedHeight(mx0, mz0, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState());
         var biome = ctx.biomeSource().getNoiseBiome(QuartPos.fromBlock(mx0), QuartPos.fromBlock(my0), QuartPos.fromBlock(mz0), ctx.randomState().sampler());
         if (!ctx.validBiome().test(biome)) return Optional.empty();
+        if (bp.square() && nearOtherStructure(ctx, c0)) return Optional.empty(); // grand terrain : jamais par-dessus une autre structure
         Rotation rot = ArenaSettings.randomRotation() ? Rotation.getRandom(ctx.random()) : Rotation.NONE;
         return plan(ctx, bp, arena, rot);
+    }
+
+    /**
+     * Une autre grande structure (nos arènes, manoir, avant-poste, temples, igloo, cabane, monument) peut-elle démarrer assez près pour chevaucher un terrain complet ?
+     * On regarde le chunk de départ POSSIBLE de chaque structure concernée dans les cases voisines (même calcul que le jeu, à partir de la graine) : par prudence,
+     * on s'écarte même si cette structure ne se génère finalement pas (biome refusé). Les villages sont déjà tenus à distance par le structure_set.
+     */
+    private static boolean nearOtherStructure(GenerationContext ctx, ChunkPos c) {
+        var reg = ctx.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE_SET);
+        for (var e : reg.entrySet()) {
+            net.minecraft.resources.ResourceLocation id = e.getKey().location();
+            String ns = id.getNamespace(), path = id.getPath();
+            int range;
+            if (ns.equals("wavesurvivor") && (path.startsWith("arena_") && !path.equals("arena_val") || path.equals("seraph_shrine"))) range = 11;
+            else if (ns.equals("minecraft") && java.util.Set.of("woodland_mansions", "pillager_outposts", "desert_pyramids", "jungle_temples", "igloos", "swamp_huts", "ocean_monuments").contains(path)) range = 9;
+            else continue;
+            if (!(e.getValue().placement() instanceof net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement rs)) continue;
+            int sp = rs.spacing();
+            for (int cx = Math.floorDiv(c.x - range, sp); cx <= Math.floorDiv(c.x + range, sp); cx++) {
+                for (int cz = Math.floorDiv(c.z - range, sp); cz <= Math.floorDiv(c.z + range, sp); cz++) {
+                    ChunkPos p = rs.getPotentialStructureChunk(ctx.seed(), cx * sp, cz * sp);
+                    if (Math.abs(p.x - c.x) <= range && Math.abs(p.z - c.z) <= range) return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

@@ -216,3 +216,4 @@ Nouveau monde (ou zone inexplorée) ; chaque arène : rotation au hasard, pente 
 - [ ] Génération naturelle du Val de la Couronne : `/locate structure wavesurvivor:arena_val` (très rare : espacement 56 chunks, un peu moins rare qu un manoir à 80 ; plaines, prairies, savanes ; à 14 chunks d'un village au moins)
 - [ ] Nouveau monde, s'y téléporter : l'arène se génère d'un coup sans trou ni coin flottant, talus d'herbe, camps à plat, Monolithe au centre
 - [ ] Clic droit sur le Monolithe de l'arène naturelle : mode Kingdom, 4 Portes aux camps
+- [ ] Val de la Couronne naturel : jamais par-dessus une autre structure (Nécropole, manoir, avant-poste, temples, village) ; vérifier sur plusieurs /locate
