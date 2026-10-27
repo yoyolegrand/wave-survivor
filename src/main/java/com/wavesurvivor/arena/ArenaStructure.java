@@ -64,8 +64,9 @@ public class ArenaStructure extends Structure {
         // Relief sous le cercle : pas d'eau, pas de pente trop forte (île flottante : on se place au-dessus du relief ; arène sur l'eau : niveau de la mer)
         int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE, count = 0;
         long sum = 0;
+        java.util.List<Integer> tops = new java.util.ArrayList<>();
         for (int x = 0; x < d[0]; x += 3) for (int z = 0; z < d[1]; z += 3) {
-            if (Math.hypot(x - mx, z - mz) > radius) continue;
+            if (!bp.square() && Math.hypot(x - mx, z - mz) > radius) continue;
             int wx = ox + x, wz = oz + z;
             if (bp.aquatic()) { // fond de l'océan ou de la plage
                 int floor = ctx.chunkGenerator().getFirstOccupiedHeight(wx, wz, Heightmap.Types.OCEAN_FLOOR_WG, ctx.heightAccessor(), ctx.randomState()) - 1;
@@ -83,6 +84,7 @@ public class ArenaStructure extends Structure {
             max = Math.max(max, top);
             sum += top;
             count++;
+            tops.add(top);
         }
         if (count == 0) return Optional.empty();
         int y0;
@@ -94,11 +96,19 @@ public class ArenaStructure extends Structure {
             if (y0 - min > 8) return Optional.empty();       // trop profond : le Récif ne se pose que sur des fonds peu profonds
             if (max > y0 + 6) return Optional.empty();       // et pas contre une falaise
         } else {
-            if (max - min > (bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope())) return Optional.empty();
-            y0 = (int) Math.round(sum / (double) count);
+            int slope = bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope();
+            if (bp.square()) { // terrain complet : médiane pour le niveau du sol, écart entre les 5 % et 95 % des hauteurs (les extrêmes sont rabotés)
+                java.util.Collections.sort(tops);
+                int lo = tops.get(tops.size() / 20), hi = tops.get(tops.size() - 1 - tops.size() / 20);
+                if (hi - lo > slope) return Optional.empty();
+                y0 = tops.get(tops.size() / 2);
+            } else {
+                if (max - min > slope) return Optional.empty();
+                y0 = (int) Math.round(sum / (double) count);
+            }
         }
         BlockPos center = new BlockPos(cx, y0, cz);
-        return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1], bp.clearHeight(), bp.floating() ? bp.planGroundY() + 3 : bp.planGroundY() + 48))));
+        return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1], bp.clearHeight(), bp.floating() ? bp.planGroundY() + 3 : bp.planGroundY() + 48, bp.blendWidth()))));
     }
 
     @Override

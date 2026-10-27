@@ -1,0 +1,8 @@
+{
+  "type": "wavesurvivor:arena",
+  "arena": "val_de_la_couronne",
+  "biomes": "#wavesurvivor:has_structure/arena_val",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}

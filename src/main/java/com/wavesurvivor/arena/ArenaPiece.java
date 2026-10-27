@@ -22,9 +22,9 @@ public class ArenaPiece extends StructurePiece {
     private final String arena;
     private final int rot, ox, oz, y0, width, depth;
 
-    public ArenaPiece(String arena, Rotation rotation, int ox, int oz, int y0, int width, int depth, int clear, int below) {
-        super(ModStructures.ARENA_PIECE.get(), 0, new BoundingBox(ox - ArenaBlueprint.BLEND_WIDTH - 2, y0 - below, oz - ArenaBlueprint.BLEND_WIDTH - 2,
-                ox + width + ArenaBlueprint.BLEND_WIDTH + 1, y0 + clear + 10, oz + depth + ArenaBlueprint.BLEND_WIDTH + 1));
+    public ArenaPiece(String arena, Rotation rotation, int ox, int oz, int y0, int width, int depth, int clear, int below, int blend) {
+        super(ModStructures.ARENA_PIECE.get(), 0, new BoundingBox(ox - blend - 2, y0 - below, oz - blend - 2,
+                ox + width + blend + 1, y0 + clear + 10, oz + depth + blend + 1));
         this.arena = arena;
         this.rot = rotation.ordinal();
         this.ox = ox;

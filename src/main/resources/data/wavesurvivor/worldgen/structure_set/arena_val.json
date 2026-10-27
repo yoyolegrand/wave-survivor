@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "wavesurvivor:arena_val",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 120,
+    "separation": 60,
+    "salt": 1741226509,
+    "exclusion_zone": {
+      "other_set": "minecraft:villages",
+      "chunk_count": 14
+    }
+  }
+}

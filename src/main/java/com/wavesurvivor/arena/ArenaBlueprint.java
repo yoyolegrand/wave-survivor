@@ -78,6 +78,7 @@ public final class ArenaBlueprint {
     public boolean floating() { return floating; }
     public int floatY() { return floatY; }
     public boolean aquatic() { return aquatic; }
+    public boolean square() { return square; }
     public boolean kingdom() { return "kingdom".equalsIgnoreCase(mode); }
 
     /** Distance au bord de l'emprise (≤ 0 = dedans) : cercle de rayon {@link #radius()}, ou rectangle du plan si « square ». */
@@ -333,7 +334,7 @@ public final class ArenaBlueprint {
 
         int base = y0 - planGroundY;   // altitude de la couche 0 du plan (le sol de l'arène est à y0)
         // 1. Dégagement du cercle  2. Fondations : sous le plan, on comble jusqu'au terrain solide (île flottante : rien de tout cela)
-        if (square) clearSquare(level, ox, oz, y0, rot, clip, base);
+        if (square) clearSquare(level, ox, oz, y0, rot, clip, base, wg);
         else if (!floating) for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
             if (edge(x, z, cx, cz, radius) > 0 || !in(clip, ox + x, oz + z)) continue;
             for (int y = aquatic ? 1 : 0; y <= clearHeight(); y++) set(level, new BlockPos(ox + x, y0 + y, oz + z), air);
@@ -385,7 +386,7 @@ public final class ArenaBlueprint {
             if (square && edgeTop != null) from0 = base + edgeTop[Math.max(0, Math.min(w - 1, x))][Math.max(0, Math.min(dep - 1, z))]; // le talus part du vrai bord du plan
             int ty = (int) Math.round(from0 + (h - from0) * frac);
             int hi = Math.max(h, ty) + 1 + clearHeight() / 2;
-            if (square) hi = Math.max(hi, level.getHeight(Heightmap.Types.WORLD_SURFACE, wx, wz) + 1); // arbres coupés compris
+            if (square) hi = Math.max(hi, level.getHeight(wg ? Heightmap.Types.WORLD_SURFACE_WG : Heightmap.Types.WORLD_SURFACE, wx, wz) + 1); // arbres coupés compris
             for (int y = ty + 1; y <= hi; y++) set(level, new BlockPos(wx, y, wz), air);
             if (square) { // talus : herbe sur terre, jamais de pierre à nu
                 for (int y = ty - 1; y >= ty - 3; y--) set(level, new BlockPos(wx, y, wz), Blocks.DIRT.defaultBlockState());
@@ -402,6 +403,7 @@ public final class ArenaBlueprint {
     private int[][] topMap(Rotation rot, int w, int dep) {
         int[][] t = new int[w][dep];
         for (int px = 0; px < sx; px++) for (int pz = 0; pz < sz; pz++) {
+            if (px != 0 && pz != 0 && px != sx - 1 && pz != sz - 1) continue; // seules les colonnes du bord servent au talus
             int top = planGroundY;
             for (int y = layers.length - 1; y >= 0; y--) {
                 if (pz < layers[y].length && px < layers[y][pz].length()) {
@@ -416,13 +418,13 @@ public final class ArenaBlueprint {
     }
 
     /** Largeur du raccord : 12 blocs pour un terrain complet, 2 pour une arène ronde. */
-    private int blendWidth() { return square ? 12 : BLEND_WIDTH; }
+    public int blendWidth() { return square ? 12 : BLEND_WIDTH; }
 
     /**
      * Terrain complet : vide TOUTE l'emprise (y compris là où le plan est de l'air) depuis le bas de chaque colonne du plan jusqu'au sommet du relief naturel
      * (arbres compris), puis comble sous le plan jusqu'au sol solide. Le plan se pose ensuite par-dessus.
      */
-    private void clearSquare(WorldGenLevel level, int ox, int oz, int y0, Rotation rot, BoundingBox clip, int base) {
+    private void clearSquare(WorldGenLevel level, int ox, int oz, int y0, Rotation rot, BoundingBox clip, int base, boolean wg) {
         BlockState air = Blocks.AIR.defaultBlockState();
         for (int px = 0; px < sx; px++) for (int pz = 0; pz < sz; pz++) {
             int[] r = rot(px, pz, rot);
@@ -435,7 +437,7 @@ public final class ArenaBlueprint {
                     if (st != null && !st.isAir()) { lo = y; break; }
                 }
             }
-            int top = Math.max(base + layers.length, level.getHeight(Heightmap.Types.WORLD_SURFACE, wx, wz) + 1);
+            int top = Math.max(base + layers.length, level.getHeight(wg ? Heightmap.Types.WORLD_SURFACE_WG : Heightmap.Types.WORLD_SURFACE, wx, wz) + 1);
             for (int y = base + lo; y <= top; y++) set(level, new BlockPos(wx, y, wz), air);
             fill(level, wx, base + lo - 1, wz, base - 48, false);
         }
