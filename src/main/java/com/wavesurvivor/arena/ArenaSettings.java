@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * RÉGLAGES DES ARÈNES (config/wavesurvivor/arenas.json, facultatif ; rechargé par /ws reload) :
  * <pre>
- * { "generation": { "enabled": true, "maxSlope": 4, "randomRotation": true, "disabled": ["necropole_rois_dechus"] } }
+ * { "generation": { "enabled": true, "maxSlope": 4, "randomRotation": true, "avoidNeighbors": true, "disabled": ["necropole_rois_dechus"] } }
  * </pre>
  * enabled : génération naturelle des arènes ; maxSlope : écart de hauteur maximal toléré sur le cercle ; randomRotation : orientation au hasard ;
  * disabled : arènes à ne pas générer ; graft : part des portails en ruine remplacés par chaque arène greffée, ex. {"breche_infernale": 0.25}.
@@ -61,6 +61,9 @@ public final class ArenaSettings {
     public static int maxSlope() { return Math.max(0, HordeJson.num(g(), "maxSlope", 4)); }
 
     public static boolean randomRotation() { return HordeJson.bool(g(), "randomRotation", true); }
+
+    /** Les grands terrains (Val de la Couronne) restent à 4 chunks de toute autre structure ; false = pas de vérification (test de /locate). */
+    public static boolean avoidNeighbors() { return HordeJson.bool(g(), "avoidNeighbors", true); }
 
     private static JsonObject aff() {
         if (gen == null) load();

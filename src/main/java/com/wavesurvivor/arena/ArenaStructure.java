@@ -2,6 +2,7 @@ package com.wavesurvivor.arena;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.wavesurvivor.WaveSurvivorMod;
 import com.wavesurvivor.registry.ModStructures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
@@ -45,11 +46,26 @@ public class ArenaStructure extends Structure {
         int mx0 = c0.getMiddleBlockX(), mz0 = c0.getMiddleBlockZ();
         int my0 = ctx.chunkGenerator().getFirstOccupiedHeight(mx0, mz0, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState());
         var biome = ctx.biomeSource().getNoiseBiome(QuartPos.fromBlock(mx0), QuartPos.fromBlock(my0), QuartPos.fromBlock(mz0), ctx.randomState().sampler());
-        if (!ctx.validBiome().test(biome)) return Optional.empty();
-        if (bp.square() && nearOtherStructure(ctx, c0)) return Optional.empty(); // grand terrain : jamais par-dessus une autre structure
+        if (!ctx.validBiome().test(biome)) { REFUS_BIOME.incrementAndGet(); return Optional.empty(); }
+        if (bp.square() && ArenaSettings.avoidNeighbors()) { // grand terrain : jamais par-dessus une autre structure
+            String voisine = nearOtherStructure(ctx, c0);
+            if (voisine != null) {
+                REFUS_VOISINE.incrementAndGet();
+                WaveSurvivorMod.LOGGER.info("[Arènes] {} refusée en chunk {} : trop près de {} (bilan : biome refusé {}, voisine refusée {}, posée {})", arena, c0, voisine, REFUS_BIOME.get(), REFUS_VOISINE.get(), POSEES.get());
+                return Optional.empty();
+            }
+        }
         Rotation rot = ArenaSettings.randomRotation() ? Rotation.getRandom(ctx.random()) : Rotation.NONE;
-        return plan(ctx, bp, arena, rot);
+        Optional<GenerationStub> r = plan(ctx, bp, arena, rot);
+        if (r.isPresent()) {
+            POSEES.incrementAndGet();
+            WaveSurvivorMod.LOGGER.info("[Arènes] {} posée en chunk {} (bilan : biome refusé {}, voisine refusée {}, posée {})", arena, c0, REFUS_BIOME.get(), REFUS_VOISINE.get(), POSEES.get());
+        } else WaveSurvivorMod.LOGGER.info("[Arènes] {} refusée en chunk {} par le relief", arena, c0);
+        return r;
     }
+
+    /** Bilan des candidats (pour comprendre pourquoi /locate ne trouve rien) : refus de biome, refus pour structure voisine, arènes posées. */
+    private static final java.util.concurrent.atomic.AtomicInteger REFUS_BIOME = new java.util.concurrent.atomic.AtomicInteger(), REFUS_VOISINE = new java.util.concurrent.atomic.AtomicInteger(), POSEES = new java.util.concurrent.atomic.AtomicInteger();
 
     /** Demi-largeur d'un terrain complet raccord compris (91 + 12 blocs ≈ 7 chunks) et écart minimal exigé avec toute autre structure de surface. */
     private static final int HALF_CHUNKS = 7, GAP_CHUNKS = 4;
@@ -62,7 +78,7 @@ public class ArenaStructure extends Structure {
      * structure (même calcul que le jeu, à partir de la graine), avec sa demi-taille estimée : par prudence, on s'écarte même si le terrain refuse finalement
      * cette structure (seul son biome est vérifié). Concerne toutes les structures réparties au hasard : vanilla, nos arènes et celles des autres mods.
      */
-    private static boolean nearOtherStructure(GenerationContext ctx, ChunkPos c) {
+    private static String nearOtherStructure(GenerationContext ctx, ChunkPos c) {
         var reg = ctx.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE_SET);
         for (var e : reg.entrySet()) {
             net.minecraft.resources.ResourceLocation id = e.getKey().location();
@@ -83,11 +99,11 @@ public class ArenaStructure extends Structure {
                     if (Math.abs(p.x - c.x) > range || Math.abs(p.z - c.z) > range) continue;
                     // seulement si cette structure peut vraiment démarrer là : son biome doit lui convenir
                     var biome = ctx.biomeSource().getNoiseBiome(QuartPos.fromBlock(p.getMiddleBlockX()), QuartPos.fromBlock(70), QuartPos.fromBlock(p.getMiddleBlockZ()), ctx.randomState().sampler());
-                    for (var sel : e.getValue().structures()) if (sel.structure().value().biomes().contains(biome)) return true;
+                    for (var sel : e.getValue().structures()) if (sel.structure().value().biomes().contains(biome)) return id.toString() + " (chunk " + p + ")";
                 }
             }
         }
-        return false;
+        return null;
     }
 
     /**
