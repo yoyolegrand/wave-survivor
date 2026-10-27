@@ -264,6 +264,13 @@ public final class ArenaBlueprint {
             if (edge(x, z, cx, cz, radius) <= 0) { sum += groundY(level, ox + x, oz + z, false); count++; }
         }
         int y0 = (int) Math.round(sum / (double) Math.max(1, count));
+        if (square) { // terrain complet : le sol du plan se cale sur la médiane des hauteurs naturelles
+            int[] hs = new int[d[0] * d[1]];
+            int n = 0;
+            for (int x = 0; x < d[0]; x++) for (int z = 0; z < d[1]; z++) hs[n++] = groundY(level, ox + x, oz + z, false);
+            java.util.Arrays.sort(hs);
+            y0 = hs[hs.length / 2];
+        }
         if (floating) y0 = center.getY();                       // île flottante : au niveau demandé
         else if (aquatic) y0 = level.getSeaLevel() - 1;         // arène sur l'eau : sol au niveau de la mer
         build(level, ox, oz, y0, rot, null, false);
@@ -326,7 +333,8 @@ public final class ArenaBlueprint {
 
         int base = y0 - planGroundY;   // altitude de la couche 0 du plan (le sol de l'arène est à y0)
         // 1. Dégagement du cercle  2. Fondations : sous le plan, on comble jusqu'au terrain solide (île flottante : rien de tout cela)
-        if (!floating) for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
+        if (square) clearSquare(level, ox, oz, y0, rot, clip, base);
+        else if (!floating) for (int x = 0; x < w; x++) for (int z = 0; z < dep; z++) {
             if (edge(x, z, cx, cz, radius) > 0 || !in(clip, ox + x, oz + z)) continue;
             for (int y = aquatic ? 1 : 0; y <= clearHeight(); y++) set(level, new BlockPos(ox + x, y0 + y, oz + z), air);
             fill(level, ox + x, base - 1, oz + z, base - 48, aquatic);
@@ -360,20 +368,75 @@ public final class ArenaBlueprint {
                 net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity.setLootTable(level, rnd, cp, new net.minecraft.resources.ResourceLocation(e.getValue()));
             }
         }
+        if (kingdom()) ominousBanners(level, ox, oz, y0, rot, clip);
         // 4. Raccord : anneau autour du cercle, qui rejoint peu à peu le terrain naturel
-        int rr = (int) Math.ceil(radius + BLEND_WIDTH);
-        double ext = square ? BLEND_WIDTH + 1 : rr - cx;   // débord du raccord autour du plan
+        int bw = blendWidth();
+        int rr = (int) Math.ceil(radius + bw);
+        double ext = square ? bw + 1 : rr - cx;   // débord du raccord autour du plan
         BlockState[] cover = {Blocks.PODZOL.defaultBlockState(), Blocks.PODZOL.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.MOSS_BLOCK.defaultBlockState()};
         if (!floating && !aquatic) for (int x = (int) -ext; x <= w - 1 + ext; x++) for (int z = (int) -ext; z <= dep - 1 + ext; z++) {
             double dist = edge(x, z, cx, cz, radius);
-            if (dist <= 0 || dist > BLEND_WIDTH || !in(clip, ox + x, oz + z)) continue;
+            if (dist <= 0 || dist > bw || !in(clip, ox + x, oz + z)) continue;
             int wx = ox + x, wz = oz + z;
             int h = groundY(level, wx, wz, wg);
-            double frac = dist / BLEND_WIDTH;                    // 0 contre l'arène, 1 au bord du raccord
+            double frac = dist / bw;                    // 0 contre l'arène, 1 au bord du raccord
             int ty = (int) Math.round(y0 + (h - y0) * frac);
-            for (int y = ty + 1; y <= Math.max(h, ty) + 1 + clearHeight() / 2; y++) set(level, new BlockPos(wx, y, wz), air);
+            int hi = Math.max(h, ty) + 1 + clearHeight() / 2;
+            if (square) hi = Math.max(hi, level.getHeight(Heightmap.Types.WORLD_SURFACE, wx, wz) + 1); // arbres coupés compris
+            for (int y = ty + 1; y <= hi; y++) set(level, new BlockPos(wx, y, wz), air);
+            if (square) { // talus : herbe sur terre, jamais de pierre à nu
+                for (int y = ty - 1; y >= ty - 3; y--) set(level, new BlockPos(wx, y, wz), Blocks.DIRT.defaultBlockState());
+                fill(level, wx, ty - 4, wz, ty - 48, false);
+                set(level, new BlockPos(wx, ty, wz), Blocks.GRASS_BLOCK.defaultBlockState());
+                continue;
+            }
             fill(level, wx, ty - 1, wz, ty - 48, false);
             set(level, new BlockPos(wx, ty, wz), cover[rnd.nextInt(cover.length)]);
+        }
+    }
+
+    /** Largeur du raccord : 12 blocs pour un terrain complet, 2 pour une arène ronde. */
+    private int blendWidth() { return square ? 12 : BLEND_WIDTH; }
+
+    /**
+     * Terrain complet : vide TOUTE l'emprise (y compris là où le plan est de l'air) depuis le bas de chaque colonne du plan jusqu'au sommet du relief naturel
+     * (arbres compris), puis comble sous le plan jusqu'au sol solide. Le plan se pose ensuite par-dessus.
+     */
+    private void clearSquare(WorldGenLevel level, int ox, int oz, int y0, Rotation rot, BoundingBox clip, int base) {
+        BlockState air = Blocks.AIR.defaultBlockState();
+        for (int px = 0; px < sx; px++) for (int pz = 0; pz < sz; pz++) {
+            int[] r = rot(px, pz, rot);
+            int wx = ox + r[0], wz = oz + r[1];
+            if (!in(clip, wx, wz)) continue;
+            int lo = planGroundY;
+            for (int y = 0; y < layers.length; y++) {
+                if (pz < layers[y].length && px < layers[y][pz].length()) {
+                    BlockState st = palette.get(layers[y][pz].charAt(px));
+                    if (st != null && !st.isAir()) { lo = y; break; }
+                }
+            }
+            int top = Math.max(base + layers.length, level.getHeight(Heightmap.Types.WORLD_SURFACE, wx, wz) + 1);
+            for (int y = base + lo; y <= top; y++) set(level, new BlockPos(wx, y, wz), air);
+            fill(level, wx, base + lo - 1, wz, base - 48, false);
+        }
+    }
+
+    /** Bannières blanches du plan = bannières de pillard (motif de la bannière sinistre), tournées vers l'extérieur du camp le plus proche. */
+    private void ominousBanners(WorldGenLevel level, int ox, int oz, int y0, Rotation rot, BoundingBox clip) {
+        List<BlockPos> gates = worldMarkers(ox, oz, y0, rot).getOrDefault("fixed_gates", List.of());
+        net.minecraft.world.item.ItemStack ominous = net.minecraft.world.entity.raid.Raid.getLeaderBannerInstance();
+        for (BlockPos p : cellsOfBlock(Blocks.WHITE_BANNER, ox, oz, y0, rot)) {
+            if (!in(clip, p.getX(), p.getZ())) continue;
+            BlockState st = level.getBlockState(p);
+            if (!st.is(Blocks.WHITE_BANNER)) continue;
+            BlockPos near = null;
+            for (BlockPos g : gates) if (near == null || g.distSqr(new BlockPos(p.getX(), g.getY(), p.getZ())) < near.distSqr(new BlockPos(p.getX(), near.getY(), p.getZ()))) near = g;
+            if (near != null) {
+                double yaw = Math.toDegrees(Math.atan2(-(p.getX() - near.getX()), p.getZ() - near.getZ())); // face vers l'extérieur du camp
+                st = st.setValue(net.minecraft.world.level.block.BannerBlock.ROTATION, Math.floorMod((int) Math.round(yaw * 16 / 360.0), 16));
+                level.setBlock(p, st, 2);
+            }
+            if (level.getBlockEntity(p) instanceof net.minecraft.world.level.block.entity.BannerBlockEntity be) be.fromItem(ominous);
         }
     }
 

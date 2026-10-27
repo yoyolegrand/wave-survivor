@@ -32,10 +32,20 @@ Si ces valeurs changent dans le code, adapter le plan (ou les repères) en cons�
 Chaque porte a son caractère : ouest = le pont, nord = le long du lac, est = à travers la forêt, sud = par les champs.
 
 ## 3. Lire le plan
+- **Version 2** (retour de jeu de Yoann) : camps reconstruits bloc par bloc (palissade à pointes, tour de guet avec plancher, garde-corps, échelle et toit, tentes à deux pans fermées à l'arrière, vraies bannières sur mâts, feu de camp et bancs, cage couverte, enclos avec portillon, ravitaillement, mannequins) ; sol de chaque camp **aplani** avec un raccord en pente douce (rayon 20 → 26) ; **fondations de 10 blocs** sous tout le terrain. Taille : 181 × 28 × 181, ~900 Ko.
 - Origine au **coin nord-ouest, au bas** de la structure ; x → est, z → sud, y → haut ; `layers[y][z]` = ligne de x = 0..180 (JSON compact, sans retours à la ligne).
-- `ground_y_at_monolith` = 9 : le sol de la place du Monolithe. Le terrain varie autour (relief, rivière, colline).
-- Les **bannières** sont des colonnes de laine blanche : à la pose, **remplacer le bloc du sommet** de chaque mât (repérable : laine blanche posée sur du chêne noir) par une **bannière de pillard** (bannière sinistre) tournée vers le Monolithe.
+- `ground_y_at_monolith` = 16 : le sol de la place du Monolithe dans le plan. Le terrain varie autour (relief, rivière, colline, camps aplanis).
+- Les **bannières** (`minecraft:white_banner`) sont des **bannières de pillard** : à la pose, leur appliquer le motif de la bannière sinistre (NBT du bloc) et les tourner vers l'extérieur du camp.
 - Le **blé** est déjà posé (`wheat[age=7]` sur `farmland`).
+
+### ⚠ Pose sur le terrain (problème vu en jeu : grandes plaques de pierre à nu, camps à moitié enterrés)
+L'arène est un **terrain complet** : elle doit **remplacer** le terrain naturel sur toute sa surface, pas se superposer à lui. À la pose :
+1. **Hauteur de référence** : placer la structure pour que `ground_y_at_monolith` tombe au niveau moyen du terrain naturel de la zone (médiane des hauteurs).
+2. **Vider** : sur toute l'emprise (181 × 181), retirer **tous** les blocs naturels au-dessus du plan (jusqu'à la hauteur maximale du terrain naturel + arbres), **y compris** là où le plan contient de l'air.
+3. **Poser le plan entier**, y compris ses 10 couches de fondations (elles recouvrent la pierre naturelle : aucune pierre ne doit rester à nu en surface).
+4. **Sous le plan** : si le sol naturel est plus bas que les fondations, combler en terre / pierre jusqu'au sol solide.
+5. **Raccord extérieur** : sur une bande de 12 blocs autour de l'emprise, **interpoler** la hauteur entre le bord du plan et le terrain naturel (talus en herbe et terre, jamais en pierre nue), et retirer les arbres coupés.
+6. Vérifier avec une capture vue du ciel : aucune falaise ni plaque grise au bord, camps à plat.
 
 ### Repères (`markers`)
 - `monolith` : position du Monolithe (sur la place).
