@@ -204,3 +204,12 @@ Nouveau monde (ou zone inexplorée) ; chaque arène : rotation au hasard, pente 
 - [ ] Multijoueur / serveur dédié : un client qui se connecte voit le même catalogue (écran de choix et liste)
 - [ ] Couche du joueur (test manuel) : créer `config/wavesurvivor/custom_blessings.json` avec
       `{"patches":{"LONGEVITE":{"tiers":{"EPIC":{"enabled":false}}}}}` puis `/ws reload` : la Longévité Épique n'est plus proposée, la Légendaire oui
+
+## Arène Kingdom — Le Val de la Couronne
+- [ ] `/ws arena place val_de_la_couronne` (sur terrain plat, rotation 0) : 181 × 181 posés, aucun bout flottant dans les coins, raccord autour
+- [ ] Le Monolithe est au centre (place de 7 blocs), verrouillé et lié à « Le Siège des Pillards »
+- [ ] Clic droit sur le Monolithe : le mode Kingdom démarre (pas de grille d'arène), 4 Portes construites au centre des 4 camps, tournées vers le Monolithe
+- [ ] Config de la horde des pillards inchangée (gatePlacement toujours « auto » dans l'éditeur)
+- [ ] Le royaume monte jusqu'au niveau 5 sans toucher la palissade (rayon 34)
+- [ ] Les troupes empruntent les routes et le pont (ouest)
+- [ ] Rotation 90° : les Portes suivent (repères tournés)

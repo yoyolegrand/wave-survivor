@@ -43,6 +43,23 @@ public final class ArenaAltar {
         return be instanceof AltarBlockEntity ab && ab.arenaId() != null; // pas encore adopté mais déjà protégé
     }
 
+    /** Portes fixes d'une arène Kingdom (repères « fixed_gates » du plan, en coordonnées du monde) ; null si l'autel n'est pas celui d'une arène Kingdom. */
+    public static List<com.wavesurvivor.config.model.HordeConfigMultiData.KingdomSettings.GatePoint> kingdomGates(ServerLevel level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof AltarBlockEntity ab) || ab.arenaId() == null) return null;
+        ArenaBlueprint bp = ArenaBlueprint.load(ab.arenaId());
+        if (bp == null || !bp.kingdom()) return null;
+        List<BlockPos> g = bp.worldMarkers(ab.arenaOx(), ab.arenaOz(), ab.arenaY0(), Rotation.values()[Math.max(0, Math.min(3, ab.arenaRot()))]).get("fixed_gates");
+        if (g == null || g.isEmpty()) return null;
+        List<com.wavesurvivor.config.model.HordeConfigMultiData.KingdomSettings.GatePoint> out = new java.util.ArrayList<>();
+        for (BlockPos p : g) {
+            var gp = new com.wavesurvivor.config.model.HordeConfigMultiData.KingdomSettings.GatePoint();
+            gp.x = p.getX(); gp.y = p.getY(); gp.z = p.getZ();
+            gp.facing = "monolith"; // tournée vers le Monolithe, quelle que soit la rotation de l'arène
+            out.add(gp);
+        }
+        return out;
+    }
+
     /** Lie et verrouille l'autel d'une arène sur la horde de son plan (une seule fois). Sans effet sur un autel ordinaire. */
     public static void adopt(ServerLevel level, BlockPos pos) {
         if (!(level.getBlockEntity(pos) instanceof AltarBlockEntity ab) || ab.arenaId() == null) return;

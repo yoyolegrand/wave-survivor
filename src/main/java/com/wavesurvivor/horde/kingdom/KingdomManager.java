@@ -94,6 +94,8 @@ public final class KingdomManager {
     private static BlockPos center;
     private static HordeConfigMultiData horde;
     private static HordeConfigMultiData.KingdomSettings cfg;
+    /** Portes fixes imposées par l'arène (Val de la Couronne…), sans toucher à la config de la horde ; null = réglages de la horde. */
+    private static List<HordeConfigMultiData.KingdomSettings.GatePoint> arenaGates;
     private static int players = 1;
     private static ServerBossEvent bar;
     private static final List<Portal> PORTALS = new ArrayList<>();
@@ -339,6 +341,7 @@ public final class KingdomManager {
         level = lvl;
         center = c;
         cfg = h.configData.kingdom();
+        arenaGates = com.wavesurvivor.arena.ArenaAltar.kingdomGates(lvl, c);
         cycle = 0;
         KingdomReport.stop();
         pendingSpecial = null;
@@ -368,11 +371,12 @@ public final class KingdomManager {
 
         int dist = Math.max(16, (Math.max(cfg.ringMin, 8) + Math.max(cfg.ringMax, cfg.ringMin)) / 2);
         // Emplacements : coordonnées fixes (maps custom) ou 1 à 8 Portes réparties sur l'anneau en partant du nord
-        boolean fixedGates = "fixed".equalsIgnoreCase(cfg.gatePlacement) && cfg.gatePoints != null && !cfg.gatePoints.isEmpty();
+        List<HordeConfigMultiData.KingdomSettings.GatePoint> gatePts = arenaGates != null ? arenaGates : cfg.gatePoints;
+        boolean fixedGates = (arenaGates != null || "fixed".equalsIgnoreCase(cfg.gatePlacement)) && gatePts != null && !gatePts.isEmpty();
         List<BlockPos> targets = new ArrayList<>();
         List<String> faces = new ArrayList<>();
         if (fixedGates) {
-            for (var gp : cfg.gatePoints) if (gp != null && targets.size() < 8) {
+            for (var gp : gatePts) if (gp != null && targets.size() < 8) {
                 targets.add(new BlockPos(gp.x, gp.y, gp.z));
                 faces.add(gp.facing == null ? "" : gp.facing);
             }
@@ -1512,7 +1516,7 @@ public final class KingdomManager {
         double d = cfg.ringMin + RNG.nextDouble() * Math.max(1, cfg.ringMax - cfg.ringMin);
         BlockPos aim = center.offset((int) Math.round(Math.cos(a) * d), 0, (int) Math.round(Math.sin(a) * d));
         // Portes à coordonnées fixes (map custom) : la faille s'ouvre entre une Porte au hasard et le Monolithe
-        if ("fixed".equalsIgnoreCase(cfg.gatePlacement)) {
+        if (arenaGates != null || "fixed".equalsIgnoreCase(cfg.gatePlacement)) {
             List<Portal> alive = new ArrayList<>();
             for (Portal p : PORTALS) if (!p.destroyed) alive.add(p);
             if (!alive.isEmpty()) {
@@ -1685,6 +1689,7 @@ public final class KingdomManager {
         RaidManager.stop(); // joueurs de l'arène renvoyés chez eux avant de tout restaurer
         raidAwait = false;
         raidBoss = null;
+        arenaGates = null;
         if (level != null) {
             for (Portal p : PORTALS) {
                 Entity e = level.getEntity(p.id);

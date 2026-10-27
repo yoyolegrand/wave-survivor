@@ -92,7 +92,7 @@ public final class ArenaSession {
         cur = null;
         if (!(level.getBlockEntity(altarPos) instanceof AltarBlockEntity ab) || ab.arenaId() == null) return;
         ArenaBlueprint bp = ArenaBlueprint.load(ab.arenaId());
-        if (bp == null) return;
+        if (bp == null || bp.kingdom()) return; // terrain Kingdom : pas de grille ni d'apparitions d'arène, le mode Kingdom gère tout
         ArenaSession s = new ArenaSession(level, altarPos, bp, ab.arenaOx(), ab.arenaOz(), ab.arenaY0(), Rotation.values()[Math.max(0, Math.min(3, ab.arenaRot()))]);
         s.closeGate();
         s.relight();
