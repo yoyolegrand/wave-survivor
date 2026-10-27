@@ -386,7 +386,7 @@ public final class ArenaBlueprint {
             if (square && edgeTop != null) from0 = base + edgeTop[Math.max(0, Math.min(w - 1, x))][Math.max(0, Math.min(dep - 1, z))]; // le talus part du vrai bord du plan
             int ty = (int) Math.round(from0 + (h - from0) * frac);
             int hi = Math.max(h, ty) + 1 + clearHeight() / 2;
-            if (square) hi = Math.max(hi, level.getHeight(wg ? Heightmap.Types.WORLD_SURFACE_WG : Heightmap.Types.WORLD_SURFACE, wx, wz) + 1); // arbres coupés compris
+            if (square) hi = Math.max(hi, surfaceTop(level, wx, wz, wg) + 1); // arbres coupés compris
             for (int y = ty + 1; y <= hi; y++) set(level, new BlockPos(wx, y, wz), air);
             if (square) { // talus : herbe sur terre, jamais de pierre à nu
                 for (int y = ty - 1; y >= ty - 3; y--) set(level, new BlockPos(wx, y, wz), Blocks.DIRT.defaultBlockState());
@@ -424,6 +424,12 @@ public final class ArenaBlueprint {
      * Terrain complet : vide TOUTE l'emprise (y compris là où le plan est de l'air) depuis le bas de chaque colonne du plan jusqu'au sommet du relief naturel
      * (arbres compris), puis comble sous le plan jusqu'au sol solide. Le plan se pose ensuite par-dessus.
      */
+    /** Hauteur de la surface, arbres compris : à la génération, le relief « WG » ignore les arbres, donc on retient aussi la surface réelle (la pose a lieu après les arbres). */
+    private static int surfaceTop(WorldGenLevel level, int x, int z, boolean wg) {
+        int real = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
+        return wg ? Math.max(real, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z)) : real;
+    }
+
     private void clearSquare(WorldGenLevel level, int ox, int oz, int y0, Rotation rot, BoundingBox clip, int base, boolean wg) {
         BlockState air = Blocks.AIR.defaultBlockState();
         for (int px = 0; px < sx; px++) for (int pz = 0; pz < sz; pz++) {
@@ -437,7 +443,7 @@ public final class ArenaBlueprint {
                     if (st != null && !st.isAir()) { lo = y; break; }
                 }
             }
-            int top = Math.max(base + layers.length, level.getHeight(wg ? Heightmap.Types.WORLD_SURFACE_WG : Heightmap.Types.WORLD_SURFACE, wx, wz) + 1);
+            int top = Math.max(base + layers.length, surfaceTop(level, wx, wz, wg) + 1);
             for (int y = base + lo; y <= top; y++) set(level, new BlockPos(wx, y, wz), air);
             fill(level, wx, base + lo - 1, wz, base - 48, false);
         }
