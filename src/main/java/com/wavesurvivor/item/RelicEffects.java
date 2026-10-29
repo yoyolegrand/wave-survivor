@@ -85,9 +85,7 @@ public class RelicEffects {
 
     /** Cet objet précis est-il ÉQUIPÉ (Curios, ou autel de Renaissance sans Curios) ? Le sac ne compte plus (1.5). */
     public static boolean hasDirect(LivingEntity e, Item item) {
-        if (!(e instanceof Player p)) return false; // les reliques ne concernent que les joueurs
-        if (curiosAvailable()) return curiosEquipped(e, item);
-        return RelicEquip.has(p, item);
+        return directLevel(e, item) > 0; // les reliques ne concernent que les joueurs (0 pour les autres)
     }
 
     /** Ceinture de Plomb : à utiliser par les compétences qui poussent / attirent les joueurs. */
@@ -136,9 +134,33 @@ public class RelicEffects {
 
     private static Method findCurios, slotStack;
 
-    /** Niveau de CETTE relique précisément quand elle est équipée (inventaire, main secondaire, Curios) ; 0 = non portée. */
+    /** Reliques équipées d'un joueur, relues au plus une fois par tick et par relique (la réflexion Curios et la lecture du NBT de l'autel coûtent cher). */
+    private static final class Equipped {
+        long tick = -1;
+        final java.util.Map<Item, Integer> levels = new java.util.HashMap<>();
+    }
+
+    private static final java.util.Map<java.util.UUID, Equipped> EQUIPPED = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** Niveau de CETTE relique précisément quand elle est équipée (inventaire, main secondaire, Curios) ; 0 = non portée. Mis en cache pour le tick en cours (serveur). */
     public static int directLevel(LivingEntity e, Item item) {
         if (!(e instanceof Player p)) return 0;
+        if (p.level().isClientSide) return readLevel(p, item);
+        Equipped q = EQUIPPED.computeIfAbsent(p.getUUID(), k -> new Equipped());
+        long now = p.level().getGameTime();
+        synchronized (q) {
+            if (q.tick != now) { q.levels.clear(); q.tick = now; }
+            Integer c = q.levels.get(item);
+            if (c == null) { c = readLevel(p, item); q.levels.put(item, c); }
+            return c;
+        }
+    }
+
+    /** Oublie le cache d'un joueur (équipement modifié, déconnexion). */
+    public static void forgetEquipped(java.util.UUID id) { EQUIPPED.remove(id); }
+
+    private static int readLevel(Player p, Item item) {
+        LivingEntity e = p;
         int best = 0;
         // Sans Curios : reliques équipées dans l'autel de Renaissance
         if (!curiosAvailable()) {

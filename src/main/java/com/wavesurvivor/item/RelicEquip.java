@@ -54,6 +54,7 @@ public class RelicEquip {
         ListTag l = new ListTag();
         for (ItemStack st : stacks) l.add(st.save(new CompoundTag()));
         p.getPersistentData().put(TAG, l);
+        RelicEffects.forgetEquipped(p.getUUID()); // le cache des reliques équipées est périmé
     }
 
     public static boolean has(Player p, Item item) {

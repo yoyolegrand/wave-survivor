@@ -43,6 +43,9 @@ public class RouletteChestManager {
 
     /** Coffres enregistrés (posés dans le monde). Key = pos, Value = config. */
     private static final Map<BlockPos, RouletteChestConfig> IDLE = new ConcurrentHashMap<>();
+    /** Dimension de chaque coffre au repos (relue 1×/s) et distance de joueur à partir de laquelle ses particules sont émises. */
+    private static final Map<BlockPos, ServerLevel> IDLE_LEVEL = new ConcurrentHashMap<>();
+    private static final double IDLE_RANGE = 48.0;
 
     /** Coffres en cours d'animation. */
     private static final Map<BlockPos, ActiveState> ACTIVE = new ConcurrentHashMap<>();
@@ -73,6 +76,7 @@ public class RouletteChestManager {
 
     public static void unregister(BlockPos pos) {
         RouletteChestConfig removed = IDLE.remove(pos.immutable());
+        IDLE_LEVEL.remove(pos.immutable());
         ACTIVE.remove(pos.immutable());
         QUEUE.remove(pos.immutable());
         if (removed != null) {
@@ -134,16 +138,23 @@ public class RouletteChestManager {
         long now = server.getTickCount();
 
         // Particules idle : cercle tournant + colonne subtile
+        // La dimension de chaque coffre n'est relue qu'une fois par seconde, et les particules ne sont émises que si un joueur est proche
+        boolean refresh = now % 20 == 0;
         for (Map.Entry<BlockPos, RouletteChestConfig> e : IDLE.entrySet()) {
             BlockPos p = e.getKey();
             RouletteChestConfig cfg = e.getValue();
-            ServerLevel level = findLevelFor(server, p);
-            if (level == null) continue;
-            // Anciens coffres vanilla → Coffre Roulette (1×/s) + couleur à jour
-            if (now % 20 == 0) {
+            ServerLevel level;
+            if (refresh) {
+                level = findLevelFor(server, p);
+                if (level == null) { IDLE_LEVEL.remove(p); continue; }
+                IDLE_LEVEL.put(p, level);
+                // Anciens coffres vanilla → Coffre Roulette (1×/s) + couleur à jour
                 convertIfVanilla(level, p, cfg);
                 if (level.getBlockEntity(p) instanceof RouletteChestBlockEntity be) be.setColor(colorFor(cfg));
+            } else {
+                level = IDLE_LEVEL.get(p);
             }
+            if (level == null || !level.hasNearbyAlivePlayer(p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5, IDLE_RANGE)) continue;
             spawnIdleParticles(level, p, cfg, now);
         }
 

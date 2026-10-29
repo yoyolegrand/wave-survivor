@@ -37,7 +37,7 @@ public class BuildingAttack {
         if (server == null || server.getTickCount() % 20 != 0) return;
         HordeManager hm = HordeManager.get();
         if (!hm.isRunning() || com.wavesurvivor.altar.MonolithFall.active()) return;
-        for (Map.Entry<UUID, HordeEntity> en : new ArrayList<>(MobRegistry.entries())) {
+        for (Map.Entry<UUID, HordeEntity> en : MobRegistry.entries()) { // table concurrente : parcours sûr sans copie
             HordeEntity t = en.getValue();
             if (t == null || !t.attackBuildings) continue;
             Entity e = findEntity(server, en.getKey());

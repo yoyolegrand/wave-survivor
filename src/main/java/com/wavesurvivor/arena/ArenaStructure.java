@@ -50,8 +50,9 @@ public class ArenaStructure extends Structure {
         if (bp.square() && ArenaSettings.avoidNeighbors()) { // grand terrain : jamais par-dessus une autre structure
             String voisine = nearOtherStructure(ctx, c0);
             if (voisine != null) {
-                REFUS_VOISINE.incrementAndGet();
-                WaveSurvivorMod.LOGGER.info("[Arènes] {} refusée en chunk {} : trop près de {} (bilan : biome refusé {}, voisine refusée {}, posée {})", arena, c0, voisine, REFUS_BIOME.get(), REFUS_VOISINE.get(), POSEES.get());
+                int n = REFUS_VOISINE.incrementAndGet();
+                WaveSurvivorMod.LOGGER.debug("[Arènes] {} refusée en chunk {} : trop près de {}", arena, c0, voisine);
+                if (n % 500 == 0) WaveSurvivorMod.LOGGER.info("[Arènes] bilan {} : biome refusé {}, voisine refusée {}, posée {}", arena, REFUS_BIOME.get(), n, POSEES.get());
                 return Optional.empty();
             }
         }
@@ -60,7 +61,7 @@ public class ArenaStructure extends Structure {
         if (r.isPresent()) {
             POSEES.incrementAndGet();
             WaveSurvivorMod.LOGGER.info("[Arènes] {} posée en chunk {} (bilan : biome refusé {}, voisine refusée {}, posée {})", arena, c0, REFUS_BIOME.get(), REFUS_VOISINE.get(), POSEES.get());
-        } else WaveSurvivorMod.LOGGER.info("[Arènes] {} refusée en chunk {} par le relief", arena, c0);
+        } else WaveSurvivorMod.LOGGER.debug("[Arènes] {} refusée en chunk {} par le relief", arena, c0);
         return r;
     }
 
@@ -73,11 +74,6 @@ public class ArenaStructure extends Structure {
     private static final java.util.Set<String> IGNORED = java.util.Set.of("mineshafts", "buried_treasures", "ocean_ruins", "shipwrecks", "ancient_cities", "nether_complexes",
             "nether_fossils", "bastion_remnants", "end_cities", "ocean_monuments", "strongholds", "trail_ruins");
 
-    /**
-     * Une autre structure de surface peut-elle démarrer à moins de 4 chunks du bord du terrain complet ? On regarde le chunk de départ POSSIBLE de chaque
-     * structure (même calcul que le jeu, à partir de la graine), avec sa demi-taille estimée : par prudence, on s'écarte même si le terrain refuse finalement
-     * cette structure (seul son biome est vérifié). Concerne toutes les structures réparties au hasard : vanilla, nos arènes et celles des autres mods.
-     */
     /** Seules les structures posées en surface comptent : celles de l'étape souterraine (grottes, cabanes enterrées, donjons de mods) ne gênent pas une arène. */
     private static boolean enSurface(Structure st) {
         var step = st.step();
@@ -86,32 +82,77 @@ public class ArenaStructure extends Structure {
                 || step == net.minecraft.world.level.levelgen.GenerationStep.Decoration.TOP_LAYER_MODIFICATION;
     }
 
-    private static String nearOtherStructure(GenerationContext ctx, ChunkPos c) {
+    /** Structure voisine à surveiller : identifiant, demi-taille estimée (chunks), placement au hasard et structures de surface du set. */
+    private record Cand(net.minecraft.resources.ResourceLocation id, int size,
+                        net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement rs, java.util.List<Structure> structures) {}
+
+    /** Liste des voisines, calculée une seule fois par registre de structures (le monde ne la change pas), au lieu de refiltrer tous les sets à chaque candidat. */
+    private record Snapshot(Object registry, java.util.List<Cand> list) {}
+
+    private static volatile Snapshot snapshot = null;
+
+    /** Résultat par chunk candidat (graine + chunk) : /locate repasse souvent sur les mêmes chunks. */
+    private record Key(long seed, int x, int z) {}
+
+    private static final java.util.concurrent.ConcurrentHashMap<Key, String> NEAR = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private static java.util.List<Cand> candidates(GenerationContext ctx) {
         var reg = ctx.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE_SET);
+        Snapshot sn = snapshot;
+        if (sn != null && sn.registry() == reg) return sn.list();
+        java.util.List<Cand> out = new java.util.ArrayList<>();
         for (var e : reg.entrySet()) {
             net.minecraft.resources.ResourceLocation id = e.getKey().location();
             String ns = id.getNamespace(), path = id.getPath();
             if (ns.equals("wavesurvivor") && path.equals("arena_val") || IGNORED.contains(path)) continue;
+            if (!(e.getValue().placement() instanceof net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement rs)) continue;
+            java.util.List<Structure> surface = new java.util.ArrayList<>();
+            for (var sel : e.getValue().structures()) if (enSurface(sel.structure().value())) surface.add(sel.structure().value());
+            if (surface.isEmpty()) continue; // rien en surface dans ce set : il ne peut jamais gêner
             int size = switch (path) { // demi-taille estimée de la structure, en chunks (valeurs serrées : sinon plus aucun emplacement n'est libre)
                 case "villages" -> 3;
                 case "woodland_mansions" -> 4;
                 case "igloos", "swamp_huts", "ruined_portals" -> 1;
                 default -> ns.equals("wavesurvivor") && path.startsWith("arena_") ? 4 : 2;
             };
-            int range = HALF_CHUNKS + GAP_CHUNKS + size;
-            if (!(e.getValue().placement() instanceof net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement rs)) continue;
-            int sp = rs.spacing();
+            out.add(new Cand(id, size, rs, java.util.List.copyOf(surface)));
+        }
+        out = java.util.List.copyOf(out);
+        snapshot = new Snapshot(reg, out);
+        NEAR.clear();
+        return out;
+    }
+
+    /**
+     * Une autre structure de surface peut-elle démarrer à moins de 4 chunks du bord du terrain complet ? On regarde le chunk de départ POSSIBLE de chaque
+     * structure (même calcul que le jeu, à partir de la graine), avec sa demi-taille estimée : par prudence, on s'écarte même si le terrain refuse finalement
+     * cette structure (seul son biome est vérifié). Concerne toutes les structures réparties au hasard : vanilla, nos arènes et celles des autres mods.
+     * Retourne le nom de la structure gênante (et son chunk), ou null si la voie est libre.
+     */
+    private static String nearOtherStructure(GenerationContext ctx, ChunkPos c) {
+        Key key = new Key(ctx.seed(), c.x, c.z);
+        String known = NEAR.get(key);
+        if (known != null) return known.isEmpty() ? null : known;
+        String found = "";
+        scan:
+        for (Cand cd : candidates(ctx)) {
+            int range = HALF_CHUNKS + GAP_CHUNKS + cd.size();
+            int sp = cd.rs().spacing();
             for (int cx = Math.floorDiv(c.x - range, sp); cx <= Math.floorDiv(c.x + range, sp); cx++) {
                 for (int cz = Math.floorDiv(c.z - range, sp); cz <= Math.floorDiv(c.z + range, sp); cz++) {
-                    ChunkPos p = rs.getPotentialStructureChunk(ctx.seed(), cx * sp, cz * sp);
+                    ChunkPos p = cd.rs().getPotentialStructureChunk(ctx.seed(), cx * sp, cz * sp);
                     if (Math.abs(p.x - c.x) > range || Math.abs(p.z - c.z) > range) continue;
                     // seulement si cette structure peut vraiment démarrer là : son biome doit lui convenir
                     var biome = ctx.biomeSource().getNoiseBiome(QuartPos.fromBlock(p.getMiddleBlockX()), QuartPos.fromBlock(70), QuartPos.fromBlock(p.getMiddleBlockZ()), ctx.randomState().sampler());
-                    for (var sel : e.getValue().structures()) if (enSurface(sel.structure().value()) && sel.structure().value().biomes().contains(biome)) return id.toString() + " (chunk " + p + ")";
+                    for (Structure st : cd.structures()) {
+                        if (st.biomes().contains(biome)) { found = cd.id() + " (chunk " + p + ")"; break scan; }
+                    }
                 }
             }
         }
-        return null;
+        if (NEAR.size() > 50000) NEAR.clear();
+        NEAR.put(key, found);
+        return found.isEmpty() ? null : found;
     }
 
     /**

@@ -231,3 +231,10 @@ Nouveau monde (ou zone inexplorée) ; chaque arène : rotation au hasard, pente 
 - [ ] Effets uniques : chiffres qui grandissent (Étendard 16/24/32 blocs, Trophée +20/30/40 %, Calice +2/3/4 PV et Absorption 8/12/16, Clé des Portes 10/15/20 %, Regard 5/7,5/10 s et 32/48/64 blocs, Marchand-Roi 20/30/40 %, Trousseau 25/37,5/50 %)
 - [ ] Légendaire niveau II : ses deux reliques d'origine agissent au niveau III (ex. Regard du Veilleur : l'Œil et le Talisman en III)
 - [ ] Les 4 légendaires « binaires » (Clé de Voûte, Œil de la Faille, Égide, Ancre) : seul le niveau des reliques d'origine monte
+
+## Optimisations (audit)
+- [ ] `latest.log` : plus de ligne par candidat d'arène (seulement « posée » et un bilan toutes les 500 refus) ; `/locate structure wavesurvivor:arena_val` toujours aussi fonctionnel et plus rapide
+- [ ] Coffres Roulette : particules au repos visibles de près, absentes quand aucun joueur n'est à ~48 blocs ; un ancien coffre vanilla se convertit toujours (1×/s)
+- [ ] Autels : particules visibles de près (48 blocs), rien de cassé pour l'autel lié / non lié
+- [ ] Reliques : équiper / retirer une relique prend effet tout de suite (immunités, aura, bonus), avec et sans Curios
+- [ ] Horde avec unités « attaque les bâtiments » : les coups sur le Monolithe et les défenses continuent

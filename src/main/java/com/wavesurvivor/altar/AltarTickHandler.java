@@ -40,7 +40,7 @@ public class AltarTickHandler {
             if (level == null) continue;
 
             BlockPos pos = entry.toBlockPos();
-            if (!level.isLoaded(pos)) continue;
+            if (!level.isLoaded(pos) || !level.hasNearbyAlivePlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 48.0)) continue; // particules inutiles sans joueur proche
 
             boolean bound = entry.hordeName != null && !entry.hordeName.isBlank();
             var state = level.getBlockState(pos);
