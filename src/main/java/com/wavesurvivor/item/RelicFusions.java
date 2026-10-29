@@ -28,6 +28,11 @@ public final class RelicFusions {
     /** Niveau auquel une légendaire fait agir ses reliques d'origine. */
     public static final int PARENT_LEVEL = 2;
 
+    /** Niveau auquel une légendaire de niveau {@code legendaryLevel} fait agir ses deux reliques d'origine : II au niveau I, III ensuite. */
+    public static int parentLevel(int legendaryLevel) {
+        return Math.min(3, PARENT_LEVEL + Math.max(1, legendaryLevel) - 1);
+    }
+
     /** Une recette : identifiant, les deux reliques à fusionner, la légendaire obtenue. */
     public record Fusion(String id, Supplier<Item> a, Supplier<Item> b, Supplier<Item> result) {}
 

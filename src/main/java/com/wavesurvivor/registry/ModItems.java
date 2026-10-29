@@ -262,41 +262,41 @@ public class ModItems {
     }
 
     public static final RegistryObject<Item> CLE_VOUTE = legendary("cle_voute", "Ceinture",
-            "La pierre qui tient toutes les autres.", "Effets du Sceau du Gardien et de la Pierre de Fondation (niv. II)",
+            "La pierre qui tient toutes les autres.", "Effets du Sceau du Gardien et de la Pierre de Fondation (niv. {P})",
             "Unique : le Sceau protège le Monolithe où que tu sois");
     public static final RegistryObject<Item> ETENDARD_BASTION = legendary("etendard_bastion", "Dos",
-            "Tant qu'il flotte, personne ne recule.", "Effets du Sceau du Gardien et de la Bannière de Ralliement (niv. II)",
-            "Unique : aura de la Bannière à 16 blocs, avec Résistance I");
+            "Tant qu'il flotte, personne ne recule.", "Effets du Sceau du Gardien et de la Bannière de Ralliement (niv. {P})",
+            "Unique : aura de la Bannière à {16} blocs, avec Résistance I");
     public static final RegistryObject<Item> TROPHEE_VENEUR = legendary("trophee_veneur", "Collier",
-            "La proie désignée n'a plus nulle part où fuir.", "Effets de la Marque du Chasseur et du Croc de l'Alpha (niv. II)",
-            "Unique : tes cibles marquées subissent +20 % de toute l'équipe");
+            "La proie désignée n'a plus nulle part où fuir.", "Effets de la Marque du Chasseur et du Croc de l'Alpha (niv. {P})",
+            "Unique : tes cibles marquées subissent +{20} % de toute l'équipe");
     public static final RegistryObject<Item> CALICE_SANG = legendary("calice_sang", "Charme",
-            "Chaque victoire remplit la coupe.", "Effets de l'Os Sacré et du Cœur Assoiffé (niv. II)",
-            "Unique : +2 PV par kill, le surplus devient de l'Absorption (8 max)");
+            "Chaque victoire remplit la coupe.", "Effets de l'Os Sacré et du Cœur Assoiffé (niv. {P})",
+            "Unique : +{2} PV par kill, le surplus devient de l'Absorption ({8} max)");
     public static final RegistryObject<Item> OEIL_FAILLE = legendary("oeil_faille", "Tête",
-            "Ce qu'il voit, l'équipe le voit.", "Effets de l'Éclat de Brèche et du Prisme du Catalyseur (niv. II)",
+            "Ce qu'il voit, l'équipe le voit.", "Effets de l'Éclat de Brèche et du Prisme du Catalyseur (niv. {P})",
             "Unique : Catalyseurs révélés à toute l'équipe");
     public static final RegistryObject<Item> CLE_PORTES = legendary("cle_portes", "Bracelet",
-            "Chaque serrure de l'Abîme a sa clé.", "Effets du Prisme du Catalyseur et du Fragment de Porte (niv. II)",
-            "Unique : un Catalyseur détruit arrache 10 % de PV à la Porte la plus proche");
+            "Chaque serrure de l'Abîme a sa clé.", "Effets du Prisme du Catalyseur et du Fragment de Porte (niv. {P})",
+            "Unique : un Catalyseur détruit arrache {10} % de PV à la Porte la plus proche");
     public static final RegistryObject<Item> EGIDE_FLEAUX = legendary("egide_fleaux", "Collier",
-            "Aucun fléau ne franchit ce bouclier.", "Effets de l'Amulette du Brasier et du Charme de Phylactère (niv. II)",
+            "Aucun fléau ne franchit ce bouclier.", "Effets de l'Amulette du Brasier et du Charme de Phylactère (niv. {P})",
             "Unique : immunité à la Faiblesse et à la Nausée");
     public static final RegistryObject<Item> COEUR_SAISONS = legendary("coeur_saisons", "Charme",
-            "Le feu de l'été, la morsure de l'hiver.", "Effets de l'Amulette du Brasier et du Cristal de Givre (niv. II)",
+            "Le feu de l'été, la morsure de l'hiver.", "Effets de l'Amulette du Brasier et du Cristal de Givre (niv. {P})",
             "Unique : tes coups brûlent et gèlent en alternance");
     public static final RegistryObject<Item> ANCRE_COLOSSE = legendary("ancre_colosse", "Ceinture",
-            "Rien ne déplace le colosse.", "Effets de l'Anneau d'Ancrage et de la Ceinture de Plomb (niv. II)",
+            "Rien ne déplace le colosse.", "Effets de l'Anneau d'Ancrage et de la Ceinture de Plomb (niv. {P})",
             "Unique : aucun dégât de chute");
     public static final RegistryObject<Item> REGARD_VEILLEUR = legendary("regard_veilleur", "Tête",
-            "Il a vu la mort et l'a regardée en face.", "Effets de l'Œil du Veilleur et du Talisman du Dernier Souffle (niv. II)",
-            "Unique : sauvé de la mort → 5 s d'invulnérabilité et monstres révélés à 32 blocs");
+            "Il a vu la mort et l'a regardée en face.", "Effets de l'Œil du Veilleur et du Talisman du Dernier Souffle (niv. {P})",
+            "Unique : sauvé de la mort → {5} s d'invulnérabilité et monstres révélés à {32} blocs");
     public static final RegistryObject<Item> SCEAU_MARCHAND_ROI = legendary("sceau_marchand_roi", "Bague",
-            "Le roi ne paie jamais deux fois.", "Effets de la Langue d'Argent et de la Bourse du Colporteur (niv. II)",
-            "Unique : 20 % de chance qu'un achat chez un marchand soit remboursé");
+            "Le roi ne paie jamais deux fois.", "Effets de la Langue d'Argent et de la Bourse du Colporteur (niv. {P})",
+            "Unique : {20} % de chance qu'un achat chez un marchand soit remboursé");
     public static final RegistryObject<Item> TROUSSEAU_PILLEUR = legendary("trousseau_pilleur", "Charme",
-            "Une clé pour chaque trésor.", "Effets de la Clé du Gardien et de l'Anneau du Prospecteur (niv. II)",
-            "Unique : un gisement détruit lâche une clé de Reliquaire (25 %)");
+            "Une clé pour chaque trésor.", "Effets de la Clé du Gardien et de l'Anneau du Prospecteur (niv. {P})",
+            "Unique : un gisement détruit lâche une clé de Reliquaire ({25} %)");
 
     /** Onglet créatif dédié. */
     public static final RegistryObject<CreativeModeTab> WAVE_SURVIVOR_TAB = TABS.register("wave_survivor",

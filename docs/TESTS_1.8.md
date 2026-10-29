@@ -223,3 +223,11 @@ Nouveau monde (ou zone inexplorée) ; chaque arène : rotation au hasard, pente 
 - [ ] Relique légendaire : ligne grise « Maj : détail… » ; avec Maj, les effets réels des deux reliques d'origine au niveau II (chiffres ×1,5)
 - [ ] Forge : une relique de niveau III ne peut plus servir de sacrifice pour monter une I ou une II (message « il faut un doublon »)
 - [ ] Forge : III + I → impossible ; II + I → la II monte, la I est consommée ; I + I → OK
+
+## Reliques légendaires — niveaux
+- [ ] Forge : une légendaire apparaît avec un bouton d'amélioration (15 PR pour II, 30 PR pour III) dès qu'on a un 2e exemplaire de LA MÊME légendaire ; une autre légendaire ne sert pas de doublon
+- [ ] Une légendaire de niveau III ne peut pas servir de sacrifice pour monter une I ou une II
+- [ ] Infobulle : « Niveau II / III », ligne « Effets de X et Y (niv. II) » → « (niv. III) » dès que la légendaire est niveau II ; avec Maj, les deux reliques d'origine au bon niveau
+- [ ] Effets uniques : chiffres qui grandissent (Étendard 16/24/32 blocs, Trophée +20/30/40 %, Calice +2/3/4 PV et Absorption 8/12/16, Clé des Portes 10/15/20 %, Regard 5/7,5/10 s et 32/48/64 blocs, Marchand-Roi 20/30/40 %, Trousseau 25/37,5/50 %)
+- [ ] Légendaire niveau II : ses deux reliques d'origine agissent au niveau III (ex. Regard du Veilleur : l'Œil et le Talisman en III)
+- [ ] Les 4 légendaires « binaires » (Clé de Voûte, Œil de la Faille, Égide, Ancre) : seul le niveau des reliques d'origine monte

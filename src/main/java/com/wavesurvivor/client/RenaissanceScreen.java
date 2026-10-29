@@ -270,7 +270,6 @@ public class RenaissanceScreen extends Screen {
             int best = 0;
             for (ItemStack st : inv) if (st.is(it)) best = Math.max(best, com.wavesurvivor.item.RelicEffects.levelOf(st));
             String lbl = plan != null ? com.wavesurvivor.i18n.WSLang.t("forge.btn_upgrade", roman(plan.fromLevel() + 1), plan.cost())
-                    : it instanceof com.wavesurvivor.item.LegendaryRelicItem ? com.wavesurvivor.i18n.WSLang.t("forge.btn_legend")
                     : best >= 3 ? com.wavesurvivor.i18n.WSLang.t("forge.btn_max") : com.wavesurvivor.i18n.WSLang.t("forge.btn_need");
             final String id = BuiltInRegistries.ITEM.getKey(it).toString();
             Button b = addRenderableWidget(Button.builder(Component.literal(lbl),

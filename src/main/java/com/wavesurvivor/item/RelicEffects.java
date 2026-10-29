@@ -136,23 +136,13 @@ public class RelicEffects {
 
     private static Method findCurios, slotStack;
 
-    /** Meilleur niveau de cette relique portée (inventaire, main secondaire, Curios) ; 0 = non portée. */
-    public static int level(LivingEntity e, Item item) {
+    /** Niveau de CETTE relique précisément quand elle est équipée (inventaire, main secondaire, Curios) ; 0 = non portée. */
+    public static int directLevel(LivingEntity e, Item item) {
         if (!(e instanceof Player p)) return 0;
         int best = 0;
         // Sans Curios : reliques équipées dans l'autel de Renaissance
         if (!curiosAvailable()) {
             for (ItemStack st : RelicEquip.list(p)) if (st.is(item)) best = Math.max(best, levelOf(st));
-        }
-        if (best >= 3) return best;
-        // Légendaire portée : ses deux reliques d'origine agissent au niveau II
-        if (best < RelicFusions.PARENT_LEVEL) {
-            for (RelicFusions.Fusion f : RelicFusions.all()) {
-                if ((f.a().get() == item || f.b().get() == item) && hasDirect(e, f.result().get())) {
-                    best = RelicFusions.PARENT_LEVEL;
-                    break;
-                }
-            }
         }
         if (curiosAvailable() && curiosEquipped(e, item)) {
             int c = 1;
@@ -168,6 +158,25 @@ public class RelicEffects {
                 }
             } catch (Exception ignored) {}
             best = Math.max(best, c);
+        }
+        return best;
+    }
+
+    /** Niveau d'une légendaire équipée (I à III), 0 si elle n'est pas portée. Sert à ses effets uniques. */
+    public static int uLevel(LivingEntity e, Item legendary) {
+        return hasDirect(e, legendary) ? Math.max(1, directLevel(e, legendary)) : 0;
+    }
+
+    /** Meilleur niveau de cette relique portée (inventaire, main secondaire, Curios) ; 0 = non portée. Une légendaire portée fait agir ses deux reliques d'origine (niveau II, puis III dès qu'elle est niveau II). */
+    public static int level(LivingEntity e, Item item) {
+        if (!(e instanceof Player)) return 0;
+        int best = directLevel(e, item);
+        if (best >= 3) return best;
+        for (RelicFusions.Fusion f : RelicFusions.all()) {
+            if (f.a().get() == item || f.b().get() == item) {
+                int u = directLevel(e, f.result().get());
+                if (u > 0) best = Math.max(best, RelicFusions.parentLevel(u));
+            }
         }
         return best;
     }
@@ -225,7 +234,8 @@ public class RelicEffects {
         for (net.minecraft.server.level.ServerPlayer p : server.getPlayerList().getPlayers()) {
             if (!p.isAlive() || p.isSpectator()) continue;
             // Clé de Voûte (légendaire) : le Sceau protège le Monolithe où que soit son porteur
-            if (hasDirect(p, ModItems.CLE_VOUTE.get())) best = Math.max(best, RelicFusions.PARENT_LEVEL);
+            int cv = uLevel(p, ModItems.CLE_VOUTE.get());
+            if (cv > 0) best = Math.max(best, RelicFusions.parentLevel(cv));
             if (dim != null && !p.level().dimension().location().toString().equals(dim)) continue;
             if (p.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > 64) continue;
             best = Math.max(best, level(p, ModItems.SCEAU_GARDIEN.get()));
@@ -317,15 +327,21 @@ public class RelicEffects {
         }
         // Trophée du Grand Veneur (légendaire) : la cible marquée subit +20 % de TOUTE l'équipe pendant 8 s
         long gt = p.level().getGameTime();
-        if (target.getPersistentData().getLong("ws_veneur") > gt) event.setAmount(event.getAmount() * 1.2f);
-        if (hasDirect(p, ModItems.TROPHEE_VENEUR.get())) target.getPersistentData().putLong("ws_veneur", gt + 160);
+        if (target.getPersistentData().getLong("ws_veneur") > gt) event.setAmount(event.getAmount() * (1f + 0.2f * mult(Math.max(1, target.getPersistentData().getInt("ws_veneur_lvl")))));
+        int veneur = uLevel(p, ModItems.TROPHEE_VENEUR.get());
+        if (veneur > 0) {
+            target.getPersistentData().putLong("ws_veneur", gt + 160);
+            target.getPersistentData().putInt("ws_veneur_lvl", veneur);
+        }
         // Cœur des Saisons (légendaire) : un coup brûle, le suivant gèle
-        if (hasDirect(p, ModItems.COEUR_SAISONS.get())) {
+        int saisons = uLevel(p, ModItems.COEUR_SAISONS.get());
+        if (saisons > 0) {
+            float ms = mult(saisons); // durées ×1 / ×1,5 / ×2 selon le niveau
             boolean fire = SEASON.getOrDefault(p.getUUID(), true);
-            if (fire) target.setSecondsOnFire(3);
+            if (fire) target.setSecondsOnFire((int) (3 * ms));
             else {
-                target.setTicksFrozen(Math.max(target.getTicksFrozen(), 160));
-                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1, false, true));
+                target.setTicksFrozen(Math.max(target.getTicksFrozen(), (int) (160 * ms)));
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (int) (60 * ms), 1, false, true));
             }
             SEASON.put(p.getUUID(), !fire);
         }
@@ -367,7 +383,7 @@ public class RelicEffects {
         LivingEntity dead = event.getEntity();
         // Trousseau du Pilleur (légendaire) : un gisement détruit lâche une clé de Reliquaire (25 %)
         if (dead instanceof com.wavesurvivor.entity.GisementEntity g && !g.isFoyer()) {
-            if (hasDirect(p, ModItems.TROUSSEAU_PILLEUR.get()) && RNG.nextDouble() < 0.25
+            if (uLevel(p, ModItems.TROUSSEAU_PILLEUR.get()) > 0 && RNG.nextDouble() < 0.25 * mult(uLevel(p, ModItems.TROUSSEAU_PILLEUR.get()))
                     && dead.level() instanceof net.minecraft.server.level.ServerLevel sl) {
                 dropRandomKey(sl, dead.getX(), dead.getY(), dead.getZ());
             }
@@ -375,11 +391,11 @@ public class RelicEffects {
         }
         if (dead instanceof com.wavesurvivor.entity.BrecheEntity) {
             // Clé des Portes (légendaire) : un Catalyseur détruit arrache 10 % de PV à la Porte la plus proche
-            if (dead instanceof com.wavesurvivor.entity.BrecheEntity cat && cat.isCatalyst() && hasDirect(p, ModItems.CLE_PORTES.get())) {
+            if (dead instanceof com.wavesurvivor.entity.BrecheEntity cat && cat.isCatalyst() && uLevel(p, ModItems.CLE_PORTES.get()) > 0) {
                 var gates = dead.level().getEntitiesOfClass(com.wavesurvivor.entity.BrecheEntity.class, dead.getBoundingBox().inflate(96),
                         b -> b.isAlive() && b.isGreat() && !b.isCatalyst());
                 gates.sort(java.util.Comparator.comparingDouble(b -> b.distanceToSqr(dead)));
-                if (!gates.isEmpty()) gates.get(0).hurt(p.damageSources().playerAttack(p), gates.get(0).getMaxHealth() * 0.10f);
+                if (!gates.isEmpty()) gates.get(0).hurt(p.damageSources().playerAttack(p), gates.get(0).getMaxHealth() * 0.10f * mult(uLevel(p, ModItems.CLE_PORTES.get())));
             }
             float h = scaled(p, ModItems.ECLAT_BRECHE.get(), 4f);
             if (h > 0) p.heal(h);
@@ -387,11 +403,13 @@ public class RelicEffects {
         }
         float thirst = dead instanceof Enemy ? scaled(p, ModItems.COEUR_ASSOIFFE.get(), 1f) : 0f;
         // Calice de Sang Sacré (légendaire) : +2 PV par kill, le surplus devient de l'Absorption (8 max)
-        if (dead instanceof Enemy && hasDirect(p, ModItems.CALICE_SANG.get())) {
+        int calice = dead instanceof Enemy ? uLevel(p, ModItems.CALICE_SANG.get()) : 0;
+        if (calice > 0) {
+            float cm = mult(calice);
             float missing = p.getMaxHealth() - p.getHealth();
-            p.heal(2f);
-            float over = 2f - Math.max(0f, missing);
-            if (over > 0) p.setAbsorptionAmount(Math.min(8f, p.getAbsorptionAmount() + over));
+            p.heal(2f * cm);
+            float over = 2f * cm - Math.max(0f, missing);
+            if (over > 0) p.setAbsorptionAmount(Math.min(8f * cm, p.getAbsorptionAmount() + over));
         }
         if (thirst > 0) {
             p.heal(thirst);
@@ -450,9 +468,11 @@ public class RelicEffects {
         sl.playSound(null, p.blockPosition(), net.minecraft.sounds.SoundEvents.TOTEM_USE, net.minecraft.sounds.SoundSource.PLAYERS, 1f, 1.3f);
         p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("relic.last_breath"), true);
         // Regard du Dernier Veilleur (légendaire) : 5 s d'invulnérabilité et monstres révélés à 32 blocs
-        if (hasDirect(p, ModItems.REGARD_VEILLEUR.get())) {
-            p.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 4, false, true));
-            for (LivingEntity m : p.level().getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(32),
+        int regard = uLevel(p, ModItems.REGARD_VEILLEUR.get());
+        if (regard > 0) {
+            float rm = mult(regard);
+            p.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, (int) (100 * rm), 4, false, true));
+            for (LivingEntity m : p.level().getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(32 * rm),
                     en -> en instanceof Enemy && en.isAlive())) {
                 m.addEffect(new MobEffectInstance(MobEffects.GLOWING, 200, 0, false, false));
             }
@@ -482,8 +502,9 @@ public class RelicEffects {
             int bannerLvl = level(p, ModItems.BANNIERE_RALLIEMENT.get());
             int regenTicks = (int) (100 * mult(Math.max(1, bannerLvl))); // 1 cœur (×1,5 / ×2 aux niveaux II / III)
             // Étendard du Bastion (légendaire) : aura à 16 blocs, avec Résistance I
-            boolean bastion = hasDirect(p, ModItems.ETENDARD_BASTION.get());
-            double r = bastion ? 16 : 8;
+            int bastionLvl = uLevel(p, ModItems.ETENDARD_BASTION.get());
+            boolean bastion = bastionLvl > 0;
+            double r = bastion ? 16 * mult(bastionLvl) : 8;
             for (Player ally : p.level().getEntitiesOfClass(Player.class, p.getBoundingBox().inflate(r),
                     a -> a.isAlive() && !a.isSpectator() && a.distanceToSqr(p) <= r * r)) {
                 if (bastion) ally.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 0, true, false, true));
@@ -576,7 +597,9 @@ public class RelicEffects {
     @SubscribeEvent
     public void onTrade(net.minecraftforge.event.entity.player.TradeWithVillagerEvent e) {
         Player p = e.getEntity();
-        if (p.level().isClientSide || !hasDirect(p, ModItems.SCEAU_MARCHAND_ROI.get()) || RNG.nextDouble() >= 0.20) return;
+        if (p.level().isClientSide) return;
+        int marchand = uLevel(p, ModItems.SCEAU_MARCHAND_ROI.get());
+        if (marchand <= 0 || RNG.nextDouble() >= 0.20 * mult(marchand)) return;
         var offer = e.getMerchantOffer();
         for (ItemStack cost : new ItemStack[]{offer.getCostA(), offer.getCostB()}) {
             if (cost.isEmpty()) continue;

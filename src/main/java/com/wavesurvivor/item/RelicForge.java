@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * FORGE DE L'AUTEL DE RENAISSANCE (1.5) — code COMMUN client / serveur (l'écran affiche exactement ce que le serveur fera).
  * Amélioration : la meilleure copie (niveau < III) monte d'un niveau ; une AUTRE copie de la même relique (la plus
- * faible, jamais de niveau supérieur à la cible) est consommée ; coût en PR : 15 pour le niveau II, 30 pour le niveau III.
+ * faible, jamais de niveau supérieur à la cible) est consommée ; coût en PR : 15 pour le niveau II, 30 pour le niveau III. Vaut aussi pour les légendaires (le doublon doit être la même légendaire).
  */
 public final class RelicForge {
 
@@ -27,7 +27,6 @@ public final class RelicForge {
 
     /** Plan d'amélioration pour cette relique dans l'inventaire principal (36 cases), ou null (pas de doublon / d\u00e9j\u00e0 III). */
     public static Plan planUpgrade(List<ItemStack> inv, Item item) {
-        if (item instanceof LegendaryRelicItem) return null; // les légendaires n'ont pas de niveau
         // La copie qui monte : la meilleure (niveau < III) pour laquelle il existe une copie sacrifiable. Le sacrifice ne peut JAMAIS être de niveau
         // supérieur à la relique améliorée (une III ne sert pas à monter une I) : on consomme la plus faible des autres copies de niveau ≤ à la cible.
         int bestT = -1, bestTLvl = 0, bestC = -1;
