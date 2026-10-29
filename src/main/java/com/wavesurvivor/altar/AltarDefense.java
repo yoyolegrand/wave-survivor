@@ -160,8 +160,8 @@ public class AltarDefense {
                     ItemStack give = proto.copy();
                     if (!p.getInventory().add(give)) p.drop(give, false);
                 }
-                p.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.monolithe_intact_a") + Math.round(pct) + com.wavesurvivor.i18n.WSLang.t("srv.bonus_de_defense")
-                        + (proto.isEmpty() ? s.cfg.bonusItem : proto.getHoverName().getString())));
+                com.wavesurvivor.network.EventFeedPacket.toPlayer(p, Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.monolithe_intact_a") + Math.round(pct) + com.wavesurvivor.i18n.WSLang.t("srv.bonus_de_defense")
+                        + (proto.isEmpty() ? s.cfg.bonusItem : proto.getHoverName().getString())), "minecraft:beacon", com.wavesurvivor.network.EventFeedPacket.HORDE, false);
             }
         } else if (victory) {
             broadcast(server, com.wavesurvivor.i18n.WSLang.t("srv.monolithe_a") + Math.round(pct) + com.wavesurvivor.i18n.WSLang.t("srv.pas_de_bonus_seuil") + s.cfg.bonusThreshold + "%).");
@@ -275,11 +275,11 @@ public class AltarDefense {
         float pct = 100f * s.hp / s.maxHp;
         if (!s.warned50 && pct <= 50) {
             s.warned50 = true;
-            broadcast(level.getServer(), com.wavesurvivor.i18n.WSLang.t("srv.le_monolithe_faiblit_50_reparez_le"));
+            broadcastImportant(level.getServer(), com.wavesurvivor.i18n.WSLang.t("srv.le_monolithe_faiblit_50_reparez_le"));
         }
         if (!s.warned25 && pct <= 25) {
             s.warned25 = true;
-            broadcast(level.getServer(), com.wavesurvivor.i18n.WSLang.t("srv.le_monolithe_va_tomber_25"));
+            broadcastImportant(level.getServer(), com.wavesurvivor.i18n.WSLang.t("srv.le_monolithe_va_tomber_25"));
             level.playSound(null, s.pos, SoundEvents.WITHER_AMBIENT, SoundSource.BLOCKS, 1f, 0.7f);
         }
         if (s.hp <= 0) fail(level, s);
@@ -610,9 +610,13 @@ public class AltarDefense {
 
     // ─── Utils ───
 
+    /** Annonces du Monolithe : dans le fil d'événements (plus dans le chat). */
     private static void broadcast(MinecraftServer server, String msg) {
-        Component c = Component.literal(msg);
-        for (ServerPlayer p : server.getPlayerList().getPlayers()) p.sendSystemMessage(c);
+        com.wavesurvivor.network.EventFeedPacket.toAll(server, Component.literal(msg), "minecraft:beacon", com.wavesurvivor.network.EventFeedPacket.HORDE, false);
+    }
+
+    private static void broadcastImportant(MinecraftServer server, String msg) {
+        com.wavesurvivor.network.EventFeedPacket.toAll(server, Component.literal(msg), "minecraft:beacon", com.wavesurvivor.network.EventFeedPacket.DANGER, true);
     }
 
     private static String prettyItem(String id) {

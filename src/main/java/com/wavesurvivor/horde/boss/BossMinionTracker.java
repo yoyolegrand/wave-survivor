@@ -279,9 +279,7 @@ public class BossMinionTracker {
         static void toAll(Component msg) {
             MinecraftServer srv = com.wavesurvivor.horde.HordeManager.get().getServer();
             if (srv == null) return;
-            for (ServerPlayer p : srv.getPlayerList().getPlayers()) {
-                p.sendSystemMessage(msg);
-            }
+            com.wavesurvivor.network.EventFeedPacket.toAll(srv, msg, "minecraft:zombie_head", com.wavesurvivor.network.EventFeedPacket.DANGER, false);
         }
     }
 }

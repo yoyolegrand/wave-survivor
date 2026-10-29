@@ -238,3 +238,12 @@ Nouveau monde (ou zone inexplorée) ; chaque arène : rotation au hasard, pente 
 - [ ] Autels : particules visibles de près (48 blocs), rien de cassé pour l'autel lié / non lié
 - [ ] Reliques : équiper / retirer une relique prend effet tout de suite (immunités, aura, bonus), avec et sans Curios
 - [ ] Horde avec unités « attaque les bâtiments » : les coups sur le Monolithe et les défenses continuent
+
+## Annonces dans le fil d'événements (plus dans le chat)
+- [ ] Horde : « Vague N/total », « Vague N nettoyée », « Délai écoulé », fin de vague forcée + bonus, début / fin / arrêt de la horde apparaissent en haut à gauche, plus dans le chat
+- [ ] Boss : apparition, invocation de sbires, Monolithe à 50 % / 25 %, défaite : encart « important » (rouge, plus long)
+- [ ] Bénédiction choisie : encart avec le totem, plus de ligne de chat
+- [ ] Kingdom : début, Portes, assauts, boss, victoire, etc. dans le fil (bleu ; important en rouge)
+- [ ] Boss Rush, Sans fin, Invasions : début, étapes, vies perdues, défaite dans le fil
+- [ ] Restent dans le chat : résumés de fin (gain de PR, victoire / record, bilan de la chute du Monolithe, rapport d'éclaireur)
+- [ ] Rafale d'annonces (fin de vague + choix + boss) : elles s'empilent à 4 max, les suivantes attendent

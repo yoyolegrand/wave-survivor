@@ -79,7 +79,7 @@ public final class KingdomLives {
         server.execute(() -> {
             if (!KingdomManager.isActive()) return;
             Component msg = WSLang.c(key);
-            for (ServerPlayer o : server.getPlayerList().getPlayers()) o.sendSystemMessage(msg);
+            for (ServerPlayer o : server.getPlayerList().getPlayers()) com.wavesurvivor.network.EventFeedPacket.say(o, msg);
             HordeManager.get().endKingdom(false);
         });
     }
@@ -100,7 +100,7 @@ public final class KingdomLives {
             DOWN.put(p.getUUID(), -1L);
             if (!HordeMutators.on(Mutator.ONE_LIFE)) {
                 Component msg = WSLang.c("kingdom.death.fallen", p.getGameProfile().getName(), WAIT_SECONDS);
-                for (ServerPlayer o : server.getPlayerList().getPlayers()) o.sendSystemMessage(msg);
+                for (ServerPlayer o : server.getPlayerList().getPlayers()) com.wavesurvivor.network.EventFeedPacket.say(o, msg);
             }
         }
 

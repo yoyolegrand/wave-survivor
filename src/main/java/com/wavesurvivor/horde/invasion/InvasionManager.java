@@ -151,7 +151,7 @@ public class InvasionManager {
         cur = v;
 
         for (ServerPlayer p : level.players()) {
-            if (near(p, v)) p.sendSystemMessage(Component.literal(WSLang.t("invasion.start", WSLang.t(horde.hordeName), v.s.prepSeconds, v.waves)));
+            if (near(p, v)) com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("invasion.start", WSLang.t(horde.hordeName), v.s.prepSeconds, v.waves)));
         }
         ringBell(v);
         hideVillagers(v);
@@ -213,7 +213,7 @@ public class InvasionManager {
 
     /** Message aux joueurs proches du village. */
     private static void tell(Inv v, String msg) {
-        for (ServerPlayer p : v.level.players()) if (near(p, v)) p.sendSystemMessage(Component.literal(msg));
+        for (ServerPlayer p : v.level.players()) if (near(p, v)) com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(msg));
     }
 
     // ─── Village ───
@@ -270,7 +270,7 @@ public class InvasionManager {
         if (anyone) v.absentSince = -1;
         else if (v.absentSince < 0) v.absentSince = now;
         else if (now - v.absentSince > 1200 && v.phase != Phase.END) {
-            for (ServerPlayer p : v.level.players()) p.sendSystemMessage(Component.literal(WSLang.t("invasion.abandoned")));
+            for (ServerPlayer p : v.level.players()) com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("invasion.abandoned")));
             cleanup(srv, false);
             return;
         }
@@ -297,7 +297,7 @@ public class InvasionManager {
                         v.phase = Phase.BREAK;
                         v.phaseStart = now;
                         v.phaseEnd = now + Math.max(5, v.s.waveDelaySeconds) * 20L;
-                        for (ServerPlayer p : v.level.players()) if (near(p, v)) p.sendSystemMessage(Component.literal(WSLang.t("invasion.wave_done", v.wave, v.waves)));
+                        for (ServerPlayer p : v.level.players()) if (near(p, v)) com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("invasion.wave_done", v.wave, v.waves)));
                     }
                 }
             }
@@ -345,7 +345,7 @@ public class InvasionManager {
 
         for (ServerPlayer p : v.level.players()) {
             if (!near(p, v)) continue;
-            p.sendSystemMessage(Component.literal(WSLang.t("invasion.wave", n, v.waves)));
+            com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("invasion.wave", n, v.waves)));
             v.level.playSound(null, p.blockPosition(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 0.6f, 0.8f);
         }
     }
@@ -366,14 +366,14 @@ public class InvasionManager {
                 HordeEntity h = swe.toHordeEntity();
                 total += spawnSplit(v, h, h.getCountForWave(wave, players), players, maxShare);
             }
-            for (ServerPlayer p : v.level.players()) if (near(p, v)) p.sendSystemMessage(Component.literal(WSLang.t("invasion.special", WSLang.t(sw.name))));
+            for (ServerPlayer p : v.level.players()) if (near(p, v)) com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("invasion.special", WSLang.t(sw.name))));
         }
         if (v.cfg.useBossWaves && v.cfg.bossWaves != null) {
             for (BossWave b : v.cfg.bossWaves) {
                 if (b.waveNumber != wave) continue;
                 if (BossManager.spawnBoss(v.level, b, v.points[0], 8, v.level.getServer())) {
                     total++;
-                    for (ServerPlayer p : v.level.players()) if (near(p, v)) p.sendSystemMessage(Component.literal(WSLang.t("invasion.boss", WSLang.t(b.bossName))));
+                    for (ServerPlayer p : v.level.players()) if (near(p, v)) com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("invasion.boss", WSLang.t(b.bossName))));
                 }
             }
         }
@@ -540,7 +540,7 @@ public class InvasionManager {
         v.phase = Phase.END;
         v.won = false;
         v.phaseEnd = now + 100;
-        for (ServerPlayer p : v.level.players()) if (near(p, v)) p.sendSystemMessage(Component.literal(WSLang.t("invasion.defeat")));
+        for (ServerPlayer p : v.level.players()) if (near(p, v)) com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("invasion.defeat")));
         cooldownUntil = now + Math.max(0, InvasionGlobal.get().cooldownSeconds) * 20L;
     }
 

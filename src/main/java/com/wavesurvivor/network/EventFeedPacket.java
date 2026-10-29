@@ -17,7 +17,7 @@ public class EventFeedPacket {
 
     /** Couleurs par catégorie. */
     public static final int CHAOS = 0xFFFF9A3C, RESOURCE = 0xFF6FE08A, ORE = 0xFFF0D860, ARCANE = 0xFFC99BFF,
-            DANGER = 0xFFFF6A6A, KINGDOM = 0xFF6FB7FF;
+            DANGER = 0xFFFF6A6A, KINGDOM = 0xFF6FB7FF, HORDE = 0xFFE8C34A, BLESSING = 0xFFFFE27A;
 
     public final Component text;
     public final String icon;
@@ -53,6 +53,11 @@ public class EventFeedPacket {
     public static void toAll(MinecraftServer server, Component text, String icon, int color, boolean important) {
         if (server == null || NetworkHandler.CHANNEL == null) return;
         NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new EventFeedPacket(text, icon, color, important));
+    }
+
+    /** Annonce simple (couleur horde, sans icône) à un joueur : remplace une ligne de chat. */
+    public static void say(ServerPlayer p, Component text) {
+        toPlayer(p, text, "", HORDE, false);
     }
 
     public static void toPlayer(ServerPlayer p, Component text, String icon, int color, boolean important) {

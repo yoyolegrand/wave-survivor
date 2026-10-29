@@ -150,7 +150,8 @@ public final class WaveCleanup {
         return null;
     }
 
+    /** Annonces de fin de vague : dans le fil d'événements (plus dans le chat). */
     private static void broadcast(MinecraftServer srv, Component msg) {
-        for (ServerPlayer p : srv.getPlayerList().getPlayers()) p.sendSystemMessage(msg);
+        com.wavesurvivor.network.EventFeedPacket.toAll(srv, msg, "minecraft:clock", com.wavesurvivor.network.EventFeedPacket.HORDE, false);
     }
 }

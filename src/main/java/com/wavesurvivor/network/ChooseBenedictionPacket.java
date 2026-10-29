@@ -68,8 +68,8 @@ public class ChooseBenedictionPacket {
             RogueUpgradeManager.onChosen(player);
             RogueUpgradeManager.setLastChosenWave(player, currentWave);
             com.wavesurvivor.horde.benediction.BenedictionProtection.release(player); // 1.7 : fin de la protection (multijoueur)
-            player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.vous_avez_choisi") + upg.name())
-                    .withStyle(upg.color(), ChatFormatting.BOLD));
+            com.wavesurvivor.network.EventFeedPacket.toPlayer(player, Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.vous_avez_choisi") + upg.name())
+                    .withStyle(upg.color(), ChatFormatting.BOLD), "minecraft:totem_of_undying", com.wavesurvivor.network.EventFeedPacket.BLESSING, false);
         });
         context.setPacketHandled(true);
     }

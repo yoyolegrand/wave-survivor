@@ -90,7 +90,7 @@ public class Endless {
         startTick = srv.getTickCount();
         active = true;
         for (ServerPlayer p : srv.getPlayerList().getPlayers()) {
-            p.sendSystemMessage(Component.literal(WSLang.t("endless.start", baseTotal, lives)));
+            com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("endless.start", baseTotal, lives)));
         }
         return true;
     }
@@ -208,7 +208,7 @@ public class Endless {
         if (n == 1) key = "endless.begins";
         else if (n > 1 && n % 5 == 0) key = "endless.milestone";
         if (key == null) return;
-        for (ServerPlayer p : srv.getPlayerList().getPlayers()) p.sendSystemMessage(Component.literal(WSLang.t(key, wave)));
+        for (ServerPlayer p : srv.getPlayerList().getPlayers()) com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t(key, wave)));
     }
 
     // ─── Fin ───
@@ -255,11 +255,11 @@ public class Endless {
         lives--;
         MinecraftServer srv = p.getServer();
         for (ServerPlayer o : srv.getPlayerList().getPlayers()) {
-            o.sendSystemMessage(Component.literal(WSLang.t("endless.life_lost", p.getGameProfile().getName(), Math.max(0, lives))));
+            com.wavesurvivor.network.EventFeedPacket.say(o, Component.literal(WSLang.t("endless.life_lost", p.getGameProfile().getName(), Math.max(0, lives))));
         }
         if (lives <= 0) {
             lost = true;
-            for (ServerPlayer o : srv.getPlayerList().getPlayers()) o.sendSystemMessage(Component.literal(WSLang.t("endless.defeat")));
+            for (ServerPlayer o : srv.getPlayerList().getPlayers()) com.wavesurvivor.network.EventFeedPacket.say(o, Component.literal(WSLang.t("endless.defeat")));
             com.wavesurvivor.horde.renaissance.RenaissanceRewards.markDefeat(); // PR des vagues terminées
             srv.execute(hm::stop);
         }

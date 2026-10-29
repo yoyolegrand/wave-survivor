@@ -714,7 +714,7 @@ public final class KingdomManager {
                     p.corruption.restore();
                     p.corruption = null;
                 }
-                broadcast(WSLang.c("kingdom.portal_destroyed", WSLang.t("kingdom.dir." + p.dir)));
+                broadcastImportant(WSLang.c("kingdom.portal_destroyed", WSLang.t("kingdom.dir." + p.dir)));
                 level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, p.pos.getX() + 0.5, p.pos.getY() + 2, p.pos.getZ() + 0.5, 3, 1, 1, 1, 0);
                 for (ServerPlayer pl : level.players()) level.playSound(null, pl.blockPosition(), SoundEvents.WITHER_DEATH, SoundSource.HOSTILE, 1f, 1.2f);
             } else {
@@ -722,7 +722,7 @@ public final class KingdomManager {
             }
         }
         if (remaining == 0 && !PORTALS.isEmpty()) {
-            broadcast(WSLang.c("kingdom.victory"));
+            broadcastImportant(WSLang.c("kingdom.victory"));
             HordeManager.get().endKingdom(true);
             return;
         }
@@ -737,7 +737,7 @@ public final class KingdomManager {
                 com.wavesurvivor.horde.boss.BossManager.updateBars(server);
                 if (com.wavesurvivor.horde.boss.BossManager.activeBossCount() == 0) {
                     bossDefeated = true;
-                    broadcast(WSLang.c("kingdom.final_boss_down"));
+                    broadcastImportant(WSLang.c("kingdom.final_boss_down"));
                     // Porte du Roi choisie alors que d'autres Portes tenaient encore : le Roi est tombé, le royaume a gagné
                     if (forcedFinal) {
                         HordeManager.get().endKingdom(true);
@@ -994,7 +994,7 @@ public final class KingdomManager {
         if (special == null || special.entities == null) { special = null; return; }
         for (var swe : special.entities) specialUnits.add(swe.toHordeEntity());
         if (specialUnits.isEmpty()) { special = null; return; }
-        broadcast(WSLang.c("kingdom.special_assault", WSLang.t(special.name).trim()));
+        broadcastImportant(WSLang.c("kingdom.special_assault", WSLang.t(special.name).trim()));
     }
 
     /** Boss d'assaut : ceux réglés sur cet assaut sortent d'une Porte au hasard (le boss final reste réservé à la Porte du Roi). */
@@ -1014,12 +1014,12 @@ public final class KingdomManager {
             if (w.gate > 0) for (Portal p : open) if (p.num == w.gate) { from = p; break; }
             if (com.wavesurvivor.horde.boss.BossManager.spawnBoss(level, w, from.pos, 6, level.getServer())) {
                 BOSS_DONE.add(w.waveNumber);
-                broadcast(WSLang.c("kingdom.assault_boss", WSLang.t(w.bossName), WSLang.t("kingdom.dir." + from.dir)));
+                broadcastImportant(WSLang.c("kingdom.assault_boss", WSLang.t(w.bossName), WSLang.t("kingdom.dir." + from.dir)));
                 // Présage « Chasse royale » : un second boss surgit d'une autre Porte
                 if (KingdomOmens.is(KingdomOmens.Omen.ROYAL_HUNT)) {
                     Portal from2 = open.get(RNG.nextInt(open.size()));
                     if (com.wavesurvivor.horde.boss.BossManager.spawnBoss(level, w, from2.pos, 6, level.getServer())) {
-                        broadcast(WSLang.c("kingdom.assault_boss", WSLang.t(w.bossName), WSLang.t("kingdom.dir." + from2.dir)));
+                        broadcastImportant(WSLang.c("kingdom.assault_boss", WSLang.t(w.bossName), WSLang.t("kingdom.dir." + from2.dir)));
                     }
                 }
             }
@@ -1128,7 +1128,7 @@ public final class KingdomManager {
                 if (!kingLow && b.getHealth() <= b.getMaxHealth() * KING_LOW + 0.5f) {
                     kingLow = true;
                     p.breached = false;
-                    broadcast(WSLang.c("kingdom.king_low"));
+                    broadcastImportant(WSLang.c("kingdom.king_low"));
                     KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, 5, "kingdom.essence.breach");
                 } else if (p.breached && b.getHealth() <= floor + 0.5f) {
                     p.breached = false; // morceau de brèche épuisé avant les 35 % : elle se referme, comme les autres Portes
@@ -1249,7 +1249,7 @@ public final class KingdomManager {
             if (level.getEntity(p.id) instanceof BrecheEntity b) {
                 b.setCustomName(Component.literal(WSLang.t("kingdom.king_gate_name")));
             }
-            broadcast(WSLang.c("kingdom.king_gate"));
+            broadcastImportant(WSLang.c("kingdom.king_gate"));
             broadcast(WSLang.c("kingdom.king_gate_rule", finalBossWave(), Math.round(KING_LOW * 100)));
         }
     }
@@ -1273,7 +1273,7 @@ public final class KingdomManager {
                 if (w == last || w.waveNumber == cycle || BOSS_DONE.contains(w.waveNumber)) continue;
                 if (com.wavesurvivor.horde.boss.BossManager.spawnBoss(level, w, fin.pos, 8, level.getServer())) {
                     BOSS_DONE.add(w.waveNumber);
-                    broadcast(WSLang.c("kingdom.assault_boss", WSLang.t(w.bossName), WSLang.t("kingdom.dir." + fin.dir)));
+                    broadcastImportant(WSLang.c("kingdom.assault_boss", WSLang.t(w.bossName), WSLang.t("kingdom.dir." + fin.dir)));
                 }
             }
             return;
@@ -1284,7 +1284,7 @@ public final class KingdomManager {
             bossDefeated = true; // pas de boss configuré : la Porte est directement attaquable une fois ses Gardiens tombés
             return;
         }
-        broadcast(WSLang.c("kingdom.final_boss", WSLang.t(last.bossName)));
+        broadcastImportant(WSLang.c("kingdom.final_boss", WSLang.t(last.bossName)));
         for (ServerPlayer pl : level.players()) level.playSound(null, pl.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 1f, 0.8f);
         BOSS_DONE.add(last.waveNumber);
         // Les mini-boss pas encore apparus l'accompagnent (ceux de cet Assaut sortiront juste après, normalement)
@@ -1292,7 +1292,7 @@ public final class KingdomManager {
             if (w == last || w.waveNumber == cycle || BOSS_DONE.contains(w.waveNumber)) continue;
             if (com.wavesurvivor.horde.boss.BossManager.spawnBoss(level, w, fin.pos, 8, level.getServer())) {
                 BOSS_DONE.add(w.waveNumber);
-                broadcast(WSLang.c("kingdom.assault_boss", WSLang.t(w.bossName), WSLang.t("kingdom.dir." + fin.dir)));
+                broadcastImportant(WSLang.c("kingdom.assault_boss", WSLang.t(w.bossName), WSLang.t("kingdom.dir." + fin.dir)));
             }
         }
     }
@@ -1655,9 +1655,15 @@ public final class KingdomManager {
         }
     }
 
+    /** Annonces du Kingdom : dans le fil d'événements (plus dans le chat). */
     private static void broadcast(Component msg) {
         if (level == null) return;
-        for (ServerPlayer p : level.getServer().getPlayerList().getPlayers()) p.sendSystemMessage(msg);
+        com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), msg, "minecraft:white_banner", com.wavesurvivor.network.EventFeedPacket.KINGDOM, false);
+    }
+
+    private static void broadcastImportant(Component msg) {
+        if (level == null) return;
+        com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), msg, "minecraft:white_banner", com.wavesurvivor.network.EventFeedPacket.DANGER, true);
     }
 
     // ─── Commandes ───

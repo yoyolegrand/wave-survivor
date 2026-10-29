@@ -453,7 +453,7 @@ public class HordeManager {
     private void finishHorde(MinecraftServer srv) {
         String name = activeHorde != null ? activeHorde.hordeName : "?";
         WaveSurvivorMod.LOGGER.info("[HordeManager] Horde '{}' TERMINÉE.", name);
-        broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.horde_59a3") + com.wavesurvivor.i18n.WSLang.t(name) + com.wavesurvivor.i18n.WSLang.t("srv.terminee")).withStyle(ChatFormatting.GREEN));
+        broadcastImportant(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.horde_59a3") + com.wavesurvivor.i18n.WSLang.t(name) + com.wavesurvivor.i18n.WSLang.t("srv.terminee")).withStyle(ChatFormatting.GREEN));
         if (activeHorde != null && (!com.wavesurvivor.horde.bossrush.BossRush.active() || com.wavesurvivor.horde.bossrush.BossRush.leaderboardRewards())) RewardsDistributor.distribute(activeHorde, srv);
         com.wavesurvivor.horde.bossrush.BossRush.onVictory(srv); // Boss Rush : chrono et classement
         com.wavesurvivor.arena.ArenaSession.onVictory(srv);      // arène : coffre de récompense (une fois par arène)
@@ -664,7 +664,7 @@ public class HordeManager {
             double dz = p.getZ() - center.getZ();
             double dSq = dx * dx + dz * dz;
             if (dSq > rSq) {
-                broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.game_over") + p.getName().getString()
+                broadcastImportant(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.game_over") + p.getName().getString()
                         + com.wavesurvivor.i18n.WSLang.t("srv.est_trop_loin_de_la_zone_rayon") + cfg.gameOverRadius + ").").withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
                 stop();
                 return;
@@ -898,13 +898,13 @@ public class HordeManager {
             }
             boolean ok = BossManager.spawnBoss(level, boss, center, radius, server);
             if (ok) {
-                broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.boss_b2e9") + com.wavesurvivor.i18n.WSLang.t(boss.bossName) + com.wavesurvivor.i18n.WSLang.t("srv.apparait")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+                broadcastImportant(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.boss_b2e9") + com.wavesurvivor.i18n.WSLang.t(boss.bossName) + com.wavesurvivor.i18n.WSLang.t("srv.apparait")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
             }
         }
         // 1.7 — Mode sans fin : un boss de la horde revient périodiquement au-delà de la dernière vague
         BossWave endlessBoss = com.wavesurvivor.horde.endless.Endless.bossFor(cfg, wave);
         if (endlessBoss != null && BossManager.spawnBoss(level, endlessBoss, center, radius, server)) {
-            broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.boss_b2e9") + com.wavesurvivor.i18n.WSLang.t(endlessBoss.bossName) + com.wavesurvivor.i18n.WSLang.t("srv.apparait")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+            broadcastImportant(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.boss_b2e9") + com.wavesurvivor.i18n.WSLang.t(endlessBoss.bossName) + com.wavesurvivor.i18n.WSLang.t("srv.apparait")).withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
         }
     }
 
@@ -921,11 +921,20 @@ public class HordeManager {
         return server.overworld();
     }
 
+    /** Annonces de la partie : dans le fil d'événements à gauche de l'écran (plus dans le chat). */
     private void broadcast(Component msg) {
+        announce(msg, false);
+    }
+
+    /** Annonce majeure (boss, défaite, fin de horde) : encart plus visible. */
+    private void broadcastImportant(Component msg) {
+        announce(msg, true);
+    }
+
+    private void announce(Component msg, boolean important) {
         if (server == null) return;
-        for (ServerPlayer p : server.getPlayerList().getPlayers()) {
-            p.sendSystemMessage(msg);
-        }
+        com.wavesurvivor.network.EventFeedPacket.toAll(server, msg, important ? "minecraft:wither_skeleton_skull" : "",
+                important ? com.wavesurvivor.network.EventFeedPacket.DANGER : com.wavesurvivor.network.EventFeedPacket.HORDE, important);
     }
 
     public void reset() {

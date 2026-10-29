@@ -124,7 +124,7 @@ public class BossRush {
         hordeName = horde.hordeName;
         mode = m;
         for (ServerPlayer p : srv.getPlayerList().getPlayers()) {
-            p.sendSystemMessage(Component.literal(WSLang.t(m == Mode.GAUNTLET ? "bossrush.start_gauntlet" : "bossrush.start",
+            com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t(m == Mode.GAUNTLET ? "bossrush.start_gauntlet" : "bossrush.start",
                     STAGES.size(), lives, cfg.pauseSeconds, (int) cfg.gauntletPercent)));
         }
         return true;
@@ -156,7 +156,7 @@ public class BossRush {
         stageIdx = Math.max(0, STAGES.indexOf(wave));
         if (srv == null) return;
         for (ServerPlayer p : srv.getPlayerList().getPlayers()) {
-            p.sendSystemMessage(Component.literal(WSLang.t("bossrush.stage", stageIdx + 1, STAGES.size())));
+            com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("bossrush.stage", stageIdx + 1, STAGES.size())));
         }
     }
 
@@ -228,11 +228,11 @@ public class BossRush {
         lives--;
         MinecraftServer srv = p.getServer();
         for (ServerPlayer o : srv.getPlayerList().getPlayers()) {
-            o.sendSystemMessage(Component.literal(WSLang.t("bossrush.life_lost", p.getGameProfile().getName(), Math.max(0, lives))));
+            com.wavesurvivor.network.EventFeedPacket.say(o, Component.literal(WSLang.t("bossrush.life_lost", p.getGameProfile().getName(), Math.max(0, lives))));
         }
         if (lives <= 0) {
             lost = true;
-            for (ServerPlayer o : srv.getPlayerList().getPlayers()) o.sendSystemMessage(Component.literal(WSLang.t("bossrush.defeat")));
+            for (ServerPlayer o : srv.getPlayerList().getPlayers()) com.wavesurvivor.network.EventFeedPacket.say(o, Component.literal(WSLang.t("bossrush.defeat")));
             com.wavesurvivor.horde.renaissance.RenaissanceRewards.markDefeat(); // PR des boss déjà vaincus
             srv.execute(hm::stop);
         }
@@ -248,7 +248,7 @@ public class BossRush {
         int limit = maxMinutes();
         if (limit > 0 && elapsed > limit * 1200L) {
             lost = true;
-            for (ServerPlayer o : srv.getPlayerList().getPlayers()) o.sendSystemMessage(Component.literal(WSLang.t("bossrush.timeout", limit)));
+            for (ServerPlayer o : srv.getPlayerList().getPlayers()) com.wavesurvivor.network.EventFeedPacket.say(o, Component.literal(WSLang.t("bossrush.timeout", limit)));
             com.wavesurvivor.horde.renaissance.RenaissanceRewards.markDefeat();
             srv.execute(() -> HordeManager.get().stop());
             return;
