@@ -106,7 +106,7 @@ public final class KingdomTreasury {
         if (!active() || n <= 0) return;
         // Présage « Lune de sang » : l'Essence gagnée pendant l'Assaut est doublée
         if (r == Res.ESSENCE && KingdomOmens.is(KingdomOmens.Omen.BLOOD_MOON)
-                && KingdomManager.phase() == KingdomManager.Phase.ASSAULT) n *= 2;
+                && KingdomManager.phase() == KingdomManager.Phase.ASSAULT) n = (int) Math.round(n * (1.0 + KingdomOmens.boon(KingdomOmens.Omen.BLOOD_MOON)));
         add(r, n);
         ServerLevel lvl = KingdomManager.level();
         if (lvl == null) return;
@@ -237,7 +237,7 @@ public final class KingdomTreasury {
             if (!active() || e.getEntity().level().isClientSide) return;
             if (com.wavesurvivor.horde.boss.BossManager.isBoss(e.getEntity().getUUID())) {
                 // Présage « Chasse royale » : +6 au lieu de +3
-                reward(Res.ESSENCE, KingdomOmens.is(KingdomOmens.Omen.ROYAL_HUNT) ? 6 : 3, "kingdom.essence.boss");
+                reward(Res.ESSENCE, KingdomOmens.is(KingdomOmens.Omen.ROYAL_HUNT) ? (int) Math.round(3 + 3 * KingdomOmens.boon(KingdomOmens.Omen.ROYAL_HUNT)) : 3, "kingdom.essence.boss");
             }
         }
     }

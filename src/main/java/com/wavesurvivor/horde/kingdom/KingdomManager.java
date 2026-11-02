@@ -317,12 +317,12 @@ public final class KingdomManager {
     private static void applyOmen(KingdomOmens.Omen om) {
         if (om == null) return;
         double mult = switch (om) {
-            case TIDE -> 0.75;
-            case BOUNTY -> 1.2;
-            case SLUMBER -> 1.3;
-            case FRENZY -> 1.4;
-            case DROWSY -> 1.3;
-            case OFFERING -> 0.65;
+            case TIDE -> Math.max(0.2, 1.0 - 0.25 * KingdomOmens.boon(om));
+            case BOUNTY -> 1.0 + 0.2 * KingdomOmens.curse(om);
+            case SLUMBER -> 1.0 + 0.3 * KingdomOmens.curse(om);
+            case FRENZY -> 1.0 + 0.4 * KingdomOmens.curse(om);
+            case DROWSY -> 1.0 + 0.3 * KingdomOmens.curse(om);
+            case OFFERING -> Math.max(0.2, 1.0 - 0.35 * KingdomOmens.boon(om));
             case IRON_RAIN, ROYAL_HUNT, FAIR_WINDS, BLOOD_MOON -> 1.0;
         };
         Portal sleeping = null;
@@ -609,7 +609,7 @@ public final class KingdomManager {
         int budget = rush ? 0 : budgetFor(cycle);
         for (Portal p : PORTALS) { p.budget = p.destroyed ? 0 : budget; p.spawned = 0; }
         // Augure : le présage choisi pendant le Calme modifie les effectifs de cet Assaut
-        applyOmen(KingdomOmens.startAssault(level.getServer()));
+        for (KingdomOmens.Omen om : KingdomOmens.startAssault(level.getServer())) applyOmen(om); // plusieurs présages possibles (talents de l'Augure)
         com.wavesurvivor.horde.benediction.BlessingEffects.onWaveStart(level.getServer()); // bénédiction de l'Aube
         // Objectif du Calme précédent : clos ; Purification → Assaut plus fort (aucun foyer) ou plus faible (tous)
         double objMult = KingdomObjectives.onAssault();
@@ -1329,7 +1329,7 @@ public final class KingdomManager {
         HordeEntity t = pickTemplate(p.num);
         // Contrepartie du Récupérateur / présage « Pluie de fer » : 25 % des groupes sont des unités de siège
         if (special == null && (KingdomRoles.present(KingdomRoles.Role.SCAVENGER) || KingdomOmens.is(KingdomOmens.Omen.IRON_RAIN))
-                && RNG.nextDouble() < 0.25) {
+                && RNG.nextDouble() < (KingdomRoles.present(KingdomRoles.Role.SCAVENGER) ? 0.25 : 0.25 * KingdomOmens.curse(KingdomOmens.Omen.IRON_RAIN))) {
             HordeEntity s = pickSiegeTemplate(p.num);
             if (s != null) t = s;
         }

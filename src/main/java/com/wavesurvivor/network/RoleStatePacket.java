@@ -19,9 +19,11 @@ public class RoleStatePacket {
     /** Niveau maximal des fioles et remise sur leurs améliorations (%), selon les talents de l'Alchimiste. */
     public final int[] flaskMax;
     public final int flaskDiscount;
+    /** « présage scellé | indicateurs » (Augure). */
+    public final String omenExtra;
 
     public RoleStatePacket(int reagents, String options, String chosen, String active,
-                           String contract, int progress, int target, int reward, int[] flaskLevels, int[] flaskMax, int flaskDiscount) {
+                           String contract, int progress, int target, int reward, int[] flaskLevels, int[] flaskMax, int flaskDiscount, String omenExtra) {
         this.reagents = reagents;
         this.options = options;
         this.chosen = chosen;
@@ -33,6 +35,7 @@ public class RoleStatePacket {
         this.flaskLevels = flaskLevels;
         this.flaskMax = flaskMax;
         this.flaskDiscount = flaskDiscount;
+        this.omenExtra = omenExtra;
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -47,11 +50,12 @@ public class RoleStatePacket {
         buf.writeVarIntArray(flaskLevels);
         buf.writeVarIntArray(flaskMax);
         buf.writeVarInt(flaskDiscount);
+        buf.writeUtf(omenExtra);
     }
 
     public static RoleStatePacket decode(FriendlyByteBuf buf) {
         return new RoleStatePacket(buf.readVarInt(), buf.readUtf(), buf.readUtf(), buf.readUtf(),
-                buf.readUtf(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarIntArray(), buf.readVarIntArray(), buf.readVarInt());
+                buf.readUtf(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarIntArray(), buf.readVarIntArray(), buf.readVarInt(), buf.readUtf());
     }
 
     public static void handle(RoleStatePacket pkt, Supplier<NetworkEvent.Context> ctx) {
@@ -67,6 +71,9 @@ public class RoleStatePacket {
             KingdomRoleState.clientFlaskLevels = pkt.flaskLevels;
             KingdomRoleState.clientFlaskMax = pkt.flaskMax;
             KingdomRoleState.clientFlaskDiscount = pkt.flaskDiscount;
+            String[] ox = pkt.omenExtra.split("\\|", -1);
+            KingdomRoleState.clientOmenSealed = ox.length > 0 ? ox[0] : "";
+            try { KingdomRoleState.clientOmenFlags = ox.length > 1 ? Integer.parseInt(ox[1]) : 0; } catch (NumberFormatException ex) { KingdomRoleState.clientOmenFlags = 0; }
         });
         ctx.get().setPacketHandled(true);
     }

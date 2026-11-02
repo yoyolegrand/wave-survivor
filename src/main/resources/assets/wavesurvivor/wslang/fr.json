@@ -3440,5 +3440,14 @@
   "voc.last_stand": "§cDernier carré : les soldats tombés reviennent !",
   "voc.raider_chest": "§7Pillage : le coffre d'un pillard t'attend !",
   "voc.reason.bounty_boss": "Tête mise à prix",
-  "voc.reason.raider": "Coffre de pillard"
+  "voc.reason.raider": "Coffre de pillard",
+  "voc.omen.preview": "§9Aperçu : le prochain Calme proposera {0}.",
+  "voc.omen.no_reroll": "§cRelance indisponible (déjà utilisée ce Calme, ou talent manquant).",
+  "voc.omen.no_seal": "§cRien à sceller (choisis d'abord un présage ; l'Offrande ne peut pas être scellée).",
+  "voc.omen.sealed": "§9Présage scellé : {0}. Libère-le quand tu veux.",
+  "voc.omen.no_sealed": "§cAucun présage scellé.",
+  "voc.omen.released": "§9Présage libéré : {0}.",
+  "voc.ui.omen_reroll": "Relancer",
+  "voc.ui.omen_seal": "Sceller",
+  "voc.ui.omen_release": "Libérer"
 }

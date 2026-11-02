@@ -85,3 +85,13 @@ Ultimes : Rupture, Nexus (zone d'affaiblissement 30 s au Monolithe à chaque Ass
 - [ ] Alchimiste : l'écran du Monolithe montre « max » au bon niveau par fiole (4 avec le talent de la catégorie), prix du niveau 4 = 48.
 - [ ] Ultimes : achat possible à 15 points + 150 PR (une fois), puis re-choix gratuit après réinitialisation.
 - Encore « Bientôt » : Exploitant `area_harvest` · Bâtisseur `ruin_refund`, ultime Grand chantier · Intendant `extra_offer`, `rare_offer`, `convert`, `essence_to_coins`, ultime Marché noir · Chasseur `choice_of_two`, `secondary_contract` · Récupérateur `recycle_items`, `recycle_gear`, `tame_ram`, ultime Arsenal de siège · Augure : 11 talents + 2 ultimes.
+
+## Augure — refonte des présages (11 talents + 2 ultimes)
+Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, valeurs modulables, scellé, relance, aperçu.
+- [ ] **Sans talent** : comportement inchangé (2 présages proposés, 1 seul choisi, effets identiques à avant).
+- [ ] `omen_boon` / `omen_curse` : avantages +10 %/rang, contreparties −10 %/rang sur TOUS les présages (effectifs −25 %/+20 %/+30 %/+40 %, butin +50 %, Essence de Frénésie, Pluie de fer 15 %, élites de la Marée basse, Chasse royale +3 Essence, Lune de sang ×2, coût de l'Offrande).
+- [ ] `reroll` (bouton « Relancer », 1 fois par Calme) ; `sealed_omen` (« Sceller » garde le dernier présage choisi, « Libérer » le remet parmi les choisis) ; `preview` (message « Aperçu » au début de l'Assaut, le Calme suivant propose bien ce tirage).
+- [ ] `carry_over` : le présage reste actif 30 s après le début du Calme ; `stacking` : même présage deux Assauts de suite → avantages ×1,25 (✦ dans l'annonce).
+- [ ] `double_omen` : 2 présages choisis (recliquer un choisi le retire) et actifs ensemble ; `double_curse_cut` : contreparties −25 % avec 2 présages ; `harmony` : avantages +15 % avec 2 présages ; `double_from_start` : 2 choix dès le 1er Calme.
+- [ ] Ultimes : Triple présage (3 choix) ; Présage vivant (Régénération I aux joueurs pendant l'Assaut tant qu'un présage est actif).
+- [ ] Écran du Monolithe (Augure) : boutons Relancer/Sceller/Libérer visibles seulement avec les talents ; pas de chevauchement avec le bloc Maîtrise (à vérifier avec 3 présages proposés).

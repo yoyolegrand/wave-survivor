@@ -603,13 +603,33 @@ public class MonolithShopScreen extends Screen {
                 String chosen = com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenChosen;
                 for (int i = 0; i < opts.length && i < 3; i++) {
                     final int code = 80 + i;
-                    boolean sel = opts[i].equals(chosen);
+                    boolean sel = java.util.Arrays.asList(chosen.split(",")).contains(opts[i]);
                     Button ob = addRenderableWidget(Button.builder(
                                     Component.literal((sel ? "§a✔ §l" : "§d§l") + WSLang.t("kingdom.omen." + opts[i])),
                                     btn -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(code)))
                             .tooltip(Tooltip.create(WSLang.c("kingdom.omen." + opts[i] + ".desc")))
                             .bounds(left + 30, ys + 14 + i * 36, PANEL_W - 60, 20).build());
-                    ob.active = !sel && calm;
+                    ob.active = calm && (!sel || (com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenFlags >> 5) > 1);
+                }
+                // Talents de l'Augure : relancer, sceller, libérer le présage scellé
+                int fl = com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenFlags;
+                if ((fl & (8 | 16 | 4)) != 0) {
+                    int by = top + PANEL_H - 76 - 20, bw = (PANEL_W - 60 - 8) / 3;
+                    String sealedId = com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenSealed;
+                    Button rr = addRenderableWidget(Button.builder(Component.literal(WSLang.t("voc.ui.omen_reroll")),
+                            btn -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(83))).bounds(left + 30, by, bw, 14).build());
+                    rr.active = (fl & 1) != 0;
+                    rr.visible = (fl & 8) != 0;
+                    Button sb = addRenderableWidget(Button.builder(Component.literal(WSLang.t("voc.ui.omen_seal")),
+                            btn -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(84))).bounds(left + 30 + bw + 4, by, bw, 14).build());
+                    sb.active = (fl & 2) != 0;
+                    sb.visible = (fl & 16) != 0;
+                    Button lb = addRenderableWidget(Button.builder(Component.literal(WSLang.t("voc.ui.omen_release")),
+                                    btn -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(85)))
+                            .tooltip(Tooltip.create(Component.literal(sealedId.isEmpty() ? "" : WSLang.t("kingdom.omen." + sealedId))))
+                            .bounds(left + 30 + 2 * (bw + 4), by, bw, 14).build());
+                    lb.active = (fl & 4) != 0;
+                    lb.visible = (fl & 16) != 0;
                 }
             }
             default -> { }
@@ -682,8 +702,9 @@ public class MonolithShopScreen extends Screen {
                 String[] opts = com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenOptions;
                 if (opts.length == 0) {
                     String act = com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenActive;
-                    centeredWrapped(g, act != null && !act.isEmpty()
-                            ? WSLang.t("kingdom.omen.active", WSLang.t("kingdom.omen." + act)) : WSLang.t("kingdom.omen.none_yet"), ys + 20);
+                    StringBuilder an = new StringBuilder();
+                    if (act != null && !act.isEmpty()) for (String a1 : act.split(",")) an.append(an.length() > 0 ? " + " : "").append(WSLang.t("kingdom.omen." + a1));
+                    centeredWrapped(g, an.length() > 0 ? WSLang.t("kingdom.omen.active", an.toString()) : WSLang.t("kingdom.omen.none_yet"), ys + 20);
                 } else {
                     g.drawCenteredString(font, WSLang.t("ui.shop.omen_title"), width / 2, ys, 0xFFFFFFFF);
                     // Résumé de chaque présage sous son bouton (avantage / contrepartie)

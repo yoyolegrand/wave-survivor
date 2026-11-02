@@ -508,6 +508,9 @@ public class AltarDefense {
             else if (type >= 70 && type < 75) com.wavesurvivor.horde.kingdom.KingdomAlchemy.brew(player, type - 70); // fioles
             else if (type >= 75 && type < 80) com.wavesurvivor.horde.kingdom.KingdomAlchemy.upgrade(player, type - 75); // amélioration des fioles
             else if (type >= 80 && type < 83) com.wavesurvivor.horde.kingdom.KingdomOmens.choose(player, type - 80); // présages
+            else if (type == 83) com.wavesurvivor.horde.kingdom.KingdomOmens.reroll(player);   // talent : relancer le tirage
+            else if (type == 84) com.wavesurvivor.horde.kingdom.KingdomOmens.seal(player);     // talent : sceller un présage
+            else if (type == 85) com.wavesurvivor.horde.kingdom.KingdomOmens.release(player);  // libérer le présage scellé
             else if (type == 90) com.wavesurvivor.horde.kingdom.KingdomRoleExtras.recoverHorn(player); // cor du Commandant
             else com.wavesurvivor.horde.kingdom.KingdomDefenses.buy(player, type);
             sendShopState(player, false);

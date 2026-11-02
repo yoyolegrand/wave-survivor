@@ -949,24 +949,21 @@
               "effect": "augur.clairvoyance.reroll",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "sealed_omen",
               "effect": "augur.clairvoyance.sealed_omen",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "preview",
               "effect": "augur.clairvoyance.preview",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         },
@@ -978,8 +975,7 @@
               "effect": "augur.mastery.omen_boon",
               "ranks": 4,
               "value": 10,
-              "unit": "pct",
-              "wip": true
+              "unit": "pct"
             },
             {
               "id": "omen_curse",
@@ -987,24 +983,21 @@
               "ranks": 4,
               "value": 10,
               "unit": "pct",
-              "sign": "-",
-              "wip": true
+              "sign": "-"
             },
             {
               "id": "carry_over",
               "effect": "augur.mastery.carry_over",
               "ranks": 1,
               "value": 30,
-              "unit": "sec",
-              "wip": true
+              "unit": "sec"
             },
             {
               "id": "stacking",
               "effect": "augur.mastery.stacking",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         },
@@ -1016,8 +1009,7 @@
               "effect": "augur.convergence.double_omen",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "double_curse_cut",
@@ -1025,24 +1017,21 @@
               "ranks": 3,
               "value": 10,
               "unit": "pct",
-              "sign": "-",
-              "wip": true
+              "sign": "-"
             },
             {
               "id": "harmony",
               "effect": "augur.convergence.harmony",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "double_from_start",
               "effect": "augur.convergence.double_from_start",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         }
@@ -1052,15 +1041,13 @@
           "id": "triple_omen",
           "effect": "augur.ult.triple_omen",
           "value": 3,
-          "unit": "flat",
-          "wip": true
+          "unit": "flat"
         },
         {
           "id": "living_omen",
           "effect": "augur.ult.living_omen",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         }
       ]
     },

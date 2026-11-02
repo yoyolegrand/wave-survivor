@@ -205,6 +205,12 @@ public final class VocationFx {
                 m.hurt(lvl.damageSources().indirectMagic(a, a), 3f);
             }
         }
+        if (tick % 20 == 0 && KingdomManager.phase() == KingdomManager.Phase.ASSAULT && !com.wavesurvivor.horde.kingdom.KingdomOmens.activeList().isEmpty()
+                && Voc.has(KingdomRoles.Role.AUGUR, "augur.ult.living_omen")) { // ultime Présage vivant : bonus personnel pendant l'Assaut
+            for (ServerPlayer p : server.getPlayerList().getPlayers()) {
+                if (!p.isSpectator()) p.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0, true, false));
+            }
+        }
         if (captain != null) {
             ServerLevel lvl = KingdomManager.level();
             var c = lvl == null ? null : lvl.getEntity(captain);

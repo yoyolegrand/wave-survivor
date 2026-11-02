@@ -49,7 +49,7 @@ public final class KingdomRoleEffects {
             if (!KingdomRoles.active()) return;
             boolean qm = e.getSource().getEntity() instanceof ServerPlayer kp && KingdomRoles.has(kp, KingdomRoles.Role.QUARTERMASTER);
             double bonus = (qm ? 1.0 + Voc.base(KingdomRoles.Role.QUARTERMASTER, "killCoinBonus", 0.10)
-                    + Vocations.total((ServerPlayer) e.getSource().getEntity(), KingdomRoles.Role.QUARTERMASTER, "quartermaster.treasury.coin_bonus") / 100.0 : 1.0) * (KingdomOmens.is(KingdomOmens.Omen.BOUNTY) ? 1.5 : 1.0) - 1.0;
+                    + Vocations.total((ServerPlayer) e.getSource().getEntity(), KingdomRoles.Role.QUARTERMASTER, "quartermaster.treasury.coin_bonus") / 100.0 : 1.0) * (KingdomOmens.is(KingdomOmens.Omen.BOUNTY) ? 1.0 + 0.5 * KingdomOmens.boon(KingdomOmens.Omen.BOUNTY) : 1.0) - 1.0;
             if (bonus <= 0) return;
             var rnd = e.getEntity().getRandom();
             for (net.minecraft.world.entity.item.ItemEntity ie : e.getDrops()) {

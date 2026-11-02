@@ -268,7 +268,7 @@ public final class KingdomRoleExtras {
     /** Chasseur présent (10 %) et/ou présage Marée basse (20 %) : des monstres de la horde deviennent des élites. */
     private static void promoteElites(ServerLevel lvl) {
         double chance = (KingdomRoles.present(KingdomRoles.Role.BOUNTY_HUNTER) ? 0.10 : 0)
-                + (KingdomOmens.is(KingdomOmens.Omen.TIDE) ? 0.20 : 0);
+                + (KingdomOmens.is(KingdomOmens.Omen.TIDE) ? 0.20 * KingdomOmens.curse(KingdomOmens.Omen.TIDE) : 0);
         for (Map.Entry<UUID, com.wavesurvivor.horde.model.HordeEntity> en : MobRegistry.entries()) {
             UUID id = en.getKey();
             if (!SEEN.add(id)) continue;
@@ -364,7 +364,7 @@ public final class KingdomRoleExtras {
             if (lvl != KingdomManager.level()) return;
             boolean siege = !KingdomSiege.roleOf(dead).isEmpty();
             // Présage « Pluie de fer » : 15 % de chance de +1 Fer par monstre de la horde abattu
-            if (KingdomOmens.is(KingdomOmens.Omen.IRON_RAIN) && RNG.nextDouble() < 0.15
+            if (KingdomOmens.is(KingdomOmens.Omen.IRON_RAIN) && RNG.nextDouble() < 0.15 * KingdomOmens.boon(KingdomOmens.Omen.IRON_RAIN)
                     && (MobRegistry.get(dead.getUUID()) != null || isElite(dead) || siege)) {
                 KingdomTreasury.add(KingdomTreasury.Res.IRON, 1);
                 lvl.sendParticles(ParticleTypes.CRIT, dead.getX(), dead.getY() + 1, dead.getZ(), 8, 0.3, 0.4, 0.3, 0.1);

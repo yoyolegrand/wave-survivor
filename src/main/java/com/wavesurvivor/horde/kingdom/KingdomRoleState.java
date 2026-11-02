@@ -24,6 +24,9 @@ public final class KingdomRoleState {
     public static int[] clientFlaskLevels = {1, 1, 1, 1, 1};
     public static int[] clientFlaskMax = {2, 2, 2, 2, 2};
     public static int clientFlaskDiscount = 0;
+    /** Présage scellé (id ou vide) et indicateurs de l'Augure (voir KingdomOmens.flagsFor). */
+    public static String clientOmenSealed = "";
+    public static int clientOmenFlags = 0;
 
     public static void syncTo(ServerPlayer p) {
         if (NetworkHandler.CHANNEL == null || p == null) return;
@@ -32,15 +35,23 @@ public final class KingdomRoleState {
         if (KingdomRoles.has(p, KingdomRoles.Role.AUGUR)) {
             for (KingdomOmens.Omen o : KingdomOmens.options()) opts.append(opts.length() > 0 ? "," : "").append(o.id());
         }
-        KingdomOmens.Omen c = KingdomOmens.chosen(), a = KingdomOmens.active();
+        String c = joinIds(KingdomOmens.chosenList()), a = joinIds(KingdomOmens.activeList());
+        boolean augur = KingdomRoles.has(p, KingdomRoles.Role.AUGUR);
+        String extra = augur ? (KingdomOmens.sealed() == null ? "" : KingdomOmens.sealed().id()) + "|" + KingdomOmens.flagsFor(p) : "|0";
         boolean hunter = p.getUUID().equals(KingdomRoleExtras.contractHunter());
         NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), new RoleStatePacket(
-                KingdomAlchemy.reagents(p.getUUID()), opts.toString(), c == null ? "" : c.id(), a == null ? "" : a.id(),
+                KingdomAlchemy.reagents(p.getUUID()), opts.toString(), c, a,
                 hunter ? KingdomRoleExtras.contractId() : "",
                 hunter ? KingdomRoleExtras.contractProgress() : 0,
                 hunter ? KingdomRoleExtras.contractTarget() : 0,
                 hunter ? KingdomRoleExtras.contractReward() : 0,
-                KingdomAlchemy.levels(p.getUUID()).clone(), KingdomAlchemy.maxLevels(p), KingdomAlchemy.upgradeDiscountPct(p)));
+                KingdomAlchemy.levels(p.getUUID()).clone(), KingdomAlchemy.maxLevels(p), KingdomAlchemy.upgradeDiscountPct(p), extra));
+    }
+
+    private static String joinIds(java.util.List<KingdomOmens.Omen> l) {
+        StringBuilder sb = new StringBuilder();
+        for (KingdomOmens.Omen o : l) sb.append(sb.length() > 0 ? "," : "").append(o.id());
+        return sb.toString();
     }
 
     public static void syncAll(MinecraftServer server) {

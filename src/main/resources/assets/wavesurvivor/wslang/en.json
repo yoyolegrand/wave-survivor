@@ -4174,5 +4174,14 @@
   "voc.last_stand": "§cLast stand: fallen soldiers return!",
   "voc.raider_chest": "§7Plunder: a raider's chest awaits!",
   "voc.reason.bounty_boss": "Bounty on its head",
-  "voc.reason.raider": "Raider chest"
+  "voc.reason.raider": "Raider chest",
+  "voc.omen.preview": "§9Preview: the next Calm will offer {0}.",
+  "voc.omen.no_reroll": "§cReroll unavailable (already used this Calm, or talent missing).",
+  "voc.omen.no_seal": "§cNothing to seal (pick an omen first; the Offering cannot be sealed).",
+  "voc.omen.sealed": "§9Omen sealed: {0}. Release it whenever you like.",
+  "voc.omen.no_sealed": "§cNo sealed omen.",
+  "voc.omen.released": "§9Omen released: {0}.",
+  "voc.ui.omen_reroll": "Reroll",
+  "voc.ui.omen_seal": "Seal",
+  "voc.ui.omen_release": "Release"
 }
