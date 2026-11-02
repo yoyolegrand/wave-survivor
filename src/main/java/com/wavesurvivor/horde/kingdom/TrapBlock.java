@@ -95,12 +95,17 @@ public class TrapBlock extends Block {
         return l.getEntitiesOfClass(Mob.class, new AABB(pos).inflate(r, 2, r), TrapBlock::isHostile);
     }
 
+    /** Talent Ingénieur : dégâts des pièges à lames et explosifs. */
+    private static float trapMult() {
+        return (float) (1.0 + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(KingdomRoles.Role.BUILDER, "builder.engineer.trap_damage"));
+    }
+
     private void trigger(ServerLevel l, BlockPos pos, Mob victim) {
         Vec3 c = Vec3.atBottomCenterOf(pos);
         switch (kind) {
             case SPIKES -> {
                 for (Mob m : hostilesAround(l, pos, 1.5)) {
-                    m.hurt(l.damageSources().cactus(), 12f);
+                    m.hurt(l.damageSources().cactus(), 12f * trapMult());
                     m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2));
                 }
                 l.sendParticles(ParticleTypes.CRIT, c.x, c.y + 0.3, c.z, 30, 0.6, 0.3, 0.6, 0.3);
@@ -121,7 +126,7 @@ public class TrapBlock extends Block {
             }
             case EXPLOSIVE -> {
                 for (Mob m : hostilesAround(l, pos, 3.5)) {
-                    m.hurt(l.damageSources().explosion(null, null), 14f);
+                    m.hurt(l.damageSources().explosion(null, null), 14f * trapMult());
                     Vec3 push = m.position().subtract(c).normalize().scale(0.8);
                     m.push(push.x, 0.4, push.z);
                 }

@@ -2,6 +2,8 @@ package com.wavesurvivor.horde.kingdom;
 
 import com.wavesurvivor.entity.GisementEntity;
 import com.wavesurvivor.horde.chaos.GisementManager;
+import com.wavesurvivor.horde.kingdom.vocation.Voc;
+import com.wavesurvivor.horde.kingdom.vocation.Vocations;
 import com.wavesurvivor.network.NetworkHandler;
 import com.wavesurvivor.network.RoleTrackerPacket;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -46,7 +48,8 @@ public final class KingdomRoleEffects {
         public void effectsDrops(net.minecraftforge.event.entity.living.LivingDropsEvent e) {
             if (!KingdomRoles.active()) return;
             boolean qm = e.getSource().getEntity() instanceof ServerPlayer kp && KingdomRoles.has(kp, KingdomRoles.Role.QUARTERMASTER);
-            double bonus = (qm ? 1.2 : 1.0) * (KingdomOmens.is(KingdomOmens.Omen.BOUNTY) ? 1.5 : 1.0) - 1.0;
+            double bonus = (qm ? 1.0 + Voc.base(KingdomRoles.Role.QUARTERMASTER, "killCoinBonus", 0.10)
+                    + Vocations.total((ServerPlayer) e.getSource().getEntity(), KingdomRoles.Role.QUARTERMASTER, "quartermaster.treasury.coin_bonus") / 100.0 : 1.0) * (KingdomOmens.is(KingdomOmens.Omen.BOUNTY) ? 1.5 : 1.0) - 1.0;
             if (bonus <= 0) return;
             var rnd = e.getEntity().getRandom();
             for (net.minecraft.world.entity.item.ItemEntity ie : e.getDrops()) {
@@ -68,9 +71,12 @@ public final class KingdomRoleEffects {
             if (e.getLevel().isClientSide || !KingdomRoles.active()) return;
             if (!(e.getTarget() instanceof net.minecraft.world.entity.npc.AbstractVillager v) || !(e.getEntity() instanceof ServerPlayer p)) return;
             boolean qm = KingdomRoles.has(p, KingdomRoles.Role.QUARTERMASTER);
+            // Remise de l'Intendant (base + talents) ; talent Commerce : l'équipe en reçoit une partie
+            double own = Voc.base(KingdomRoles.Role.QUARTERMASTER, "merchantDiscount", 0.08) + Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.trade.discount");
+            double disc = qm ? own : (KingdomRoles.present(KingdomRoles.Role.QUARTERMASTER) ? own * Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.trade.team_share") : 0);
             for (var offer : v.getOffers()) {
                 int base = offer.getBaseCostA().getCount();
-                offer.setSpecialPriceDiff(qm ? -Math.max(1, (int) Math.round(base * 0.15)) : 0);
+                offer.setSpecialPriceDiff(disc > 0 ? -Math.max(1, (int) Math.round(base * Math.min(0.9, disc))) : 0);
             }
         }
         @SubscribeEvent
@@ -89,7 +95,8 @@ public final class KingdomRoleEffects {
             }
             Set<UUID> now = new HashSet<>();
             // Bâtisseur : +10 % de PV sur toutes les constructions tant qu'il est connecté
-            KingdomClaim.setBuilderBonus(KingdomRoles.present(KingdomRoles.Role.BUILDER));
+            KingdomClaim.setBuilderBonus(KingdomRoles.present(KingdomRoles.Role.BUILDER)
+                    ? Voc.base(KingdomRoles.Role.BUILDER, "hpBonus", 0.05) + Voc.pct(KingdomRoles.Role.BUILDER, "builder.engineer.hp") : 0);
             // Pierre de Fondation (relique) : +15 % de PV tant qu'un porteur est connecté
             KingdomClaim.setFoundationLevel(com.wavesurvivor.item.RelicEffects.bestLevel(server, com.wavesurvivor.registry.ModItems.PIERRE_FONDATION.get()));
             boolean teamRift = false;
@@ -116,7 +123,8 @@ public final class KingdomRoleEffects {
                         beam(p, g, GOLD);
                         if (g.level() == p.level() && g.distanceToSqr(p) < 36) near = true;
                     }
-                    if (near) p.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 40, 1, true, false, true));
+                    if (near) p.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 40,
+                            (int) Voc.base(KingdomRoles.Role.MINER, "hasteAmplifier", 0) + (int) Vocations.total(p, KingdomRoles.Role.MINER, "miner.endurance.haste"), true, false, true));
                     send(p, "deposit", new ArrayList<>(deps));
                     now.add(p.getUUID());
                 }

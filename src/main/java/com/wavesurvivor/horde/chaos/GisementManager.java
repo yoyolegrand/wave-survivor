@@ -49,7 +49,7 @@ public class GisementManager {
         int life = ev.lifetime > 0 ? ev.lifetime : 120;
         // Contrepartie du Mineur (Kingdom) : les gisements disparaissent plus vite (-20 % de durée)
         if (com.wavesurvivor.horde.kingdom.KingdomRoles.present(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER)) {
-            life = Math.max(20, (int) Math.round(life * 0.8));
+            life = Math.max(20, (int) Math.round(life * 0.8 * (1.0 + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.abundance.lifetime"))));
         }
         DEPOSITS.put(g.getUUID(), new Deposit(g.getUUID(), now + life * 20L,
                 ev.drops != null ? new ArrayList<>(ev.drops) : List.of(), ev.hitDropItem, ev.hitDropChance, label, Math.max(0.1, lootMult),
@@ -160,7 +160,7 @@ public class GisementManager {
         if (event.getSource().getEntity() instanceof ServerPlayer vp) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(vp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "deposit_harvested"); // Vocations
         if (event.getSource().getEntity() instanceof ServerPlayer minerP
                 && com.wavesurvivor.horde.kingdom.KingdomRoles.has(minerP, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER)
-                && RNG.nextDouble() < 0.25) {
+                && RNG.nextDouble() < com.wavesurvivor.horde.kingdom.vocation.Voc.base(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "doubleLootChance", 0.15) + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.yield.double_loot")) {
             mult *= 2;
             minerP.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.role.miner.double"), true);
         }

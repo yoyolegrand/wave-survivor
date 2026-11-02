@@ -162,7 +162,10 @@ public class GisementEntity extends Mob {
             float hit = Math.max(2f, Math.min(amount, 14f));
             // Arcaniste : purifie deux fois plus vite
             if (p instanceof net.minecraft.server.level.ServerPlayer sp
-                    && com.wavesurvivor.horde.kingdom.KingdomRoles.has(sp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.ARCANIST)) hit *= 2f;
+                    && com.wavesurvivor.horde.kingdom.KingdomRoles.has(sp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.ARCANIST)) {
+                hit *= (float) (com.wavesurvivor.horde.kingdom.vocation.Voc.base(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.ARCANIST, "purifyMult", 1.5)
+                        * (1.0 + com.wavesurvivor.horde.kingdom.vocation.Vocations.total(sp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.ARCANIST, "arcanist.purification.purify_speed") / 100.0));
+            }
             return super.hurt(source, hit);
         }
         ItemStack st = p.getMainHandItem();

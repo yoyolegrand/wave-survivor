@@ -16,9 +16,11 @@ public class RoleStatePacket {
     public final int progress, target, reward;
     /** Niveaux des fioles de l'Alchimiste. */
     public final int[] flaskLevels;
+    /** Niveau maximal des fioles et remise sur leurs améliorations (%), selon les talents de l'Alchimiste. */
+    public final int flaskMax, flaskDiscount;
 
     public RoleStatePacket(int reagents, String options, String chosen, String active,
-                           String contract, int progress, int target, int reward, int[] flaskLevels) {
+                           String contract, int progress, int target, int reward, int[] flaskLevels, int flaskMax, int flaskDiscount) {
         this.reagents = reagents;
         this.options = options;
         this.chosen = chosen;
@@ -28,6 +30,8 @@ public class RoleStatePacket {
         this.target = target;
         this.reward = reward;
         this.flaskLevels = flaskLevels;
+        this.flaskMax = flaskMax;
+        this.flaskDiscount = flaskDiscount;
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -40,11 +44,13 @@ public class RoleStatePacket {
         buf.writeVarInt(target);
         buf.writeVarInt(reward);
         buf.writeVarIntArray(flaskLevels);
+        buf.writeVarInt(flaskMax);
+        buf.writeVarInt(flaskDiscount);
     }
 
     public static RoleStatePacket decode(FriendlyByteBuf buf) {
         return new RoleStatePacket(buf.readVarInt(), buf.readUtf(), buf.readUtf(), buf.readUtf(),
-                buf.readUtf(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarIntArray());
+                buf.readUtf(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarIntArray(), buf.readVarInt(), buf.readVarInt());
     }
 
     public static void handle(RoleStatePacket pkt, Supplier<NetworkEvent.Context> ctx) {
@@ -58,6 +64,8 @@ public class RoleStatePacket {
             KingdomRoleState.clientContractTarget = pkt.target;
             KingdomRoleState.clientContractReward = pkt.reward;
             KingdomRoleState.clientFlaskLevels = pkt.flaskLevels;
+            KingdomRoleState.clientFlaskMax = pkt.flaskMax;
+            KingdomRoleState.clientFlaskDiscount = pkt.flaskDiscount;
         });
         ctx.get().setPacketHandled(true);
     }

@@ -8,6 +8,7 @@ import com.wavesurvivor.horde.model.HordeEntity;
 import com.wavesurvivor.horde.spawn.HordeSpawner;
 import com.wavesurvivor.horde.spawn.MobRegistry;
 import com.wavesurvivor.horde.spawn.SpawnZone;
+import com.wavesurvivor.horde.kingdom.vocation.Voc;
 import com.wavesurvivor.i18n.WSLang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -646,7 +647,9 @@ public final class KingdomManager {
         KingdomRoles.sync(level.getServer());
         // Intendant : intérêts de fin de vague (+5 % du trésor, 100 maximum) — pas au Calme de reprise
         if (!resuming && KingdomRoles.present(KingdomRoles.Role.QUARTERMASTER)) {
-            int gain = Math.min(100, (int) Math.floor(KingdomTreasury.get(KingdomTreasury.Res.MONEY) * 0.05));
+            double rate = Voc.base(KingdomRoles.Role.QUARTERMASTER, "interestRate", 0.03) + Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.treasury.interest");
+            int cap = (int) (Voc.base(KingdomRoles.Role.QUARTERMASTER, "interestCap", 60) + Voc.total(KingdomRoles.Role.QUARTERMASTER, "quartermaster.treasury.interest_cap"));
+            int gain = Math.min(cap, (int) Math.floor(KingdomTreasury.get(KingdomTreasury.Res.MONEY) * rate));
             if (gain > 0) KingdomTreasury.reward(KingdomTreasury.Res.MONEY, gain, "kingdom.role.quartermaster.interest");
         }
         // Chasseur de primes : bilan du contrat de la vague, puis nouveau contrat
@@ -1180,7 +1183,8 @@ public final class KingdomManager {
         int gi = candidates.get(RNG.nextInt(candidates.size()));
         if (!spawnCatalystAt(gi)) return;
         candidates.remove(Integer.valueOf(gi));
-        if (!candidates.isEmpty() && KingdomRoles.present(KingdomRoles.Role.ARCANIST) && RNG.nextDouble() < 0.20) {
+        if (!candidates.isEmpty() && KingdomRoles.present(KingdomRoles.Role.ARCANIST)
+                && RNG.nextDouble() < Voc.base(KingdomRoles.Role.ARCANIST, "secondCatalystChance", 0.10) + Voc.pct(KingdomRoles.Role.ARCANIST, "arcanist.resonance.second_catalyst")) {
             int g2 = candidates.get(RNG.nextInt(candidates.size()));
             if (spawnCatalystAt(g2)) broadcast(WSLang.c("kingdom.role.arcanist.second"));
         }
@@ -1238,6 +1242,8 @@ public final class KingdomManager {
                 "minecraft:crying_obsidian", com.wavesurvivor.network.EventFeedPacket.ARCANE, true);
         KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, 3, "kingdom.essence.catalyst");
         com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.ARCANIST, "catalyst_closed");
+        int closeEssence = (int) Voc.total(KingdomRoles.Role.ARCANIST, "arcanist.resonance.essence_on_close"); // talent Résonance
+        if (closeEssence > 0) KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, closeEssence, "kingdom.essence.catalyst");
         level.playSound(null, p.pos, SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 3f, 0.5f);
     }
 

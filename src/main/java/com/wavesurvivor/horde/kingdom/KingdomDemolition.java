@@ -37,13 +37,23 @@ public final class KingdomDemolition {
     private static final List<Armed> ARMED = new ArrayList<>();
     /** Vague (cycle) du dernier achat. */
     private static int boughtCycle = -1;
+    /** Charges achetées pendant cette vague. */
+    private static int boughtCount = 0;
+
+    /** Charges par vague : 1 de base, + le talent Ingénieur. */
+    public static int perWave() {
+        return Math.max(1, (int) com.wavesurvivor.horde.kingdom.vocation.Voc.base(KingdomRoles.Role.BUILDER, "demolitionCharges", 1)
+                + (int) com.wavesurvivor.horde.kingdom.vocation.Voc.total(KingdomRoles.Role.BUILDER, "builder.engineer.demolition_charges"));
+    }
 
     public static boolean boughtThisWave() {
-        return KingdomManager.isActive() && boughtCycle == KingdomManager.cycle();
+        return KingdomManager.isActive() && boughtCycle == KingdomManager.cycle() && boughtCount >= perWave();
     }
 
     public static void markBought() {
+        if (boughtCycle != KingdomManager.cycle()) boughtCount = 0;
         boughtCycle = KingdomManager.cycle();
+        boughtCount++;
     }
 
     /** Pose d'une charge : amas de TNT, mèche allumée. */

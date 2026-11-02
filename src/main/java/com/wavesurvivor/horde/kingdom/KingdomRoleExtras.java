@@ -48,7 +48,11 @@ public final class KingdomRoleExtras {
 
     // ═══ Commandant : ralliement ═══
 
-    public static final int RALLY_SECONDS = 60;
+    /** Durée de la bannière : base du rôle + talent Ralliement. */
+    public static int rallySeconds() {
+        return (int) (com.wavesurvivor.horde.kingdom.vocation.Voc.base(KingdomRoles.Role.COMMANDER, "bannerSeconds", 40)
+                + com.wavesurvivor.horde.kingdom.vocation.Voc.total(KingdomRoles.Role.COMMANDER, "commander.rally.banner_time"));
+    }
     private static BlockPos rally;
     private static long rallyUntil;
     /** Bannière posée pour le ralliement (retirée à la fin). */
@@ -68,13 +72,13 @@ public final class KingdomRoleExtras {
     public static void setRally(ServerLevel lvl, BlockPos pos, ServerPlayer by) {
         endRally(lvl);
         rally = pos.immutable();
-        rallyUntil = lvl.getServer().getTickCount() + RALLY_SECONDS * 20L;
+        rallyUntil = lvl.getServer().getTickCount() + rallySeconds() * 20L;
         if (lvl.getBlockState(pos).isAir() && lvl.getBlockState(pos.below()).isSolid()) {
             lvl.setBlock(pos, Blocks.BLUE_BANNER.defaultBlockState(), 3);
             bannerPos = pos.immutable();
         }
         lvl.playSound(null, by.blockPosition(), SoundEvents.GOAT_HORN_SOUND_VARIANTS.get(0).value(), SoundSource.PLAYERS, 3f, 1f);
-        Component msg = WSLang.c("kingdom.rally.set", by.getGameProfile().getName(), RALLY_SECONDS);
+        Component msg = WSLang.c("kingdom.rally.set", by.getGameProfile().getName(), rallySeconds());
         for (ServerPlayer o : lvl.getServer().getPlayerList().getPlayers()) o.sendSystemMessage(msg);
     }
 
@@ -200,7 +204,8 @@ public final class KingdomRoleExtras {
             case SIEGE -> Math.min(8, 2 + c / 2);
             case KILLS -> Math.min(60, 15 + 5 * c);
         };
-        reward = 25 + 8 * c;
+        reward = (int) Math.round((25 + 8 * c) * com.wavesurvivor.horde.kingdom.vocation.Voc.base(KingdomRoles.Role.BOUNTY_HUNTER, "payoutMult", 0.70)
+                * (1.0 + com.wavesurvivor.horde.kingdom.vocation.Vocations.total(h, KingdomRoles.Role.BOUNTY_HUNTER, "bounty_hunter.contracts.pay") / 100.0));
         progress = 0;
         hunter = h.getUUID();
         h.sendSystemMessage(WSLang.c("kingdom.bounty.new", WSLang.t("kingdom.bounty.type." + contract.name().toLowerCase()), target));
@@ -296,8 +301,12 @@ public final class KingdomRoleExtras {
             // tout autre monstre de la horde : 12 % de chance de laisser un débris (Fer ou Pierre)
             if (KingdomRoles.present(KingdomRoles.Role.SCAVENGER)) {
                 if (siege) {
-                    scavengeDrop(lvl, dead.getX(), dead.getY(), dead.getZ(), 3 + RNG.nextInt(2), 2, 2);
-                } else if ((MobRegistry.get(dead.getUUID()) != null || isElite(dead)) && RNG.nextDouble() < 0.12) {
+                    double sm = com.wavesurvivor.horde.kingdom.vocation.Voc.base(KingdomRoles.Role.SCAVENGER, "siegeDropMult", 0.8)
+                            * (1.0 + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(KingdomRoles.Role.SCAVENGER, "scavenger.plunder.siege_loot"));
+                    scavengeDrop(lvl, dead.getX(), dead.getY(), dead.getZ(), (int) Math.round((3 + RNG.nextInt(2)) * sm), (int) Math.round(2 * sm), (int) Math.round(2 * sm));
+                } else if ((MobRegistry.get(dead.getUUID()) != null || isElite(dead))
+                        && RNG.nextDouble() < com.wavesurvivor.horde.kingdom.vocation.Voc.base(KingdomRoles.Role.SCAVENGER, "debrisChance", 0.08)
+                                + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(KingdomRoles.Role.SCAVENGER, "scavenger.scrap.debris")) {
                     boolean iron = RNG.nextBoolean();
                     scavengeDrop(lvl, dead.getX(), dead.getY(), dead.getZ(), 0, iron ? 1 : 0, iron ? 0 : 2);
                 }

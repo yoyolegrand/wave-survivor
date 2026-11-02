@@ -47,7 +47,20 @@ public final class KingdomAlchemy {
     public static final int[] COST = {4, 5, 6, 7, 6};
     /** Coût pour passer au niveau 2, puis au niveau 3. */
     public static final int[] UPGRADE_COST = {12, 24};
+    /** Niveau le plus haut possible (le niveau 4 viendra des talents) ; le niveau permis dépend de la Vocation : voir {@link #maxLevel}. */
     public static final int MAX_LEVEL = 3;
+
+    /** Niveau maximal des fioles : 2 de base, 3 avec le talent « Maître alchimiste ». */
+    public static int maxLevel(net.minecraft.world.entity.player.Player p) {
+        int m = (int) com.wavesurvivor.horde.kingdom.vocation.VocationsConfig.baseValue("alchemist", "maxFlaskLevel", 2);
+        if (p != null && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, KingdomRoles.Role.ALCHEMIST, "alchemist.distillation.master_alchemist")) m++;
+        return Math.max(1, Math.min(MAX_LEVEL, m));
+    }
+
+    /** Remise (en %) sur les améliorations de fioles : talent Distillation. */
+    public static int upgradeDiscountPct(net.minecraft.world.entity.player.Player p) {
+        return p == null ? 0 : (int) Math.min(90, com.wavesurvivor.horde.kingdom.vocation.Vocations.total(p, KingdomRoles.Role.ALCHEMIST, "alchemist.distillation.cheaper_upgrades"));
+    }
     private static final int[] COLOR = {0x7FD4FF, 0xFF6A1A, 0xFF5FA8, 0xF5E663, 0xB0B0B8};
 
     private static final Map<UUID, Integer> REAGENTS = new HashMap<>();
@@ -103,11 +116,11 @@ public final class KingdomAlchemy {
             return;
         }
         int[] lv = levels(p.getUUID());
-        if (lv[i] >= MAX_LEVEL) {
+        if (lv[i] >= maxLevel(p)) {
             p.displayClientMessage(WSLang.c("kingdom.alchemy.maxed"), true);
             return;
         }
-        int cost = UPGRADE_COST[lv[i] - 1];
+        int cost = (int) Math.round(UPGRADE_COST[lv[i] - 1] * (1.0 - upgradeDiscountPct(p) / 100.0));
         int have = reagents(p.getUUID());
         if (have < cost && !p.isCreative()) {
             p.displayClientMessage(WSLang.c("kingdom.alchemy.missing", cost, have), true);
@@ -155,7 +168,7 @@ public final class KingdomAlchemy {
             LivingEntity dead = e.getEntity();
             boolean elite = dead.getPersistentData().getBoolean("ws_elite");
             if (MobRegistry.get(dead.getUUID()) == null && !elite && !(dead instanceof Enemy)) return;
-            REAGENTS.merge(p.getUUID(), elite ? 3 : 1, Integer::sum);
+            REAGENTS.merge(p.getUUID(), elite ? 3 + (int) com.wavesurvivor.horde.kingdom.vocation.Vocations.total(p, KingdomRoles.Role.ALCHEMIST, "alchemist.distillation.reagent_elite") : 1, Integer::sum);
             KingdomRoleState.syncTo(p);
         }
 
@@ -168,6 +181,9 @@ public final class KingdomAlchemy {
             String kind = st.getTag().getString(FLASK_TAG);
             int lv = Math.max(1, Math.min(MAX_LEVEL, st.getTag().getInt(LEVEL_TAG)));
             int k = lv - 1;
+            // Talents de l'Alchimiste : efficacité des fioles de soin / offensives
+            double healMul = 1.0 + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(KingdomRoles.Role.ALCHEMIST, "alchemist.remedies.heal_flask");
+            double offMul = 1.0 + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(KingdomRoles.Role.ALCHEMIST, "alchemist.toxins.offense_flask");
             e.setCanceled(true);
             double x = tp.getX(), y = tp.getY(), z = tp.getZ();
             BlockPos at = tp.blockPosition();
@@ -177,7 +193,7 @@ public final class KingdomAlchemy {
             switch (kind) {
                 case "frost" -> {
                     double r = 4 + k;
-                    int t = (6 + 2 * k) * 20;
+                    int t = (int) Math.round((6 + 2 * k) * 20 * offMul);
                     for (LivingEntity m : lvl.getEntitiesOfClass(LivingEntity.class, box(x, y, z, r), KingdomAlchemy::foe)) {
                         m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, t, 2));
                         if (lv >= 3) m.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, t, 0));
@@ -188,7 +204,7 @@ public final class KingdomAlchemy {
                 }
                 case "fire" -> {
                     double r = 4 + 0.5 * k;
-                    float dmg = 4 + 2 * k;
+                    float dmg = (float) ((4 + 2 * k) * offMul);
                     for (LivingEntity m : lvl.getEntitiesOfClass(LivingEntity.class, box(x, y, z, r), KingdomAlchemy::foe)) {
                         m.hurt(lvl.damageSources().onFire(), dmg);
                         m.setSecondsOnFire(6 + 2 * k);
@@ -199,7 +215,7 @@ public final class KingdomAlchemy {
                 case "heal" -> {
                     double r = 5 + k;
                     for (LivingEntity m : lvl.getEntitiesOfClass(LivingEntity.class, box(x, y, z, r), KingdomAlchemy::ally)) {
-                        m.heal(8 + 4 * k);
+                        m.heal((float) ((8 + 4 * k) * healMul));
                         m.addEffect(new MobEffectInstance(MobEffects.REGENERATION, (5 + (k == 2 ? 5 : 2 * k)) * 20, 0));
                     }
                     lvl.sendParticles(ParticleTypes.HEART, x, y + 0.8, z, 15 + 5 * k, r / 2, 0.6, r / 2, 0.02);
@@ -207,7 +223,7 @@ public final class KingdomAlchemy {
                 }
                 case "storm" -> {
                     double r = 3 + 0.5 * k;
-                    float dmg = 6 + 2 * k;
+                    float dmg = (float) ((6 + 2 * k) * offMul);
                     var bolt = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(lvl);
                     if (bolt != null) {
                         bolt.moveTo(x, y, z);

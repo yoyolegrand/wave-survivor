@@ -731,7 +731,8 @@ public class HordeManager {
         ChaosApplier.apply(picked, level, center, srv);
         // Exploitant présent (Kingdom) : 50 % de chance qu'un gisement ou un arbre de plus accompagne un autre événement
         if (com.wavesurvivor.horde.kingdom.KingdomRoles.present(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER)
-                && !isResourceEvent(picked) && RNG.nextDouble() < 0.5) {
+                && !isResourceEvent(picked)
+                && RNG.nextDouble() < com.wavesurvivor.horde.kingdom.vocation.Voc.base(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "frequencyBonus", 0.15) + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.abundance.frequency")) {
             List<ChaosEvent> deposits = new java.util.ArrayList<>();
             for (ChaosEvent ev : cfg.chaosEvents) if (isResourceEvent(ev)) deposits.add(ev);
             if (!deposits.isEmpty()) {

@@ -76,13 +76,16 @@ public final class KingdomOmens {
         List<Omen> fresh = new ArrayList<>(pool);
         fresh.removeAll(LAST);
         Collections.shuffle(fresh, RNG);
-        OPTIONS.addAll(fresh.subList(0, Math.min(3, fresh.size())));
+        // Présages proposés : 2 de base + talent Clairvoyance (3 au maximum : trois emplacements dans la boutique)
+        int count = Math.min(3, (int) com.wavesurvivor.horde.kingdom.vocation.Voc.base(KingdomRoles.Role.AUGUR, "omenChoices", 2)
+                + (int) com.wavesurvivor.horde.kingdom.vocation.Voc.total(KingdomRoles.Role.AUGUR, "augur.clairvoyance.extra_omen"));
+        OPTIONS.addAll(fresh.subList(0, Math.min(count, fresh.size())));
         // Pas assez de présages « neufs » : on complète avec les anciens
-        if (OPTIONS.size() < 3) {
+        if (OPTIONS.size() < count) {
             List<Omen> rest = new ArrayList<>(pool);
             rest.removeAll(OPTIONS);
             Collections.shuffle(rest, RNG);
-            for (Omen o : rest) { if (OPTIONS.size() >= 3) break; OPTIONS.add(o); }
+            for (Omen o : rest) { if (OPTIONS.size() >= count) break; OPTIONS.add(o); }
         }
         LAST.clear();
         LAST.addAll(OPTIONS);

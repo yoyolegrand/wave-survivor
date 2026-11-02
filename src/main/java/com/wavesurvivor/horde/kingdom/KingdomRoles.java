@@ -181,7 +181,10 @@ public final class KingdomRoles {
 
     /** Prix avec la remise du Bâtisseur (-20 %) s'il est là. */
     public static int builderPrice(int cost, boolean builder) {
-        return builder ? Math.max(1, (int) Math.round(cost * 0.8)) : cost;
+        if (!builder) return cost;
+        double d = com.wavesurvivor.horde.kingdom.vocation.Voc.base(Role.BUILDER, "discount", 0.10)
+                + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(Role.BUILDER, "builder.architect.discount");
+        return Math.max(1, (int) Math.round(cost * (1.0 - Math.min(0.9, d))));
     }
 
     /** Vrai si un joueur connecté tient ce rôle. */

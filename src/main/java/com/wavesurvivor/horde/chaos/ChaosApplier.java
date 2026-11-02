@@ -132,7 +132,7 @@ public class ChaosApplier {
         int count = Math.max(1, Math.min(5, event.count));
         // Exploitant présent (Kingdom) : un gisement / arbre de plus, et chacun d'une taille au-dessus
         boolean miner = com.wavesurvivor.horde.kingdom.KingdomRoles.present(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER);
-        if (miner) count = Math.min(6, count + 1);
+        if (miner) count = Math.min(6, count + (int) com.wavesurvivor.horde.kingdom.vocation.Voc.total(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.abundance.extra_deposit"));
         int dMin = Math.max(4, event.distanceMin), dMax = Math.max(dMin + 1, event.distanceMax);
         // Kingdom : la distance se mesure depuis le MONOLITHE (réglable dans l'éditeur), toujours hors du claim
         if (com.wavesurvivor.horde.kingdom.KingdomManager.isActive() && com.wavesurvivor.horde.kingdom.KingdomManager.center() != null) {
@@ -156,7 +156,7 @@ public class ChaosApplier {
                 case "aleatoire" -> { double r = RNG.nextDouble(); yield r < 0.6 ? 0 : r < 0.9 ? 1 : 2; }
                 default -> 0;
             };
-            if (miner) size = Math.min(2, size + 1);
+            if (miner && RNG.nextDouble() < com.wavesurvivor.horde.kingdom.vocation.Voc.pct(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.abundance.size")) size = Math.min(2, size + 1);
             g.setTree(tree);
             g.setSize(size);
             g.moveTo(x + 0.5, y, z + 0.5, RNG.nextFloat() * 360f, 0);

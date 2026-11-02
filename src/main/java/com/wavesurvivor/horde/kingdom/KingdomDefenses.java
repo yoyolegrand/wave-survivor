@@ -3,6 +3,7 @@ package com.wavesurvivor.horde.kingdom;
 import com.wavesurvivor.altar.AltarDefense;
 import com.wavesurvivor.horde.model.HordeEntity;
 import com.wavesurvivor.horde.spawn.MobRegistry;
+import com.wavesurvivor.horde.kingdom.vocation.Voc;
 import com.wavesurvivor.i18n.WSLang;
 import com.wavesurvivor.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -654,7 +655,7 @@ public final class KingdomDefenses {
             return;
         }
         // Contrepartie du Bâtisseur : réparations +25 %
-        int repairCost = KingdomRoles.present(KingdomRoles.Role.BUILDER) ? (int) Math.ceil(REPAIR_COST * 1.25) : REPAIR_COST;
+        int repairCost = KingdomRoles.present(KingdomRoles.Role.BUILDER) ? (int) Math.ceil(REPAIR_COST * 1.25 * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.repair_discount")))) : REPAIR_COST;
         // Pierre de Fondation (relique) : réparations −25 % (−37 / −50 % aux niveaux II / III)
         int fondation = com.wavesurvivor.item.RelicEffects.bestLevel(p.server, com.wavesurvivor.registry.ModItems.PIERRE_FONDATION.get());
         if (fondation > 0) {
@@ -730,7 +731,7 @@ public final class KingdomDefenses {
 
     /** Coût d'une réparation de 25 % pour ce joueur (Bâtisseur, Pierre de Fondation). */
     static int repairCostFor(ServerPlayer p) {
-        int c = KingdomRoles.present(KingdomRoles.Role.BUILDER) ? (int) Math.ceil(REPAIR_COST * 1.25) : REPAIR_COST;
+        int c = KingdomRoles.present(KingdomRoles.Role.BUILDER) ? (int) Math.ceil(REPAIR_COST * 1.25 * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.repair_discount")))) : REPAIR_COST;
         int f = com.wavesurvivor.item.RelicEffects.bestLevel(p.server, com.wavesurvivor.registry.ModItems.PIERRE_FONDATION.get());
         if (f > 0) c = Math.max(1, (int) Math.round(c * (1.0 - 0.25 * com.wavesurvivor.item.RelicEffects.mult(f))));
         return c;
@@ -769,7 +770,7 @@ public final class KingdomDefenses {
             }
         }
         int refund = refundOf(d).values().stream().mapToInt(Integer::intValue).sum();
-        int max = 2 + d.level + ("paladins".equals(d.variant) ? 1 : 0) + (KingdomRoles.present(KingdomRoles.Role.COMMANDER) ? 1 : 0);
+        int max = 2 + d.level + ("paladins".equals(d.variant) ? 1 : 0) + commanderSoldiers(d);
         com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
                 new com.wavesurvivor.network.DefenseSheetPackets.Sheet(pos, d.kind.ordinal(), d.level, d.variant,
                         hp == null ? 0 : hp[0], hp == null ? 0 : hp[1], KingdomTownHall.tier(), repairCostFor(p), refund,
@@ -923,9 +924,19 @@ public final class KingdomDefenses {
         level.playSound(null, pos, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 0.8f, 1.2f);
     }
 
+    /** Soldats en plus d'un baraquement grâce au Commandant : à partir du niveau réglé dans vocations.json (talent : dès le niveau 1). */
+    private static int commanderSoldiers(Def d) {
+        if (!KingdomRoles.present(KingdomRoles.Role.COMMANDER)) return 0;
+        int minLevel = (int) Voc.base(KingdomRoles.Role.COMMANDER, "soldierMinBarracksLevel", 2);
+        if (d.level < minLevel && !Voc.has(KingdomRoles.Role.COMMANDER, "commander.discipline.early_soldier")) return 0;
+        return (int) Voc.base(KingdomRoles.Role.COMMANDER, "soldiersPerBarracks", 1);
+    }
+
     /** Stats d'un soldat selon le niveau et la spécialisation du baraquement. */
     private static void applySoldierStats(com.wavesurvivor.entity.KingdomSoldier s, Def d) {
         double hp = 16 + 8 * d.level, atk = 4 + d.level, armor = 0, speed = 0.32;
+        hp *= 1.0 + Voc.pct(KingdomRoles.Role.COMMANDER, "commander.discipline.soldier_hp");   // talents Discipline
+        atk *= 1.0 + Voc.pct(KingdomRoles.Role.COMMANDER, "commander.discipline.soldier_damage");
         switch (d.variant) {
             case "guards" -> { hp *= 2.0; armor = 8; }
             case "berserkers" -> { atk *= 1.5; speed = 0.38; }
@@ -1198,7 +1209,7 @@ public final class KingdomDefenses {
         int max = 2 + d.level;
         if ("paladins".equals(d.variant)) max++;                          // Paladins : un soldat de plus
         // Commandant : +1 soldat par baraquement
-        if (KingdomRoles.present(KingdomRoles.Role.COMMANDER)) max++;
+        max += commanderSoldiers(d);
         // Paladins : Régénération II, et soignent les joueurs proches (1 PV / 2 s)
         if ("paladins".equals(d.variant)) {
             boolean heal = level.getGameTime() % 40 < 20;
@@ -1258,7 +1269,7 @@ public final class KingdomDefenses {
             level.sendParticles(ParticleTypes.CLOUD, s.getX(), s.getY() + 1, s.getZ(), 10, 0.3, 0.5, 0.3, 0.02);
             level.playSound(null, d.pos, SoundEvents.ARMOR_EQUIP_IRON, SoundSource.BLOCKS, 1f, 1f);
         }
-        d.nextSpawn = now + (d.filled ? (35 - 5L * d.level) * 20L : 20L);
+        d.nextSpawn = now + (d.filled ? Math.round((35 - 5L * d.level) * 20L * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.COMMANDER, "commander.discipline.fast_respawn")))) : 20L);
     }
 
     /**

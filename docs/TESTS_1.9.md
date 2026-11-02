@@ -25,3 +25,16 @@
 - [ ] Changer de rôle en cours de partie : l'XP reste attribuée au rôle tenu au moment de l'action.
 - [ ] Un joueur déconnecté à la fin ne reçoit pas son XP (limite connue).
 - [ ] `/ws vocation info <rôle>` confirme le niveau et l'XP après la partie.
+
+## Étape 3a — effets de base réduits + talents chiffrés
+Les talents ne comptent que pendant une partie Kingdom, pour le joueur qui tient le rôle. Pour tester vite : `/ws vocation xp <rôle> 11500` (niveau 20) puis `/ws vocation buy <rôle> <talent>` hors partie ; les rangs/valeurs sont dans `vocations.json` (≈ 21 à 27 points par arbre).
+- [ ] **Arcaniste** — 2e Catalyseur : 10 % de base (+7 %/rang) ; purification ×1,5 (+15 %/rang `purify_speed`) ; `essence_on_close` : Essence à chaque Catalyseur fermé ; `purify_loot` : Bois + Pierre au trésor par foyer purifié.
+- [ ] **Exploitant** — gisements/arbres : plus de +1 gratuit ni de taille automatique ; Célérité I (II avec `haste`) ; double butin 15 % (+5 %/rang) ; `frequency` : chance d'un gisement en plus ; `size` : chance de taille supérieure ; `extra_deposit` : +1 gisement ; `lifetime` : durée.
+- [ ] **Bâtisseur** — remise 10 % (+5 %/rang `discount`) ; PV +5 % (+5 %/rang `hp`) ; réparations −X % (`repair_discount`) ; pièges à lames/explosifs +X % de dégâts ; charges de démolition 1/vague (+1 avec le talent).
+- [ ] **Commandant** — +1 soldat seulement dès le baraquement niv. 2 (niv. 1 avec `early_soldier`) ; bannière 40 s (+15 s/rang) ; recharge du cor −10 %/rang ; soldats +PV / +dégâts ; renaissance plus rapide (`fast_respawn`).
+- [ ] **Intendant** — +10 % de pièces sur ses kills (+5 %/rang) ; marchands −8 % (−4 %/rang) et `team_share` : l'équipe a une partie de la remise ; intérêts 3 % max 60 (+1 %/rang, +40/rang de plafond).
+- [ ] **Alchimiste** — fioles jusqu'au niveau 2 (3 avec `master_alchemist`) ; l'écran du Monolithe affiche bien « max » et le bon prix (`cheaper_upgrades`) ; `reagent_elite` : +1 réactif/élite ; fioles de soin / offensives plus fortes.
+- [ ] **Chasseur de primes** — contrat payé −30 % de base (+15 %/rang) ; +10 %/rang de dégâts sur les élites.
+- [ ] **Augure** — 2 présages proposés (3 avec `extra_omen`).
+- [ ] **Récupérateur** — débris 8 % (+4 %/rang) ; unités de siège lâchent ×0,8 (+10 %/rang `siege_loot`).
+- [ ] Textes de description des rôles mis à jour (valeurs de base).

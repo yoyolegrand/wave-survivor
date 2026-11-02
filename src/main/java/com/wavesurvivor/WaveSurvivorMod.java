@@ -149,6 +149,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.KingdomDemolition.Events());
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.KingdomRoleExtras.Events());
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.KingdomAlchemy.Events());
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.vocation.VocationEvents());
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.KingdomLeftovers.Events());
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.editor.HordeEditSessions.Events());
         // Hordes : les poissons d'argent n'infestent plus la pierre

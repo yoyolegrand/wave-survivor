@@ -4,6 +4,7 @@ import com.wavesurvivor.config.model.HordeConfigMultiData.CalmObjectives;
 import com.wavesurvivor.config.model.HordeConfigMultiData.Reward;
 import com.wavesurvivor.entity.GisementEntity;
 import com.wavesurvivor.horde.model.ChaosEvent;
+import com.wavesurvivor.horde.kingdom.vocation.Voc;
 import com.wavesurvivor.i18n.WSLang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -348,7 +349,14 @@ public final class KingdomObjectives {
         }
         int purified = foyerTotal - alive;
         if (purified != foyerPurified) {
-            for (int i = foyerPurified; i < purified; i++) com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.ARCANIST, "focus_purified");
+            for (int i = foyerPurified; i < purified; i++) {
+                com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.ARCANIST, "focus_purified");
+                int loot = (int) Voc.total(KingdomRoles.Role.ARCANIST, "arcanist.purification.purify_loot"); // talent Purification
+                if (loot > 0) {
+                    KingdomTreasury.add(KingdomTreasury.Res.WOOD, loot);
+                    KingdomTreasury.add(KingdomTreasury.Res.STONE, loot);
+                }
+            }
             foyerPurified = purified;
             broadcast(WSLang.c("obj.purify.progress", foyerPurified, foyerTotal));
         }

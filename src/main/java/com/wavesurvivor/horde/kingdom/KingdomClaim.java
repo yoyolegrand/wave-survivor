@@ -117,7 +117,7 @@ public final class KingdomClaim {
             clearMarkers();
         }
         PLACED.clear();
-        builderBonus = false;
+        builderBonus = 0;
         foundationLevel = 0;
         level = null;
     }
@@ -388,17 +388,17 @@ public final class KingdomClaim {
 
     // ─── Bâtisseur : +10 % de PV sur toutes les constructions tant qu'il est là ───
 
-    public static final double BUILDER_HP = 1.10;
     /** Pierre de Fondation (relique) : +15 % de PV sur les constructions tant qu'un porteur est connecté. */
     public static final double FOUNDATION_HP = 1.15;
-    private static boolean builderBonus = false;
+    /** Bonus de PV du Bâtisseur (0,05 = +5 %), base du rôle + talents. */
+    private static double builderBonus = 0;
     /** Niveau de la meilleure Pierre de Fondation portée (0 = aucune). */
     private static int foundationLevel = 0;
 
     /** Multiplicateur de PV courant des constructions (Bâtisseur × Pierre de Fondation +15 / +22 / +30 %). */
     private static double bonusMult() {
         double f = foundationLevel <= 0 ? 1.0 : 1.0 + (FOUNDATION_HP - 1.0) * com.wavesurvivor.item.RelicEffects.mult(foundationLevel);
-        return (builderBonus ? BUILDER_HP : 1.0) * f;
+        return (1.0 + builderBonus) * f;
     }
 
     public static void setFoundationLevel(int lvl) {
@@ -444,13 +444,13 @@ public final class KingdomClaim {
     }
 
     /** Active / retire le bonus du Bâtisseur sur toutes les constructions suivies (PV max et actuels). */
-    public static void setBuilderBonus(boolean on) {
-        if (on == builderBonus || level == null) {
-            if (level == null) builderBonus = false;
+    public static void setBuilderBonus(double bonus) {
+        if (bonus == builderBonus || level == null) {
+            if (level == null) builderBonus = 0;
             return;
         }
         double before = bonusMult();
-        builderBonus = on;
+        builderBonus = bonus;
         rescale(bonusMult() / before);
     }
 
