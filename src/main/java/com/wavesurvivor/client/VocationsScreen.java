@@ -35,9 +35,9 @@ import java.util.Locale;
 public class VocationsScreen extends Screen {
 
     private static final int GRID_W = 325, GRID_H = 295; // même taille que l'autel de Renaissance (+25 %)
-    private static final int TREE_W = 410, TREE_H = 272;
+    private static final int TREE_W = 410, TREE_H = 304;
     private static final int CARD_W = 96, CARD_H = 54, CARD_STEP_X = 100, CARD_STEP_Y = 60, GRID_ROWS = 3;
-    private static final int BOX_W = 128, BOX_H = 24, BOX_STEP = 30;
+    private static final int BOX_W = 128, BOX_H = 34, BOX_STEP = 40;
 
     private static final int GOLD = 0xFFFFD34D, PURPLE = 0xFFA855F7, GREY = 0xFF9A98A8, WHITE = 0xFFFFFFFF;
 
@@ -302,9 +302,22 @@ public class VocationsScreen extends Screen {
                 String line2 = t.wip() ? WSLang.t("voc.ui.soon") : t.unit().equals("bool")
                         ? WSLang.t("voc.talent." + r.id + "." + t.id() + ".d") : WSLang.t("voc.ui.per_rank", val(t, t.value()));
                 int sqW = t.ranks() * 5;
-                g.drawString(font, fit(line2, BOX_W - 8 - sqW), cx + 4, y + 14, txt == WHITE ? 0xFFE8E0C8 : txt, false);
+                int c2 = txt == WHITE ? 0xFFE8E0C8 : txt;
+                if (t.unit().equals("bool") && !t.wip()) {
+                    // Description longue : jusqu'à 2 lignes (la dernière est abrégée si besoin)
+                    String l1 = font.plainSubstrByWidth(line2, BOX_W - 8);
+                    if (l1.length() < line2.length()) {
+                        int cut = l1.lastIndexOf(' ');
+                        if (cut > 0) l1 = l1.substring(0, cut);
+                    }
+                    g.drawString(font, l1, cx + 4, y + 14, c2, false);
+                    String l2 = line2.substring(l1.length()).trim();
+                    if (!l2.isEmpty()) g.drawString(font, fit(l2, BOX_W - 8 - sqW), cx + 4, y + 24, c2, false);
+                } else {
+                    g.drawString(font, fit(line2, BOX_W - 8 - sqW), cx + 4, y + 14, c2, false);
+                }
                 for (int k = 0; k < t.ranks(); k++) {
-                    int sx = cx + BOX_W - 4 - (t.ranks() - k) * 5 + 1, sy = y + 16;
+                    int sx = cx + BOX_W - 4 - (t.ranks() - k) * 5 + 1, sy = y + BOX_H - 6;
                     g.fill(sx, sy, sx + 4, sy + 4, k < rank ? 0xFF7FE08A : 0xFF55546A);
                 }
                 hits.add(new Hit(cx, y, BOX_W, BOX_H, K_TALENT, t.id(), r));
