@@ -1172,6 +1172,15 @@ public final class KingdomDefenses {
         // Commandant : tant que sa bannière de ralliement est plantée, les soldats sans cible s'y rendent
         BlockPos rally = KingdomRoleExtras.rallyPoint();
         int home = Math.max(8, KingdomClaim.radius()) + 4;
+        // Talents Ralliement / Champ de bataille : soldats ralliés plus rapides, et Force I
+        if (rally != null) {
+            boolean spd = com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.COMMANDER, "commander.rally.rally_speed"), str = com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.COMMANDER, "commander.battlefield.horn_strength");
+            for (UUID id : d.soldiers) {
+                if (!(level.getEntity(id) instanceof Mob sm) || !sm.isAlive()) continue;
+                if (spd) sm.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED, 40, 0, true, false));
+                if (str) sm.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_BOOST, 40, 0, true, false));
+            }
+        }
         for (UUID id : d.soldiers) {
             if (!(level.getEntity(id) instanceof Mob s) || s.getTarget() != null) continue;
             // Commandant — « Suivez-moi » : les soldats l'escortent partout (prioritaire sur la bannière et les autres ordres)
@@ -1186,7 +1195,7 @@ public final class KingdomDefenses {
             }
             if (rally != null) {
                 // Pas de chemin direct au-delà de la portée de suivi du soldat : il avance par étapes de 12 blocs
-                Vec3 tgt = Vec3.atBottomCenterOf(rally);
+                Vec3 tgt = Vec3.atBottomCenterOf(KingdomRoleExtras.nearestRally(s.blockPosition()));
                 double dr = Math.sqrt(s.distanceToSqr(tgt));
                 if (dr > 64) {
                     s.teleportTo(tgt.x, tgt.y + 0.5, tgt.z);

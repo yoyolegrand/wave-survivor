@@ -94,6 +94,7 @@ public final class KingdomRoleEffects {
                 return;
             }
             com.wavesurvivor.horde.kingdom.vocation.VocationFx.tickCalm(server.getTickCount());
+            com.wavesurvivor.horde.kingdom.vocation.VocationFx.tickZones(server.getTickCount());
             Set<UUID> now = new HashSet<>();
             // Bâtisseur : +10 % de PV sur toutes les constructions tant qu'il est connecté
             KingdomClaim.setBuilderBonus(KingdomRoles.present(KingdomRoles.Role.BUILDER)
@@ -123,6 +124,12 @@ public final class KingdomRoleEffects {
                     for (GisementEntity g : deps) {
                         beam(p, g, GOLD);
                         if (g.level() == p.level() && g.distanceToSqr(p) < 36) near = true;
+                    }
+                    if (near && Vocations.has(p, KingdomRoles.Role.MINER, "miner.endurance.slow_aura")) {
+                        for (net.minecraft.world.entity.LivingEntity m : p.level().getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, p.getBoundingBox().inflate(8),
+                                x -> x instanceof net.minecraft.world.entity.monster.Enemy && x.isAlive())) {
+                            m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 0, true, false)); // talent Endurance
+                        }
                     }
                     if (near) p.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 40,
                             (int) Voc.base(KingdomRoles.Role.MINER, "hasteAmplifier", 0) + (int) Vocations.total(p, KingdomRoles.Role.MINER, "miner.endurance.haste"), true, false, true));

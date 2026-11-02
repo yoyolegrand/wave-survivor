@@ -54,41 +54,65 @@ public final class KingdomRoleExtras {
         return (int) (com.wavesurvivor.horde.kingdom.vocation.Voc.base(KingdomRoles.Role.COMMANDER, "bannerSeconds", 40)
                 + com.wavesurvivor.horde.kingdom.vocation.Voc.total(KingdomRoles.Role.COMMANDER, "commander.rally.banner_time"));
     }
-    private static BlockPos rally;
-    private static long rallyUntil;
-    /** Bannière posée pour le ralliement (retirée à la fin). */
-    private static BlockPos bannerPos;
+    /** Une bannière de ralliement : point, bannière posée (retirée à la fin) et fin de validité. */
+    private static final class Flag {
+        BlockPos pos, banner;
+        long until;
+    }
+
+    /** Bannières actives (1 ; 2 avec le talent Ralliement › double bannière). */
+    private static final java.util.List<Flag> FLAGS = new java.util.ArrayList<>();
 
     /** Point de ralliement actif (null = aucun). */
     public static BlockPos rallyPoint() {
+        java.util.List<BlockPos> all = rallyPoints();
+        return all.isEmpty() ? null : all.get(0);
+    }
+
+    /** Tous les points de ralliement actifs (les bannières expirées sont retirées au passage). */
+    public static java.util.List<BlockPos> rallyPoints() {
         ServerLevel lvl = KingdomManager.level();
-        if (rally == null || lvl == null) return null;
-        if (lvl.getServer().getTickCount() >= rallyUntil) {
-            endRally(lvl);
-            return null;
+        java.util.List<BlockPos> out = new java.util.ArrayList<>();
+        if (lvl == null) return out;
+        long now = lvl.getServer().getTickCount();
+        for (java.util.Iterator<Flag> it = FLAGS.iterator(); it.hasNext(); ) {
+            Flag f = it.next();
+            if (now >= f.until) { removeBanner(lvl, f); it.remove(); } else out.add(f.pos);
         }
-        return rally;
+        return out;
+    }
+
+    /** Point de ralliement le plus proche d'une position (null = aucun). */
+    public static BlockPos nearestRally(BlockPos from) {
+        BlockPos best = null;
+        for (BlockPos p : rallyPoints()) if (best == null || p.distSqr(from) < best.distSqr(from)) best = p;
+        return best;
+    }
+
+    private static void removeBanner(ServerLevel lvl, Flag f) {
+        if (f.banner != null && lvl != null && lvl.getBlockState(f.banner).is(Blocks.BLUE_BANNER)) lvl.removeBlock(f.banner, false);
     }
 
     public static void setRally(ServerLevel lvl, BlockPos pos, ServerPlayer by) {
-        endRally(lvl);
-        rally = pos.immutable();
-        rallyUntil = lvl.getServer().getTickCount() + rallySeconds() * 20L;
+        rallyPoints(); // retire les bannières expirées
+        int max = com.wavesurvivor.horde.kingdom.vocation.Vocations.has(by, KingdomRoles.Role.COMMANDER, "commander.rally.double_banner") ? 2 : 1;
+        while (FLAGS.size() >= max) { removeBanner(lvl, FLAGS.get(0)); FLAGS.remove(0); }
+        Flag f = new Flag();
+        f.pos = pos.immutable();
+        f.until = lvl.getServer().getTickCount() + rallySeconds() * 20L;
         if (lvl.getBlockState(pos).isAir() && lvl.getBlockState(pos.below()).isSolid()) {
             lvl.setBlock(pos, Blocks.BLUE_BANNER.defaultBlockState(), 3);
-            bannerPos = pos.immutable();
+            f.banner = pos.immutable();
         }
+        FLAGS.add(f);
         lvl.playSound(null, by.blockPosition(), SoundEvents.GOAT_HORN_SOUND_VARIANTS.get(0).value(), SoundSource.PLAYERS, 3f, 1f);
         Component msg = WSLang.c("kingdom.rally.set", by.getGameProfile().getName(), rallySeconds());
         for (ServerPlayer o : lvl.getServer().getPlayerList().getPlayers()) o.sendSystemMessage(msg);
     }
 
     public static void endRally(ServerLevel lvl) {
-        if (bannerPos != null && lvl != null && lvl.getBlockState(bannerPos).is(Blocks.BLUE_BANNER)) {
-            lvl.removeBlock(bannerPos, false);
-        }
-        bannerPos = null;
-        rally = null;
+        for (Flag f : FLAGS) removeBanner(lvl, f);
+        FLAGS.clear();
     }
 
     /** Onglet Rôles : le Commandant récupère son cor s'il l'a perdu (code 90). */
@@ -114,6 +138,16 @@ public final class KingdomRoleExtras {
             p.getServer().execute(() -> KingdomOmens.offerIfNeeded(p.getServer()));
         }
         if (r == KingdomRoles.Role.BOUNTY_HUNTER) contractIfNeeded(p);
+        if (r == KingdomRoles.Role.QUARTERMASTER && !startResourcesGiven) {
+            int n = (int) com.wavesurvivor.horde.kingdom.vocation.Vocations.total(p, r, "quartermaster.stewardship.start_resources") * 2; // talent Intendance
+            if (n > 0) {
+                startResourcesGiven = true;
+                KingdomTreasury.add(KingdomTreasury.Res.WOOD, n);
+                KingdomTreasury.add(KingdomTreasury.Res.STONE, n);
+                KingdomTreasury.add(KingdomTreasury.Res.IRON, n / 2);
+                p.sendSystemMessage(WSLang.c("voc.start_resources", n, n, n / 2));
+            }
+        }
         if (r != KingdomRoles.Role.COMMANDER) return;
         var horn = com.wavesurvivor.registry.ModItems.COMMANDER_HORN.get();
         if (p.getInventory().contains(new ItemStack(horn))) return;
@@ -222,8 +256,7 @@ public final class KingdomRoleExtras {
         SEEN.clear();
         ServerLevel lvl = KingdomManager.level();
         endRally(lvl);
-        rally = null;
-        bannerPos = null;
+        startResourcesGiven = false;
     }
 
     private static boolean isElite(Entity e) {
@@ -252,6 +285,16 @@ public final class KingdomRoleExtras {
         }
         if (SEEN.size() > 4000) SEEN.clear();
     }
+
+    /** Talent Recyclage : une caisse de ferraille (Bois, Fer, Pierre) pour le Récupérateur. */
+    public static void scrapCrate(ServerPlayer s) {
+        if (!(s.level() instanceof ServerLevel lvl)) return;
+        scavengeDrop(lvl, s.getX(), s.getY(), s.getZ(), 8, 4, 8);
+        s.displayClientMessage(WSLang.c("voc.scrap_crate"), true);
+    }
+
+    /** Talent Recyclage › Ressources de départ de l'Intendant : une seule fois par partie. */
+    private static boolean startResourcesGiven = false;
 
     /** Talent Ferraille : les débris du Récupérateur sont attirés vers lui. */
     private static void pullDebris(ServerLevel lvl) {
@@ -292,8 +335,7 @@ public final class KingdomRoleExtras {
                 }
             }
             // Bannière de ralliement : colonne bleue visible de tous
-            BlockPos r = rallyPoint();
-            if (r != null) {
+            for (BlockPos r : rallyPoints()) {
                 for (int i = 0; i < 10; i++) {
                     lvl.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, r.getX() + 0.5, r.getY() + 1 + i * 0.8, r.getZ() + 0.5, 1, 0.05, 0.1, 0.05, 0);
                 }
@@ -324,6 +366,10 @@ public final class KingdomRoleExtras {
                                 + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(KingdomRoles.Role.SCAVENGER, "scavenger.scrap.debris")) {
                     boolean iron = RNG.nextBoolean();
                     scavengeDrop(lvl, dead.getX(), dead.getY(), dead.getZ(), 0, iron ? 1 : 0, iron ? 0 : 2);
+                    ServerPlayer sc = KingdomRoles.holder(lvl.getServer(), KingdomRoles.Role.SCAVENGER);
+                    if (sc != null && RNG.nextDouble() < com.wavesurvivor.horde.kingdom.vocation.Vocations.total(sc, KingdomRoles.Role.SCAVENGER, "scavenger.scrap.rare_debris") / 100.0) {
+                        spawnScav(lvl, dead.getX(), dead.getY(), dead.getZ(), new ItemStack(Items.AMETHYST_SHARD, 1), "essence", sc.getUUID()); // talent Ferraille : débris rare
+                    }
                 }
             }
             if (e.getSource().getEntity() instanceof ServerPlayer hp && isElite(dead)) {

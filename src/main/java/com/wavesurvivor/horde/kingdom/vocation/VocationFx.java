@@ -51,14 +51,46 @@ public final class VocationFx {
         if (knock) lvl.sendParticles(ParticleTypes.CLOUD, a.getX(), a.getY() + 0.5, a.getZ(), 40, 3, 0.4, 3, 0.1);
     }
 
+    // ── Zones temporaires (fiole incendiaire laissant du feu, zone sacrée d'un foyer purifié) ──
+    private record Zone(ServerLevel lvl, net.minecraft.core.BlockPos pos, double r, long until, boolean holy) {}
+
+    private static final java.util.List<Zone> ZONES = new java.util.ArrayList<>();
+
+    public static void addZone(ServerLevel lvl, net.minecraft.core.BlockPos pos, double r, int seconds, boolean holy) {
+        ZONES.add(new Zone(lvl, pos.immutable(), r, lvl.getServer().getTickCount() + seconds * 20L, holy));
+    }
+
+    public static void clear() { ZONES.clear(); }
+
+    /** Toutes les 0,5 s : le feu au sol brûle les monstres, la zone sacrée les ralentit. */
+    public static void tickZones(long tick) {
+        if (ZONES.isEmpty()) return;
+        ZONES.removeIf(z -> tick >= z.until());
+        for (Zone z : ZONES) {
+            var c = net.minecraft.world.phys.Vec3.atBottomCenterOf(z.pos());
+            z.lvl().sendParticles(z.holy() ? ParticleTypes.END_ROD : ParticleTypes.FLAME, c.x, c.y + 0.3, c.z, 6, z.r() / 2, 0.2, z.r() / 2, 0.01);
+            if (tick % 20 != 0) continue;
+            for (LivingEntity m : z.lvl().getEntitiesOfClass(LivingEntity.class, new net.minecraft.world.phys.AABB(z.pos()).inflate(z.r(), 2, z.r()), e -> e instanceof Enemy && e.isAlive())) {
+                if (z.holy()) m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, true, false));
+                else {
+                    m.setSecondsOnFire(3);
+                    m.hurt(z.lvl().damageSources().onFire(), 2f);
+                }
+            }
+        }
+    }
+
     /** Un foyer vient d'être purifié : ressources (talent Purification) et soin des alliés autour de l'Arcaniste. */
-    public static void onFocusPurified(MinecraftServer server) {
+    public static void onFocusPurified(MinecraftServer server, net.minecraft.core.BlockPos at) {
         ServerPlayer a = Voc.holder(ARC);
         if (a == null) return;
         int loot = (int) Vocations.total(a, ARC, "arcanist.purification.purify_loot");
         if (loot > 0) {
             KingdomTreasury.add(KingdomTreasury.Res.WOOD, loot);
             KingdomTreasury.add(KingdomTreasury.Res.STONE, loot);
+        }
+        if (Vocations.has(a, ARC, "arcanist.purification.purify_zone") && a.level() instanceof ServerLevel zl && at != null) {
+            addZone(zl, at, 8, 40, true); // zone sacrée : monstres ralentis 40 s
         }
         if (Vocations.has(a, ARC, "arcanist.purification.purify_heal") && a.level() instanceof ServerLevel lvl) {
             for (LivingEntity m : lvl.getEntitiesOfClass(LivingEntity.class, a.getBoundingBox().inflate(14),
@@ -69,8 +101,17 @@ public final class VocationFx {
         }
     }
 
-    /** Début du Calme (Assaut survécu) : prime de l'Intendant si le Monolithe est en bonne santé. */
+    /** Début du Calme (Assaut survécu) : prime de l'Intendant, fiole offerte à l'Alchimiste, caisse de ferraille du Récupérateur. */
     public static void onCalmStart() {
+        ServerPlayer alch = Voc.holder(KingdomRoles.Role.ALCHEMIST);
+        if (alch != null && Vocations.has(alch, KingdomRoles.Role.ALCHEMIST, "alchemist.distillation.extra_flask")) {
+            com.wavesurvivor.horde.kingdom.KingdomAlchemy.giveFree(alch);
+        }
+        ServerPlayer scav = Voc.holder(KingdomRoles.Role.SCAVENGER);
+        if (scav != null && Vocations.has(scav, KingdomRoles.Role.SCAVENGER, "scavenger.recycling.scrap_crate")) {
+            com.wavesurvivor.horde.kingdom.KingdomRoleExtras.scrapCrate(scav);
+        }
+
         float[] snap = com.wavesurvivor.altar.AltarDefense.snapshot();
         int bonus = (int) Voc.total(KingdomRoles.Role.QUARTERMASTER, "quartermaster.treasury.wave_bonus");
         if (bonus > 0 && snap != null && snap[1] > 0 && snap[0] / snap[1] > 0.75f) {

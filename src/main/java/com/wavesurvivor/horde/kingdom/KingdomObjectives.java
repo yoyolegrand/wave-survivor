@@ -76,6 +76,9 @@ public final class KingdomObjectives {
     // Purification
     private static final List<UUID> FOYERS = new ArrayList<>();
     private static int foyerTotal, foyerPurified;
+    /** Foyers déjà comptés comme purifiés, et dernière position connue de chacun (talent Purification). */
+    private static final java.util.Set<UUID> FOYERS_DONE = new java.util.HashSet<>();
+    private static final java.util.Map<UUID, BlockPos> FOYERS_POS = new java.util.HashMap<>();
 
     /** Effet de la Purification sur le prochain Assaut (1 = aucun). */
     private static double nextAssaultMult = 1.0;
@@ -116,7 +119,7 @@ public final class KingdomObjectives {
         pending = null;
         nextAssaultMult = 1.0;
         LINKED.clear();
-        FOYERS.clear();
+        FOYERS.clear(); FOYERS_DONE.clear(); FOYERS_POS.clear();
         convoy = null;
         champion = null;
         chest = null;
@@ -234,7 +237,7 @@ public final class KingdomObjectives {
             }
             case PURIFY -> {
                 int n = Math.max(1, Math.min(8, cfg.purify.count));
-                FOYERS.clear();
+                FOYERS.clear(); FOYERS_DONE.clear(); FOYERS_POS.clear();
                 foyerTotal = n;
                 foyerPurified = 0;
                 int claim = KingdomManager.objClaimRadius();
@@ -342,17 +345,22 @@ public final class KingdomObjectives {
             Entity e = level.getEntity(id);
             if (e instanceof GisementEntity g && g.isAlive()) {
                 alive++;
+                FOYERS_POS.put(id, g.blockPosition());
                 g.setCustomName(Component.literal(WSLang.t("obj.purify.foyer") + " §7" + Math.round(g.getHealth()) + "/" + Math.round(g.getMaxHealth())));
                 level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, g.getX(), g.getY() + 1.2, g.getZ(), 2, 0.3, 0.6, 0.3, 0.01);
                 if (level.random.nextInt(4) == 0) level.sendParticles(ParticleTypes.PORTAL, g.getX(), g.getY() + 2.5, g.getZ(), 6, 0.2, 2.0, 0.2, 0.1);
             }
         }
+        for (UUID id : FOYERS) {
+            Entity fe = level.getEntity(id);
+            if (fe instanceof GisementEntity fg && fg.isAlive()) continue;
+            if (FOYERS_DONE.add(id)) {
+                com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.ARCANIST, "focus_purified");
+                com.wavesurvivor.horde.kingdom.vocation.VocationFx.onFocusPurified(level.getServer(), FOYERS_POS.get(id)); // talents Purification
+            }
+        }
         int purified = foyerTotal - alive;
         if (purified != foyerPurified) {
-            for (int i = foyerPurified; i < purified; i++) {
-                com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.ARCANIST, "focus_purified");
-                com.wavesurvivor.horde.kingdom.vocation.VocationFx.onFocusPurified(level.getServer()); // talents Purification
-            }
             foyerPurified = purified;
             broadcast(WSLang.c("obj.purify.progress", foyerPurified, foyerTotal));
         }
@@ -445,7 +453,7 @@ public final class KingdomObjectives {
             champion = null;
         }
         for (UUID id : FOYERS) discard(id);
-        FOYERS.clear();
+        FOYERS.clear(); FOYERS_DONE.clear(); FOYERS_POS.clear();
         if (chest != null) {
             boolean wasChest = level.getBlockState(chest).is(Blocks.CHEST);
             if (wasChest) {

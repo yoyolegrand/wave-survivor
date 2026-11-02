@@ -299,6 +299,11 @@ public final class KingdomManager {
         if (p.isFinal && !finalBossSpawned) floor = Math.max(floor, b.getMaxHealth() * KING_LOW);
         if (b.getHealth() <= floor + 0.5f) return false;
         b.setHealth(Math.max(1f, floor));
+        if (com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.BUILDER, "builder.engineer.charge_hurts_siege")) { // talent Ingénieur
+            for (net.minecraft.world.entity.Mob m : level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, b.getBoundingBox().inflate(14), x -> x.isAlive() && !KingdomSiege.roleOf(x).isEmpty())) {
+                m.hurt(level.damageSources().explosion(null, null), 40f);
+            }
+        }
         return true;
     }
 
@@ -1742,6 +1747,7 @@ public final class KingdomManager {
         KingdomTreasury.stop(server);
         KingdomRoles.stop(server);
         com.wavesurvivor.horde.kingdom.vocation.VocationXp.clear();
+        com.wavesurvivor.horde.kingdom.vocation.VocationFx.clear();
         KingdomLives.stop(server);
         KingdomDemolition.clear(server);
         KingdomRoleExtras.clear();

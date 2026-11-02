@@ -187,7 +187,7 @@ public final class KingdomTreasury {
             // Récupérateur : Bois / Fer / Pierre réservés, crédités au trésor
             if (st.hasTag() && st.getTag().contains(KingdomRoleExtras.SCAV_TAG)) {
                 String tag = st.getTag().getString(KingdomRoleExtras.SCAV_TAG);
-                Res r = "iron".equals(tag) ? Res.IRON : "stone".equals(tag) ? Res.STONE : Res.WOOD;
+                Res r = "iron".equals(tag) ? Res.IRON : "stone".equals(tag) ? Res.STONE : "essence".equals(tag) ? Res.ESSENCE : Res.WOOD;
                 add(r, st.getCount());
                 for (int i = 0; i < st.getCount(); i++) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(p, KingdomRoles.Role.SCAVENGER, "debris_picked");
                 if (com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, KingdomRoles.Role.SCAVENGER, "scavenger.recycling.debris_repair")) {

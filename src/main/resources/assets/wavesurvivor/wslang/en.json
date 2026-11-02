@@ -3837,5 +3837,9 @@
   "voc.xp.level_up": "{0} Mastery: level {1}/{2}!",
   "voc.xp.points": "§7Talent points to spend ({1}): §e{0} §7— at the Rebirth altar, Vocations tab.",
   "voc.reason.tree": "Tree felled (Vocation)",
-  "voc.reason.wave_bonus": "Quartermaster bonus"
+  "voc.reason.wave_bonus": "Quartermaster bonus",
+  "voc.reason.champion": "Champion slain (Hunter)",
+  "voc.free_flask": "§5Distillation: a free flask ({0})!",
+  "voc.scrap_crate": "§7Recycling: a scrap crate awaits!",
+  "voc.start_resources": "§7Stewardship: +{0} Wood, +{1} Stone, +{2} Iron for the kingdom."
 }

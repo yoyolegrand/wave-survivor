@@ -175,6 +175,8 @@ public class GisementManager {
             if (n > 0) drop(g, LootItems.resolve(drop.item, n));
         }
         // Partie Kingdom : trésor commun selon la taille — minerai : Pierre 8 + Fer 2 ; arbre : Bois 16
+        // Exploitant › Endurance : ressources directement au trésor (+50 % de trésor sur ce qu'il détruit)
+        if (event.getSource().getEntity() instanceof ServerPlayer dp && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(dp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.endurance.direct_treasury")) mult *= 1.5;
         if (com.wavesurvivor.horde.kingdom.KingdomTreasury.active()) {
             if (g.isTree()) {
                 com.wavesurvivor.horde.kingdom.KingdomTreasury.add(com.wavesurvivor.horde.kingdom.KingdomTreasury.Res.WOOD,

@@ -11,6 +11,35 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 /** VOCATIONS — talents qui passent par un événement de combat (pas rattachés à une mécanique de rôle existante). */
 public class VocationEvents {
 
+    /** Chasseur de primes › Trophées : les élites qu'il abat lâchent plus de butin (comme l'Intendant : arrondi au hasard). */
+    @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST)
+    public void onDrops(net.minecraftforge.event.entity.living.LivingDropsEvent e) {
+        if (!KingdomRoles.active() || !(e.getSource().getEntity() instanceof ServerPlayer p) || !KingdomRoles.has(p, KingdomRoles.Role.BOUNTY_HUNTER)) return;
+        if (!e.getEntity().getPersistentData().getBoolean("ws_elite")) return;
+        double bonus = Vocations.total(p, KingdomRoles.Role.BOUNTY_HUNTER, "bounty_hunter.trophies.elite_loot") / 100.0;
+        if (bonus <= 0) return;
+        var rnd = e.getEntity().getRandom();
+        for (net.minecraft.world.entity.item.ItemEntity ie : e.getDrops()) {
+            var st = ie.getItem();
+            double extra = st.getCount() * bonus;
+            int add = (int) Math.floor(extra) + (rnd.nextDouble() < extra - Math.floor(extra) ? 1 : 0);
+            if (add > 0) {
+                var copy = st.copy();
+                copy.grow(add);
+                ie.setItem(copy);
+            }
+        }
+    }
+
+    /** Chasseur de primes › Trophées : un Champion de Porte abattu par lui rapporte de l'Essence en plus. */
+    @SubscribeEvent
+    public void onDeath(net.minecraftforge.event.entity.living.LivingDeathEvent e) {
+        if (!KingdomRoles.active() || !(e.getSource().getEntity() instanceof ServerPlayer p) || !KingdomRoles.has(p, KingdomRoles.Role.BOUNTY_HUNTER)) return;
+        if (!e.getEntity().getPersistentData().getBoolean("ws_obj_champion")) return;
+        int ess = (int) Vocations.total(p, KingdomRoles.Role.BOUNTY_HUNTER, "bounty_hunter.trophies.champion_essence");
+        if (ess > 0) com.wavesurvivor.horde.kingdom.KingdomTreasury.reward(com.wavesurvivor.horde.kingdom.KingdomTreasury.Res.ESSENCE, ess, "voc.reason.champion");
+    }
+
     @SubscribeEvent
     public void onHurt(LivingHurtEvent e) {
         if (!KingdomRoles.active()) return;

@@ -3103,5 +3103,9 @@
   "voc.xp.level_up": "Maîtrise {0} : niveau {1}/{2} !",
   "voc.xp.points": "§7Points de talent à dépenser ({1}) : §e{0} §7— à l'autel de Renaissance, onglet Vocations.",
   "voc.reason.tree": "Arbre abattu (Vocation)",
-  "voc.reason.wave_bonus": "Prime de l'Intendant"
+  "voc.reason.wave_bonus": "Prime de l'Intendant",
+  "voc.reason.champion": "Champion abattu (Chasseur)",
+  "voc.free_flask": "§5Distillation : une fiole offerte ({0}) !",
+  "voc.scrap_crate": "§7Recyclage : une caisse de ferraille t'attend !",
+  "voc.start_resources": "§7Intendance : +{0} Bois, +{1} Pierre, +{2} Fer pour le royaume."
 }

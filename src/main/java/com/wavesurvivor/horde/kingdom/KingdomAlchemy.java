@@ -134,6 +134,14 @@ public final class KingdomAlchemy {
         KingdomRoleState.syncTo(p);
     }
 
+    /** Talent Distillation : une fiole offerte au hasard à chaque Calme. */
+    public static void giveFree(ServerPlayer p) {
+        int i = p.getRandom().nextInt(FLASKS.length);
+        ItemStack st = flask(i, levels(p.getUUID())[i]);
+        if (!p.getInventory().add(st)) p.drop(st, false);
+        p.displayClientMessage(WSLang.c("voc.free_flask", WSLang.t("kingdom.alchemy.flask." + FLASKS[i])), true);
+    }
+
     private static ItemStack flask(int i, int lvl) {
         ItemStack st = new ItemStack(com.wavesurvivor.registry.ModItems.ALCHEMY_FLASK.get());
         var tag = st.getOrCreateTag();
@@ -198,6 +206,9 @@ public final class KingdomAlchemy {
                         m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, t, 2));
                         if (lv >= 3) m.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, t, 0));
                         m.setTicksFrozen(Math.max(m.getTicksFrozen(), t + 40));
+                        if (m.getPersistentData().getBoolean("ws_elite") && com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.ALCHEMIST, "alchemist.toxins.frost_elite")) {
+                            m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 9)); // talent Toxines : élite figée 3 s
+                        }
                     }
                     lvl.sendParticles(ParticleTypes.SNOWFLAKE, x, y + 0.5, z, 40 + 20 * k, r / 2, 0.6, r / 2, 0.02);
                     lvl.playSound(null, at, SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1f, 0.7f);
@@ -210,6 +221,9 @@ public final class KingdomAlchemy {
                         m.setSecondsOnFire(6 + 2 * k);
                     }
                     lvl.sendParticles(ParticleTypes.FLAME, x, y + 0.5, z, 40 + 20 * k, r / 2, 0.6, r / 2, 0.04);
+                    if (com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.ALCHEMIST, "alchemist.toxins.fire_ground")) {
+                        com.wavesurvivor.horde.kingdom.vocation.VocationFx.addZone(lvl, at, r, 6 + 2 * k, false); // talent Toxines : le feu reste au sol
+                    }
                     lvl.playSound(null, at, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1f, 0.8f);
                 }
                 case "heal" -> {

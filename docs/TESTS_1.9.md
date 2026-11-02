@@ -49,3 +49,14 @@ Même méthode de test qu'en 3a (`/ws vocation xp <rôle> 11500`, `/ws vocation 
 - [ ] **Alchimiste** : `cleanse` (la fiole de soin retire les effets négatifs).
 - [ ] **Chasseur** : `elite_speed` (Vitesse II 5 s après une élite abattue).
 - [ ] **Récupérateur** : `pull` (débris attirés), `breach_loot` (brèches refermées plus généreuses), `debris_repair` (chaque débris ramassé soigne les bâtiments à ≤ 12 blocs).
+
+## Étape 3c — lot A (17 talents prévus, 14 faits)
+- [ ] **Exploitant** : `slow_aura` (monstres à ≤ 8 blocs ralentis près d'un gisement) ; `direct_treasury` (+50 % de trésor sur ce qu'il détruit).
+- [ ] **Bâtisseur** : `charge_hurts_siege` (la charge blesse les unités de siège à ≤ 14 blocs de la Porte).
+- [ ] **Commandant** : `horn_strength` (Force I) et `rally_speed` (Vitesse I) pour les soldats quand une bannière est active ; `double_banner` (2 bannières, les soldats vont à la plus proche).
+- [ ] **Alchimiste** : `frost_elite` (élite figée 3 s) ; `fire_ground` (zone de feu 6 s +2 s/niveau) ; `extra_flask` (fiole offerte au début de chaque Calme).
+- [ ] **Chasseur** : `elite_loot` (butin des élites qu'il abat) ; `champion_essence` (Essence sur un Champion de Porte).
+- [ ] **Récupérateur** : `rare_debris` (débris d'Essence) ; `scrap_crate` (caisse de ferraille à chaque Calme).
+- [ ] **Intendant** : `start_resources` (Bois/Pierre/Fer à la prise du rôle, une fois par partie).
+- [ ] **Arcaniste** : `purify_zone` (zone sacrée de 40 s qui ralentit les monstres, à l'endroit du foyer purifié).
+- [ ] Non faits (à décider) : `choice_of_two`, `contract_extend` (Chasseur), `cheaper_soldiers`, `essence_to_coins` (Intendant).
