@@ -525,6 +525,7 @@ public final class KingdomDefenses {
         if (type == 22) KingdomDemolition.markBought();
         String name = item.getHoverName().getString();
         if (!p.getInventory().add(item)) p.drop(item, false);
+        if (type != 22 && type != 23 && type != 24) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(p, KingdomRoles.Role.BUILDER, "build");
         p.displayClientMessage(WSLang.c("kingdom.defense_bought", name), true);
         p.level().playSound(null, p.blockPosition(), SoundEvents.VILLAGER_YES, SoundSource.PLAYERS, 1f, 1f);
     }
@@ -663,6 +664,7 @@ public final class KingdomDefenses {
         KingdomClaim.heal(pos, hp[1] * 0.25f);
         level.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 15, 0.5, 0.6, 0.5, 0);
         level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.6f, 1.4f);
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(p, KingdomRoles.Role.BUILDER, "repair");
         p.displayClientMessage(WSLang.c("kingdom.defense_repaired", Math.round(hp[0]), Math.round(hp[1])), true);
     }
 
@@ -840,6 +842,7 @@ public final class KingdomDefenses {
             }
             KingdomCosts.take(p, cost, cur);
             applyLevel(d, 2, "");
+            com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(p, KingdomRoles.Role.BUILDER, "upgrade");
             p.displayClientMessage(WSLang.c("kingdom.defense_upgraded", d.level), true);
             return;
         }
@@ -1236,6 +1239,7 @@ public final class KingdomDefenses {
 
         com.wavesurvivor.entity.KingdomSoldier s = com.wavesurvivor.registry.ModEntities.KINGDOM_SOLDIER.get().create(level);
         if (s == null) return;
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.COMMANDER, "soldier_produced");
         BlockPos at = com.wavesurvivor.horde.spawn.SpawnZone.pick(level, d.pos, 6, s.getType()); // autour du bâtiment 6×4
         s.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, level.random.nextFloat() * 360f, 0f);
         double hp = 16 + 8 * d.level; // 24 / 32 / 40 PV (avant spécialisation)

@@ -3097,5 +3097,9 @@
   "voc.res.not_enough_pr": "Pas assez de PR.",
   "voc.res.ult_locked": "Il faut dépenser plus de points dans l'arbre pour choisir un ultime.",
   "voc.res.ult_already": "Un talent ultime est déjà choisi (réinitialise l'arbre pour en changer).",
-  "voc.res.nothing": "Rien à réinitialiser."
+  "voc.res.nothing": "Rien à réinitialiser.",
+  "voc.xp.gain_win": "§6Vocation §e+{0} XP de Maîtrise §7({1}) §8— victoire ×{2}",
+  "voc.xp.gain_loss": "§6Vocation §e+{0} XP de Maîtrise §7({1}) §8— défaite ×{2}",
+  "voc.xp.level_up": "Maîtrise {0} : niveau {1}/{2} !",
+  "voc.xp.points": "§7Points de talent à dépenser ({1}) : §e{0} §7— à l'autel de Renaissance, onglet Vocations."
 }

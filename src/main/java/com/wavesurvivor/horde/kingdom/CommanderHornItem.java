@@ -53,6 +53,7 @@ public class CommanderHornItem extends Item {
         }
         BlockPos at = bh.getBlockPos().relative(bh.getDirection());
         KingdomRoleExtras.setRally(sl, at, p);
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(p, KingdomRoles.Role.COMMANDER, "horn_used");
         p.getCooldowns().addCooldown(this, 400);
         return InteractionResultHolder.consume(st);
     }

@@ -145,6 +145,7 @@ public final class KingdomRoleExtras {
     /** Brèche du Calme refermée : débris pour le Récupérateur (Bois, Fer, Pierre). */
     static void riftClosed(ServerLevel lvl, BlockPos pos) {
         if (!KingdomRoles.present(KingdomRoles.Role.SCAVENGER)) return;
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(lvl.getServer(), KingdomRoles.Role.SCAVENGER, "breach_closed");
         scavengeDrop(lvl, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 2 + RNG.nextInt(2), 1, 1 + RNG.nextInt(2));
     }
 
@@ -172,6 +173,7 @@ public final class KingdomRoleExtras {
             if (progress >= target) {
                 KingdomTreasury.reward(KingdomTreasury.Res.MONEY, reward, "kingdom.bounty.paid");
                 KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, 4, "kingdom.bounty.paid");
+                if (h != null) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(h, KingdomRoles.Role.BOUNTY_HUNTER, "contract_done");
             } else if (h != null) {
                 h.sendSystemMessage(WSLang.c("kingdom.bounty.failed", progress, target));
             }
@@ -300,6 +302,7 @@ public final class KingdomRoleExtras {
                     scavengeDrop(lvl, dead.getX(), dead.getY(), dead.getZ(), 0, iron ? 1 : 0, iron ? 0 : 2);
                 }
             }
+            if (e.getSource().getEntity() instanceof ServerPlayer hp && isElite(dead)) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(hp, KingdomRoles.Role.BOUNTY_HUNTER, "elite_killed");
             // Chasseur de primes : avancement du contrat (ses propres kills)
             if (contract != null && e.getSource().getEntity() instanceof ServerPlayer p && p.getUUID().equals(hunter)
                     && progress < target) {

@@ -442,6 +442,7 @@ public class HordeManager {
      */
     public void endKingdom(boolean victory) {
         if (server == null) return;
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.finish(server, victory); // Vocations : XP de Maitrise versee (x victoire / x defaite)
         if (victory) {
             killAllActiveMobs();
             finishHorde(server);

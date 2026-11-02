@@ -96,6 +96,7 @@ public final class KingdomTreasury {
     public static void add(Res r, int n) {
         if (!active() || n <= 0) return;
         AMT[r.ordinal()] += n;
+        if (r == Res.MONEY && KingdomManager.level() != null) com.wavesurvivor.horde.kingdom.vocation.VocationXp.coins(KingdomManager.level().getServer(), n); // Vocations : XP de l'Intendant
         KingdomReport.onGain(r, n); // bilan de fin d'Assaut
         dirty = true;
     }
@@ -188,6 +189,7 @@ public final class KingdomTreasury {
                 String tag = st.getTag().getString(KingdomRoleExtras.SCAV_TAG);
                 Res r = "iron".equals(tag) ? Res.IRON : "stone".equals(tag) ? Res.STONE : Res.WOOD;
                 add(r, st.getCount());
+                for (int i = 0; i < st.getCount(); i++) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(p, KingdomRoles.Role.SCAVENGER, "debris_picked");
                 e.getItem().discard();
                 e.setCanceled(true);
                 p.level().playSound(null, p.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.3f, 1.2f);

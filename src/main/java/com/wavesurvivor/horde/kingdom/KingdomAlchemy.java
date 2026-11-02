@@ -89,6 +89,7 @@ public final class KingdomAlchemy {
         }
         if (!p.isCreative()) REAGENTS.put(p.getUUID(), have - COST[i]);
         ItemStack st = flask(i, levels(p.getUUID())[i]);
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(p, KingdomRoles.Role.ALCHEMIST, "flask_prepared");
         if (!p.getInventory().add(st)) p.drop(st, false);
         p.level().playSound(null, p.blockPosition(), SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 1f, 1f);
         KingdomRoleState.syncTo(p);
@@ -114,6 +115,7 @@ public final class KingdomAlchemy {
         }
         if (!p.isCreative()) REAGENTS.put(p.getUUID(), have - cost);
         lv[i]++;
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(p, KingdomRoles.Role.ALCHEMIST, "flask_upgraded");
         p.displayClientMessage(WSLang.c("kingdom.alchemy.upgraded", WSLang.t("kingdom.alchemy.flask." + FLASKS[i]), lv[i]), true);
         p.level().playSound(null, p.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1f, 1.2f);
         KingdomRoleState.syncTo(p);

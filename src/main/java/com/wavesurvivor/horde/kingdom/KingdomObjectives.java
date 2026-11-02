@@ -348,6 +348,7 @@ public final class KingdomObjectives {
         }
         int purified = foyerTotal - alive;
         if (purified != foyerPurified) {
+            for (int i = foyerPurified; i < purified; i++) com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.ARCANIST, "focus_purified");
             foyerPurified = purified;
             broadcast(WSLang.c("obj.purify.progress", foyerPurified, foyerTotal));
         }

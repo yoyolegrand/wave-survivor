@@ -639,6 +639,7 @@ public final class KingdomManager {
         if (!resuming) {
             KingdomReport.finish(level); // bilan de l'Assaut qui vient de se terminer
             com.wavesurvivor.horde.renaissance.RenaissanceRewards.onWaveCleared(); // PR : Assaut survécu
+            if (cycle > 0) com.wavesurvivor.horde.kingdom.vocation.VocationXp.waveSurvived(level.getServer()); // Vocations : XP de base par Assaut survécu
         }
         // Gisements / arbres garantis (réglage « Garantis par Calme » de l'éditeur)
         HordeManager.get().spawnGuaranteedResources(level.getServer());
@@ -1236,6 +1237,7 @@ public final class KingdomManager {
         com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), WSLang.c("kingdom.gate_breached", WSLang.t("kingdom.dir." + p.dir), (int) Math.round(cfg.breachPercent)),
                 "minecraft:crying_obsidian", com.wavesurvivor.network.EventFeedPacket.ARCANE, true);
         KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, 3, "kingdom.essence.catalyst");
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.ARCANIST, "catalyst_closed");
         level.playSound(null, p.pos, SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 3f, 0.5f);
     }
 
@@ -1731,6 +1733,7 @@ public final class KingdomManager {
         KingdomObjectives.clear();
         KingdomTreasury.stop(server);
         KingdomRoles.stop(server);
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.clear();
         KingdomLives.stop(server);
         KingdomDemolition.clear(server);
         KingdomRoleExtras.clear();

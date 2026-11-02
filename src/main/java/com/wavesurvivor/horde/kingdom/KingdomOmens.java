@@ -135,6 +135,7 @@ public final class KingdomOmens {
         chosen = null;
         OPTIONS.clear();
         if (active != null) {
+            com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(server, KingdomRoles.Role.AUGUR, "omen_chosen");
             Component msg = WSLang.c("kingdom.omen.active", WSLang.t("kingdom.omen." + active.id()));
             for (ServerPlayer p : server.getPlayerList().getPlayers()) p.sendSystemMessage(msg);
         }

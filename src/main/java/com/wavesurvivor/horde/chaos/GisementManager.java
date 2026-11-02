@@ -157,6 +157,7 @@ public class GisementManager {
             mult *= 1.0 + com.wavesurvivor.item.RelicEffects.scaled(killer, com.wavesurvivor.registry.ModItems.ANNEAU_PROSPECTEUR.get(), 0.5f); // +50 / 75 / 100 %
         }
         // Mineur (Kingdom) : 25 % de chance de doubler le butin du gisement qu'il détruit
+        if (event.getSource().getEntity() instanceof ServerPlayer vp) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(vp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "deposit_harvested"); // Vocations
         if (event.getSource().getEntity() instanceof ServerPlayer minerP
                 && com.wavesurvivor.horde.kingdom.KingdomRoles.has(minerP, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER)
                 && RNG.nextDouble() < 0.25) {
