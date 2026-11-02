@@ -93,6 +93,7 @@ public final class KingdomRoleEffects {
                 }
                 return;
             }
+            com.wavesurvivor.horde.kingdom.vocation.VocationFx.tickCalm(server.getTickCount());
             Set<UUID> now = new HashSet<>();
             // Bâtisseur : +10 % de PV sur toutes les constructions tant qu'il est connecté
             KingdomClaim.setBuilderBonus(KingdomRoles.present(KingdomRoles.Role.BUILDER)

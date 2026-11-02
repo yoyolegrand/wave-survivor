@@ -641,6 +641,7 @@ public final class KingdomManager {
             KingdomReport.finish(level); // bilan de l'Assaut qui vient de se terminer
             com.wavesurvivor.horde.renaissance.RenaissanceRewards.onWaveCleared(); // PR : Assaut survécu
             if (cycle > 0) com.wavesurvivor.horde.kingdom.vocation.VocationXp.waveSurvived(level.getServer()); // Vocations : XP de base par Assaut survécu
+            if (cycle > 0) com.wavesurvivor.horde.kingdom.vocation.VocationFx.onCalmStart(); // Vocations : prime de l'Intendant
         }
         // Gisements / arbres garantis (réglage « Garantis par Calme » de l'éditeur)
         HordeManager.get().spawnGuaranteedResources(level.getServer());
@@ -1242,6 +1243,7 @@ public final class KingdomManager {
                 "minecraft:crying_obsidian", com.wavesurvivor.network.EventFeedPacket.ARCANE, true);
         KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, 3, "kingdom.essence.catalyst");
         com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.ARCANIST, "catalyst_closed");
+        com.wavesurvivor.horde.kingdom.vocation.VocationFx.onCatalystClosed(level.getServer());
         int closeEssence = (int) Voc.total(KingdomRoles.Role.ARCANIST, "arcanist.resonance.essence_on_close"); // talent Résonance
         if (closeEssence > 0) KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, closeEssence, "kingdom.essence.catalyst");
         level.playSound(null, p.pos, SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 3f, 0.5f);

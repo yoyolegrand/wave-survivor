@@ -3101,5 +3101,7 @@
   "voc.xp.gain_win": "§6Vocation §e+{0} XP de Maîtrise §7({1}) §8— victoire ×{2}",
   "voc.xp.gain_loss": "§6Vocation §e+{0} XP de Maîtrise §7({1}) §8— défaite ×{2}",
   "voc.xp.level_up": "Maîtrise {0} : niveau {1}/{2} !",
-  "voc.xp.points": "§7Points de talent à dépenser ({1}) : §e{0} §7— à l'autel de Renaissance, onglet Vocations."
+  "voc.xp.points": "§7Points de talent à dépenser ({1}) : §e{0} §7— à l'autel de Renaissance, onglet Vocations.",
+  "voc.reason.tree": "Arbre abattu (Vocation)",
+  "voc.reason.wave_bonus": "Prime de l'Intendant"
 }

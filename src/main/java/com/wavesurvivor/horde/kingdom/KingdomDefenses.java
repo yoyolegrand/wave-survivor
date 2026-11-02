@@ -737,13 +737,25 @@ public final class KingdomDefenses {
         return c;
     }
 
+    /** Coût du niveau 2, avec la remise du Bâtisseur (talent Architecte) quand il est là. */
+    private static List<KingdomCosts.Cost> upgradeCosts(Def d) {
+        List<KingdomCosts.Cost> base = KingdomCosts.upgradeToLevel2(d.kind);
+        double off = KingdomRoles.present(KingdomRoles.Role.BUILDER) ? Math.min(0.9, Voc.pct(KingdomRoles.Role.BUILDER, "builder.architect.upgrade_discount")) : 0;
+        if (off <= 0) return base;
+        List<KingdomCosts.Cost> out = new ArrayList<>();
+        for (KingdomCosts.Cost c : base) out.add(new KingdomCosts.Cost(c.res(), Math.max(1, (int) Math.round(c.count() * (1.0 - off)))));
+        return out;
+    }
+
     /** Remboursement au démontage : 50 % de l'achat et des améliorations, par ressource. */
     private static java.util.EnumMap<KingdomTreasury.Res, Integer> refundOf(Def d) {
         java.util.EnumMap<KingdomTreasury.Res, Integer> r = new java.util.EnumMap<>(KingdomTreasury.Res.class);
         r.merge(KingdomTreasury.Res.MONEY, BUY[Math.min(BUY.length - 1, d.kind.ordinal())], Integer::sum);
         if (d.level >= 2) for (KingdomCosts.Cost c : KingdomCosts.upgradeToLevel2(d.kind)) r.merge(c.res(), c.count(), Integer::sum);
         if (d.level >= 3 && !d.variant.isEmpty()) for (KingdomCosts.Cost c : KingdomCosts.variantCost(d.kind, d.variant)) r.merge(c.res(), c.count(), Integer::sum);
-        r.replaceAll((k, v) -> v / 2);
+        // 50 % de base ; talent Restaurateur : 75 % (jusqu'à la valeur du talent)
+        double share = Math.max(0.5, Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.dismantle_refund"));
+        r.replaceAll((k, v) -> (int) (v * share));
         return r;
     }
 
@@ -762,7 +774,7 @@ public final class KingdomDefenses {
             return;
         }
         float[] hp = KingdomClaim.hpOf(pos);
-        List<com.wavesurvivor.network.DefenseSheetPackets.Cost> next = d.level == 1 ? sheetCosts(p, KingdomCosts.upgradeToLevel2(d.kind)) : List.of();
+        List<com.wavesurvivor.network.DefenseSheetPackets.Cost> next = d.level == 1 ? sheetCosts(p, upgradeCosts(d)) : List.of();
         List<com.wavesurvivor.network.DefenseSheetPackets.Variant> vs = new ArrayList<>();
         if (d.level == 2) {
             for (String v : KingdomCosts.variants(d.kind)) {
@@ -836,7 +848,7 @@ public final class KingdomDefenses {
                 p.displayClientMessage(WSLang.c("kingdom.need_town", 2), true);
                 return;
             }
-            List<KingdomCosts.Cost> cost = KingdomCosts.upgradeToLevel2(d.kind);
+            List<KingdomCosts.Cost> cost = upgradeCosts(d);
             if (!KingdomCosts.canAfford(p, cost, cur)) {
                 p.sendSystemMessage(WSLang.c("kingdom.need").copy().append(KingdomCosts.missing(p, cost, cur)));
                 return;
@@ -937,6 +949,10 @@ public final class KingdomDefenses {
         double hp = 16 + 8 * d.level, atk = 4 + d.level, armor = 0, speed = 0.32;
         hp *= 1.0 + Voc.pct(KingdomRoles.Role.COMMANDER, "commander.discipline.soldier_hp");   // talents Discipline
         atk *= 1.0 + Voc.pct(KingdomRoles.Role.COMMANDER, "commander.discipline.soldier_damage");
+        if (Voc.has(KingdomRoles.Role.COMMANDER, "commander.battlefield.no_knockback")) {   // talent Champ de bataille
+            var kb = s.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE);
+            if (kb != null) kb.setBaseValue(1.0);
+        }
         switch (d.variant) {
             case "guards" -> { hp *= 2.0; armor = 8; }
             case "berserkers" -> { atk *= 1.5; speed = 0.38; }
@@ -1434,7 +1450,7 @@ public final class KingdomDefenses {
         var spd = s.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
         if (atk != null) {
             boolean has = atk.getModifier(CRY_DMG) != null;
-            if (near && !has) atk.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(CRY_DMG, "ws_war_cry", 0.2,
+            if (near && !has) atk.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(CRY_DMG, "ws_war_cry", 0.2 + Voc.pct(KingdomRoles.Role.COMMANDER, "commander.battlefield.near_damage"),
                     net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_TOTAL));
             else if (!near && has) atk.removeModifier(CRY_DMG);
         }

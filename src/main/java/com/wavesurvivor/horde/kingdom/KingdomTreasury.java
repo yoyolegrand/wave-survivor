@@ -190,6 +190,9 @@ public final class KingdomTreasury {
                 Res r = "iron".equals(tag) ? Res.IRON : "stone".equals(tag) ? Res.STONE : Res.WOOD;
                 add(r, st.getCount());
                 for (int i = 0; i < st.getCount(); i++) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(p, KingdomRoles.Role.SCAVENGER, "debris_picked");
+                if (com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, KingdomRoles.Role.SCAVENGER, "scavenger.recycling.debris_repair")) {
+                    KingdomClaim.healArea(p.blockPosition(), 12, 0.01f * st.getCount()); // talent Recyclage : les débris réparent les bâtiments proches
+                }
                 e.getItem().discard();
                 e.setCanceled(true);
                 p.level().playSound(null, p.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.3f, 1.2f);

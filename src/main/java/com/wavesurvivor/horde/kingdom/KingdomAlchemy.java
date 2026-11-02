@@ -216,6 +216,11 @@ public final class KingdomAlchemy {
                     double r = 5 + k;
                     for (LivingEntity m : lvl.getEntitiesOfClass(LivingEntity.class, box(x, y, z, r), KingdomAlchemy::ally)) {
                         m.heal((float) ((8 + 4 * k) * healMul));
+                        if (com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.ALCHEMIST, "alchemist.remedies.cleanse")) {
+                            for (MobEffectInstance fx : new java.util.ArrayList<>(m.getActiveEffects())) {
+                                if (fx.getEffect().getCategory() == net.minecraft.world.effect.MobEffectCategory.HARMFUL) m.removeEffect(fx.getEffect());
+                            }
+                        }
                         m.addEffect(new MobEffectInstance(MobEffects.REGENERATION, (5 + (k == 2 ? 5 : 2 * k)) * 20, 0));
                     }
                     lvl.sendParticles(ParticleTypes.HEART, x, y + 0.8, z, 15 + 5 * k, r / 2, 0.6, r / 2, 0.02);

@@ -3835,5 +3835,7 @@
   "voc.xp.gain_win": "§6Vocation §e+{0} Mastery XP §7({1}) §8— victory ×{2}",
   "voc.xp.gain_loss": "§6Vocation §e+{0} Mastery XP §7({1}) §8— defeat ×{2}",
   "voc.xp.level_up": "{0} Mastery: level {1}/{2}!",
-  "voc.xp.points": "§7Talent points to spend ({1}): §e{0} §7— at the Rebirth altar, Vocations tab."
+  "voc.xp.points": "§7Talent points to spend ({1}): §e{0} §7— at the Rebirth altar, Vocations tab.",
+  "voc.reason.tree": "Tree felled (Vocation)",
+  "voc.reason.wave_bonus": "Quartermaster bonus"
 }

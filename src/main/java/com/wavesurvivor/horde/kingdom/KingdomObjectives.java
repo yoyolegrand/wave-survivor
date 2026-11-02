@@ -351,11 +351,7 @@ public final class KingdomObjectives {
         if (purified != foyerPurified) {
             for (int i = foyerPurified; i < purified; i++) {
                 com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(level.getServer(), KingdomRoles.Role.ARCANIST, "focus_purified");
-                int loot = (int) Voc.total(KingdomRoles.Role.ARCANIST, "arcanist.purification.purify_loot"); // talent Purification
-                if (loot > 0) {
-                    KingdomTreasury.add(KingdomTreasury.Res.WOOD, loot);
-                    KingdomTreasury.add(KingdomTreasury.Res.STONE, loot);
-                }
+                com.wavesurvivor.horde.kingdom.vocation.VocationFx.onFocusPurified(level.getServer()); // talents Purification
             }
             foyerPurified = purified;
             broadcast(WSLang.c("obj.purify.progress", foyerPurified, foyerTotal));

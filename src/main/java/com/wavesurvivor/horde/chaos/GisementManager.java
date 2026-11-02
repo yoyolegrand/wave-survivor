@@ -158,6 +158,10 @@ public class GisementManager {
         }
         // Mineur (Kingdom) : 25 % de chance de doubler le butin du gisement qu'il détruit
         if (event.getSource().getEntity() instanceof ServerPlayer vp) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(vp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "deposit_harvested"); // Vocations
+        if (g.isTree() && event.getSource().getEntity() instanceof ServerPlayer tp && com.wavesurvivor.horde.kingdom.KingdomTreasury.active()) {
+            int ess = (int) com.wavesurvivor.horde.kingdom.vocation.Vocations.total(tp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.yield.tree_essence");
+            if (ess > 0) com.wavesurvivor.horde.kingdom.KingdomTreasury.reward(com.wavesurvivor.horde.kingdom.KingdomTreasury.Res.ESSENCE, ess, "voc.reason.tree");
+        }
         if (event.getSource().getEntity() instanceof ServerPlayer minerP
                 && com.wavesurvivor.horde.kingdom.KingdomRoles.has(minerP, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER)
                 && RNG.nextDouble() < com.wavesurvivor.horde.kingdom.vocation.Voc.base(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "doubleLootChance", 0.15) + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.yield.double_loot")) {

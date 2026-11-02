@@ -38,3 +38,14 @@ Les talents ne comptent que pendant une partie Kingdom, pour le joueur qui tient
 - [ ] **Augure** — 2 présages proposés (3 avec `extra_omen`).
 - [ ] **Récupérateur** — débris 8 % (+4 %/rang) ; unités de siège lâchent ×0,8 (+10 %/rang `siege_loot`).
 - [ ] Textes de description des rôles mis à jour (valeurs de base).
+
+## Étape 3b — talents « interrupteurs » simples
+Même méthode de test qu'en 3a (`/ws vocation xp <rôle> 11500`, `/ws vocation buy <rôle> <talent>` hors partie).
+- [ ] **Arcaniste** : `shield_on_close` (absorption 10 s à la fermeture d'un Catalyseur) ; `close_knockback` (monstres à ≤ 9 blocs repoussés) ; `close_lightning` (élites à ≤ 14 blocs foudroyées) ; `magic_damage` (+5 %/rang sur dégâts magie / magie indirecte / foudre) ; `purify_heal` (alliés à ≤ 14 blocs soignés quand un foyer est purifié) ; `purify_loot` (Bois + Pierre).
+- [ ] **Exploitant** : `tree_essence` (Essence quand il abat un arbre) ; `resist` (dégâts subis réduits à moins de 6 blocs d'un gisement/arbre).
+- [ ] **Bâtisseur** : `upgrade_discount` (niveau 2 moins cher, visible sur la fiche de la défense) ; `dismantle_refund` (démontage rembourse jusqu'à 75 %) ; `auto_repair` (+2 % de PV toutes les 5 s pendant le Calme).
+- [ ] **Commandant** : `no_knockback` (soldats sans recul) ; `near_damage` (Cri de guerre : +20 % de base, + le talent).
+- [ ] **Intendant** : `wave_bonus` (pièces au début du Calme si le Monolithe est à plus de 75 % de PV).
+- [ ] **Alchimiste** : `cleanse` (la fiole de soin retire les effets négatifs).
+- [ ] **Chasseur** : `elite_speed` (Vitesse II 5 s après une élite abattue).
+- [ ] **Récupérateur** : `pull` (débris attirés), `breach_loot` (brèches refermées plus généreuses), `debris_repair` (chaque débris ramassé soigne les bâtiments à ≤ 12 blocs).

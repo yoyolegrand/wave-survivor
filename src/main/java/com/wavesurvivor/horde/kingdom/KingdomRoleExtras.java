@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -150,7 +151,8 @@ public final class KingdomRoleExtras {
     static void riftClosed(ServerLevel lvl, BlockPos pos) {
         if (!KingdomRoles.present(KingdomRoles.Role.SCAVENGER)) return;
         com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(lvl.getServer(), KingdomRoles.Role.SCAVENGER, "breach_closed");
-        scavengeDrop(lvl, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 2 + RNG.nextInt(2), 1, 1 + RNG.nextInt(2));
+        double bm = 1.0 + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(KingdomRoles.Role.SCAVENGER, "scavenger.scrap.breach_loot"); // talent Ferraille
+        scavengeDrop(lvl, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, (int) Math.round((2 + RNG.nextInt(2)) * bm), (int) Math.round(1 * bm), (int) Math.round((1 + RNG.nextInt(2)) * bm));
     }
 
     // ═══ Chasseur de primes ═══
@@ -251,6 +253,18 @@ public final class KingdomRoleExtras {
         if (SEEN.size() > 4000) SEEN.clear();
     }
 
+    /** Talent Ferraille : les débris du Récupérateur sont attirés vers lui. */
+    private static void pullDebris(ServerLevel lvl) {
+        ServerPlayer s = KingdomRoles.holder(lvl.getServer(), KingdomRoles.Role.SCAVENGER);
+        if (s == null || s.level() != lvl || !com.wavesurvivor.horde.kingdom.vocation.Vocations.has(s, KingdomRoles.Role.SCAVENGER, "scavenger.scrap.pull")) return;
+        for (ItemEntity ie : lvl.getEntitiesOfClass(ItemEntity.class, s.getBoundingBox().inflate(14), i -> i.getItem().hasTag() && i.getItem().getTag().contains(SCAV_TAG))) {
+            Vec3 to = s.position().add(0, 0.5, 0).subtract(ie.position());
+            if (to.lengthSqr() < 1.5) continue;
+            ie.setDeltaMovement(to.normalize().scale(0.35));
+            ie.hurtMarked = true;
+        }
+    }
+
     public static class Events {
 
         @SubscribeEvent
@@ -259,6 +273,7 @@ public final class KingdomRoleExtras {
             ServerLevel lvl = KingdomManager.level();
             if (lvl == null || !KingdomRoles.active()) return;
             if (KingdomRoles.present(KingdomRoles.Role.BOUNTY_HUNTER) || KingdomOmens.is(KingdomOmens.Omen.TIDE)) promoteElites(lvl);
+            pullDebris(lvl);
             // Présages « Vents favorables » (Vitesse I pour tous) et « Lune de sang » (Force I aux monstres)
             boolean winds = KingdomOmens.is(KingdomOmens.Omen.FAIR_WINDS), blood = KingdomOmens.is(KingdomOmens.Omen.BLOOD_MOON);
             if (winds || blood) {
@@ -311,7 +326,12 @@ public final class KingdomRoleExtras {
                     scavengeDrop(lvl, dead.getX(), dead.getY(), dead.getZ(), 0, iron ? 1 : 0, iron ? 0 : 2);
                 }
             }
-            if (e.getSource().getEntity() instanceof ServerPlayer hp && isElite(dead)) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(hp, KingdomRoles.Role.BOUNTY_HUNTER, "elite_killed");
+            if (e.getSource().getEntity() instanceof ServerPlayer hp && isElite(dead)) {
+                com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(hp, KingdomRoles.Role.BOUNTY_HUNTER, "elite_killed");
+                if (KingdomRoles.has(hp, KingdomRoles.Role.BOUNTY_HUNTER) && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(hp, KingdomRoles.Role.BOUNTY_HUNTER, "bounty_hunter.hunt.elite_speed")) {
+                    hp.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED, 100, 1)); // talent Traque
+                }
+            }
             // Chasseur de primes : avancement du contrat (ses propres kills)
             if (contract != null && e.getSource().getEntity() instanceof ServerPlayer p && p.getUUID().equals(hunter)
                     && progress < target) {
