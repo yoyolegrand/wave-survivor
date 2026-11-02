@@ -91,3 +91,5 @@ Pour chaque talent : un point + une situation de jeu qui le déclenche. Liste co
 - [ ] Ultime Rupture : à chaque Catalyseur fermé, la Porte voit +15 % de PV max rendus vulnérables en plus (plus de « brèche refermée »).
 - [ ] Compétence `war_banner` (Porte-étendard, Seigneur du Bastion…) : un porteur ne repose pas de bannière tant que les siennes tiennent ; aucune nouvelle bannière à moins de 8 blocs d'une bannière d'un autre porteur.
 - [ ] Arbre des Vocations (agrandi : 410×272) : noms de talents tronqués proprement (« … ») sans chevaucher « N pts », ligne « lecture seule » entière, ultimes lisibles.
+- [ ] Forme du claim : éditeur de horde Kingdom › « Forme du claim » (▢ Carré / ◯ Cercle, même surface). Cercle : bornes (améthyste/obsidienne) et particules en cercle, construction autorisée seulement dans le cercle, carte du Monolithe avec contour circulaire, Mairie qui agrandit le cercle, soldats qui restent dedans.
+- [ ] Le siège de base (legacy_base) démarre en cercle ; le Kingdom Pillager Siege aussi pour un NOUVEAU monde (un monde déjà existant garde sa config : activer « Cercle » dans l'éditeur).

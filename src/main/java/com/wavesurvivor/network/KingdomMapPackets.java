@@ -74,7 +74,8 @@ public final class KingdomMapPackets {
 
         public static void handle(Data pkt, Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
-                CLIENT_CLAIM = pkt.claim;
+                CLIENT_CIRCLE = pkt.claim >= 0 && (pkt.claim >> 16) != 0;
+                CLIENT_CLAIM = pkt.claim >= 0 ? pkt.claim & 0xFFFF : pkt.claim;
                 CLIENT = pkt.markers;
             });
             ctx.get().setPacketHandled(true);
@@ -83,6 +84,8 @@ public final class KingdomMapPackets {
 
     /** Côté client : dernière carte reçue. */
     public static int CLIENT_CLAIM = -1;
+    /** Le claim du royaume est un cercle (sinon un carré). */
+    public static boolean CLIENT_CIRCLE = false;
     public static List<Marker> CLIENT = new ArrayList<>();
 
     // ─── C→S : régler la Boussole du Royaume sur un repère de la carte (clear = effacer la cible) ───

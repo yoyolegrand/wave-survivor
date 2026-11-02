@@ -417,6 +417,8 @@ public class HordeConfigMultiData {
         @SerializedName("buildOnlyInClaim") public boolean buildOnlyInClaim = true;
         /** Claim : bornes au sol + particules de la bordure (jamais affichées si le claim est désactivé). */
         @SerializedName("claimMarkers") public boolean claimMarkers = true;
+        /** Claim : forme de la zone, « square » (carré, par défaut) ou « circle » (cercle de même surface). */
+        @SerializedName("claimShape") public String claimShape = "square";
         /** Arène du Roi : le boss final attend dans une dimension dédiée, accessible par la Porte du Roi ouverte. */
         @SerializedName("raidArena") public boolean raidArena = false;
         /** Rayon de l'arène du Roi (en blocs). */

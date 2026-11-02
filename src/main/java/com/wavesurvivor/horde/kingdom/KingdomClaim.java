@@ -40,6 +40,8 @@ public final class KingdomClaim {
     private static ServerLevel level;
     private static BlockPos center;
     private static int radius = 16;
+    /** Forme du claim : cercle (de même surface que le carré de départ) ou carré. */
+    private static boolean circle = false;
     private static boolean buildOnlyInClaim = true;
     /** Bornes au sol + particules de la bordure (réglage « claimMarkers », jamais si le claim est désactivé). */
     private static boolean showBorder = true;
@@ -66,7 +68,8 @@ public final class KingdomClaim {
         stop();
         level = lvl;
         center = c;
-        radius = Math.max(4, cfg.claimRadius);
+        circle = "circle".equalsIgnoreCase(cfg.claimShape);
+        radius = effective(cfg.claimRadius);
         buildOnlyInClaim = cfg.buildOnlyInClaim;
         showBorder = cfg.claimMarkers && cfg.buildOnlyInClaim; // claim désactivé : jamais de bornes ni de bordure
         walls = cfg.wallDurability;
@@ -127,10 +130,22 @@ public final class KingdomClaim {
     /** Demi-côté de la zone (les soldats du royaume restent dedans). */
     public static int radius() { return radius; }
 
+    /** Vrai si le claim est un cercle. */
+    public static boolean isCircle() { return circle; }
+
+    /**
+     * Rayon réel du claim pour un « demi-côté » réglé : carré → inchangé ; cercle → rayon de même SURFACE
+     * (π·R² = (2r)², soit R ≈ 1,128·r), pour que les deux formes offrent à peu près la même place.
+     */
+    private static int effective(int half) {
+        int r = Math.max(4, half);
+        return circle ? Math.max(4, (int) Math.round(r * 1.1284)) : r;
+    }
+
     /** Mairie : agrandit (ou réduit) le claim en cours de partie ; les bornes et la bordure suivent. */
     static void setRadius(int r) {
         clearMarkers();
-        radius = Math.max(4, r);
+        radius = effective(r);
         placeMarkers();
     }
 
@@ -145,6 +160,15 @@ public final class KingdomClaim {
     private static void placeMarkers() {
         if (level == null || center == null || !showBorder) return;
         int cx = center.getX(), cz = center.getZ(), r = radius;
+        if (circle) { // cercle : une borne tous les 2 blocs de contour, obsidienne pleureuse tous les 4 bornes et aux 4 points cardinaux
+            int n = Math.max(8, (int) Math.round(Math.PI * r)); // ≈ circonférence / 2
+            for (int k = 0; k < n; k++) {
+                double a = Math.PI * 2 * k / n;
+                marker(cx + (int) Math.round(Math.cos(a) * r), cz + (int) Math.round(Math.sin(a) * r), k % 4 == 0);
+            }
+            for (int[] k : new int[][]{{-r, 0}, {r, 0}, {0, -r}, {0, r}}) marker(cx + k[0], cz + k[1], true);
+            return;
+        }
         for (int i = -r + 2; i <= r - 2; i += 2) {
             boolean bright = Math.floorMod(i, 8) == 0;
             marker(cx + i, cz - r, bright);
@@ -321,7 +345,10 @@ public final class KingdomClaim {
     }
 
     public static boolean inside(BlockPos p) {
-        return center != null && Math.abs(p.getX() - center.getX()) <= radius && Math.abs(p.getZ() - center.getZ()) <= radius;
+        if (center == null) return false;
+        int dx = p.getX() - center.getX(), dz = p.getZ() - center.getZ();
+        if (circle) return (long) dx * dx + (long) dz * dz <= (long) radius * radius;
+        return Math.abs(dx) <= radius && Math.abs(dz) <= radius;
     }
 
     /** Portée de pose des PIÈGES : ils peuvent sortir du claim, jusqu'à 64 blocs du Monolithe. */
@@ -565,6 +592,22 @@ public final class KingdomClaim {
     private static void drawBorder(long now) {
         int cx = center.getX(), cz = center.getZ(), r = radius;
         int phase = (int) ((now / 5) % 3);
+        if (circle) { // cercle : un point par bloc de contour, effet « guirlande » identique, colonnes de lumière aux 4 points cardinaux
+            int n = Math.max(12, (int) Math.round(Math.PI * 2 * r));
+            for (int k = 0; k < n; k++) {
+                if (Math.floorMod(k + phase, 3) != 0) continue;
+                double a = Math.PI * 2 * k / n;
+                dot(cx + (int) Math.round(Math.cos(a) * r), cz + (int) Math.round(Math.sin(a) * r));
+            }
+            if ((now / 5) % 2 == 0) {
+                for (int[] k : new int[][]{{-r, 0}, {r, 0}, {0, -r}, {0, r}}) {
+                    int x = cx + k[0], z = cz + k[1];
+                    int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+                    level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, x + 0.5, y + 1.5, z + 0.5, 4, 0.05, 1.2, 0.05, 0.02);
+                }
+            }
+            return;
+        }
         for (int i = -r; i <= r; i++) {
             if (Math.floorMod(i + phase, 3) != 0) continue;
             dot(cx + i, cz - r);

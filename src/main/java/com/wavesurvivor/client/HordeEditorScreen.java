@@ -999,6 +999,16 @@ public class HordeEditorScreen extends Screen {
         fInt(24, HordeJson.num(k, "claimRadius", 16), v -> k.addProperty("claimRadius", Math.max(4, Math.min(64, v))));
         fl(t("ui.kingdom.wall_hp"));
         fDbl(30, HordeJson.dbl(k, "wallHpMultiplier", 1.0), v -> k.addProperty("wallHpMultiplier", Math.max(0.1, v)));
+        y += 20;
+        flow(x, y);
+        fl(t("ui.kingdom.claim_shape"));
+        boolean circleShape = "circle".equalsIgnoreCase(HordeJson.str(k, "claimShape", "square"));
+        fBtn(110, circleShape ? t("ui.kingdom.shape_circle") : t("ui.kingdom.shape_square"), () -> {
+            k.addProperty("claimShape", circleShape ? "square" : "circle");
+            changed();
+            init();
+        });
+        fl(t("ui.kingdom.claim_shape_hint"));
         y += 24;
 
         // ── Objectifs (Gardiens, Catalyseur, corruption) ──

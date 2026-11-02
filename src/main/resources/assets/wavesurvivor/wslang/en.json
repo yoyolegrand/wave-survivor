@@ -4203,5 +4203,9 @@
   "voc.ui.conv_ec": "Essence → coins",
   "voc.ui.recycle_items": "Recycle items",
   "voc.ui.recycle_gear": "Recycle gear",
-  "voc.ui.contract_reroll": "Change contract"
+  "voc.ui.contract_reroll": "Change contract",
+  "ui.kingdom.claim_shape": "Claim shape",
+  "ui.kingdom.shape_square": "▢ Square",
+  "ui.kingdom.shape_circle": "◯ Circle",
+  "ui.kingdom.claim_shape_hint": "(a circle has the same area as the square)"
 }

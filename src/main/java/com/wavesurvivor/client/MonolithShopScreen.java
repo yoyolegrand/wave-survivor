@@ -123,7 +123,16 @@ public class MonolithShopScreen extends Screen {
         // Limite du claim
         int cr = Math.round(com.wavesurvivor.network.KingdomMapPackets.CLIENT_CLAIM * sc);
         int cx = x0 + S / 2, cy = y0 + S / 2;
-        g.renderOutline(cx - cr, cy - cr, cr * 2 + 1, cr * 2 + 1, 0xAA22C55E);
+        if (com.wavesurvivor.network.KingdomMapPackets.CLIENT_CIRCLE) { // claim circulaire : contour point par point
+            int steps = Math.max(24, (int) (cr * 6.3));
+            for (int i = 0; i < steps; i++) {
+                double an = Math.PI * 2 * i / steps;
+                int px = cx + (int) Math.round(Math.cos(an) * cr), py = cy + (int) Math.round(Math.sin(an) * cr);
+                g.fill(px, py, px + 1, py + 1, 0xAA22C55E);
+            }
+        } else {
+            g.renderOutline(cx - cr, cy - cr, cr * 2 + 1, cr * 2 + 1, 0xAA22C55E);
+        }
         g.drawCenteredString(font, "N", cx, y0 + 2, 0xFFAAAAAA);
         // Marqueurs (les plus petits d'abord, joueurs par-dessus)
         com.wavesurvivor.network.KingdomMapPackets.Marker hover = null;

@@ -3469,5 +3469,9 @@
   "voc.ui.conv_ec": "Essence → pièces",
   "voc.ui.recycle_items": "Recycler les objets",
   "voc.ui.recycle_gear": "Recycler l'équipement",
-  "voc.ui.contract_reroll": "Changer de contrat"
+  "voc.ui.contract_reroll": "Changer de contrat",
+  "ui.kingdom.claim_shape": "Forme du claim",
+  "ui.kingdom.shape_square": "▢ Carré",
+  "ui.kingdom.shape_circle": "◯ Cercle",
+  "ui.kingdom.claim_shape_hint": "(le cercle a la même surface que le carré)"
 }

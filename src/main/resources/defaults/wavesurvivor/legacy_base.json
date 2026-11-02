@@ -22336,6 +22336,7 @@
               "squadSize": 8,
               "engageRadius": 16,
               "claimRadius": 16,
+              "claimShape": "circle",
               "buildOnlyInClaim": true,
               "claimMarkers": true,
               "wallDurability": true,

@@ -53,7 +53,7 @@ public final class KingdomMap {
             if (p.isSpectator()) continue;
             add(out, c, p.getBlockX(), p.getBlockZ(), p == viewer ? KingdomMapPackets.SELF : KingdomMapPackets.PLAYER, (byte) 0);
         }
-        return new KingdomMapPackets.Data(KingdomClaim.radius(), out);
+        return new KingdomMapPackets.Data(KingdomClaim.radius() | (KingdomClaim.isCircle() ? 1 << 16 : 0), out); // bit 16 : claim circulaire
     }
 
     /** Boussole du Royaume du joueur : main principale, main secondaire, puis inventaire. */
