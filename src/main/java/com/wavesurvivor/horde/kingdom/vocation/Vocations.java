@@ -25,9 +25,10 @@ public final class Vocations {
     private Vocations() {}
 
     /** Résultat d'une action sur l'arbre. */
-    public enum Result { OK, UNKNOWN, IN_GAME, NO_POINTS, MAX_RANK, LOCKED, NOT_ENOUGH_PR, ULT_LOCKED, ULT_ALREADY, NOTHING }
+    public enum Result { OK, UNKNOWN, IN_GAME, NO_POINTS, MAX_RANK, LOCKED, NOT_ENOUGH_PR, ULT_LOCKED, ULT_ALREADY, NOTHING, NOT_READY }
 
-    private static CompoundTag root(Player p) {
+    /** Données brutes du joueur (lecture : synchronisation vers le client). */
+    static CompoundTag root(Player p) {
         CompoundTag persistentRoot = p.getPersistentData();
         CompoundTag persisted = persistentRoot.getCompound("PlayerPersisted");
         CompoundTag d = persisted.getCompound("ws_vocations");
@@ -41,6 +42,11 @@ public final class Vocations {
         CompoundTag t = root.getCompound(r.id);
         root.put(r.id, t);
         return t;
+    }
+
+    /** Nom du rôle sans l'émoji de tête (la police du jeu ne l'affiche pas). */
+    public static String roleName(KingdomRoles.Role r) {
+        return com.wavesurvivor.i18n.WSLang.t("kingdom.role." + r.id).replaceFirst("^[^\\p{L}]+", "");
     }
 
     // ─── Maîtrise ───
@@ -116,7 +122,7 @@ public final class Vocations {
 
     // ─── Actions ───
 
-    private static boolean inGame() {
+    public static boolean inGame() {
         return com.wavesurvivor.altar.AltarDefense.isActive() || com.wavesurvivor.horde.kingdom.KingdomManager.isActive();
     }
 
@@ -127,6 +133,7 @@ public final class Vocations {
         Branch branch = tree.branchOf(talentId);
         Talent talent = tree.talent(talentId);
         if (branch == null || talent == null) return Result.UNKNOWN;
+        if (talent.wip()) return Result.NOT_READY;
         if (inGame()) return Result.IN_GAME;
         int rank = rank(p, r, talent.id());
         if (rank >= talent.ranks()) return Result.MAX_RANK;
@@ -143,6 +150,7 @@ public final class Vocations {
         RoleTree tree = VocationsConfig.tree(r.id);
         Ultimate u = tree == null ? null : tree.ultimate(ultimateId);
         if (u == null) return Result.UNKNOWN;
+        if (u.wip()) return Result.NOT_READY;
         if (inGame()) return Result.IN_GAME;
         if (!ultimate(p, r).isEmpty()) return Result.ULT_ALREADY;
         if (pointsSpent(p, r) < VocationsConfig.ultimatePoints()) return Result.ULT_LOCKED;

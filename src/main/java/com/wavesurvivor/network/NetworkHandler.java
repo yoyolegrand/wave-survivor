@@ -209,6 +209,12 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, EntityEditorPackets.Revert.class,
                 EntityEditorPackets.Revert::encode, EntityEditorPackets.Revert::decode, EntityEditorPackets.Revert::handle);
 
+        // Vocations (1.9)
+        CHANNEL.registerMessage(id++, VocationSyncPacket.class,
+                VocationSyncPacket::encode, VocationSyncPacket::decode, VocationSyncPacket::handle);
+        CHANNEL.registerMessage(id++, VocationActionPacket.class,
+                VocationActionPacket::encode, VocationActionPacket::decode, VocationActionPacket::handle);
+
         WaveSurvivorMod.LOGGER.info("[Network] Channel 'main' enregistré (protocol v{}, {} packets)",
                 PROTOCOL_VERSION, id);
     }

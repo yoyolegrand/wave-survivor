@@ -40,6 +40,12 @@ public class VocationEvents {
         if (ess > 0) com.wavesurvivor.horde.kingdom.KingdomTreasury.reward(com.wavesurvivor.horde.kingdom.KingdomTreasury.Res.ESSENCE, ess, "voc.reason.champion");
     }
 
+    /** Connexion : le client reçoit sa Maîtrise et la configuration des arbres (affichage dans le Monolithe). */
+    @SubscribeEvent
+    public void onLogin(net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent e) {
+        if (e.getEntity() instanceof ServerPlayer p) VocationSync.send(p, true);
+    }
+
     @SubscribeEvent
     public void onHurt(LivingHurtEvent e) {
         if (!KingdomRoles.active()) return;

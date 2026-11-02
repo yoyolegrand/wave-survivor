@@ -118,13 +118,16 @@ public class RenaissanceScreen extends Screen {
 
         int tabY = top + 22;
         Button sacTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.sacrifice")), b -> switchTab(0))
-                .bounds(width / 2 - 127, tabY, 62, 18).build());
+                .bounds(width / 2 - 127, tabY, 49, 18).build());
         Button shopTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.boutique")), b -> switchTab(1))
-                .bounds(width / 2 - 63, tabY, 62, 18).build());
+                .bounds(width / 2 - 76, tabY, 49, 18).build());
         Button forgeTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.tab")), b -> switchTab(2))
-                .bounds(width / 2 + 1, tabY, 62, 18).build());
+                .bounds(width / 2 - 25, tabY, 49, 18).build());
         Button herTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("heritage.tab")), b -> switchTab(3))
-                .bounds(width / 2 + 65, tabY, 62, 18).build());
+                .bounds(width / 2 + 26, tabY, 49, 18).build());
+        addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("voc.ui.tab")),
+                        b -> Minecraft.getInstance().setScreen(new VocationsScreen(this, null, false)))
+                .bounds(width / 2 + 77, tabY, 49, 18).build()); // Vocations (1.9) : écran à part, même panneau
         sacTab.active = tab != 0;
         shopTab.active = tab != 1;
         forgeTab.active = tab != 2;
@@ -436,7 +439,7 @@ public class RenaissanceScreen extends Screen {
         return tip;
     }
 
-    private void switchTab(int t) {
+    void switchTab(int t) {
         tab = t;
         confirmArmed = false;
         scroll = 0;

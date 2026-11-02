@@ -613,6 +613,29 @@ public class MonolithShopScreen extends Screen {
             }
             default -> { }
         }
+        // Vocations (1.9) : arbre complet en lecture seule
+        final var roleForTree = mine;
+        addRenderableWidget(Button.builder(Component.literal(WSLang.t("voc.ui.view_tree")),
+                        b -> Minecraft.getInstance().setScreen(new VocationsScreen(this, roleForTree, true)))
+                .bounds(left + PANEL_W - 12 - 130, top + PANEL_H - 76 + 12, 130, 16).build());
+        NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.VocationActionPacket(com.wavesurvivor.network.VocationActionPacket.SYNC, "", ""));
+    }
+
+    /** Section Maîtrise de la fiche du rôle (lecture seule) : niveau, barre, XP de la partie, points libres, ultime. */
+    private void renderMastery(GuiGraphics g, com.wavesurvivor.horde.kingdom.KingdomRoles.Role r) {
+        if (!VocationsClient.ready()) return;
+        int y = top + PANEL_H - 76;
+        g.fill(left + 12, y - 4, left + PANEL_W - 12, y - 3, 0x60FFFFFF);
+        g.drawString(font, WSLang.t("voc.ui.mastery", VocationsClient.level(r), com.wavesurvivor.horde.kingdom.vocation.VocationsConfig.maxLevel()), left + 14, y, 0xFFE0B040, false);
+        int bx = left + 110, bw = 120;
+        g.fill(bx, y + 2, bx + bw, y + 7, 0xFF1A2A20);
+        g.fill(bx, y + 2, bx + Math.round(bw * VocationsClient.progress(r)), y + 7, 0xFF22C55E);
+        String xp = WSLang.t("voc.ui.xp_game", VocationsClient.pending(r));
+        g.drawString(font, xp, left + PANEL_W - 14 - font.width(xp), y, 0xFFAAAAAA, false);
+        g.drawString(font, WSLang.t("voc.ui.free_points", VocationsClient.pointsFree(r)), left + 14, y + 14, 0xFFFFD34D, false);
+        String ult = VocationsClient.ultimate(r);
+        String ultTxt = ult.isEmpty() ? WSLang.t("voc.ui.ult_none") : WSLang.t("voc.ui.ult_is", WSLang.t("voc.ult." + r.id + "." + ult));
+        g.drawString(font, font.plainSubstrByWidth(ultTxt, PANEL_W - 14 - 130 - 24 - 80), left + 14, y + 25, 0xFFBBBBBB, false);
     }
 
     private void renderRoles(GuiGraphics g, int y0) {
@@ -685,6 +708,7 @@ public class MonolithShopScreen extends Screen {
             case BUILDER -> centeredWrapped(g, WSLang.t("ui.shop.role_builder_hint"), ys + 6);
             default -> { }
         }
+        renderMastery(g, mine);
     }
 
     /** Texte centré, renvoyé à la ligne pour rester dans le panneau. @return y sous la dernière ligne. */
@@ -710,6 +734,9 @@ public class MonolithShopScreen extends Screen {
             g.renderItem(new ItemStack(r.icon), left + 11, y + 1);
             String name = (avail ? "§f" : "§8") + WSLang.t("kingdom.role." + r.id);
             g.drawString(font, name, left + 31, y + 5, 0xFFFFFFFF);
+            if (VocationsClient.ready()) { // Vocations : Maîtrise du joueur dans ce rôle
+                g.drawString(font, "§6" + WSLang.t("voc.ui.mastery_short", VocationsClient.level(r)), left + 31 + font.width(name.replaceAll("§.", "")) + 8, y + 5, 0xFFFFFFFF);
+            }
             String who = h != null ? "§7" + h[1] : (avail ? WSLang.t("ui.shop.role_free") : "");
             g.drawString(font, who, left + PANEL_W - 88 - font.width(who.replaceAll("§.", "")), y + 5, 0xFFFFFFFF);
         }

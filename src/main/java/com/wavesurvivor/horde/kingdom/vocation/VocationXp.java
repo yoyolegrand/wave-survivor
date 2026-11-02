@@ -83,7 +83,7 @@ public final class VocationXp {
                 int before = Vocations.level(p, r);
                 Vocations.addXp(p, r, gain);
                 int after = Vocations.level(p, r);
-                String role = WSLang.t("kingdom.role." + r.id);
+                String role = Vocations.roleName(r);
                 p.sendSystemMessage(WSLang.c(victory ? "voc.xp.gain_win" : "voc.xp.gain_loss", gain, role, mult));
                 if (after > before) {
                     EventFeedPacket.toPlayer(p, WSLang.c("voc.xp.level_up", role, after, VocationsConfig.maxLevel()),
@@ -91,6 +91,10 @@ public final class VocationXp {
                     p.sendSystemMessage(WSLang.c("voc.xp.points", Vocations.pointsFree(p, r), role));
                 }
             }
+        }
+        for (UUID id : new java.util.ArrayList<>(PENDING.keySet())) {
+            ServerPlayer p = server.getPlayerList().getPlayer(id);
+            if (p != null) VocationSync.send(p, false);
         }
         clear();
     }

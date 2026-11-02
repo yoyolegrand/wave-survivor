@@ -27,12 +27,12 @@ import java.util.Map;
 public final class VocationsConfig {
 
     /** Un talent : valeur PAR RANG (unité : pct, flat, sec ou bool). « effect » est la clé lue par les effets des rôles. */
-    public record Talent(String id, String effect, int ranks, double value, String unit) {}
+    public record Talent(String id, String effect, int ranks, double value, String unit, String sign, boolean wip) {}
 
     public record Branch(String id, List<Talent> talents) {}
 
     /** Talent ultime (au choix, un seul par rôle). */
-    public record Ultimate(String id, String effect, double value, String unit) {}
+    public record Ultimate(String id, String effect, double value, String unit, boolean wip) {}
 
     public record RoleTree(String roleId, JsonObject base, List<Branch> branches, List<Ultimate> ultimates) {
         public Talent talent(String id) {
@@ -76,6 +76,24 @@ public final class VocationsConfig {
                 WaveSurvivorMod.LOGGER.error("[Vocations] {} illisible : {}", f.getFileName(), e.getMessage());
             }
         }
+        build(r);
+    }
+
+    /** Côté client : adopte la configuration envoyée par le serveur (arbres, courbe d'XP, coûts). */
+    public static synchronized void loadFromJson(String json) {
+        try {
+            build(JsonParser.parseString(json).getAsJsonObject());
+        } catch (Exception e) {
+            WaveSurvivorMod.LOGGER.error("[Vocations] Configuration reçue illisible : {}", e.getMessage());
+        }
+    }
+
+    /** Configuration fusionnée (base + couche du joueur), à envoyer aux clients. */
+    public static String json() {
+        return cfg().toString();
+    }
+
+    private static void build(JsonObject r) {
         Map<String, RoleTree> map = new LinkedHashMap<>();
         JsonObject roles = r.has("roles") && r.get("roles").isJsonObject() ? r.getAsJsonObject("roles") : new JsonObject();
         for (Map.Entry<String, JsonElement> e : roles.entrySet()) {
@@ -92,7 +110,7 @@ public final class VocationsConfig {
                     String id = HordeJson.str(to, "id", "");
                     if (id.isBlank()) continue;
                     ts.add(new Talent(id, HordeJson.str(to, "effect", e.getKey() + "." + HordeJson.str(bo, "id", "") + "." + id),
-                            Math.max(1, HordeJson.num(to, "ranks", 1)), HordeJson.dbl(to, "value", 1), HordeJson.str(to, "unit", "flat")));
+                            Math.max(1, HordeJson.num(to, "ranks", 1)), HordeJson.dbl(to, "value", 1), HordeJson.str(to, "unit", "flat"), HordeJson.str(to, "sign", "+"), HordeJson.bool(to, "wip", false)));
                 }
                 String bid = HordeJson.str(bo, "id", "");
                 if (!bid.isBlank() && !ts.isEmpty()) branches.add(new Branch(bid, ts));
@@ -103,7 +121,7 @@ public final class VocationsConfig {
                 JsonObject uo = ue.getAsJsonObject();
                 String id = HordeJson.str(uo, "id", "");
                 if (id.isBlank()) continue;
-                ults.add(new Ultimate(id, HordeJson.str(uo, "effect", e.getKey() + ".ult." + id), HordeJson.dbl(uo, "value", 1), HordeJson.str(uo, "unit", "bool")));
+                ults.add(new Ultimate(id, HordeJson.str(uo, "effect", e.getKey() + ".ult." + id), HordeJson.dbl(uo, "value", 1), HordeJson.str(uo, "unit", "bool"), HordeJson.bool(uo, "wip", false)));
             }
             JsonObject b = o.has("base") && o.get("base").isJsonObject() ? o.getAsJsonObject("base") : new JsonObject();
             map.put(e.getKey(), new RoleTree(e.getKey(), b, branches, ults));

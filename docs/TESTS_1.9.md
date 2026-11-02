@@ -60,3 +60,15 @@ Même méthode de test qu'en 3a (`/ws vocation xp <rôle> 11500`, `/ws vocation 
 - [ ] **Intendant** : `start_resources` (Bois/Pierre/Fer à la prise du rôle, une fois par partie).
 - [ ] **Arcaniste** : `purify_zone` (zone sacrée de 40 s qui ralentit les monstres, à l'endroit du foyer purifié).
 - [ ] Non faits (à décider) : `choice_of_two`, `contract_extend` (Chasseur), `cheaper_soldiers`, `essence_to_coins` (Intendant).
+
+## Étape 4 — écrans
+Pour avoir des points : `/ws vocation xp <rôle> 11500` (niveau 20). Les talents « Bientôt » (non branchés) ne peuvent pas être achetés.
+- [ ] **Autel de Renaissance** : 5 onglets (Sacrifice, Boutique, Forge, Héritage, Vocations) bien alignés ; le 5e ouvre la grille des 9 métiers (icône du rôle, Maîtrise x / 20, barre d'XP, « ★ n points » en doré). Les 4 autres onglets de cette grille ramènent à l'écran habituel.
+- [ ] Grille : survol = cadre doré ; clic = arbre du métier ; la molette fait défiler (et la barre de défilement apparaît) seulement s'il y a plus de 9 métiers (rien à faire défiler pour l'instant).
+- [ ] **Arbre** : en-tête (icône, Maîtrise, barre, points à dépenser / dépensés), ligne « Base : … » avec les valeurs réduites, 3 colonnes de 4 talents reliés. Vert = tous les rangs pris, doré = en cours ou achetable, gris = verrouillé (« N pts » requis), sombre « Bientôt » = pas encore actif.
+- [ ] Chaque talent affiche le total appliqué (en haut à droite), la valeur par rang (ligne 2) et les carrés de rang ; l'info-bulle détaille nom, description, valeur par rang, total et condition.
+- [ ] Clic sur un talent achetable : +1 rang (le serveur refuse sinon, avec un message). Paliers 0 / 2 / 5 / 8 points par branche respectés.
+- [ ] **Ultimes** : grisés sous 15 points ; refusés tant qu'ils sont « Bientôt ».
+- [ ] **Réinitialiser** : 1er clic « Confirmer ? », 2e clic = 50 PR, points rendus ; grisé pendant une partie (message rouge).
+- [ ] **Monolithe › Rôles** : liste = « Maîtrise N » à côté de chaque rôle ; fiche = section Maîtrise en bas (niveau, barre, « +X XP cette partie », points libres, ultime) + bouton « Voir l'arbre complet » (lecture seule : aucun achat possible, Retour ramène au Monolithe).
+- [ ] Multijoueur / serveur dédié : l'écran se remplit à la connexion (configuration envoyée par le serveur), pas de crash si le client n'a pas encore reçu les données (« Chargement… »).
