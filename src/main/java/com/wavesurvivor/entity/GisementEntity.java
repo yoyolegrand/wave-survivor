@@ -196,6 +196,8 @@ public class GisementEntity extends Mob {
         // Force du coup selon la pioche (bois 1 → netherite 5, pioche moddée = diamant 4) ; Prospecteur ×2
         float dmg = tree ? axePower(st) : pickaxePower(st);
         dmg *= 1f + com.wavesurvivor.item.RelicEffects.scaled(p, com.wavesurvivor.registry.ModItems.ANNEAU_PROSPECTEUR.get(), 1f); // ×2 / ×2,5 / ×3
+        if (p instanceof net.minecraft.server.level.ServerPlayer mp && com.wavesurvivor.horde.kingdom.KingdomRoles.has(mp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER)
+                && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(mp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.yield.area_harvest")) dmg *= 1.5f; // talent Rendement : coup de zone
         return super.hurt(source, dmg);
     }
 

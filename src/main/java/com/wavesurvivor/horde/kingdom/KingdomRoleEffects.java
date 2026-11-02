@@ -70,6 +70,7 @@ public final class KingdomRoleEffects {
         public void effectsInteract(net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract e) {
             if (e.getLevel().isClientSide || !KingdomRoles.active()) return;
             if (!(e.getTarget() instanceof net.minecraft.world.entity.npc.AbstractVillager v) || !(e.getEntity() instanceof ServerPlayer p)) return;
+            com.wavesurvivor.horde.kingdom.vocation.VocationFx.addVillagerOffers(v); // talents Commerce : offres en plus
             boolean qm = KingdomRoles.has(p, KingdomRoles.Role.QUARTERMASTER);
             // Remise de l'Intendant (base + talents) ; talent Commerce : l'équipe en reçoit une partie
             double own = Voc.base(KingdomRoles.Role.QUARTERMASTER, "merchantDiscount", 0.08) + Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.trade.discount");

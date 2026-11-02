@@ -5,6 +5,7 @@ import com.wavesurvivor.horde.kingdom.KingdomManager;
 import com.wavesurvivor.horde.kingdom.KingdomRoles;
 import com.wavesurvivor.horde.kingdom.KingdomTreasury;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -64,6 +65,10 @@ public final class VocationFx {
     public static void clear() {
         ZONES.clear();
         TASKS.clear();
+        despawnMarket(KingdomManager.level());
+        market = null;
+        ALLIES.clear();
+        essenceConverted = false;
         warChest = false;
         motherLode = false;
         lastStandUsed = false;
@@ -124,6 +129,9 @@ public final class VocationFx {
             com.wavesurvivor.horde.kingdom.KingdomRoleExtras.scrapCrate(scav);
         }
         if (scav != null && Vocations.has(scav, KingdomRoles.Role.SCAVENGER, "scavenger.plunder.raider_chest")) com.wavesurvivor.horde.kingdom.KingdomRoleExtras.raiderChest(scav);
+        essenceConverted = false;
+        ServerPlayer qm = Voc.holder(KingdomRoles.Role.QUARTERMASTER);
+        if (qm != null && Vocations.has(qm, KingdomRoles.Role.QUARTERMASTER, "quartermaster.ult.black_market") && qm.level() instanceof ServerLevel ql) spawnMarket(ql);
         warChest = scav != null && Vocations.has(scav, KingdomRoles.Role.SCAVENGER, "scavenger.ult.war_chest"); // ultime : doublent les débris du prochain Assaut
         motherLode = Voc.has(KingdomRoles.Role.MINER, "miner.ult.mother_lode"); // ultime : le 1er gisement du Calme sera un filon-mère
 
@@ -160,6 +168,7 @@ public final class VocationFx {
     /** Début d'un Assaut : ultimes de l'Arcaniste (Nexus) et du Commandant (Garde d'élite), Panacée rechargée. */
     public static void onAssaultStart(MinecraftServer server) {
         VocationEvents.onAssaultStart();
+        despawnMarket(KingdomManager.level()); // le Marché noir repart avec l'Assaut
         warChest = Voc.has(KingdomRoles.Role.SCAVENGER, "scavenger.ult.war_chest") && warChest; // actif seulement après un Assaut repoussé
         ServerPlayer arc = Voc.holder(ARC);
         if (arc != null && Vocations.has(arc, ARC, "arcanist.ult.nexus") && KingdomManager.center() != null && arc.level() instanceof ServerLevel lvl) {
@@ -211,6 +220,15 @@ public final class VocationFx {
                 if (!p.isSpectator()) p.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0, true, false));
             }
         }
+        if (!ALLIES.isEmpty()) {
+            ServerLevel al = KingdomManager.level();
+            for (java.util.Iterator<java.util.Map.Entry<java.util.UUID, Long>> it = ALLIES.entrySet().iterator(); it.hasNext(); ) {
+                var en = it.next();
+                var ae = al == null ? null : al.getEntity(en.getKey());
+                if (ae == null || !ae.isAlive()) { it.remove(); continue; }
+                if (tick >= en.getValue()) { ae.discard(); it.remove(); }
+            }
+        }
         if (captain != null) {
             ServerLevel lvl = KingdomManager.level();
             var c = lvl == null ? null : lvl.getEntity(captain);
@@ -228,6 +246,145 @@ public final class VocationFx {
                 if (cmd != null) cmd.sendSystemMessage(com.wavesurvivor.i18n.WSLang.c("voc.last_stand"));
             }
         }
+    }
+
+    // ── Intendant, Récupérateur : marchands, conversions, recyclage, unités ralliées, Marché noir ──
+    private static final java.util.Map<java.util.UUID, Long> ALLIES = new java.util.HashMap<>();
+    private static java.util.UUID market = null;
+    private static boolean essenceConverted = false;
+
+    /** Talents Commerce : une offre en plus et/ou une offre rare chez chaque marchand (ajoutées une seule fois par marchand). */
+    public static void addVillagerOffers(net.minecraft.world.entity.npc.AbstractVillager v) {
+        if (v.getPersistentData().getBoolean("ws_voc_offers") || !KingdomRoles.present(KingdomRoles.Role.QUARTERMASTER)) return;
+        boolean ex = Voc.has(KingdomRoles.Role.QUARTERMASTER, "quartermaster.trade.extra_offer");
+        boolean rare = Voc.has(KingdomRoles.Role.QUARTERMASTER, "quartermaster.trade.rare_offer");
+        if (!ex && !rare) return;
+        net.minecraft.world.item.Item cur = com.wavesurvivor.altar.AltarDefense.currencyItem();
+        var offers = v.getOffers();
+        if (ex) offers.add(new net.minecraft.world.item.trading.MerchantOffer(new net.minecraft.world.item.ItemStack(cur, 12),
+                new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.GOLDEN_APPLE, 2), 4, 0, 0f));
+        if (rare) offers.add(new net.minecraft.world.item.trading.MerchantOffer(new net.minecraft.world.item.ItemStack(cur, 48),
+                new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.TOTEM_OF_UNDYING), 1, 0, 0f));
+        v.getPersistentData().putBoolean("ws_voc_offers", true);
+    }
+
+    /** Intendant › Intendance : 0 Bois→Pierre, 1 Pierre→Fer, 2 Fer→Bois (20 pour 10) ; 3 Essence→pièces (2 pour 40, 1 fois par Calme). */
+    public static void convert(ServerPlayer p, int kind) {
+        if (!KingdomRoles.has(p, KingdomRoles.Role.QUARTERMASTER) || !KingdomTreasury.active()) return;
+        if (kind < 3) {
+            if (!Vocations.has(p, KingdomRoles.Role.QUARTERMASTER, "quartermaster.stewardship.convert")) return;
+            KingdomTreasury.Res from = new KingdomTreasury.Res[]{KingdomTreasury.Res.WOOD, KingdomTreasury.Res.STONE, KingdomTreasury.Res.IRON}[kind];
+            KingdomTreasury.Res to = new KingdomTreasury.Res[]{KingdomTreasury.Res.STONE, KingdomTreasury.Res.IRON, KingdomTreasury.Res.WOOD}[kind];
+            if (!KingdomTreasury.has(from, 20)) {
+                p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("voc.convert.no"), true);
+                return;
+            }
+            KingdomTreasury.spend(from, 20);
+            KingdomTreasury.add(to, 10);
+        } else {
+            if (!Vocations.has(p, KingdomRoles.Role.QUARTERMASTER, "quartermaster.stewardship.essence_to_coins")
+                    || essenceConverted || KingdomManager.phase() != KingdomManager.Phase.CALM || !KingdomTreasury.has(KingdomTreasury.Res.ESSENCE, 2)) {
+                p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("voc.convert.no"), true);
+                return;
+            }
+            essenceConverted = true;
+            KingdomTreasury.spend(KingdomTreasury.Res.ESSENCE, 2);
+            KingdomTreasury.add(KingdomTreasury.Res.MONEY, 40);
+        }
+        KingdomTreasury.sync(p.getServer());
+        p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("voc.convert.ok"), true);
+    }
+
+    /** Récupérateur › Recyclage : os, flèches, ficelle, plumes, poudre → Pierre ; chair pourrie, yeux d'araignée, cuir → Bois (1 pour 1). */
+    public static void recycleItems(ServerPlayer p) {
+        if (!KingdomRoles.has(p, KingdomRoles.Role.SCAVENGER) || !KingdomTreasury.active()
+                || !Vocations.has(p, KingdomRoles.Role.SCAVENGER, "scavenger.recycling.recycle_items")) return;
+        int stone = 0, wood = 0;
+        var inv = p.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            var st = inv.getItem(i);
+            var it = st.getItem();
+            if (it == net.minecraft.world.item.Items.BONE || it == net.minecraft.world.item.Items.ARROW || it == net.minecraft.world.item.Items.STRING
+                    || it == net.minecraft.world.item.Items.FEATHER || it == net.minecraft.world.item.Items.GUNPOWDER) { stone += st.getCount(); inv.setItem(i, net.minecraft.world.item.ItemStack.EMPTY); }
+            else if (it == net.minecraft.world.item.Items.ROTTEN_FLESH || it == net.minecraft.world.item.Items.SPIDER_EYE || it == net.minecraft.world.item.Items.LEATHER) { wood += st.getCount(); inv.setItem(i, net.minecraft.world.item.ItemStack.EMPTY); }
+        }
+        if (stone + wood == 0) {
+            p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("voc.recycle.none"), true);
+            return;
+        }
+        if (stone > 0) KingdomTreasury.add(KingdomTreasury.Res.STONE, stone);
+        if (wood > 0) KingdomTreasury.add(KingdomTreasury.Res.WOOD, wood);
+        KingdomTreasury.sync(p.getServer());
+        p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("voc.recycle.items", stone, wood), true);
+    }
+
+    /** Récupérateur › Recyclage : l'équipement tenu en main (armure, outil, arme) devient de l'Essence (1, +1 par enchantement). */
+    public static void recycleGear(ServerPlayer p) {
+        if (!KingdomRoles.has(p, KingdomRoles.Role.SCAVENGER) || !KingdomTreasury.active()
+                || !Vocations.has(p, KingdomRoles.Role.SCAVENGER, "scavenger.recycling.recycle_gear")) return;
+        var st = p.getMainHandItem();
+        if (st.isEmpty() || !st.isDamageableItem()) {
+            p.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("voc.recycle.no_gear"), true);
+            return;
+        }
+        int ess = 1 + st.getEnchantmentTags().size();
+        p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.ItemStack.EMPTY);
+        KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, ess, "voc.reason.recycle");
+        KingdomTreasury.sync(p.getServer());
+    }
+
+    /** Pillage › Bélier apprivoisé / ultime Arsenal de siège : une unité de siège abattue peut rejoindre le royaume 60 s. */
+    public static void siegeCapture(ServerLevel lvl, LivingEntity dead, String role) {
+        ServerPlayer s = Voc.holder(KingdomRoles.Role.SCAVENGER);
+        if (s == null) return;
+        double ch = ("ram".equals(role) ? Vocations.total(s, KingdomRoles.Role.SCAVENGER, "scavenger.plunder.tame_ram") / 100.0 : 0)
+                + (Vocations.has(s, KingdomRoles.Role.SCAVENGER, "scavenger.ult.siege_arsenal") ? 0.15 : 0);
+        if (ch <= 0 || lvl.random.nextDouble() >= ch) return;
+        var a = com.wavesurvivor.registry.ModEntities.KINGDOM_SOLDIER.get().create(lvl);
+        if (a == null) return;
+        a.moveTo(dead.getX(), dead.getY(), dead.getZ(), 0f, 0f);
+        var hp = a.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH);
+        if (hp != null) hp.setBaseValue(70);
+        var atk = a.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE);
+        if (atk != null) atk.setBaseValue(9);
+        a.setHealth(a.getMaxHealth());
+        a.setCustomName(Component.literal(com.wavesurvivor.i18n.WSLang.t("voc.ally.name")));
+        a.setCustomNameVisible(true);
+        if (lvl.addFreshEntity(a)) {
+            ALLIES.put(a.getUUID(), lvl.getServer().getTickCount() + 1200L);
+            s.sendSystemMessage(com.wavesurvivor.i18n.WSLang.c("voc.ally.joined"));
+        }
+    }
+
+    /** Ultime Marché noir : un marchand spécial aux offres exceptionnelles apparaît près du Monolithe à chaque Calme. */
+    private static void spawnMarket(ServerLevel lvl) {
+        despawnMarket(lvl);
+        var c = KingdomManager.center();
+        if (c == null) return;
+        var v = net.minecraft.world.entity.EntityType.VILLAGER.create(lvl);
+        if (v == null) return;
+        var at = lvl.getHeightmapPos(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, c.offset(4, 0, 3));
+        v.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0f, 0f);
+        v.setNoAi(true);
+        v.setInvulnerable(true);
+        v.setCustomName(Component.literal(com.wavesurvivor.i18n.WSLang.t("voc.market.name")));
+        v.setCustomNameVisible(true);
+        v.getPersistentData().putBoolean("ws_voc_offers", true);
+        net.minecraft.world.item.Item cur = com.wavesurvivor.altar.AltarDefense.currencyItem();
+        var offers = v.getOffers();
+        offers.clear();
+        offers.add(new net.minecraft.world.item.trading.MerchantOffer(new net.minecraft.world.item.ItemStack(cur, 32), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND, 3), 3, 0, 0f));
+        offers.add(new net.minecraft.world.item.trading.MerchantOffer(new net.minecraft.world.item.ItemStack(cur, 48), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.TOTEM_OF_UNDYING), 2, 0, 0f));
+        offers.add(new net.minecraft.world.item.trading.MerchantOffer(new net.minecraft.world.item.ItemStack(cur, 56), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ENCHANTED_GOLDEN_APPLE), 1, 0, 0f));
+        offers.add(new net.minecraft.world.item.trading.MerchantOffer(new net.minecraft.world.item.ItemStack(cur, 40), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_SCRAP, 2), 2, 0, 0f));
+        if (lvl.addFreshEntity(v)) market = v.getUUID();
+    }
+
+    private static void despawnMarket(ServerLevel lvl) {
+        if (market == null || lvl == null) { market = null; return; }
+        var m = lvl.getEntity(market);
+        if (m != null) m.discard();
+        market = null;
     }
 
     /** Toutes les 5 s pendant le Calme : le Restaurateur répare légèrement toutes les constructions. */

@@ -172,7 +172,7 @@ public final class KingdomDefenses {
 
     /** Nombre maximum de tours d'archers : 4 au niveau 1 de la Mairie, +2 par niveau. */
     public static int archerLimit() {
-        return 4 + 2 * Math.max(0, KingdomTownHall.tier() - 1);
+        return 4 + 2 * Math.max(0, KingdomTownHall.tier() - 1) + (Voc.has(KingdomRoles.Role.BUILDER, "builder.ult.grand_works") ? 1 : 0); // ultime Grand chantier
     }
 
     /**
@@ -295,8 +295,15 @@ public final class KingdomDefenses {
         unregister(pos);
     }
 
+    /** Vrai pendant un démontage volontaire (pas une ruine). */
+    private static boolean demolishing = false;
+
     static void unregister(BlockPos pos) {
         Def d = DEFS.remove(pos);
+        if (d != null && !demolishing && KingdomTreasury.active() && KingdomManager.isActive()) {
+            double ruin = Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.ruin_refund"); // talent Restaurateur : une ruine rend une part de son coût
+            if (ruin > 0) refundOf(d, ruin).forEach((res, n) -> { if (n > 0) KingdomTreasury.add(res, n); });
+        }
         if (d != null) {
             discardSoldiers(d);
             for (BlockPos c : d.colliders) {
@@ -769,12 +776,15 @@ public final class KingdomDefenses {
 
     /** Remboursement au démontage : 50 % de l'achat et des améliorations, par ressource. */
     private static java.util.EnumMap<KingdomTreasury.Res, Integer> refundOf(Def d) {
+        return refundOf(d, Math.max(0.5, Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.dismantle_refund")));
+    }
+
+    /** Remboursement d'un bâtiment : {@code share} = part du coût rendue (0,5 au démontage ; talent Restaurateur : plus). */
+    private static java.util.EnumMap<KingdomTreasury.Res, Integer> refundOf(Def d, double share) {
         java.util.EnumMap<KingdomTreasury.Res, Integer> r = new java.util.EnumMap<>(KingdomTreasury.Res.class);
         r.merge(KingdomTreasury.Res.MONEY, BUY[Math.min(BUY.length - 1, d.kind.ordinal())], Integer::sum);
         if (d.level >= 2) for (KingdomCosts.Cost c : KingdomCosts.upgradeToLevel2(d.kind)) r.merge(c.res(), c.count(), Integer::sum);
         if (d.level >= 3 && !d.variant.isEmpty()) for (KingdomCosts.Cost c : KingdomCosts.variantCost(d.kind, d.variant)) r.merge(c.res(), c.count(), Integer::sum);
-        // 50 % de base ; talent Restaurateur : 75 % (jusqu'à la valeur du talent)
-        double share = Math.max(0.5, Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.dismantle_refund"));
         r.replaceAll((k, v) -> (int) (v * share));
         return r;
     }
@@ -839,7 +849,9 @@ public final class KingdomDefenses {
                 if (KingdomTreasury.active()) refund.forEach((res, n) -> { if (n > 0) KingdomTreasury.add(res, n); });
                 int total = refund.values().stream().mapToInt(Integer::intValue).sum();
                 level.sendParticles(ParticleTypes.CLOUD, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 20, 0.8, 0.8, 0.8, 0.02);
+                demolishing = true;
                 level.destroyBlock(pos, false);
+                demolishing = false;
                 p.displayClientMessage(WSLang.c("kingdom.demolished", total), true);
                 p.closeContainer();
                 return;

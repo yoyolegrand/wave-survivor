@@ -37,7 +37,7 @@ public final class KingdomRoleState {
         }
         String c = joinIds(KingdomOmens.chosenList()), a = joinIds(KingdomOmens.activeList());
         boolean augur = KingdomRoles.has(p, KingdomRoles.Role.AUGUR);
-        String extra = augur ? (KingdomOmens.sealed() == null ? "" : KingdomOmens.sealed().id()) + "|" + KingdomOmens.flagsFor(p) : "|0";
+        String extra = augur ? (KingdomOmens.sealed() == null ? "" : KingdomOmens.sealed().id()) + "|" + KingdomOmens.flagsFor(p) : "|" + roleFlags(p);
         boolean hunter = p.getUUID().equals(KingdomRoleExtras.contractHunter());
         NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), new RoleStatePacket(
                 KingdomAlchemy.reagents(p.getUUID()), opts.toString(), c, a,
@@ -46,6 +46,22 @@ public final class KingdomRoleState {
                 hunter ? KingdomRoleExtras.contractTarget() : 0,
                 hunter ? KingdomRoleExtras.contractReward() : 0,
                 KingdomAlchemy.levels(p.getUUID()).clone(), KingdomAlchemy.maxLevels(p), KingdomAlchemy.upgradeDiscountPct(p), extra));
+    }
+
+    /** Indicateurs des boutons de talents (bit 1, 2, 4 selon le rôle) : Intendant, Récupérateur, Chasseur. */
+    private static int roleFlags(ServerPlayer p) {
+        int f = 0;
+        KingdomRoles.Role r = KingdomRoles.of(p);
+        if (r == KingdomRoles.Role.QUARTERMASTER) {
+            if (com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, r, "quartermaster.stewardship.convert")) f |= 1;
+            if (com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, r, "quartermaster.stewardship.essence_to_coins")) f |= 2;
+        } else if (r == KingdomRoles.Role.SCAVENGER) {
+            if (com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, r, "scavenger.recycling.recycle_items")) f |= 1;
+            if (com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, r, "scavenger.recycling.recycle_gear")) f |= 2;
+        } else if (r == KingdomRoles.Role.BOUNTY_HUNTER) {
+            if (com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, r, "bounty_hunter.contracts.choice_of_two")) f |= 1;
+        }
+        return f;
     }
 
     private static String joinIds(java.util.List<KingdomOmens.Omen> l) {

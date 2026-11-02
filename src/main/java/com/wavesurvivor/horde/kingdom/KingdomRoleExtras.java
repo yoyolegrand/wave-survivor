@@ -196,6 +196,9 @@ public final class KingdomRoleExtras {
 
     private static ContractType contract;
     private static int target, progress, reward;
+    /** Talent Contrats : contrat secondaire (monstres à abattre) et changement de contrat déjà utilisé ce Calme. */
+    private static int target2, progress2, reward2;
+    private static boolean contractRerolled = false;
     private static UUID hunter;
     /** Monstres déjà examinés pour la promotion en élite. */
     private static final Set<UUID> SEEN = new HashSet<>();
@@ -209,6 +212,11 @@ public final class KingdomRoleExtras {
 
     /** Début du Calme : bilan du contrat précédent, puis nouveau contrat si le Chasseur est là. */
     static void onCalm(MinecraftServer server, int cycle) {
+        contractRerolled = false;
+        if (target2 > 0) {
+            if (progress2 >= target2) KingdomTreasury.reward(KingdomTreasury.Res.MONEY, reward2, "voc.reason.contract2");
+            target2 = progress2 = reward2 = 0;
+        }
         if (contract != null) {
             ServerPlayer h = hunter != null ? server.getPlayerList().getPlayer(hunter) : null;
             if (progress >= target) {
@@ -224,6 +232,17 @@ public final class KingdomRoleExtras {
         }
         ServerPlayer h = KingdomRoles.holder(server, KingdomRoles.Role.BOUNTY_HUNTER);
         if (h != null) issueContract(h, cycle);
+    }
+
+    /** Talent Contrats : change le contrat en cours (tant qu'il n'a pas avancé), 1 fois par Calme. Code 93 de la boutique. */
+    public static void rerollContract(ServerPlayer p) {
+        if (!KingdomRoles.has(p, KingdomRoles.Role.BOUNTY_HUNTER) || !com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, KingdomRoles.Role.BOUNTY_HUNTER, "bounty_hunter.contracts.choice_of_two")) return;
+        if (contractRerolled || contract == null || progress > 0 || KingdomManager.phase() != KingdomManager.Phase.CALM) {
+            p.displayClientMessage(WSLang.c("voc.contract.no_reroll"), true);
+            return;
+        }
+        contractRerolled = true;
+        issueContract(p, KingdomManager.cycle());
     }
 
     /** Chasseur choisi en cours de partie : il reçoit tout de suite un contrat (s'il n'en a pas). */
@@ -248,6 +267,13 @@ public final class KingdomRoleExtras {
         hunter = h.getUUID();
         h.sendSystemMessage(WSLang.c("kingdom.bounty.new", WSLang.t("kingdom.bounty.type." + contract.name().toLowerCase()), target));
         h.level().playSound(null, h.blockPosition(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.PLAYERS, 1f, 1f);
+        progress2 = 0;
+        target2 = reward2 = 0;
+        if (com.wavesurvivor.horde.kingdom.vocation.Vocations.has(h, KingdomRoles.Role.BOUNTY_HUNTER, "bounty_hunter.contracts.secondary_contract")) { // talent Contrats : contrat secondaire
+            target2 = Math.min(40, 8 + 3 * c);
+            reward2 = (int) Math.round(reward * 0.5);
+            h.sendSystemMessage(WSLang.c("voc.contract2.new", target2, reward2));
+        }
         KingdomRoleState.syncTo(h);
     }
 
@@ -255,6 +281,8 @@ public final class KingdomRoleExtras {
         contract = null;
         hunter = null;
         progress = target = 0;
+        target2 = progress2 = reward2 = 0;
+        contractRerolled = false;
         SEEN.clear();
         ServerLevel lvl = KingdomManager.level();
         endRally(lvl);
@@ -363,6 +391,7 @@ public final class KingdomRoleExtras {
             if (dead.level().isClientSide || !(dead.level() instanceof ServerLevel lvl) || !KingdomRoles.active()) return;
             if (lvl != KingdomManager.level()) return;
             boolean siege = !KingdomSiege.roleOf(dead).isEmpty();
+            if (siege) com.wavesurvivor.horde.kingdom.vocation.VocationFx.siegeCapture(lvl, dead, KingdomSiege.roleOf(dead)); // talents Pillage : unité de siège ralliée
             // Présage « Pluie de fer » : 15 % de chance de +1 Fer par monstre de la horde abattu
             if (KingdomOmens.is(KingdomOmens.Omen.IRON_RAIN) && RNG.nextDouble() < 0.15 * KingdomOmens.boon(KingdomOmens.Omen.IRON_RAIN)
                     && (MobRegistry.get(dead.getUUID()) != null || isElite(dead) || siege)) {
@@ -392,6 +421,11 @@ public final class KingdomRoleExtras {
                 if (KingdomRoles.has(hp, KingdomRoles.Role.BOUNTY_HUNTER) && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(hp, KingdomRoles.Role.BOUNTY_HUNTER, "bounty_hunter.hunt.elite_speed")) {
                     hp.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED, 100, 1)); // talent Traque
                 }
+            }
+            if (target2 > 0 && progress2 < target2 && e.getSource().getEntity() instanceof ServerPlayer p2 && p2.getUUID().equals(hunter)
+                    && (MobRegistry.get(dead.getUUID()) != null || isElite(dead))) {
+                progress2++;
+                if (progress2 >= target2) p2.sendSystemMessage(WSLang.c("voc.contract2.done"));
             }
             // Chasseur de primes : avancement du contrat (ses propres kills)
             if (contract != null && e.getSource().getEntity() instanceof ServerPlayer p && p.getUUID().equals(hunter)

@@ -511,6 +511,10 @@ public class AltarDefense {
             else if (type == 83) com.wavesurvivor.horde.kingdom.KingdomOmens.reroll(player);   // talent : relancer le tirage
             else if (type == 84) com.wavesurvivor.horde.kingdom.KingdomOmens.seal(player);     // talent : sceller un présage
             else if (type == 85) com.wavesurvivor.horde.kingdom.KingdomOmens.release(player);  // libérer le présage scellé
+            else if (type >= 86 && type <= 89) com.wavesurvivor.horde.kingdom.vocation.VocationFx.convert(player, type - 86); // Intendant : conversions
+            else if (type == 91) com.wavesurvivor.horde.kingdom.vocation.VocationFx.recycleItems(player); // Récupérateur : objets inutiles
+            else if (type == 92) com.wavesurvivor.horde.kingdom.vocation.VocationFx.recycleGear(player);  // Récupérateur : équipement
+            else if (type == 93) com.wavesurvivor.horde.kingdom.KingdomRoleExtras.rerollContract(player); // Chasseur : changer de contrat
             else if (type == 90) com.wavesurvivor.horde.kingdom.KingdomRoleExtras.recoverHorn(player); // cor du Commandant
             else com.wavesurvivor.horde.kingdom.KingdomDefenses.buy(player, type);
             sendShopState(player, false);

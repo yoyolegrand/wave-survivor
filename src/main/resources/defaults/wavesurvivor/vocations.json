@@ -249,8 +249,7 @@
               "effect": "miner.yield.area_harvest",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         },
@@ -402,8 +401,7 @@
               "effect": "builder.restorer.ruin_refund",
               "ranks": 3,
               "value": 10,
-              "unit": "pct",
-              "wip": true
+              "unit": "pct"
             },
             {
               "id": "auto_repair",
@@ -426,8 +424,7 @@
           "id": "grand_works",
           "effect": "builder.ult.grand_works",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         }
       ]
     },
@@ -619,16 +616,14 @@
               "effect": "quartermaster.trade.extra_offer",
               "ranks": 1,
               "value": 1,
-              "unit": "flat",
-              "wip": true
+              "unit": "flat"
             },
             {
               "id": "rare_offer",
               "effect": "quartermaster.trade.rare_offer",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         },
@@ -647,16 +642,14 @@
               "effect": "quartermaster.stewardship.convert",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "essence_to_coins",
               "effect": "quartermaster.stewardship.essence_to_coins",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "supplies",
@@ -680,8 +673,7 @@
           "id": "black_market",
           "effect": "quartermaster.ult.black_market",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         }
       ]
     },
@@ -827,16 +819,14 @@
               "effect": "bounty_hunter.contracts.choice_of_two",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "secondary_contract",
               "effect": "bounty_hunter.contracts.secondary_contract",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "contract_xp",
@@ -1098,16 +1088,14 @@
               "effect": "scavenger.recycling.recycle_items",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "recycle_gear",
               "effect": "scavenger.recycling.recycle_gear",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "scrap_crate",
@@ -1147,8 +1135,7 @@
               "effect": "scavenger.plunder.tame_ram",
               "ranks": 2,
               "value": 5,
-              "unit": "pct",
-              "wip": true
+              "unit": "pct"
             },
             {
               "id": "raider_chest",
@@ -1165,8 +1152,7 @@
           "id": "siege_arsenal",
           "effect": "scavenger.ult.siege_arsenal",
           "value": 15,
-          "unit": "pct",
-          "wip": true
+          "unit": "pct"
         },
         {
           "id": "war_chest",

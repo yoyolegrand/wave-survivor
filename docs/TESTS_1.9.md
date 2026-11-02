@@ -95,3 +95,11 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] `double_omen` : 2 présages choisis (recliquer un choisi le retire) et actifs ensemble ; `double_curse_cut` : contreparties −25 % avec 2 présages ; `harmony` : avantages +15 % avec 2 présages ; `double_from_start` : 2 choix dès le 1er Calme.
 - [ ] Ultimes : Triple présage (3 choix) ; Présage vivant (Régénération I aux joueurs pendant l'Assaut tant qu'un présage est actif).
 - [ ] Écran du Monolithe (Augure) : boutons Relancer/Sceller/Libérer visibles seulement avec les talents ; pas de chevauchement avec le bloc Maîtrise (à vérifier avec 3 présages proposés).
+
+## Derniers talents (plus aucun « Bientôt »)
+- [ ] **Exploitant** `area_harvest` : coups sur gisements/arbres ×1,5 (interprétation de la « récolte de zone »).
+- [ ] **Bâtisseur** `ruin_refund` : un bâtiment DÉTRUIT (pas démonté) rend sa part du coût au trésor ; ultime Grand chantier : +1 à la limite de tours d'archers.
+- [ ] **Intendant** `extra_offer` (12 pièces → 2 pommes dorées), `rare_offer` (48 → Totem) chez chaque marchand (une seule fois par marchand) ; `convert` (3 boutons dans le Monolithe : 20→10) ; `essence_to_coins` (2 Essence → 40 pièces, 1×/Calme) ; ultime Marché noir : villageois « Marché noir » près du Monolithe à chaque Calme, retiré au début de l'Assaut.
+- [ ] **Chasseur** `choice_of_two` (bouton « Changer de contrat », 1×/Calme, seulement si le contrat n'a pas avancé) ; `secondary_contract` (2e contrat de monstres, payé au Calme).
+- [ ] **Récupérateur** `recycle_items` (objets inutiles → Pierre/Bois), `recycle_gear` (équipement en main → Essence) ; `tame_ram` (bélier abattu → allié 60 s), ultime Arsenal de siège (toute unité de siège, 15 %).
+- [ ] Boutons de talents du Monolithe visibles seulement avec le talent, sans chevaucher le bloc Maîtrise.

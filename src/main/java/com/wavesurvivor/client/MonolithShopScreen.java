@@ -632,7 +632,35 @@ public class MonolithShopScreen extends Screen {
                     lb.visible = (fl & 16) != 0;
                 }
             }
+            case QUARTERMASTER -> {
+                int fl = com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenFlags, bw = (PANEL_W - 60 - 4) / 2;
+                String[] keys = {"voc.ui.conv_ws", "voc.ui.conv_si", "voc.ui.conv_iw", "voc.ui.conv_ec"};
+                for (int i = 0; i < 4; i++) {
+                    final int code = 86 + i;
+                    boolean show = i < 3 ? (fl & 1) != 0 : (fl & 2) != 0;
+                    Button cb = addRenderableWidget(Button.builder(Component.literal(WSLang.t(keys[i])),
+                            btn -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(code)))
+                            .bounds(left + 30 + (i % 2) * (bw + 4), ys + 14 + (i / 2) * 22, bw, 18).build());
+                    cb.visible = show;
+                    cb.active = i < 3 || calm;
+                }
+            }
+            case SCAVENGER -> {
+                int fl = com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenFlags, bw = (PANEL_W - 60 - 4) / 2;
+                Button b1 = addRenderableWidget(Button.builder(Component.literal(WSLang.t("voc.ui.recycle_items")),
+                        btn -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(91))).bounds(left + 30, ys + 14, bw, 18).build());
+                b1.visible = (fl & 1) != 0;
+                Button b2 = addRenderableWidget(Button.builder(Component.literal(WSLang.t("voc.ui.recycle_gear")),
+                        btn -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(92))).bounds(left + 30 + bw + 4, ys + 14, bw, 18).build());
+                b2.visible = (fl & 2) != 0;
+            }
             default -> { }
+        }
+        if (mine == com.wavesurvivor.horde.kingdom.KingdomRoles.Role.BOUNTY_HUNTER && (com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenFlags & 1) != 0) {
+            Button rb = addRenderableWidget(Button.builder(Component.literal(WSLang.t("voc.ui.contract_reroll")),
+                    btn -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(93)))
+                    .bounds(left + 30, top + PANEL_H - 76 - 22, PANEL_W - 60, 16).build());
+            rb.active = calm;
         }
         // Vocations (1.9) : arbre complet en lecture seule
         final var roleForTree = mine;
