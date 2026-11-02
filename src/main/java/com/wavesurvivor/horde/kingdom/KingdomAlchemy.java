@@ -46,15 +46,29 @@ public final class KingdomAlchemy {
     public static final String[] FLASKS = {"frost", "fire", "heal", "storm", "bastion"};
     public static final int[] COST = {4, 5, 6, 7, 6};
     /** Coût pour passer au niveau 2, puis au niveau 3. */
-    public static final int[] UPGRADE_COST = {12, 24};
+    public static final int[] UPGRADE_COST = {12, 24, 48};
     /** Niveau le plus haut possible (le niveau 4 viendra des talents) ; le niveau permis dépend de la Vocation : voir {@link #maxLevel}. */
-    public static final int MAX_LEVEL = 3;
+    public static final int MAX_LEVEL = 4;
 
     /** Niveau maximal des fioles : 2 de base, 3 avec le talent « Maître alchimiste ». */
     public static int maxLevel(net.minecraft.world.entity.player.Player p) {
         int m = (int) com.wavesurvivor.horde.kingdom.vocation.VocationsConfig.baseValue("alchemist", "maxFlaskLevel", 2);
         if (p != null && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, KingdomRoles.Role.ALCHEMIST, "alchemist.distillation.master_alchemist")) m++;
         return Math.max(1, Math.min(MAX_LEVEL, m));
+    }
+
+    /** Niveau maximal d'une fiole : + 1 avec « Soutien niveau 4 » (soin, bastion) ou « Offensif niveau 4 » (givre, incendiaire, orage). */
+    public static int maxLevel(net.minecraft.world.entity.player.Player p, int i) {
+        int m = maxLevel(p);
+        boolean support = i == 2 || i == 4;
+        if (p != null && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, KingdomRoles.Role.ALCHEMIST, support ? "alchemist.remedies.support_level4" : "alchemist.toxins.offense_level4")) m++;
+        return Math.min(MAX_LEVEL, m);
+    }
+
+    public static int[] maxLevels(net.minecraft.world.entity.player.Player p) {
+        int[] a = new int[FLASKS.length];
+        for (int i = 0; i < a.length; i++) a[i] = maxLevel(p, i);
+        return a;
     }
 
     /** Remise (en %) sur les améliorations de fioles : talent Distillation. */
@@ -116,7 +130,7 @@ public final class KingdomAlchemy {
             return;
         }
         int[] lv = levels(p.getUUID());
-        if (lv[i] >= maxLevel(p)) {
+        if (lv[i] >= maxLevel(p, i)) {
             p.displayClientMessage(WSLang.c("kingdom.alchemy.maxed"), true);
             return;
         }
@@ -260,6 +274,7 @@ public final class KingdomAlchemy {
                     int n = KingdomClaim.healArea(at, r, 0.15f + 0.10f * k);
                     for (LivingEntity m : lvl.getEntitiesOfClass(LivingEntity.class, box(x, y, z, r), KingdomAlchemy::ally)) {
                         m.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, (6 + 2 * k) * 20, 0));
+                        if (m instanceof com.wavesurvivor.entity.KingdomSoldier && com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.ALCHEMIST, "alchemist.remedies.bastion_soldiers")) m.heal(m.getMaxHealth() * 0.3f); // talent Remèdes
                     }
                     lvl.sendParticles(ParticleTypes.WAX_ON, x, y + 0.8, z, 40 + 20 * k, r / 2, 0.8, r / 2, 0.05);
                     lvl.playSound(null, at, SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.8f, 1.4f);
@@ -268,6 +283,15 @@ public final class KingdomAlchemy {
                     }
                 }
                 default -> { }
+            }
+            if (!kind.equals("heal") && !kind.equals("bastion") && com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.ALCHEMIST, "alchemist.ult.chain_reaction") && lvl.random.nextDouble() < 0.35) { // ultime Réaction en chaîne
+                final double fx = x, fy = y, fz = z;
+                final float cdmg = (float) ((5 + 2 * k) * offMul * 0.6);
+                com.wavesurvivor.horde.kingdom.vocation.VocationFx.later(lvl.getServer(), 15, () -> {
+                    lvl.sendParticles(ParticleTypes.EXPLOSION, fx, fy + 0.5, fz, 3, 1, 0.5, 1, 0);
+                    lvl.playSound(null, at, SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 0.8f, 1.2f);
+                    for (LivingEntity m : lvl.getEntitiesOfClass(LivingEntity.class, box(fx, fy, fz, 4), KingdomAlchemy::foe)) m.hurt(lvl.damageSources().explosion(null, null), cdmg);
+                });
             }
         }
     }

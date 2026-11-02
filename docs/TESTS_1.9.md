@@ -77,3 +77,11 @@ Pour avoir des points : `/ws vocation xp <rôle> 11500` (niveau 20). Les talents
 - [ ] **Codex** (bouton 📖) : nouvelle page « Vocations » juste après « Rôles » (★), texte lisible et défilant en FR et en EN ; la page « Renaissance » parle de 5 onglets ; la page « Présages » dit 2 présages (3 avec un talent).
 - [ ] Les textes de description des rôles (Monolithe, Codex) reflètent les valeurs réduites.
 - [ ] `CHANGELOG.md` : section `## 1.9.0 — Role Vocations` (à relire / ajuster avant la publication ; titre de version à vérifier avec `.github/scripts/check_title.py`).
+
+## Talents restants — lot B1 (17 talents + 13 ultimes)
+Talents : `double_close`, `arcane_orb` (Arcaniste) · `rare_ores` (Exploitant) · `wall_stone`, `free_last_level` (Bâtisseur : spécialisation de niveau 3 offerte) · `siege_priority` (Commandant) · `supplies` (Intendant, remplace « soldats moins chers » : réparations −X % pour toute l'équipe) · `bastion_soldiers`, `support_level4`, `offense_level4` (Alchimiste : fioles jusqu'au niveau 4) · `contract_xp`, `contract_extend` (une élite compte triple), `mark` (cible marquée 10 s, +25 % de dégâts de l'équipe), `trophy_chance` (Force I 60 s), `collection` (+1 %/élite, 15 % max) (Chasseur) · `champion_loot`, `raider_chest` (Récupérateur).
+Ultimes : Rupture, Nexus (zone d'affaiblissement 30 s au Monolithe à chaque Assaut) · Filon-mère, Cœur de la forêt · Chef-d'œuvre (+25 % PV constructions) · Garde d'élite (capitaine invincible), Dernier carré (Monolithe < 25 % PV) · Âge d'or · Panacée, Réaction en chaîne · Tête mise à prix, Grand veneur · Trésor de guerre.
+- [ ] Chaque talent/ultime ci-dessus s'achète (plus de « Bientôt ») et a son effet décrit.
+- [ ] Alchimiste : l'écran du Monolithe montre « max » au bon niveau par fiole (4 avec le talent de la catégorie), prix du niveau 4 = 48.
+- [ ] Ultimes : achat possible à 15 points + 150 PR (une fois), puis re-choix gratuit après réinitialisation.
+- Encore « Bientôt » : Exploitant `area_harvest` · Bâtisseur `ruin_refund`, ultime Grand chantier · Intendant `extra_offer`, `rare_offer`, `convert`, `essence_to_coins`, ultime Marché noir · Chasseur `choice_of_two`, `secondary_contract` · Récupérateur `recycle_items`, `recycle_gear`, `tame_ram`, ultime Arsenal de siège · Augure : 11 talents + 2 ultimes.

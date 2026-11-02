@@ -588,7 +588,8 @@ public class MonolithShopScreen extends Screen {
                             .tooltip(Tooltip.create(WSLang.c("kingdom.alchemy.desc." + f)))
                             .bounds(left + PANEL_W - 172, y, 78, 18).build());
                     fb.active = calm && (reag >= c || creative());
-                    boolean max = l >= Math.min(com.wavesurvivor.horde.kingdom.KingdomAlchemy.MAX_LEVEL, com.wavesurvivor.horde.kingdom.KingdomRoleState.clientFlaskMax);
+                    int[] fmax = com.wavesurvivor.horde.kingdom.KingdomRoleState.clientFlaskMax;
+                    boolean max = l >= Math.min(com.wavesurvivor.horde.kingdom.KingdomAlchemy.MAX_LEVEL, fmax != null && i < fmax.length ? fmax[i] : 2);
                     int uc = max ? 0 : (int) Math.round(com.wavesurvivor.horde.kingdom.KingdomAlchemy.UPGRADE_COST[l - 1] * (1.0 - com.wavesurvivor.horde.kingdom.KingdomRoleState.clientFlaskDiscount / 100.0));
                     Button ub = addRenderableWidget(Button.builder(Component.literal(max ? WSLang.t("ui.max_93f1") : WSLang.t("ui.shop.alchemy_up", uc)),
                                     btn -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(up)))

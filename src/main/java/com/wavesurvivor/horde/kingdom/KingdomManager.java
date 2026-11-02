@@ -604,6 +604,7 @@ public final class KingdomManager {
         if (!rush && cfg.finalBoss && hasFinalBoss() && !finalMarked && cycle >= finalBossWave()) markFinalForced();
         phase = Phase.ASSAULT;
         KingdomReport.start(cycle); // bilan de fin d'Assaut : compteurs remis à zéro
+        com.wavesurvivor.horde.kingdom.vocation.VocationFx.onAssaultStart(level.getServer()); // Vocations : ultimes déclenchés à chaque Assaut
         KingdomRoles.sync(level.getServer());
         int budget = rush ? 0 : budgetFor(cycle);
         for (Portal p : PORTALS) { p.budget = p.destroyed ? 0 : budget; p.spawned = 0; }
@@ -655,6 +656,7 @@ public final class KingdomManager {
         if (!resuming && KingdomRoles.present(KingdomRoles.Role.QUARTERMASTER)) {
             double rate = Voc.base(KingdomRoles.Role.QUARTERMASTER, "interestRate", 0.03) + Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.treasury.interest");
             int cap = (int) (Voc.base(KingdomRoles.Role.QUARTERMASTER, "interestCap", 60) + Voc.total(KingdomRoles.Role.QUARTERMASTER, "quartermaster.treasury.interest_cap"));
+            if (Voc.has(KingdomRoles.Role.QUARTERMASTER, "quartermaster.ult.golden_age")) { rate *= 2; cap *= 2; } // ultime Âge d'or
             int gain = Math.min(cap, (int) Math.floor(KingdomTreasury.get(KingdomTreasury.Res.MONEY) * rate));
             if (gain > 0) KingdomTreasury.reward(KingdomTreasury.Res.MONEY, gain, "kingdom.role.quartermaster.interest");
         }
@@ -1236,6 +1238,12 @@ public final class KingdomManager {
             CATS.remove(i);
             CAT_GATES.remove(i);
             breachGate(gate);
+            if (com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.ARCANIST, "arcanist.resonance.double_close")) { // talent Résonance : l'autre Catalyseur se referme aussi
+                for (int j = 0; j < CATS.size(); j++) {
+                    Entity oc = level.getEntity(CATS.get(j));
+                    if (oc != null && oc.isAlive()) oc.kill();
+                }
+            }
         }
     }
 
@@ -1573,6 +1581,14 @@ public final class KingdomManager {
             if (r < 0) return u.toHordeEntity();
         }
         return list.get(list.size() - 1).toHordeEntity();
+    }
+
+    /** Ultime Rupture de l'Arcaniste : la brèche du Calme la plus proche se referme tout de suite. */
+    public static void closeNearestRift(BlockPos from) {
+        if (level == null) return;
+        Rift best = null;
+        for (Rift rf : RIFTS) if (rf.closeAt == 0 && (best == null || rf.pos.distSqr(from) < best.pos.distSqr(from))) best = rf;
+        if (best != null) best.closeAt = level.getServer().getTickCount();
     }
 
     /** Ouverture (2 s) → sortie des unités (une toutes les 0,4 s, une paire d'yeux s'éteint) → fermeture (2 s). */

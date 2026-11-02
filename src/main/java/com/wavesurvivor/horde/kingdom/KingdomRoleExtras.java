@@ -167,6 +167,7 @@ public final class KingdomRoleExtras {
     private static void scavengeDrop(ServerLevel lvl, double x, double y, double z, int wood, int iron, int stone) {
         ServerPlayer s = KingdomRoles.holder(lvl.getServer(), KingdomRoles.Role.SCAVENGER);
         if (s == null) return;
+        if (com.wavesurvivor.horde.kingdom.vocation.VocationFx.warChestActive()) { wood *= 2; iron *= 2; stone *= 2; } // ultime Trésor de guerre
         if (wood > 0) spawnScav(lvl, x, y, z, new ItemStack(Items.OAK_LOG, wood), "logs", s.getUUID());
         if (iron > 0) spawnScav(lvl, x, y, z, new ItemStack(Items.IRON_INGOT, iron), "iron", s.getUUID());
         if (stone > 0) spawnScav(lvl, x, y, z, new ItemStack(Items.COBBLESTONE, stone), "stone", s.getUUID());
@@ -214,6 +215,7 @@ public final class KingdomRoleExtras {
                 KingdomTreasury.reward(KingdomTreasury.Res.MONEY, reward, "kingdom.bounty.paid");
                 KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, 4, "kingdom.bounty.paid");
                 if (h != null) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(h, KingdomRoles.Role.BOUNTY_HUNTER, "contract_done");
+                if (h != null && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(h, KingdomRoles.Role.BOUNTY_HUNTER, "bounty_hunter.contracts.contract_xp")) com.wavesurvivor.horde.kingdom.vocation.VocationXp.award(h, KingdomRoles.Role.BOUNTY_HUNTER, "contract_done"); // talent Contrats : XP doublée
             } else if (h != null) {
                 h.sendSystemMessage(WSLang.c("kingdom.bounty.failed", progress, target));
             }
@@ -284,6 +286,19 @@ public final class KingdomRoleExtras {
             m.setCustomNameVisible(true);
         }
         if (SEEN.size() > 4000) SEEN.clear();
+    }
+
+    /** Débris supplémentaires pour le Récupérateur (Champions abattus, coffre de pillard). */
+    public static void bonusDrop(ServerLevel lvl, double x, double y, double z, int wood, int iron, int stone) {
+        scavengeDrop(lvl, x, y, z, wood, iron, stone);
+    }
+
+    /** Talent Pillage : le coffre d'un pillard après chaque Assaut repoussé (débris + pièces). */
+    public static void raiderChest(ServerPlayer s) {
+        if (!(s.level() instanceof ServerLevel lvl)) return;
+        scavengeDrop(lvl, s.getX(), s.getY(), s.getZ(), 6, 6, 6);
+        KingdomTreasury.reward(KingdomTreasury.Res.MONEY, 15, "voc.reason.raider");
+        s.displayClientMessage(WSLang.c("voc.raider_chest"), true);
     }
 
     /** Talent Recyclage : une caisse de ferraille (Bois, Fer, Pierre) pour le Récupérateur. */
@@ -387,7 +402,7 @@ public final class KingdomRoleExtras {
                     case KILLS -> MobRegistry.get(dead.getUUID()) != null || isElite(dead) || siege;
                 };
                 if (counts) {
-                    progress++;
+                    progress += isElite(dead) && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(p, KingdomRoles.Role.BOUNTY_HUNTER, "bounty_hunter.hunt.contract_extend") ? 3 : 1; // talent Traque : une élite compte triple
                     p.displayClientMessage(WSLang.c("kingdom.bounty.progress", progress, target), true);
                     KingdomRoleState.syncTo(p);
                     if (progress >= target) {

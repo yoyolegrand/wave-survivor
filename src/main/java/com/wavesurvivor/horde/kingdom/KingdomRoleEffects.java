@@ -94,11 +94,12 @@ public final class KingdomRoleEffects {
                 return;
             }
             com.wavesurvivor.horde.kingdom.vocation.VocationFx.tickCalm(server.getTickCount());
-            com.wavesurvivor.horde.kingdom.vocation.VocationFx.tickZones(server.getTickCount());
+            com.wavesurvivor.horde.kingdom.vocation.VocationFx.tickAll(server);
             Set<UUID> now = new HashSet<>();
             // Bâtisseur : +10 % de PV sur toutes les constructions tant qu'il est connecté
             KingdomClaim.setBuilderBonus(KingdomRoles.present(KingdomRoles.Role.BUILDER)
-                    ? Voc.base(KingdomRoles.Role.BUILDER, "hpBonus", 0.05) + Voc.pct(KingdomRoles.Role.BUILDER, "builder.engineer.hp") : 0);
+                    ? Voc.base(KingdomRoles.Role.BUILDER, "hpBonus", 0.05) + Voc.pct(KingdomRoles.Role.BUILDER, "builder.engineer.hp")
+                    + (Voc.has(KingdomRoles.Role.BUILDER, "builder.ult.masterpiece") ? 0.25 : 0.0) : 0);
             // Pierre de Fondation (relique) : +15 % de PV tant qu'un porteur est connecté
             KingdomClaim.setFoundationLevel(com.wavesurvivor.item.RelicEffects.bestLevel(server, com.wavesurvivor.registry.ModItems.PIERRE_FONDATION.get()));
             boolean teamRift = false;

@@ -17,10 +17,11 @@ public class RoleStatePacket {
     /** Niveaux des fioles de l'Alchimiste. */
     public final int[] flaskLevels;
     /** Niveau maximal des fioles et remise sur leurs améliorations (%), selon les talents de l'Alchimiste. */
-    public final int flaskMax, flaskDiscount;
+    public final int[] flaskMax;
+    public final int flaskDiscount;
 
     public RoleStatePacket(int reagents, String options, String chosen, String active,
-                           String contract, int progress, int target, int reward, int[] flaskLevels, int flaskMax, int flaskDiscount) {
+                           String contract, int progress, int target, int reward, int[] flaskLevels, int[] flaskMax, int flaskDiscount) {
         this.reagents = reagents;
         this.options = options;
         this.chosen = chosen;
@@ -44,13 +45,13 @@ public class RoleStatePacket {
         buf.writeVarInt(target);
         buf.writeVarInt(reward);
         buf.writeVarIntArray(flaskLevels);
-        buf.writeVarInt(flaskMax);
+        buf.writeVarIntArray(flaskMax);
         buf.writeVarInt(flaskDiscount);
     }
 
     public static RoleStatePacket decode(FriendlyByteBuf buf) {
         return new RoleStatePacket(buf.readVarInt(), buf.readUtf(), buf.readUtf(), buf.readUtf(),
-                buf.readUtf(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarIntArray(), buf.readVarInt(), buf.readVarInt());
+                buf.readUtf(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarIntArray(), buf.readVarIntArray(), buf.readVarInt());
     }
 
     public static void handle(RoleStatePacket pkt, Supplier<NetworkEvent.Context> ctx) {

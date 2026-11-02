@@ -509,6 +509,9 @@ public final class KingdomDefenses {
         }
         // Bâtisseur présent : défenses, remparts, portes et pièges -20 %
         if (type != 22 && type != 23) cost = KingdomRoles.builderPrice(cost, KingdomRoles.present(KingdomRoles.Role.BUILDER));
+        if ((type == 20 || type == 21) && KingdomRoles.present(KingdomRoles.Role.BUILDER)) { // talent Architecte : murs et portes moins chers
+            cost = Math.max(1, (int) Math.round(cost * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.BUILDER, "builder.architect.wall_stone")))));
+        }
         // Héritage — Seigneur 2 : défenses et remparts −15 %
         if (type != 22 && type != 23 && com.wavesurvivor.horde.renaissance.Heritage.anyone(p.server, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 2)) {
             cost = Math.max(1, (int) Math.round(cost * 0.85));
@@ -661,6 +664,7 @@ public final class KingdomDefenses {
         if (fondation > 0) {
             repairCost = Math.max(1, (int) Math.round(repairCost * (1.0 - 0.25 * com.wavesurvivor.item.RelicEffects.mult(fondation))));
         }
+        repairCost = Math.max(1, (int) Math.round(repairCost * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.stewardship.supplies")))));
         if (!AltarDefense.trySpend(p, repairCost)) return;
         KingdomClaim.heal(pos, hp[1] * 0.25f);
         level.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 15, 0.5, 0.6, 0.5, 0);
@@ -734,7 +738,23 @@ public final class KingdomDefenses {
         int c = KingdomRoles.present(KingdomRoles.Role.BUILDER) ? (int) Math.ceil(REPAIR_COST * 1.25 * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.repair_discount")))) : REPAIR_COST;
         int f = com.wavesurvivor.item.RelicEffects.bestLevel(p.server, com.wavesurvivor.registry.ModItems.PIERRE_FONDATION.get());
         if (f > 0) c = Math.max(1, (int) Math.round(c * (1.0 - 0.25 * com.wavesurvivor.item.RelicEffects.mult(f))));
-        return c;
+        return Math.max(1, (int) Math.round(c * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.stewardship.supplies")))));
+    }
+
+    /** Un soldat de baraquement au hasard (ultime Garde d'élite) ; null s'il n'y en a aucun. */
+    public static Mob randomSoldier() {
+        List<Mob> all = new ArrayList<>();
+        for (Def d : DEFS.values()) for (UUID id : d.soldiers) if (level != null && level.getEntity(id) instanceof Mob m && m.isAlive()) all.add(m);
+        return all.isEmpty() ? null : all.get(level.random.nextInt(all.size()));
+    }
+
+    /** Ultime Dernier carré : tous les baraquements reproduisent leurs soldats tombés sans attendre. */
+    public static void reviveSoldiers() {
+        for (Def d : DEFS.values()) {
+            if (d.kind != DefenseBlock.Kind.BARRACKS) continue;
+            d.filled = false;
+            d.nextSpawn = 0;
+        }
     }
 
     /** Coût du niveau 2, avec la remise du Bâtisseur (talent Architecte) quand il est là. */
@@ -902,6 +922,7 @@ public final class KingdomDefenses {
         }
         net.minecraft.world.item.Item cur = AltarDefense.currencyItem();
         List<KingdomCosts.Cost> cost = KingdomCosts.variantCost(d.kind, v);
+        if (KingdomRoles.present(KingdomRoles.Role.BUILDER) && Voc.has(KingdomRoles.Role.BUILDER, "builder.architect.free_last_level")) cost = List.of(); // talent Architecte : dernier niveau offert
         if (!KingdomCosts.canAfford(p, cost, cur)) {
             p.sendSystemMessage(WSLang.c("kingdom.need").copy().append(KingdomCosts.missing(p, cost, cur)));
             return;
@@ -1172,6 +1193,19 @@ public final class KingdomDefenses {
         // Commandant : tant que sa bannière de ralliement est plantée, les soldats sans cible s'y rendent
         BlockPos rally = KingdomRoleExtras.rallyPoint();
         int home = Math.max(8, KingdomClaim.radius()) + 4;
+        // Talent Champ de bataille : les soldats visent d'abord les unités de siège proches
+        if (now % 10 == 0 && Voc.has(KingdomRoles.Role.COMMANDER, "commander.battlefield.siege_priority")) {
+            for (UUID id : d.soldiers) {
+                if (!(level.getEntity(id) instanceof Mob sm) || !sm.isAlive()) continue;
+                Mob best = null;
+                double bd = 18 * 18;
+                for (Mob m : level.getEntitiesOfClass(Mob.class, sm.getBoundingBox().inflate(18), x -> x.isAlive() && !KingdomSiege.roleOf(x).isEmpty())) {
+                    double dd = m.distanceToSqr(sm);
+                    if (dd < bd) { bd = dd; best = m; }
+                }
+                if (best != null && sm.getTarget() != best) sm.setTarget(best);
+            }
+        }
         // Talents Ralliement / Champ de bataille : soldats ralliés plus rapides, et Force I
         if (rally != null) {
             boolean spd = com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.COMMANDER, "commander.rally.rally_speed"), str = com.wavesurvivor.horde.kingdom.vocation.Voc.has(KingdomRoles.Role.COMMANDER, "commander.battlefield.horn_strength");

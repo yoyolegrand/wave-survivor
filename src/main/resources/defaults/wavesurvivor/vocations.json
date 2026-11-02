@@ -94,8 +94,7 @@
               "effect": "arcanist.resonance.double_close",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         },
@@ -161,8 +160,7 @@
               "effect": "arcanist.offense.arcane_orb",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         }
@@ -172,15 +170,13 @@
           "id": "rupture",
           "effect": "arcanist.ult.rupture",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         },
         {
           "id": "nexus",
           "effect": "arcanist.ult.nexus",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         }
       ]
     },
@@ -239,8 +235,7 @@
               "effect": "miner.yield.rare_ores",
               "ranks": 3,
               "value": 10,
-              "unit": "pct",
-              "wip": true
+              "unit": "pct"
             },
             {
               "id": "tree_essence",
@@ -298,15 +293,13 @@
           "id": "mother_lode",
           "effect": "miner.ult.mother_lode",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         },
         {
           "id": "forest_heart",
           "effect": "miner.ult.forest_heart",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         }
       ]
     },
@@ -342,16 +335,14 @@
               "ranks": 3,
               "value": 5,
               "unit": "pct",
-              "sign": "-",
-              "wip": true
+              "sign": "-"
             },
             {
               "id": "free_last_level",
               "effect": "builder.architect.free_last_level",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         },
@@ -429,8 +420,7 @@
           "id": "masterpiece",
           "effect": "builder.ult.masterpiece",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         },
         {
           "id": "grand_works",
@@ -531,8 +521,7 @@
               "effect": "commander.battlefield.siege_priority",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "horn_strength",
@@ -556,15 +545,13 @@
           "id": "elite_guard",
           "effect": "commander.ult.elite_guard",
           "value": 30,
-          "unit": "sec",
-          "wip": true
+          "unit": "sec"
         },
         {
           "id": "last_stand",
           "effect": "commander.ult.last_stand",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         }
       ]
     },
@@ -672,13 +659,12 @@
               "wip": true
             },
             {
-              "id": "cheaper_soldiers",
-              "effect": "quartermaster.stewardship.cheaper_soldiers",
+              "id": "supplies",
+              "effect": "quartermaster.stewardship.supplies",
               "ranks": 3,
               "value": 10,
               "unit": "pct",
-              "sign": "-",
-              "wip": true
+              "sign": "-"
             }
           ]
         }
@@ -688,8 +674,7 @@
           "id": "golden_age",
           "effect": "quartermaster.ult.golden_age",
           "value": 2,
-          "unit": "flat",
-          "wip": true
+          "unit": "flat"
         },
         {
           "id": "black_market",
@@ -727,16 +712,14 @@
               "effect": "alchemist.remedies.bastion_soldiers",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "support_level4",
               "effect": "alchemist.remedies.support_level4",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         },
@@ -769,8 +752,7 @@
               "effect": "alchemist.toxins.offense_level4",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         },
@@ -814,15 +796,13 @@
           "id": "panacea",
           "effect": "alchemist.ult.panacea",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         },
         {
           "id": "chain_reaction",
           "effect": "alchemist.ult.chain_reaction",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         }
       ]
     },
@@ -863,8 +843,7 @@
               "effect": "bounty_hunter.contracts.contract_xp",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         },
@@ -883,16 +862,14 @@
               "effect": "bounty_hunter.hunt.mark",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "contract_extend",
               "effect": "bounty_hunter.hunt.contract_extend",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             },
             {
               "id": "elite_speed",
@@ -918,8 +895,7 @@
               "effect": "bounty_hunter.trophies.trophy_chance",
               "ranks": 3,
               "value": 5,
-              "unit": "pct",
-              "wip": true
+              "unit": "pct"
             },
             {
               "id": "champion_essence",
@@ -933,8 +909,7 @@
               "effect": "bounty_hunter.trophies.collection",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         }
@@ -944,15 +919,13 @@
           "id": "bounty_boss",
           "effect": "bounty_hunter.ult.bounty_boss",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         },
         {
           "id": "great_hunter",
           "effect": "bounty_hunter.ult.great_hunter",
           "value": 1,
-          "unit": "bool",
-          "wip": true
+          "unit": "bool"
         }
       ]
     },
@@ -1180,8 +1153,7 @@
               "effect": "scavenger.plunder.champion_loot",
               "ranks": 3,
               "value": 10,
-              "unit": "pct",
-              "wip": true
+              "unit": "pct"
             },
             {
               "id": "tame_ram",
@@ -1196,8 +1168,7 @@
               "effect": "scavenger.plunder.raider_chest",
               "ranks": 1,
               "value": 1,
-              "unit": "bool",
-              "wip": true
+              "unit": "bool"
             }
           ]
         }
@@ -1214,8 +1185,7 @@
           "id": "war_chest",
           "effect": "scavenger.ult.war_chest",
           "value": 2,
-          "unit": "flat",
-          "wip": true
+          "unit": "flat"
         }
       ]
     }

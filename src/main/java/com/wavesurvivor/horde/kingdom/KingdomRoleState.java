@@ -22,7 +22,8 @@ public final class KingdomRoleState {
     public static String clientContract = "";
     public static int clientContractProgress = 0, clientContractTarget = 0, clientContractReward = 0;
     public static int[] clientFlaskLevels = {1, 1, 1, 1, 1};
-    public static int clientFlaskMax = 2, clientFlaskDiscount = 0;
+    public static int[] clientFlaskMax = {2, 2, 2, 2, 2};
+    public static int clientFlaskDiscount = 0;
 
     public static void syncTo(ServerPlayer p) {
         if (NetworkHandler.CHANNEL == null || p == null) return;
@@ -39,7 +40,7 @@ public final class KingdomRoleState {
                 hunter ? KingdomRoleExtras.contractProgress() : 0,
                 hunter ? KingdomRoleExtras.contractTarget() : 0,
                 hunter ? KingdomRoleExtras.contractReward() : 0,
-                KingdomAlchemy.levels(p.getUUID()).clone(), KingdomAlchemy.maxLevel(p), KingdomAlchemy.upgradeDiscountPct(p)));
+                KingdomAlchemy.levels(p.getUUID()).clone(), KingdomAlchemy.maxLevels(p), KingdomAlchemy.upgradeDiscountPct(p)));
     }
 
     public static void syncAll(MinecraftServer server) {

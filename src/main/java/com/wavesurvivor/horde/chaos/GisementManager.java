@@ -52,7 +52,7 @@ public class GisementManager {
             life = Math.max(20, (int) Math.round(life * 0.8 * (1.0 + com.wavesurvivor.horde.kingdom.vocation.Voc.pct(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.abundance.lifetime"))));
         }
         DEPOSITS.put(g.getUUID(), new Deposit(g.getUUID(), now + life * 20L,
-                ev.drops != null ? new ArrayList<>(ev.drops) : List.of(), ev.hitDropItem, ev.hitDropChance, label, Math.max(0.1, lootMult),
+                ev.drops != null ? new ArrayList<>(ev.drops) : List.of(), ev.hitDropItem, ev.hitDropChance, label, Math.max(0.1, lootMult * (com.wavesurvivor.horde.kingdom.vocation.VocationFx.takeMotherLode() ? 2.5 : 1.0)),
                 ev.hitDrops != null ? new ArrayList<>(ev.hitDrops) : List.of()));
     }
 
@@ -161,6 +161,12 @@ public class GisementManager {
         if (g.isTree() && event.getSource().getEntity() instanceof ServerPlayer tp && com.wavesurvivor.horde.kingdom.KingdomTreasury.active()) {
             int ess = (int) com.wavesurvivor.horde.kingdom.vocation.Vocations.total(tp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.yield.tree_essence");
             if (ess > 0) com.wavesurvivor.horde.kingdom.KingdomTreasury.reward(com.wavesurvivor.horde.kingdom.KingdomTreasury.Res.ESSENCE, ess, "voc.reason.tree");
+            if (g.getSize() == 2 && com.wavesurvivor.horde.kingdom.vocation.Vocations.has(tp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.ult.forest_heart") && tp.level() instanceof ServerLevel fl) { // ultime Cœur de la forêt
+                for (ServerPlayer o : fl.players()) {
+                    o.heal(10f);
+                    o.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED, 300, 1));
+                }
+            }
         }
         if (event.getSource().getEntity() instanceof ServerPlayer minerP
                 && com.wavesurvivor.horde.kingdom.KingdomRoles.has(minerP, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER)
@@ -169,7 +175,11 @@ public class GisementManager {
             minerP.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.role.miner.double"), true);
         }
         for (ChaosEvent.Drop drop : d.drops()) {
-            if (drop == null || drop.item == null || RNG.nextDouble() * 100 >= drop.chance) continue;
+            double dropChance = drop == null ? 0 : drop.chance;
+            if (drop != null && dropChance <= 30 && event.getSource().getEntity() instanceof ServerPlayer rp) { // Exploitant › Rendement : minerais rares plus fréquents
+                dropChance *= 1.0 + com.wavesurvivor.horde.kingdom.vocation.Vocations.total(rp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.yield.rare_ores") / 100.0;
+            }
+            if (drop == null || drop.item == null || RNG.nextDouble() * 100 >= dropChance) continue;
             int n = drop.minQty + (drop.maxQty > drop.minQty ? RNG.nextInt(drop.maxQty - drop.minQty + 1) : 0);
             n = (int) Math.round(n * mult);
             if (n > 0) drop(g, LootItems.resolve(drop.item, n));
