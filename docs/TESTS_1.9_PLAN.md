@@ -89,3 +89,5 @@ Pour chaque talent : un point + une situation de jeu qui le déclenche. Liste co
 - [ ] Fenêtre de l'autel de Renaissance agrandie de 25 % (325×295) : tous les onglets lisibles (Sacrifice : grille d'inventaire plus grande, Boutique/Forge : 9 lignes visibles, Héritage : nœuds plus larges, Vocations : cartes et arbre plus larges).
 - [ ] Créatif : aucune condition de déblocage de horde exigée (l'écran de l'autel les affiche comme remplies, le lancement et la liaison passent), y compris pour les hordes Kingdom.
 - [ ] Ultime Rupture : à chaque Catalyseur fermé, la Porte voit +15 % de PV max rendus vulnérables en plus (plus de « brèche refermée »).
+- [ ] Compétence `war_banner` (Porte-étendard, Seigneur du Bastion…) : un porteur ne repose pas de bannière tant que les siennes tiennent ; aucune nouvelle bannière à moins de 8 blocs d'une bannière d'un autre porteur.
+- [ ] Arbre des Vocations (agrandi : 410×272) : noms de talents tronqués proprement (« … ») sans chevaucher « N pts », ligne « lecture seule » entière, ultimes lisibles.

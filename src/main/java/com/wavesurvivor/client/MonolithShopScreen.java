@@ -684,7 +684,7 @@ public class MonolithShopScreen extends Screen {
         g.drawString(font, WSLang.t("voc.ui.free_points", VocationsClient.pointsFree(r)), left + 14, y + 14, 0xFFFFD34D, false);
         String ult = VocationsClient.ultimate(r);
         String ultTxt = ult.isEmpty() ? WSLang.t("voc.ui.ult_none") : WSLang.t("voc.ui.ult_is", WSLang.t("voc.ult." + r.id + "." + ult));
-        g.drawString(font, font.plainSubstrByWidth(ultTxt, PANEL_W - 14 - 130 - 24 - 80), left + 14, y + 25, 0xFFBBBBBB, false);
+        g.drawString(font, font.plainSubstrByWidth(ultTxt, PANEL_W - 14 - 130 - 24 - 10), left + 14, y + 25, 0xFFBBBBBB, false);
     }
 
     private void renderRoles(GuiGraphics g, int y0) {

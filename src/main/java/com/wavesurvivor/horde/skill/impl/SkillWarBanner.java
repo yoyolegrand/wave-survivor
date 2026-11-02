@@ -42,8 +42,29 @@ public class SkillWarBanner extends BossSkill {
         return true;
     }
 
+    /** Distance minimale entre une nouvelle bannière et celles d'un AUTRE porteur (évite l'accumulation de bannières). */
+    private static final double MIN_SPACING = 8.0;
+
+    /** Bannières encore debout de chaque porteur : un porteur ne repose pas de bannière tant que les siennes tiennent. */
+    private static final java.util.Map<UUID, List<UUID>> ACTIVE = new java.util.HashMap<>();
+
     @Override
     public void execute(LivingEntity boss, LivingEntity target, ServerLevel level) {
+        // Une seule fournée de bannières à la fois par porteur
+        List<UUID> mine = ACTIVE.get(boss.getUUID());
+        if (mine != null) {
+            mine.removeIf(id -> { Entity e = level.getEntity(id); return e == null || !e.isAlive(); });
+            if (!mine.isEmpty()) return;
+        }
+        // Bannières des autres porteurs : aucune nouvelle bannière à moins de 8 blocs
+        List<Entity> others = new ArrayList<>();
+        for (java.util.Iterator<java.util.Map.Entry<UUID, List<UUID>>> it = ACTIVE.entrySet().iterator(); it.hasNext(); ) {
+            var en = it.next();
+            en.getValue().removeIf(id -> { Entity e = level.getEntity(id); return e == null || !e.isAlive(); });
+            if (en.getValue().isEmpty()) { it.remove(); continue; }
+            if (en.getKey().equals(boss.getUUID())) continue;
+            for (UUID id : en.getValue()) { Entity e = level.getEntity(id); if (e != null) others.add(e); }
+        }
         int count = Math.max(1, Math.min(6, config.warBannerCount));
         int life = Math.max(10, config.warBannerLifetime);
         double dist = Math.max(3, config.warBannerDistance);
@@ -55,6 +76,11 @@ public class SkillWarBanner extends BossSkill {
             TotemEntity t = com.wavesurvivor.registry.ModEntities.TOTEM.get().create(level);
             if (t == null) continue;
             BlockPos at = com.wavesurvivor.horde.spawn.SpawnZone.pick(level, aim, 2, t.getType());
+            boolean crowded = false;
+            for (Entity o : others) {
+                if (o.distanceToSqr(at.getX() + 0.5, at.getY(), at.getZ() + 0.5) < MIN_SPACING * MIN_SPACING) { crowded = true; break; }
+            }
+            if (crowded) continue; // une autre bannière est déjà posée à moins de 8 blocs
             t.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, (float) Math.toDegrees(a), 0);
             t.setup("fureur", "minecraft:yellow_banner", 0xFFAA00);
             t.setCustomName(Component.literal(com.wavesurvivor.i18n.WSLang.t("skill.war_banner.name")));
@@ -65,6 +91,7 @@ public class SkillWarBanner extends BossSkill {
             level.sendParticles(ParticleTypes.FLAME, at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, 30, 0.3, 0.8, 0.3, 0.05);
         }
         if (banners.isEmpty()) return;
+        ACTIVE.put(boss.getUUID(), new ArrayList<>(banners));
         level.playSound(null, boss.blockPosition(), SoundEvents.PIGLIN_BRUTE_ANGRY, SoundSource.HOSTILE, 2f, 0.7f);
         level.playSound(null, boss.blockPosition(), SoundEvents.RAID_HORN.value(), SoundSource.HOSTILE, 3f, 1.1f);
         if (config.warBannerMessage != null && !config.warBannerMessage.isBlank()) {
