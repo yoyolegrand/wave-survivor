@@ -72,3 +72,8 @@ Pour avoir des points : `/ws vocation xp <rôle> 11500` (niveau 20). Les talents
 - [ ] **Réinitialiser** : 1er clic « Confirmer ? », 2e clic = 50 PR, points rendus ; grisé pendant une partie (message rouge).
 - [ ] **Monolithe › Rôles** : liste = « Maîtrise N » à côté de chaque rôle ; fiche = section Maîtrise en bas (niveau, barre, « +X XP cette partie », points libres, ultime) + bouton « Voir l'arbre complet » (lecture seule : aucun achat possible, Retour ramène au Monolithe).
 - [ ] Multijoueur / serveur dédié : l'écran se remplit à la connexion (configuration envoyée par le serveur), pas de crash si le client n'a pas encore reçu les données (« Chargement… »).
+
+## Étape 5 — Codex et CHANGELOG
+- [ ] **Codex** (bouton 📖) : nouvelle page « Vocations » juste après « Rôles » (★), texte lisible et défilant en FR et en EN ; la page « Renaissance » parle de 5 onglets ; la page « Présages » dit 2 présages (3 avec un talent).
+- [ ] Les textes de description des rôles (Monolithe, Codex) reflètent les valeurs réduites.
+- [ ] `CHANGELOG.md` : section `## 1.9.0 — Role Vocations` (à relire / ajuster avant la publication ; titre de version à vérifier avec `.github/scripts/check_title.py`).

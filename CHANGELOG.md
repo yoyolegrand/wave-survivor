@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.9.0 — Role Vocations
+
+> 🎓 **Your Kingdom role now grows with you.** Every role earns **Mastery** as you play it, gives you **talent points**, and opens a **talent tree** — while base role effects are toned down so progression really matters. Everything is data you can edit (`vocations.json`).
+
+---
+
+### 🎓 Vocations — role progression
+- 📈 **Mastery for each of the 9 roles** (levels 0 to 20): play a role in a Kingdom game to earn **Mastery XP** — 10 per Assault survived, plus XP for what the role really does (closing **Catalysts**, building and repairing, brewing flasks, completing **contracts**, closing **breaches**, choosing **omens**, picking up scrap…).
+- 🏆 **End-of-game payout**: the XP you earned is multiplied by **×2 on victory** and **×0.5 on defeat**. A message tells you the total, and level-ups show in the **event feed**.
+- ⭐ **1 talent point per level** for that role (20 at most). Progress is saved per player, like Renaissance Points and Heritage, and survives death.
+- 🌳 **A talent tree per role**: 3 branches of 4 talents (many with several ranks), unlocked by branch tiers (**2 / 5 / 8 points** in the branch), plus a choice of **2 ultimate talents** (15 points spent + **150 RP**, paid once per role). **Reset** a tree for **50 RP**. RP spent here count towards Renaissance.
+- 🔒 Talents can only be changed **outside a game**, and only apply in Kingdom games, to the player who holds the role.
+- 🧩 Talents already active include: Arcanist (extra Catalyst chance, Essence, shield, knockback, lightning, hearth purification), Harvester (frequency, size, extra deposits, double loot), Builder (discounts, HP, traps, demolition charges, auto-repair), Commander (soldier HP and damage, banners, horn), Quartermaster (coins, interest, merchant discounts), Alchemist (flask power, cleanse, burning ground, free flask), Bounty Hunter (pay, elite damage, loot), Augur (extra omen) and Scavenger (debris, crates, repairing scrap). Talents not active yet are shown as *Coming soon* and cannot be bought.
+
+### ⚖ Role rebalance — lower base, room to grow
+- 🔮 **Arcanist**: 2nd Catalyst 20% → **10%**, purification ×2 → **×1.5**.
+- ⛏ **Harvester**: Haste II → **Haste I**, double loot 25% → **15%**, no more automatic extra deposit or bigger size.
+- 🔨 **Builder**: discounts -20% → **-10%**, building HP +10% → **+5%**.
+- 🚩 **Commander**: the extra soldier now comes from **barracks level 2**, banner **60 s → 40 s**.
+- 💰 **Quartermaster**: coins +20% → **+10%**, merchants -15% → **-8%**, interest 5% (max 100) → **3% (max 60)**.
+- ⚗ **Alchemist**: flasks upgrade to **level 2** (level 3 with the *Master Alchemist* talent).
+- 🎯 **Bounty Hunter**: contracts pay **-30%** (talents bring it back).
+- 👁 **Augur**: **2 omens** offered per Calm instead of 3.
+- ⚙ **Scavenger**: scrap chance 12% → **8%**, siege units drop ×0.8.
+
+### 🖥 Screens & commands
+- 🔥 New **Vocations tab** on the Renaissance Altar: the grid of roles (Mastery, XP bar, points to spend, **mouse-wheel scrolling**), then the **talent tree** of each role — every talent shows its **value per rank** and the **total applied**, with a tooltip.
+- 🏛 **Monolith → Roles**: your **Mastery**, XP earned this game, free points and ultimate, plus a **read-only view of the full tree**; the role list shows your Mastery next to each role.
+- 📖 New **Vocations** page in the Codex.
+- 🛠 `/ws vocation info | xp | buy | ultimate | reset` (operators) to test and tune.
+
+### 🔧 Under the hood
+- 🗂 Everything lives in **`vocations.json`** (XP curve, XP per action, ranks, values, tiers, costs, base role effects), layered like the other configs: put only the fields you change in `config/wavesurvivor/vocations.json`; `/ws reload` applies them. The server sends the trees to clients, so servers can tune them freely.
+
+---
+
+**Thanks for playing!** ⚔ Bugs & ideas: [GitHub Issues](https://github.com/yoyolegrand/wave-survivor/issues) · Support the development on [Patreon](https://www.patreon.com/cw/yoyolegrand34)
+
 ## 1.8.0 — Blessings Reborn, Seraph Shrine & Arenas
 
 > 🙏 **Blessings, rebuilt from the ground up.** Rarer cards, rerolls and bans, special blessings, curses and synergies — all editable in game. Bend the new **Seraph Shrine** towards grace or corruption to upgrade your gear, explore **eight ready-made arenas** across the world (including a giant Kingdom battlefield), and upgrade your **legendary relics**.
