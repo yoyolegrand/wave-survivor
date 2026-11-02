@@ -328,6 +328,15 @@ public class RogueUpgradeManager {
         }
         List<String> fresh = BlessingDraw.draw(p, Math.max(1, menuSize(p) - kept.size()), pe.wave(), present, family);
         if (fresh.isEmpty()) { st.putInt("rerolls", st.getInt("rerolls") + 1); return; }
+        // Famille demandée sans aucune carte à proposer : on le dit (au lieu de tirer au hasard sans prévenir)
+        if (!family.isEmpty()) {
+            boolean any = false;
+            for (String id : fresh) {
+                RogueUpgrade fu = RogueUpgradeRegistry.get(id);
+                if (fu != null && family.equals(fu.family())) { any = true; break; }
+            }
+            if (!any) p.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("bless.family_empty", com.wavesurvivor.i18n.WSLang.t("blessed.family." + family))));
+        }
         // Les cartes gardées gardent leur emplacement, les autres sont remplacées dans l'ordre
         List<String> choices = new ArrayList<>();
         int fi = 0;

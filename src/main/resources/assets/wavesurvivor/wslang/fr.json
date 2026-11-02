@@ -3475,5 +3475,6 @@
   "ui.kingdom.shape_circle": "◯ Cercle",
   "ui.kingdom.claim_shape_hint": "(le cercle a la même surface que le carré)",
   "raid.open_where": "§7La Porte du Roi est au §f{0}§7, à environ §f{1}§7 blocs du Monolithe : approche-toi d'elle pour entrer dans l'arène.",
-  "raid.no_skip": "§cLa Porte du Roi est ouverte : entre dans l'arène et vaincs le boss avant de continuer."
+  "raid.no_skip": "§cLa Porte du Roi est ouverte : entre dans l'arène et vaincs le boss avant de continuer.",
+  "bless.family_empty": "§cAucune bénédiction disponible dans la famille « {0} » (déjà au niveau maximal, bannies ou déjà présentes) : cartes tirées au hasard."
 }

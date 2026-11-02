@@ -986,7 +986,7 @@
       "id": "FARDEAU",
       "name": "Pacte du Fardeau",
       "icon": "⛓",
-      "description": "Rôle de tank : armure, robustesse, insensible au recul, Bastion, Provocation, projectiles réduits, mais plus lent",
+      "description": "Pour les vrais tanks : plus solide, mais plus lent",
       "family": "pact",
       "tiers": {
         "COMMON": {

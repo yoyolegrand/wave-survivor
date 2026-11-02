@@ -57,7 +57,18 @@ public final class BlessingDraw {
             pool.add(e.getKey());
         }
         // Rien dans la famille demandée, ou tout est banni : on assouplit plutôt que de ne rien proposer
-        if (pool.isEmpty() && wantFamily) return draw(p, count, wave, exclude, "", useBans);
+        if (pool.isEmpty() && wantFamily) {
+            int inFam = 0, famBanned = 0, famExcluded = 0;
+            for (Map.Entry<String, List<RogueUpgrade>> e : byCat.entrySet()) {
+                if (!family.equals(e.getValue().get(0).family())) continue;
+                inFam++;
+                if (banned.contains(e.getKey())) famBanned++;
+                if (exclude.contains(e.getKey())) famExcluded++;
+            }
+            com.wavesurvivor.WaveSurvivorMod.LOGGER.info("[Benediction] Famille '{}' vide pour {} : {} catégorie(s) encore possibles, dont {} bannie(s) et {} déjà présente(s) ; les autres sont au niveau maximal.",
+                    family, p.getGameProfile().getName(), inFam, famBanned, famExcluded);
+            return draw(p, count, wave, exclude, "", useBans);
+        }
         if (pool.isEmpty() && useBans && !banned.isEmpty()) return draw(p, count, wave, exclude, family, false);
         Collections.shuffle(pool, RNG);
         double[] w = weights(p, wave);
@@ -66,6 +77,15 @@ public final class BlessingDraw {
             if (out.size() >= count) break;
             String id = pickTier(byCat.get(cat), w);
             if (id != null) out.add(id);
+        }
+        // La famille demandée a moins de catégories que de cartes à tirer : on complète avec d'autres familles (menu toujours plein)
+        if (wantFamily && out.size() < count) {
+            List<String> ex = new ArrayList<>(exclude);
+            for (String id : out) {
+                RogueUpgrade u = RogueUpgradeRegistry.get(id);
+                if (u != null) ex.add(u.category());
+            }
+            out.addAll(draw(p, count - out.size(), wave, ex, "", useBans));
         }
         return out;
     }

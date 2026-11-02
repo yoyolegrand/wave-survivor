@@ -84,7 +84,7 @@ public class BenedictionSelectionScreen extends Screen {
         // Hauteur des cartes : assez pour la carte la plus remplie (texte au-dessus du bouton Choisir),
         // sans dépasser l'écran (titre au-dessus, boutons Bannir / Garder en dessous)
         int need = 240;
-        for (RogueUpgrade u : choices) need = Math.max(need, bodyStart(u) + measureBody(u) + 38);
+        for (RogueUpgrade u : choices) need = Math.max(need, bodyStart(u) + measureBody(u) + previewHeight(u) + 38);
         CARD_HEIGHT = Math.max(200, Math.min(need, height - 96));
         int totalWidth = n * CARD_WIDTH + (n - 1) * CARD_SPACING;
         int startX = (width - totalWidth) / 2;
@@ -235,7 +235,10 @@ public class BenedictionSelectionScreen extends Screen {
         int descY = sepY + 10;
         // Filet de sécurité : si le contenu dépasse malgré tout (petit écran), on réduit légèrement le texte
         // pour qu'il reste au-dessus du bouton Choisir (et on saute les lignes facultatives).
-        int bodyH = measureBody(upg), availH = (y + CARD_HEIGHT - 34) - descY;
+        int availH = (y + CARD_HEIGHT - 34) - descY;
+        // Les lignes « total actuel → total après » ne sont gardées que si TOUT tient ; sinon on les retire, puis on réduit le texte
+        boolean showPreview = measureBody(upg) + previewHeight(upg) <= availH;
+        int bodyH = measureBody(upg) + (showPreview ? previewHeight(upg) : 0);
         boolean squeeze = bodyH > availH;
         float s = squeeze ? Math.max(0.55f, availH / (float) bodyH) : 1f;
         if (squeeze) {
@@ -260,7 +263,7 @@ public class BenedictionSelectionScreen extends Screen {
                     x + CARD_WIDTH / 2, descY, 0xFF55FF55);
             descY += font.lineHeight + 1;
             // Aperçu : total actuel → total après ce choix (si la carte a la place)
-            if (!squeeze && !owned.isEmpty() && descY + font.lineHeight < y + CARD_HEIGHT - 36) {
+            if (showPreview) {
                 double cur = totals.getOrDefault(modKey(mod), 0.0);
                 g.drawCenteredString(font, Component.literal("§8" + fmtVal(mod.operation(), cur) + " → §7" + fmtVal(mod.operation(), cur + mod.amount())),
                         x + CARD_WIDTH / 2, descY, 0xFF888888);
@@ -309,6 +312,11 @@ public class BenedictionSelectionScreen extends Screen {
     private int bodyStart(RogueUpgrade upg) {
         int nameLines = font.split(Component.literal(upg.name()).withStyle(upg.color(), ChatFormatting.BOLD), CARD_WIDTH - 20).size();
         return 45 + nameLines * (font.lineHeight + 1) + 8 + 10;
+    }
+
+    /** Hauteur des lignes d'aperçu (« total actuel → total après ce choix »), une par stat, seulement si on a déjà des bénédictions. */
+    private int previewHeight(RogueUpgrade upg) {
+        return owned.isEmpty() ? 0 : upg.modifiers().size() * (font.lineHeight + 1);
     }
 
     /** Hauteur du contenu obligatoire (description, stats, soin, effets, niveau max), comme dans drawCard. */
