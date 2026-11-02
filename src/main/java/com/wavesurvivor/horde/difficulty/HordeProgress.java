@@ -101,7 +101,13 @@ public class HordeProgress extends SavedData {
         return out;
     }
 
+    /** Créatif : aucune condition de déblocage n'est exigée (tests, opérateurs). */
+    public static boolean bypass(ServerPlayer player) {
+        return player.isCreative();
+    }
+
     public static boolean unlocked(ServerPlayer player, HordeConfigMultiData horde) {
+        if (bypass(player)) return true;
         for (Line l : status(player, horde)) if (!l.ok()) return false;
         return true;
     }
@@ -109,7 +115,8 @@ public class HordeProgress extends SavedData {
     /** Lignes encodées pour l'écran de l'autel : « 1|texte » (remplie) ou « 0|texte », séparées par des retours à la ligne. */
     public static String encode(ServerPlayer player, HordeConfigMultiData horde) {
         StringBuilder sb = new StringBuilder();
-        for (Line l : status(player, horde)) sb.append(sb.length() > 0 ? "\n" : "").append(l.ok() ? "1|" : "0|").append(l.text());
+        boolean free = bypass(player); // créatif : toutes les conditions sont affichées comme remplies
+        for (Line l : status(player, horde)) sb.append(sb.length() > 0 ? "\n" : "").append(l.ok() || free ? "1|" : "0|").append(l.text());
         return sb.toString();
     }
 

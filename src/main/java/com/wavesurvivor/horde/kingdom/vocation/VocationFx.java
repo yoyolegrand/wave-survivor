@@ -27,7 +27,6 @@ public final class VocationFx {
     public static void onCatalystClosed(MinecraftServer server) {
         ServerPlayer a = Voc.holder(ARC);
         if (a == null || !(a.level() instanceof ServerLevel lvl)) return;
-        if (Vocations.has(a, ARC, "arcanist.ult.rupture")) KingdomManager.closeNearestRift(a.blockPosition()); // ultime Rupture
         if (Vocations.has(a, ARC, "arcanist.resonance.shield_on_close")) {
             a.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 1)); // 2 cœurs d'absorption, 10 s
         }

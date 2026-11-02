@@ -34,10 +34,10 @@ import java.util.Locale;
 @OnlyIn(Dist.CLIENT)
 public class VocationsScreen extends Screen {
 
-    private static final int GRID_W = 260, GRID_H = 236;
-    private static final int TREE_W = 300, TREE_H = 252;
-    private static final int CARD_W = 76, CARD_H = 44, CARD_STEP_X = 80, CARD_STEP_Y = 48, GRID_ROWS = 3;
-    private static final int BOX_W = 92, BOX_H = 22, BOX_STEP = 27;
+    private static final int GRID_W = 325, GRID_H = 295; // même taille que l'autel de Renaissance (+25 %)
+    private static final int TREE_W = 375, TREE_H = 262;
+    private static final int CARD_W = 96, CARD_H = 54, CARD_STEP_X = 100, CARD_STEP_Y = 60, GRID_ROWS = 3;
+    private static final int BOX_W = 116, BOX_H = 24, BOX_STEP = 30;
 
     private static final int GOLD = 0xFFFFD34D, PURPLE = 0xFFA855F7, GREY = 0xFF9A98A8, WHITE = 0xFFFFFFFF;
 
@@ -84,7 +84,7 @@ public class VocationsScreen extends Screen {
             for (int i = 0; i < keys.length; i++) {
                 final int tabIndex = i;
                 Button b = addRenderableWidget(Button.builder(Component.literal(WSLang.t(keys[i])), btn -> goTab(tabIndex))
-                        .bounds(width / 2 - 127 + i * 51, top + 22, 49, 18).build());
+                        .bounds(width / 2 - 155 + i * 62, top + 22, 60, 18).build());
                 b.active = i != 4;
             }
         } else {
@@ -199,7 +199,7 @@ public class VocationsScreen extends Screen {
         String pr = WSLang.t("voc.ui.pr", String.format(Locale.ROOT, "%,d", VocationsClient.pr()).replace(',', ' '));
         g.drawString(font, pr, left + pw - 8 - font.width(pr), top + 8, GOLD, false);
         g.drawString(font, fit(WSLang.t("voc.ui.title"), pw - 16), left + 8, top + 46, GREY, false);
-        int y0 = top + 58;
+        int y0 = top + 60;
         int rows = (ROLES.length + 2) / 3;
         scrollRow = Math.max(0, Math.min(scrollRow, Math.max(0, rows - GRID_ROWS)));
         for (int i = 0; i < ROLES.length; i++) {
@@ -213,17 +213,17 @@ public class VocationsScreen extends Screen {
             g.fill(x, y + CARD_H - 1, x + CARD_W, y + CARD_H, hover ? GOLD : 0xFF45405A);
             g.fill(x, y, x + 1, y + CARD_H, hover ? GOLD : 0xFF45405A);
             g.fill(x + CARD_W - 1, y, x + CARD_W, y + CARD_H, hover ? GOLD : 0xFF45405A);
-            g.renderItem(new ItemStack(r.icon), x + 4, y + 4);
-            g.drawString(font, fit(Vocations.roleName(r), CARD_W - 28), x + 24, y + 5, WHITE, false);
+            g.renderItem(new ItemStack(r.icon), x + 5, y + 6);
+            g.drawString(font, fit(Vocations.roleName(r), CARD_W - 30), x + 26, y + 6, WHITE, false);
             int lvl = VocationsClient.level(r);
-            g.drawString(font, WSLang.t("voc.ui.mastery", lvl, VocationsConfig.maxLevel()), x + 24, y + 16, lvl > 0 ? 0xFFE0B040 : GREY, false);
-            g.fill(x + 6, y + 29, x + CARD_W - 6, y + 33, 0xFF26232F);
-            g.fill(x + 6, y + 29, x + 6 + Math.round((CARD_W - 12) * VocationsClient.progress(r)), y + 33, PURPLE);
-            g.drawString(font, Math.round(VocationsClient.progress(r) * 100) + " %", x + 6, y + 35, GREY, false);
+            g.drawString(font, WSLang.t("voc.ui.mastery", lvl, VocationsConfig.maxLevel()), x + 6, y + 25, lvl > 0 ? 0xFFE0B040 : GREY, false);
+            g.fill(x + 6, y + 36, x + CARD_W - 6, y + 40, 0xFF26232F);
+            g.fill(x + 6, y + 36, x + 6 + Math.round((CARD_W - 12) * VocationsClient.progress(r)), y + 40, PURPLE);
+            g.drawString(font, Math.round(VocationsClient.progress(r) * 100) + " %", x + 6, y + 43, GREY, false);
             int free = VocationsClient.pointsFree(r);
             if (free > 0) {
                 String s = WSLang.t(free == 1 ? "voc.ui.points_one" : "voc.ui.points_many", free);
-                g.drawString(font, s, x + CARD_W - 6 - font.width(s), y + 35, GOLD, false);
+                g.drawString(font, s, x + CARD_W - 6 - font.width(s), y + 43, GOLD, false);
             }
             hits.add(new Hit(x, y, CARD_W, CARD_H, K_CARD, r.id, r));
         }
@@ -297,14 +297,14 @@ public class VocationsScreen extends Screen {
                 String right = !unlocked && !t.wip() ? WSLang.t("voc.ui.pts", req) : (rank > 0 ? val(t, rank * t.value()) : "");
                 if (right.isEmpty() && t.unit().equals("bool") && rank > 0) right = WSLang.t("voc.ui.bool_on");
                 int rw = right.isEmpty() ? 0 : font.width(right) + 4;
-                g.drawString(font, "§l" + fit(WSLang.t("voc.talent." + r.id + "." + t.id()), BOX_W - 8 - rw), cx + 4, y + 3, txt, false);
-                if (!right.isEmpty()) g.drawString(font, right, cx + BOX_W - 4 - font.width(right), y + 3, !unlocked ? 0xFF77758A : 0xFFFFF0B0, false);
+                g.drawString(font, "§l" + fit(WSLang.t("voc.talent." + r.id + "." + t.id()), BOX_W - 8 - rw), cx + 4, y + 4, txt, false);
+                if (!right.isEmpty()) g.drawString(font, right, cx + BOX_W - 4 - font.width(right), y + 4, !unlocked ? 0xFF77758A : 0xFFFFF0B0, false);
                 String line2 = t.wip() ? WSLang.t("voc.ui.soon") : t.unit().equals("bool")
                         ? WSLang.t("voc.talent." + r.id + "." + t.id() + ".d") : WSLang.t("voc.ui.per_rank", val(t, t.value()));
                 int sqW = t.ranks() * 5;
-                g.drawString(font, fit(line2, BOX_W - 8 - sqW), cx + 4, y + 12, txt == WHITE ? 0xFFE8E0C8 : txt, false);
+                g.drawString(font, fit(line2, BOX_W - 8 - sqW), cx + 4, y + 14, txt == WHITE ? 0xFFE8E0C8 : txt, false);
                 for (int k = 0; k < t.ranks(); k++) {
-                    int sx = cx + BOX_W - 4 - (t.ranks() - k) * 5 + 1, sy = y + 14;
+                    int sx = cx + BOX_W - 4 - (t.ranks() - k) * 5 + 1, sy = y + 16;
                     g.fill(sx, sy, sx + 4, sy + 4, k < rank ? 0xFF7FE08A : 0xFF55546A);
                 }
                 hits.add(new Hit(cx, y, BOX_W, BOX_H, K_TALENT, t.id(), r));
@@ -318,7 +318,7 @@ public class VocationsScreen extends Screen {
                 : WSLang.t("voc.ui.ult_title", VocationsConfig.ultimatePoints(), VocationsConfig.ultimateCostPR());
         g.drawCenteredString(font, fit(uh, pw - 16), left + pw / 2, top + 66 + 4 * BOX_STEP + 2, 0xFFE0B040);
         String chosen = VocationsClient.ultimate(r);
-        int uy = top + 66 + 4 * BOX_STEP + 14, uw = 142;
+        int uy = top + 66 + 4 * BOX_STEP + 14, uw = 180;
         for (int i = 0; i < tree.ultimates().size() && i < 2; i++) {
             Ultimate u = tree.ultimates().get(i);
             int ux = i == 0 ? left + 7 : left + pw - 7 - uw;

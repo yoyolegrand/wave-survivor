@@ -3872,7 +3872,7 @@
   "voc.talent.arcanist.arcane_orb": "Arcane orb",
   "voc.talent.arcanist.arcane_orb.d": "An arcane orb orbits around you.",
   "voc.ult.arcanist.rupture": "Rupture",
-  "voc.ult.arcanist.rupture.d": "Closing a Catalyst also closes the nearest breach.",
+  "voc.ult.arcanist.rupture.d": "Closing a Catalyst tears a deeper breach: +15% more of the Gate's max HP becomes vulnerable.",
   "voc.ult.arcanist.nexus": "Nexus",
   "voc.ult.arcanist.nexus.d": "Once per assault: an allied Catalyst weakens monsters around it.",
   "voc.branch.miner.abundance": "Abundance",

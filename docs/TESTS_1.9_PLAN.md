@@ -56,7 +56,7 @@ Pour chaque talent : un point + une situation de jeu qui le déclenche. Liste co
 
 ## Phase 6 — Ultimes (18)
 - [ ] Achat : refusé sous 15 points, 150 PR la première fois, re-choix gratuit après réinitialisation, un seul par rôle.
-- [ ] Arcaniste : Rupture, Nexus. · Exploitant : Filon-mère, Cœur de la forêt. · Bâtisseur : Chef-d'œuvre (+25 % PV), Grand chantier.
+- [ ] Arcaniste : Rupture (brèche de Porte plus profonde), Nexus. · Exploitant : Filon-mère, Cœur de la forêt. · Bâtisseur : Chef-d'œuvre (+25 % PV), Grand chantier.
 - [ ] Commandant : Garde d'élite, Dernier carré. · Intendant : Âge d'or, Marché noir. · Alchimiste : Panacée, Réaction en chaîne.
 - [ ] Chasseur : Tête mise à prix, Grand veneur. · Augure : Triple présage, Présage vivant. · Récupérateur : Arsenal de siège, Trésor de guerre.
 
@@ -84,3 +84,8 @@ Pour chaque talent : un point + une situation de jeu qui le déclenche. Liste co
 ## Phase 11 — Avant publication
 - [ ] `mod_version` → 1.9.0 (nom du jar dans la commande de build), CHANGELOG `## 1.9.0 — Role Vocations` relu, `.github/scripts/check_title.py` OK (≤ 64 caractères).
 - [ ] Description CurseForge / Modrinth et captures de l'arbre à préparer ; mise à jour de CLAUDE.md.
+
+## Ajouts après premiers tests (retours de Yoann)
+- [ ] Fenêtre de l'autel de Renaissance agrandie de 25 % (325×295) : tous les onglets lisibles (Sacrifice : grille d'inventaire plus grande, Boutique/Forge : 9 lignes visibles, Héritage : nœuds plus larges, Vocations : cartes et arbre plus larges).
+- [ ] Créatif : aucune condition de déblocage de horde exigée (l'écran de l'autel les affiche comme remplies, le lancement et la liaison passent), y compris pour les hordes Kingdom.
+- [ ] Ultime Rupture : à chaque Catalyseur fermé, la Porte voit +15 % de PV max rendus vulnérables en plus (plus de « brèche refermée »).

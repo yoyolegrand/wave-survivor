@@ -3138,7 +3138,7 @@
   "voc.talent.arcanist.arcane_orb": "Orbe arcanique",
   "voc.talent.arcanist.arcane_orb.d": "Un orbe arcanique tourne autour de toi.",
   "voc.ult.arcanist.rupture": "Rupture",
-  "voc.ult.arcanist.rupture.d": "Fermer un Catalyseur referme aussi la brèche la plus proche.",
+  "voc.ult.arcanist.rupture.d": "Fermer un Catalyseur ouvre une brèche plus profonde : +15 % de PV max de la Porte deviennent vulnérables.",
   "voc.ult.arcanist.nexus": "Nexus",
   "voc.ult.arcanist.nexus.d": "1 fois par assaut : un Catalyseur allié affaiblit les monstres autour de lui.",
   "voc.branch.miner.abundance": "Abondance",

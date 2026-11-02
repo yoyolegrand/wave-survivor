@@ -1251,7 +1251,8 @@ public final class KingdomManager {
         Portal p = gate >= 0 && gate < PORTALS.size() ? PORTALS.get(gate) : null;
         if (p == null || p.destroyed || !(level.getEntity(p.id) instanceof BrecheEntity b)) return;
         p.breached = true;
-        p.floor = (float) Math.max(0, b.getHealth() - b.getMaxHealth() * Math.max(1, cfg.breachPercent) / 100.0);
+        double extraBreach = Voc.has(KingdomRoles.Role.ARCANIST, "arcanist.ult.rupture") ? 15 : 0; // ultime Rupture : brèche plus profonde (+15 % de PV max vulnérables)
+        p.floor = (float) Math.max(0, b.getHealth() - b.getMaxHealth() * (Math.max(1, cfg.breachPercent) + extraBreach) / 100.0);
         com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), WSLang.c("kingdom.gate_breached", WSLang.t("kingdom.dir." + p.dir), (int) Math.round(cfg.breachPercent)),
                 "minecraft:crying_obsidian", com.wavesurvivor.network.EventFeedPacket.ARCANE, true);
         KingdomTreasury.reward(KingdomTreasury.Res.ESSENCE, 3, "kingdom.essence.catalyst");
@@ -1581,14 +1582,6 @@ public final class KingdomManager {
             if (r < 0) return u.toHordeEntity();
         }
         return list.get(list.size() - 1).toHordeEntity();
-    }
-
-    /** Ultime Rupture de l'Arcaniste : la brèche du Calme la plus proche se referme tout de suite. */
-    public static void closeNearestRift(BlockPos from) {
-        if (level == null) return;
-        Rift best = null;
-        for (Rift rf : RIFTS) if (rf.closeAt == 0 && (best == null || rf.pos.distSqr(from) < best.pos.distSqr(from))) best = rf;
-        if (best != null) best.closeAt = level.getServer().getTickCount();
     }
 
     /** Ouverture (2 s) → sortie des unités (une toutes les 0,4 s, une paire d'yeux s'éteint) → fermeture (2 s). */

@@ -35,11 +35,11 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class RenaissanceScreen extends Screen {
 
-    private static final int PANEL_W = 260;
-    private static final int PANEL_H = 236;
-    private static final int CELL = 18;
+    private static final int PANEL_W = 325; // +25 % (1.9)
+    private static final int PANEL_H = 295; // +25 % (1.9)
+    private static final int CELL = 22;
     private static final int ROW_H = 22;
-    private static final int VISIBLE_ROWS = 7;
+    private static final int VISIBLE_ROWS = 9;
 
     // État serveur
     private int tab;
@@ -118,16 +118,16 @@ public class RenaissanceScreen extends Screen {
 
         int tabY = top + 22;
         Button sacTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.sacrifice")), b -> switchTab(0))
-                .bounds(width / 2 - 127, tabY, 49, 18).build());
+                .bounds(width / 2 - 155, tabY, 60, 18).build());
         Button shopTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.boutique")), b -> switchTab(1))
-                .bounds(width / 2 - 76, tabY, 49, 18).build());
+                .bounds(width / 2 - 93, tabY, 60, 18).build());
         Button forgeTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.tab")), b -> switchTab(2))
-                .bounds(width / 2 - 25, tabY, 49, 18).build());
+                .bounds(width / 2 - 31, tabY, 60, 18).build());
         Button herTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("heritage.tab")), b -> switchTab(3))
-                .bounds(width / 2 + 26, tabY, 49, 18).build());
+                .bounds(width / 2 + 31, tabY, 60, 18).build());
         addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("voc.ui.tab")),
                         b -> Minecraft.getInstance().setScreen(new VocationsScreen(this, null, false)))
-                .bounds(width / 2 + 77, tabY, 49, 18).build()); // Vocations (1.9) : écran à part, même panneau
+                .bounds(width / 2 + 93, tabY, 60, 18).build()); // Vocations (1.9) : écran à part, même panneau
         sacTab.active = tab != 0;
         shopTab.active = tab != 1;
         forgeTab.active = tab != 2;
@@ -152,7 +152,10 @@ public class RenaissanceScreen extends Screen {
     private static final com.wavesurvivor.horde.renaissance.Heritage.Branch[] BRANCHES = com.wavesurvivor.horde.renaissance.Heritage.Branch.values();
     private boolean rebirthArmed = false;
 
-    private int colX(int i) { return left + 8 + i * 83; }
+    /** Nœuds de l'Héritage : plus larges avec la fenêtre agrandie. */
+    private static final int NODE_W = 96, NODE_H = 20, NODE_PITCH = 24;
+
+    private int colX(int i) { return left + 12 + i * (NODE_W + 8); }
 
     private void buildHeritageWidgets() {
         var H = com.wavesurvivor.horde.renaissance.Heritage.class;
@@ -164,7 +167,7 @@ public class RenaissanceScreen extends Screen {
                     : com.wavesurvivor.i18n.WSLang.t("heritage.btn_buy", com.wavesurvivor.horde.renaissance.Heritage.NODE_COST[lvl]);
             Button b = addRenderableWidget(Button.builder(Component.literal(lbl),
                     bt -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.RelicForgePacket("heritage", id)))
-                    .bounds(colX(i), top + 182, 78, 16).build());
+                    .bounds(colX(i), top + 78 + 5 * NODE_PITCH + 4, NODE_W, 18).build());
             b.active = lvl < com.wavesurvivor.horde.renaissance.Heritage.MAX_NODE
                     && points >= com.wavesurvivor.horde.renaissance.Heritage.NODE_COST[lvl];
         }
@@ -206,16 +209,16 @@ public class RenaissanceScreen extends Screen {
             String key = "heritage." + BRANCHES[i].name().toLowerCase();
             g.drawString(font, "§l" + com.wavesurvivor.i18n.WSLang.t(key), x, top + 68, 0xFFFFFFFF, false);
             for (int n = 1; n <= com.wavesurvivor.horde.renaissance.Heritage.MAX_NODE; n++) {
-                int y = top + 78 + (n - 1) * 20;
+                int y = top + 78 + (n - 1) * NODE_PITCH;
                 boolean owned = nodes[i] >= n;
                 boolean next = nodes[i] == n - 1;
                 int bg = owned ? 0xFF2E7D32 : next ? 0xFF8D6E00 : 0xFF2A2A33;
-                g.fill(x, y, x + 78, y + 18, bg);
-                g.renderOutline(x, y, 78, 18, owned ? 0xFF66BB6A : next ? 0xFFFFD54F : 0xFF444455);
+                g.fill(x, y, x + NODE_W, y + NODE_H, bg);
+                g.renderOutline(x, y, NODE_W, NODE_H, owned ? 0xFF66BB6A : next ? 0xFFFFD54F : 0xFF444455);
                 String txt = com.wavesurvivor.i18n.WSLang.t(key + "." + n);
-                String shown = font.width(txt) > 70 ? font.plainSubstrByWidth(txt, 66) + "…" : txt;
-                g.drawString(font, shown, x + 4, y + 5, owned ? 0xFFFFFFFF : next ? 0xFFFFF3C4 : 0xFF777788, false);
-                if (mx >= x && mx < x + 78 && my >= y && my < y + 18) {
+                String shown = font.width(txt) > NODE_W - 8 ? font.plainSubstrByWidth(txt, NODE_W - 12) + "…" : txt;
+                g.drawString(font, shown, x + 4, y + 6, owned ? 0xFFFFFFFF : next ? 0xFFFFF3C4 : 0xFF777788, false);
+                if (mx >= x && mx < x + NODE_W && my >= y && my < y + NODE_H) {
                     tip = new ArrayList<>();
                     tip.add(Component.literal((owned ? "§a✔ " : next ? "§e" : "§8") + txt));
                     if (!owned) tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("heritage.cost",
@@ -765,9 +768,9 @@ public class RenaissanceScreen extends Screen {
                 }
                 if (st.isEmpty()) continue;
 
-                g.renderItem(st, rx + 1, ry + 1);
+                g.renderItem(st, rx + 3, ry + 3);
                 String countText = sel > 0 ? "§d" + sel + (sel < st.getCount() ? "/" + st.getCount() : "") : null;
-                g.renderItemDecorations(font, st, rx + 1, ry + 1, countText);
+                g.renderItemDecorations(font, st, rx + 3, ry + 3, countText);
 
                 if (r == null) {
                     // Assombrit les items non sacrifiables (au-dessus des items)
