@@ -3817,5 +3817,19 @@
   "Unique : un Catalyseur détruit arrache {10} % de PV à la Porte la plus proche": "Unique: a destroyed Catalyst tears {10}% HP off the nearest Gate",
   "Unique : sauvé de la mort → {5} s d'invulnérabilité et monstres révélés à {32} blocs": "Unique: saved from death → {5} s of invulnerability and monsters revealed within {32} blocks",
   "Unique : {20} % de chance qu'un achat chez un marchand soit remboursé": "Unique: {20}% chance for a merchant purchase to be refunded",
-  "Unique : un gisement détruit lâche une clé de Reliquaire ({25} %)": "Unique: a destroyed deposit drops a Reliquary key ({25}%)"
+  "Unique : un gisement détruit lâche une clé de Reliquaire ({25} %)": "Unique: a destroyed deposit drops a Reliquary key ({25}%)",
+  "voc.cmd.unknown_role": "Unknown role.",
+  "voc.cmd.line": "%s: Mastery %s/%s (%s/%s XP) · %s free point(s), %s spent · ultimate: %s",
+  "voc.cmd.ultimates": "Ultimates:",
+  "voc.cmd.xp": "+%s Mastery XP (%s) → level %s (%s level(s) gained).",
+  "voc.cmd.ok": "Done. RP left: %s.",
+  "voc.res.unknown": "Unknown talent or role.",
+  "voc.res.in_game": "Not possible during a game.",
+  "voc.res.no_points": "No talent point available.",
+  "voc.res.max_rank": "This talent is already at maximum rank.",
+  "voc.res.locked": "Tier not reached: spend more points in this branch.",
+  "voc.res.not_enough_pr": "Not enough RP.",
+  "voc.res.ult_locked": "Spend more points in the tree to choose an ultimate.",
+  "voc.res.ult_already": "An ultimate is already chosen (reset the tree to change it).",
+  "voc.res.nothing": "Nothing to reset."
 }

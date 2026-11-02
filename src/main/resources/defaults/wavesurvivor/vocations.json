@@ -1,0 +1,1155 @@
+{
+  "_comment": "Vocations (1.9) : Maîtrise des rôles du mode Kingdom. Base du mod ; vos changements vont dans config/wavesurvivor/vocations.json (seulement les champs à modifier). Niveau n atteint à xpCurve.base + xpCurve.step*(n-1) XP de plus que le niveau n-1. 'value' = valeur PAR RANG ; unit : pct, flat, sec, bool. Les 'base' sont les effets de départ des rôles (réduits).",
+  "maxLevel": 20,
+  "pointsPerLevel": 1,
+  "xpCurve": {
+    "base": 100,
+    "step": 50
+  },
+  "branchTiers": [
+    0,
+    2,
+    5,
+    8
+  ],
+  "ultimate": {
+    "pointsRequired": 15,
+    "costPR": 150
+  },
+  "resetCostPR": 50,
+  "xp": {
+    "perWave": 10,
+    "victoryMult": 2.0,
+    "defeatMult": 0.5,
+    "actions": {
+      "arcanist": {
+        "catalyst_closed": 15,
+        "focus_purified": 10
+      },
+      "miner": {
+        "deposit_harvested": 10
+      },
+      "builder": {
+        "build": 5,
+        "upgrade": 5,
+        "repair": 2
+      },
+      "commander": {
+        "horn_used": 5,
+        "soldier_produced": 1
+      },
+      "quartermaster": {
+        "coins_per_xp": 20
+      },
+      "alchemist": {
+        "flask_prepared": 5,
+        "flask_upgraded": 15
+      },
+      "bounty_hunter": {
+        "contract_done": 30,
+        "elite_killed": 5
+      },
+      "augur": {
+        "omen_chosen": 10
+      },
+      "scavenger": {
+        "debris_picked": 1,
+        "breach_closed": 10
+      }
+    }
+  },
+  "roles": {
+    "arcanist": {
+      "base": {
+        "secondCatalystChance": 0.1,
+        "purifyMult": 1.5
+      },
+      "branches": [
+        {
+          "id": "resonance",
+          "talents": [
+            {
+              "id": "second_catalyst",
+              "effect": "arcanist.resonance.second_catalyst",
+              "ranks": 3,
+              "value": 7,
+              "unit": "pct"
+            },
+            {
+              "id": "essence_on_close",
+              "effect": "arcanist.resonance.essence_on_close",
+              "ranks": 1,
+              "value": 2,
+              "unit": "flat"
+            },
+            {
+              "id": "shield_on_close",
+              "effect": "arcanist.resonance.shield_on_close",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "double_close",
+              "effect": "arcanist.resonance.double_close",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "purification",
+          "talents": [
+            {
+              "id": "purify_speed",
+              "effect": "arcanist.purification.purify_speed",
+              "ranks": 3,
+              "value": 15,
+              "unit": "pct"
+            },
+            {
+              "id": "purify_heal",
+              "effect": "arcanist.purification.purify_heal",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "purify_zone",
+              "effect": "arcanist.purification.purify_zone",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "purify_loot",
+              "effect": "arcanist.purification.purify_loot",
+              "ranks": 1,
+              "value": 20,
+              "unit": "flat"
+            }
+          ]
+        },
+        {
+          "id": "offense",
+          "talents": [
+            {
+              "id": "close_knockback",
+              "effect": "arcanist.offense.close_knockback",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "magic_damage",
+              "effect": "arcanist.offense.magic_damage",
+              "ranks": 3,
+              "value": 5,
+              "unit": "pct"
+            },
+            {
+              "id": "close_lightning",
+              "effect": "arcanist.offense.close_lightning",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "arcane_orb",
+              "effect": "arcanist.offense.arcane_orb",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        }
+      ],
+      "ultimates": [
+        {
+          "id": "rupture",
+          "effect": "arcanist.ult.rupture",
+          "value": 1,
+          "unit": "bool"
+        },
+        {
+          "id": "nexus",
+          "effect": "arcanist.ult.nexus",
+          "value": 1,
+          "unit": "bool"
+        }
+      ]
+    },
+    "miner": {
+      "base": {
+        "frequencyBonus": 0.15,
+        "doubleLootChance": 0.15,
+        "hasteAmplifier": 0
+      },
+      "branches": [
+        {
+          "id": "abundance",
+          "talents": [
+            {
+              "id": "frequency",
+              "effect": "miner.abundance.frequency",
+              "ranks": 2,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "size",
+              "effect": "miner.abundance.size",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "extra_deposit",
+              "effect": "miner.abundance.extra_deposit",
+              "ranks": 1,
+              "value": 1,
+              "unit": "flat"
+            },
+            {
+              "id": "lifetime",
+              "effect": "miner.abundance.lifetime",
+              "ranks": 1,
+              "value": 50,
+              "unit": "pct"
+            }
+          ]
+        },
+        {
+          "id": "yield",
+          "talents": [
+            {
+              "id": "double_loot",
+              "effect": "miner.yield.double_loot",
+              "ranks": 3,
+              "value": 5,
+              "unit": "pct"
+            },
+            {
+              "id": "rare_ores",
+              "effect": "miner.yield.rare_ores",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "tree_essence",
+              "effect": "miner.yield.tree_essence",
+              "ranks": 1,
+              "value": 1,
+              "unit": "flat"
+            },
+            {
+              "id": "area_harvest",
+              "effect": "miner.yield.area_harvest",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "endurance",
+          "talents": [
+            {
+              "id": "haste",
+              "effect": "miner.endurance.haste",
+              "ranks": 1,
+              "value": 1,
+              "unit": "flat"
+            },
+            {
+              "id": "resist",
+              "effect": "miner.endurance.resist",
+              "ranks": 1,
+              "value": 20,
+              "unit": "pct"
+            },
+            {
+              "id": "slow_aura",
+              "effect": "miner.endurance.slow_aura",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "direct_treasury",
+              "effect": "miner.endurance.direct_treasury",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        }
+      ],
+      "ultimates": [
+        {
+          "id": "mother_lode",
+          "effect": "miner.ult.mother_lode",
+          "value": 1,
+          "unit": "bool"
+        },
+        {
+          "id": "forest_heart",
+          "effect": "miner.ult.forest_heart",
+          "value": 1,
+          "unit": "bool"
+        }
+      ]
+    },
+    "builder": {
+      "base": {
+        "discount": 0.1,
+        "hpBonus": 0.05,
+        "demolitionCharges": 1
+      },
+      "branches": [
+        {
+          "id": "architect",
+          "talents": [
+            {
+              "id": "discount",
+              "effect": "builder.architect.discount",
+              "ranks": 3,
+              "value": 5,
+              "unit": "pct"
+            },
+            {
+              "id": "upgrade_discount",
+              "effect": "builder.architect.upgrade_discount",
+              "ranks": 1,
+              "value": 10,
+              "unit": "pct"
+            },
+            {
+              "id": "wall_stone",
+              "effect": "builder.architect.wall_stone",
+              "ranks": 1,
+              "value": 15,
+              "unit": "pct"
+            },
+            {
+              "id": "free_last_level",
+              "effect": "builder.architect.free_last_level",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "engineer",
+          "talents": [
+            {
+              "id": "hp",
+              "effect": "builder.engineer.hp",
+              "ranks": 3,
+              "value": 5,
+              "unit": "pct"
+            },
+            {
+              "id": "trap_damage",
+              "effect": "builder.engineer.trap_damage",
+              "ranks": 1,
+              "value": 20,
+              "unit": "pct"
+            },
+            {
+              "id": "demolition_charges",
+              "effect": "builder.engineer.demolition_charges",
+              "ranks": 1,
+              "value": 1,
+              "unit": "flat"
+            },
+            {
+              "id": "charge_hurts_siege",
+              "effect": "builder.engineer.charge_hurts_siege",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "restorer",
+          "talents": [
+            {
+              "id": "repair_discount",
+              "effect": "builder.restorer.repair_discount",
+              "ranks": 2,
+              "value": 15,
+              "unit": "pct"
+            },
+            {
+              "id": "dismantle_refund",
+              "effect": "builder.restorer.dismantle_refund",
+              "ranks": 1,
+              "value": 75,
+              "unit": "pct"
+            },
+            {
+              "id": "ruin_refund",
+              "effect": "builder.restorer.ruin_refund",
+              "ranks": 1,
+              "value": 30,
+              "unit": "pct"
+            },
+            {
+              "id": "auto_repair",
+              "effect": "builder.restorer.auto_repair",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        }
+      ],
+      "ultimates": [
+        {
+          "id": "masterpiece",
+          "effect": "builder.ult.masterpiece",
+          "value": 1,
+          "unit": "bool"
+        },
+        {
+          "id": "grand_works",
+          "effect": "builder.ult.grand_works",
+          "value": 1,
+          "unit": "bool"
+        }
+      ]
+    },
+    "commander": {
+      "base": {
+        "soldiersPerBarracks": 1,
+        "soldierMinBarracksLevel": 2,
+        "bannerSeconds": 40
+      },
+      "branches": [
+        {
+          "id": "discipline",
+          "talents": [
+            {
+              "id": "soldier_hp",
+              "effect": "commander.discipline.soldier_hp",
+              "ranks": 3,
+              "value": 10,
+              "unit": "pct"
+            },
+            {
+              "id": "soldier_damage",
+              "effect": "commander.discipline.soldier_damage",
+              "ranks": 2,
+              "value": 10,
+              "unit": "pct"
+            },
+            {
+              "id": "fast_respawn",
+              "effect": "commander.discipline.fast_respawn",
+              "ranks": 1,
+              "value": 30,
+              "unit": "pct"
+            },
+            {
+              "id": "early_soldier",
+              "effect": "commander.discipline.early_soldier",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "rally",
+          "talents": [
+            {
+              "id": "banner_time",
+              "effect": "commander.rally.banner_time",
+              "ranks": 2,
+              "value": 20,
+              "unit": "sec"
+            },
+            {
+              "id": "horn_cooldown",
+              "effect": "commander.rally.horn_cooldown",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "rally_speed",
+              "effect": "commander.rally.rally_speed",
+              "ranks": 1,
+              "value": 20,
+              "unit": "pct"
+            },
+            {
+              "id": "double_banner",
+              "effect": "commander.rally.double_banner",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "battlefield",
+          "talents": [
+            {
+              "id": "near_damage",
+              "effect": "commander.battlefield.near_damage",
+              "ranks": 1,
+              "value": 15,
+              "unit": "pct"
+            },
+            {
+              "id": "siege_priority",
+              "effect": "commander.battlefield.siege_priority",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "horn_strength",
+              "effect": "commander.battlefield.horn_strength",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "no_knockback",
+              "effect": "commander.battlefield.no_knockback",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        }
+      ],
+      "ultimates": [
+        {
+          "id": "elite_guard",
+          "effect": "commander.ult.elite_guard",
+          "value": 30,
+          "unit": "sec"
+        },
+        {
+          "id": "last_stand",
+          "effect": "commander.ult.last_stand",
+          "value": 1,
+          "unit": "bool"
+        }
+      ]
+    },
+    "quartermaster": {
+      "base": {
+        "killCoinBonus": 0.1,
+        "merchantDiscount": 0.08,
+        "interestRate": 0.03,
+        "interestCap": 60
+      },
+      "branches": [
+        {
+          "id": "treasury",
+          "talents": [
+            {
+              "id": "coin_bonus",
+              "effect": "quartermaster.treasury.coin_bonus",
+              "ranks": 3,
+              "value": 5,
+              "unit": "pct"
+            },
+            {
+              "id": "interest",
+              "effect": "quartermaster.treasury.interest",
+              "ranks": 2,
+              "value": 1,
+              "unit": "pct"
+            },
+            {
+              "id": "interest_cap",
+              "effect": "quartermaster.treasury.interest_cap",
+              "ranks": 2,
+              "value": 40,
+              "unit": "flat"
+            },
+            {
+              "id": "wave_bonus",
+              "effect": "quartermaster.treasury.wave_bonus",
+              "ranks": 1,
+              "value": 20,
+              "unit": "flat"
+            }
+          ]
+        },
+        {
+          "id": "trade",
+          "talents": [
+            {
+              "id": "discount",
+              "effect": "quartermaster.trade.discount",
+              "ranks": 3,
+              "value": 4,
+              "unit": "pct"
+            },
+            {
+              "id": "team_share",
+              "effect": "quartermaster.trade.team_share",
+              "ranks": 1,
+              "value": 50,
+              "unit": "pct"
+            },
+            {
+              "id": "extra_offer",
+              "effect": "quartermaster.trade.extra_offer",
+              "ranks": 1,
+              "value": 1,
+              "unit": "flat"
+            },
+            {
+              "id": "rare_offer",
+              "effect": "quartermaster.trade.rare_offer",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "stewardship",
+          "talents": [
+            {
+              "id": "start_resources",
+              "effect": "quartermaster.stewardship.start_resources",
+              "ranks": 1,
+              "value": 10,
+              "unit": "flat"
+            },
+            {
+              "id": "convert",
+              "effect": "quartermaster.stewardship.convert",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "essence_to_coins",
+              "effect": "quartermaster.stewardship.essence_to_coins",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "cheaper_soldiers",
+              "effect": "quartermaster.stewardship.cheaper_soldiers",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            }
+          ]
+        }
+      ],
+      "ultimates": [
+        {
+          "id": "golden_age",
+          "effect": "quartermaster.ult.golden_age",
+          "value": 2,
+          "unit": "flat"
+        },
+        {
+          "id": "black_market",
+          "effect": "quartermaster.ult.black_market",
+          "value": 1,
+          "unit": "bool"
+        }
+      ]
+    },
+    "alchemist": {
+      "base": {
+        "maxFlaskLevel": 2
+      },
+      "branches": [
+        {
+          "id": "remedies",
+          "talents": [
+            {
+              "id": "heal_flask",
+              "effect": "alchemist.remedies.heal_flask",
+              "ranks": 3,
+              "value": 15,
+              "unit": "pct"
+            },
+            {
+              "id": "cleanse",
+              "effect": "alchemist.remedies.cleanse",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "bastion_soldiers",
+              "effect": "alchemist.remedies.bastion_soldiers",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "support_level4",
+              "effect": "alchemist.remedies.support_level4",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "toxins",
+          "talents": [
+            {
+              "id": "offense_flask",
+              "effect": "alchemist.toxins.offense_flask",
+              "ranks": 3,
+              "value": 15,
+              "unit": "pct"
+            },
+            {
+              "id": "frost_elite",
+              "effect": "alchemist.toxins.frost_elite",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "fire_ground",
+              "effect": "alchemist.toxins.fire_ground",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "offense_level4",
+              "effect": "alchemist.toxins.offense_level4",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "distillation",
+          "talents": [
+            {
+              "id": "reagent_elite",
+              "effect": "alchemist.distillation.reagent_elite",
+              "ranks": 1,
+              "value": 1,
+              "unit": "flat"
+            },
+            {
+              "id": "cheaper_upgrades",
+              "effect": "alchemist.distillation.cheaper_upgrades",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "master_alchemist",
+              "effect": "alchemist.distillation.master_alchemist",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "extra_flask",
+              "effect": "alchemist.distillation.extra_flask",
+              "ranks": 1,
+              "value": 1,
+              "unit": "flat"
+            }
+          ]
+        }
+      ],
+      "ultimates": [
+        {
+          "id": "panacea",
+          "effect": "alchemist.ult.panacea",
+          "value": 1,
+          "unit": "bool"
+        },
+        {
+          "id": "chain_reaction",
+          "effect": "alchemist.ult.chain_reaction",
+          "value": 1,
+          "unit": "bool"
+        }
+      ]
+    },
+    "bounty_hunter": {
+      "base": {
+        "payoutMult": 0.7,
+        "eliteChance": 0.1
+      },
+      "branches": [
+        {
+          "id": "contracts",
+          "talents": [
+            {
+              "id": "pay",
+              "effect": "bounty_hunter.contracts.pay",
+              "ranks": 3,
+              "value": 15,
+              "unit": "pct"
+            },
+            {
+              "id": "choice_of_two",
+              "effect": "bounty_hunter.contracts.choice_of_two",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "secondary_contract",
+              "effect": "bounty_hunter.contracts.secondary_contract",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "contract_xp",
+              "effect": "bounty_hunter.contracts.contract_xp",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "hunt",
+          "talents": [
+            {
+              "id": "elite_damage",
+              "effect": "bounty_hunter.hunt.elite_damage",
+              "ranks": 3,
+              "value": 10,
+              "unit": "pct"
+            },
+            {
+              "id": "mark",
+              "effect": "bounty_hunter.hunt.mark",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "contract_extend",
+              "effect": "bounty_hunter.hunt.contract_extend",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "elite_speed",
+              "effect": "bounty_hunter.hunt.elite_speed",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "trophies",
+          "talents": [
+            {
+              "id": "elite_loot",
+              "effect": "bounty_hunter.trophies.elite_loot",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "trophy_chance",
+              "effect": "bounty_hunter.trophies.trophy_chance",
+              "ranks": 1,
+              "value": 10,
+              "unit": "pct"
+            },
+            {
+              "id": "champion_essence",
+              "effect": "bounty_hunter.trophies.champion_essence",
+              "ranks": 1,
+              "value": 1,
+              "unit": "flat"
+            },
+            {
+              "id": "collection",
+              "effect": "bounty_hunter.trophies.collection",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        }
+      ],
+      "ultimates": [
+        {
+          "id": "bounty_boss",
+          "effect": "bounty_hunter.ult.bounty_boss",
+          "value": 1,
+          "unit": "bool"
+        },
+        {
+          "id": "great_hunter",
+          "effect": "bounty_hunter.ult.great_hunter",
+          "value": 1,
+          "unit": "bool"
+        }
+      ]
+    },
+    "augur": {
+      "base": {
+        "omenChoices": 2
+      },
+      "branches": [
+        {
+          "id": "clairvoyance",
+          "talents": [
+            {
+              "id": "extra_omen",
+              "effect": "augur.clairvoyance.extra_omen",
+              "ranks": 2,
+              "value": 1,
+              "unit": "flat"
+            },
+            {
+              "id": "reroll",
+              "effect": "augur.clairvoyance.reroll",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "sealed_omen",
+              "effect": "augur.clairvoyance.sealed_omen",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "preview",
+              "effect": "augur.clairvoyance.preview",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "mastery",
+          "talents": [
+            {
+              "id": "omen_boon",
+              "effect": "augur.mastery.omen_boon",
+              "ranks": 3,
+              "value": 10,
+              "unit": "pct"
+            },
+            {
+              "id": "omen_curse",
+              "effect": "augur.mastery.omen_curse",
+              "ranks": 3,
+              "value": 10,
+              "unit": "pct"
+            },
+            {
+              "id": "carry_over",
+              "effect": "augur.mastery.carry_over",
+              "ranks": 1,
+              "value": 30,
+              "unit": "sec"
+            },
+            {
+              "id": "stacking",
+              "effect": "augur.mastery.stacking",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "convergence",
+          "talents": [
+            {
+              "id": "double_omen",
+              "effect": "augur.convergence.double_omen",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "double_curse_cut",
+              "effect": "augur.convergence.double_curse_cut",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "harmony",
+              "effect": "augur.convergence.harmony",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "double_from_start",
+              "effect": "augur.convergence.double_from_start",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        }
+      ],
+      "ultimates": [
+        {
+          "id": "triple_omen",
+          "effect": "augur.ult.triple_omen",
+          "value": 3,
+          "unit": "flat"
+        },
+        {
+          "id": "living_omen",
+          "effect": "augur.ult.living_omen",
+          "value": 1,
+          "unit": "bool"
+        }
+      ]
+    },
+    "scavenger": {
+      "base": {
+        "debrisChance": 0.08,
+        "siegeDropMult": 0.8
+      },
+      "branches": [
+        {
+          "id": "scrap",
+          "talents": [
+            {
+              "id": "debris",
+              "effect": "scavenger.scrap.debris",
+              "ranks": 3,
+              "value": 4,
+              "unit": "pct"
+            },
+            {
+              "id": "pull",
+              "effect": "scavenger.scrap.pull",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "breach_loot",
+              "effect": "scavenger.scrap.breach_loot",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "rare_debris",
+              "effect": "scavenger.scrap.rare_debris",
+              "ranks": 1,
+              "value": 10,
+              "unit": "pct"
+            }
+          ]
+        },
+        {
+          "id": "recycling",
+          "talents": [
+            {
+              "id": "recycle_items",
+              "effect": "scavenger.recycling.recycle_items",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "recycle_gear",
+              "effect": "scavenger.recycling.recycle_gear",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "scrap_crate",
+              "effect": "scavenger.recycling.scrap_crate",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            },
+            {
+              "id": "debris_repair",
+              "effect": "scavenger.recycling.debris_repair",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        },
+        {
+          "id": "plunder",
+          "talents": [
+            {
+              "id": "siege_loot",
+              "effect": "scavenger.plunder.siege_loot",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "champion_loot",
+              "effect": "scavenger.plunder.champion_loot",
+              "ranks": 1,
+              "value": 25,
+              "unit": "pct"
+            },
+            {
+              "id": "tame_ram",
+              "effect": "scavenger.plunder.tame_ram",
+              "ranks": 1,
+              "value": 10,
+              "unit": "pct"
+            },
+            {
+              "id": "raider_chest",
+              "effect": "scavenger.plunder.raider_chest",
+              "ranks": 1,
+              "value": 1,
+              "unit": "bool"
+            }
+          ]
+        }
+      ],
+      "ultimates": [
+        {
+          "id": "siege_arsenal",
+          "effect": "scavenger.ult.siege_arsenal",
+          "value": 15,
+          "unit": "pct"
+        },
+        {
+          "id": "war_chest",
+          "effect": "scavenger.ult.war_chest",
+          "value": 2,
+          "unit": "flat"
+        }
+      ]
+    }
+  }
+}

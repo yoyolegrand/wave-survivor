@@ -228,6 +228,7 @@ public class WaveSurvivorMod {
         com.wavesurvivor.shrine.ShrineConfig.load();
         com.wavesurvivor.arena.ArenaSettings.load();
         com.wavesurvivor.shrine.ShrineUpgrades.load();
+        com.wavesurvivor.horde.kingdom.vocation.VocationsConfig.load();
         com.wavesurvivor.horde.benediction.BlessingCatalog.load();
         com.wavesurvivor.horde.benediction.BlessingCatalog.syncAll(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer());
 
