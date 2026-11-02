@@ -56,6 +56,8 @@ public class MobRegistry {
     public static HordeEntity remove(UUID uuid) {
         LAST_SEEN.remove(uuid);
         DEAD.remove(uuid);
+        LAST_POS.remove(uuid);
+        MISSING.remove(uuid);
         return MAP.remove(uuid);
     }
 
@@ -67,6 +69,8 @@ public class MobRegistry {
         MAP.clear();
         LAST_SEEN.clear();
         DEAD.clear();
+        LAST_POS.clear();
+        MISSING.clear();
     }
 
     public static Set<Map.Entry<UUID, HordeEntity>> entries() {
@@ -92,17 +96,41 @@ public class MobRegistry {
             // Hors de vue (zone déchargée, loin des joueurs) ≠ mort : on garde l'unité. Les vraies morts sont retirées
             // par l'événement de mort (HordeSafety) ; filet : oubliée après 5 minutes sans être vue.
             if (ent == null) {
-                if (DEAD.remove(e.getKey())) { it.remove(); LAST_SEEN.remove(e.getKey()); removed++; continue; } // vraiment morte
+                if (DEAD.remove(e.getKey())) { it.remove(); LAST_SEEN.remove(e.getKey()); LAST_POS.remove(e.getKey()); MISSING.remove(e.getKey()); removed++; continue; } // vraiment morte
+                // Introuvable alors que son dernier endroit connu est CHARGÉ : l'unité n'existe plus (retirée sans événement de mort).
+                // Sans ça, des « fantômes » restent comptés (barre d'Assaut, fin de vague) jusqu'au filet de 5 minutes.
+                Object[] lp = LAST_POS.get(e.getKey());
+                if (lp != null) {
+                    @SuppressWarnings("unchecked")
+                    ServerLevel lv = server.getLevel((net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level>) lp[0]);
+                    if (lv != null && lv.isLoaded((net.minecraft.core.BlockPos) lp[1])) {
+                        Long since = MISSING.putIfAbsent(e.getKey(), now);
+                        if (since != null && now - since >= 100) {
+                            it.remove();
+                            LAST_SEEN.remove(e.getKey());
+                            LAST_POS.remove(e.getKey());
+                            MISSING.remove(e.getKey());
+                            removed++;
+                            continue;
+                        }
+                    } else {
+                        MISSING.remove(e.getKey());
+                    }
+                }
                 Long seen = LAST_SEEN.putIfAbsent(e.getKey(), now);
                 if (seen == null || now - seen < 6000) continue;
             } else if (ent instanceof LivingEntity living && living.isAlive()) {
                 LAST_SEEN.put(e.getKey(), now);
+                LAST_POS.put(e.getKey(), new Object[]{ent.level().dimension(), ent.blockPosition()});
+                MISSING.remove(e.getKey());
                 DEAD.remove(e.getKey()); // mort annulée (résurrection, totem…) : toujours en vie
                 continue;
             }
             it.remove();
             LAST_SEEN.remove(e.getKey());
             DEAD.remove(e.getKey());
+            LAST_POS.remove(e.getKey());
+            MISSING.remove(e.getKey());
             removed++;
         }
         if (removed > 0) {
@@ -113,6 +141,9 @@ public class MobRegistry {
 
     /** Dernière fois (tick serveur) où chaque unité a été vue chargée. */
     private static final Map<UUID, Long> LAST_SEEN = new ConcurrentHashMap<>();
+    /** Dernier endroit connu de chaque unité (dimension, position) et début de son absence alors que cet endroit est chargé. */
+    private static final Map<UUID, Object[]> LAST_POS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> MISSING = new ConcurrentHashMap<>();
 
     /** Unités à contrôler au tick suivant leur apparition (montures / passagers non demandés). */
     private static final java.util.Queue<UUID> MOUNT_CHECK = new java.util.concurrent.ConcurrentLinkedQueue<>();

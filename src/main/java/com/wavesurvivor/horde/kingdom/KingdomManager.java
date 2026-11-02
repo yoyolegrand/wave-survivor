@@ -670,7 +670,10 @@ public final class KingdomManager {
             raidAwait = false;
             Portal fin = null;
             for (Portal p : PORTALS) if (!p.destroyed && p.isFinal) fin = p;
-            if (fin != null) RaidManager.open(level, fin.pos, center, raidBoss, cfg.raidRadius);
+            if (fin != null) {
+                RaidManager.open(level, fin.pos, center, raidBoss, cfg.raidRadius);
+                chat(WSLang.c("raid.open_where", WSLang.t("kingdom.dir." + fin.dir), (int) Math.round(Math.sqrt(fin.pos.distSqr(center)))));
+            }
             else raidVictory();
         }
         calmStartTick = now; // l'aube commence
@@ -870,6 +873,7 @@ public final class KingdomManager {
         pick.breached = false;
         if (level.getEntity(pick.id) instanceof BrecheEntity b) b.setCustomName(Component.literal(WSLang.t("kingdom.king_gate_name")));
         broadcast(WSLang.c("kingdom.king_forced", WSLang.t("kingdom.dir." + pick.dir)));
+        chat(WSLang.c("kingdom.king_forced", WSLang.t("kingdom.dir." + pick.dir))); // aussi dans le chat : le fil d'événements passe vite
     }
 
     /**
@@ -1292,6 +1296,7 @@ public final class KingdomManager {
             raidAwait = true;
             BOSS_DONE.add(last.waveNumber);
             broadcast(WSLang.c("raid.await", WSLang.t(last.bossName)));
+            chat(WSLang.c("raid.await", WSLang.t(last.bossName)));
             for (ServerPlayer pl : level.players()) level.playSound(null, pl.blockPosition(), SoundEvents.WITHER_AMBIENT, SoundSource.HOSTILE, 1f, 0.5f);
             for (var w : waves) {
                 if (w == last || w.waveNumber == cycle || BOSS_DONE.contains(w.waveNumber)) continue;
@@ -1685,6 +1690,12 @@ public final class KingdomManager {
         com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), msg, "minecraft:white_banner", com.wavesurvivor.network.EventFeedPacket.KINGDOM, false);
     }
 
+    /** Message dans le chat de tous les joueurs (annonces essentielles, que le fil d'événements pourrait faire manquer). */
+    private static void chat(Component msg) {
+        if (level == null) return;
+        for (ServerPlayer p : level.getServer().getPlayerList().getPlayers()) p.sendSystemMessage(msg);
+    }
+
     private static void broadcastImportant(Component msg) {
         if (level == null) return;
         com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), msg, "minecraft:white_banner", com.wavesurvivor.network.EventFeedPacket.DANGER, true);
@@ -1707,6 +1718,10 @@ public final class KingdomManager {
                     "minecraft:feather", com.wavesurvivor.network.EventFeedPacket.KINGDOM, false);
             startCalm(now);
         } else {
+            if (RaidManager.isOpen()) { // la Porte du Roi est ouverte : le boss final attend, on ne relance pas d'Assaut
+                chat(WSLang.c("raid.no_skip"));
+                return false;
+            }
             com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), WSLang.c("kingdom.skip_to_assault"),
                     "minecraft:iron_sword", com.wavesurvivor.network.EventFeedPacket.KINGDOM, false);
             startAssault(now);

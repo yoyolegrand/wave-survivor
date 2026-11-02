@@ -4207,5 +4207,7 @@
   "ui.kingdom.claim_shape": "Claim shape",
   "ui.kingdom.shape_square": "▢ Square",
   "ui.kingdom.shape_circle": "◯ Circle",
-  "ui.kingdom.claim_shape_hint": "(a circle has the same area as the square)"
+  "ui.kingdom.claim_shape_hint": "(a circle has the same area as the square)",
+  "raid.open_where": "§7The King's Gate is to the §f{0}§7, about §f{1}§7 blocks from the Monolith: walk up to it to enter the arena.",
+  "raid.no_skip": "§cThe King's Gate is open: enter the arena and defeat the boss before moving on."
 }
