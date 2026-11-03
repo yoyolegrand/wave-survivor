@@ -140,3 +140,7 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Flèche bénie : embrase et repousse un mort-vivant / Corrompu. Flèche souillée : Wither I 4 s + Lenteur I. Les deux se tirent à l'arc et à l'arbalète.
 - [ ] Totem de grâce (en main) : remplace la mort (1 cœur, Régénération, Absorption, Résistance au feu) et soigne les alliés à moins de 6 blocs de 4 cœurs.
 - [ ] Totem de souillure (en main) : remplace la mort, vie pleine, +50 % de dégâts 30 s, puis 4 cœurs max pendant 2 min (retour à la normale ensuite, aussi après mort ou déconnexion).
+
+## Artisanat sacré et profane — étape 5 : textes, Codex, CHANGELOG
+- [ ] Codex : page « Artisanat sacré et profane » (après Sanctuaire du Séraphin), texte FR et EN complet et lisible (défilement) ; la page du Sanctuaire mentionne l'onglet 5.
+- [ ] Aucun texte brut / clé manquante dans les infobulles, messages et l'onglet Artisanat (FR et EN).

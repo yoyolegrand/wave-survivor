@@ -31,6 +31,15 @@
 - 📖 New **Vocations** page in the Codex.
 - 🛠 `/ws vocation info | xp | buy | ultimate | reset` (operators) to test and tune.
 
+### ✨ Sacred & Profane Crafting
+Grace and taint fragments from the Seraph Shrine now craft **food, blocks and gear**. **Consecrated** (grace) items are moderate and positive; **Profaned** (taint) items are strong but come with a price.
+- 🍞 **8 foods** at the crafting table: **Blessed Bread**, **Sanctified Apple**, **Celestial Mead** and the placeable **Feast of Grace** (6 portions the whole team can eat), against **Tainted Meat**, **Void Fruit**, **Black Wine** and **Raw Heart**. Only **one special food effect at a time** — eating another replaces the first.
+- 🏛 **Decoration blocks**: **Blessed Marble** and **Tainted Stone** with stairs, slabs, walls, columns, polished and chiseled versions (faint glow, stonecutter recipes).
+- 🔨 New **Crafting tab** in the Shrine screen: pick a craft, see the cost in green or red and click **Craft** — ingredients come straight from your inventory.
+- 🕯 **6 utility blocks**: **Lantern of Grace**, **Holy Fountain**, **Votive Candle** (no natural spawns around it), **Bait Totem**, **Profane Obelisk** and **Blood Altar**.
+- ⚔ **6 pieces of gear**: **Dawnblade** and **Blessed Arrows**, **Totem of Grace** — against **Scythe of Taint** (a missed swing costs a heart), **Tainted Arrows** and **Totem of Taint**. The Dawnblade and the Scythe can be upgraded at the Shrine's Forge, keeping their alignment.
+- 📖 New **Sacred & Profane Crafting** page in the Codex. Every value (effects, durations, radii, the craft list) is in `crafting_fragments.json`.
+
 ### 🔧 Under the hood
 - 🗂 Everything lives in **`vocations.json`** (XP curve, XP per action, ranks, values, tiers, costs, base role effects), layered like the other configs: put only the fields you change in `config/wavesurvivor/vocations.json`; `/ws reload` applies them. The server sends the trees to clients, so servers can tune them freely.
 
