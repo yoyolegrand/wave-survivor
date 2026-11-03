@@ -1,5 +1,7 @@
 package com.wavesurvivor.client;
 
+import com.wavesurvivor.craft.CraftConfig;
+import com.wavesurvivor.craft.CraftRecipes;
 import com.wavesurvivor.i18n.WSLang;
 import com.wavesurvivor.registry.ModItems;
 import com.wavesurvivor.shrine.SeraphShrineMenu;
@@ -27,8 +29,8 @@ import java.util.List;
 public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu> {
 
     /** Onglets déjà actifs (les suivants arrivent aux étapes 3 et 4 du développement). */
-    private static final boolean[] TAB_ENABLED = {true, true, true, true};
-    private static final int[] TAB_X = {4, 34, 64, 94};
+    private static final boolean[] TAB_ENABLED = {true, true, true, true, true};
+    private static final int[] TAB_X = {4, 34, 64, 94, 124};
     private static final int PANEL_Y = 24;
 
     // Thèmes : bord, fond, liséré / boutons, contour de case, fond de case, case spéciale (contour, fond), titre, aide, libellé
@@ -41,6 +43,10 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
     private static final int GOLD = 0xF2C14E, SILVER = 0xC8CCD8, VIOLET = 0xB54BFF;
 
     private int[] th = THEMES[1];
+    /** Onglet Artisanat : fabrication choisie et première ligne affichée de la liste. */
+    private int craftSel = 0, craftScroll = 0;
+    private ItemStack tipItem = ItemStack.EMPTY;
+    private static final int CRAFT_ROWS = 6, CRAFT_ROW_H = 13;
 
     public SeraphShrineScreen(SeraphShrineMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -71,10 +77,14 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
             if (ShrineGear.CONSECRATED.equals(al)) themeIdx = 0;
             else if (ShrineGear.PROFANED.equals(al)) themeIdx = 2;
         }
+        if (menu.tab == SeraphShrineMenu.TAB_CRAFT) { // dans l'Artisanat, le thème suit l'alignement de la fabrication choisie
+            List<CraftConfig.Craft> cl = CraftConfig.crafts();
+            if (!cl.isEmpty()) themeIdx = "profaned".equals(cl.get(Math.min(craftSel, cl.size() - 1)).align()) ? 2 : 0;
+        }
         th = THEMES[themeIdx];
         int x = leftPos, y = topPos;
         // Onglets
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < TAB_X.length; i++) {
             int tx = x + TAB_X[i];
             boolean active = i == menu.tab, on = TAB_ENABLED[i];
             g.fill(tx, y + 2, tx + 28, y + PANEL_Y + 2, th[0]);
@@ -84,7 +94,8 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
                 case 0 -> new ItemStack(Items.GOLD_INGOT);
                 case 1 -> new ItemStack(ModItems.GRACE_SHARD.get());
                 case 2 -> new ItemStack(ModItems.GRACE_FRAGMENT.get());
-                default -> new ItemStack(Items.ANVIL);
+                case 3 -> new ItemStack(Items.ANVIL);
+                default -> new ItemStack(ModItems.GRACE_HEART.get());
             };
             g.renderItem(icon, tx + 6, y + 7);
             if (!on) g.fill(tx + 1, y + 4, tx + 27, y + PANEL_Y + 2, 0xAA000000);
@@ -106,6 +117,7 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
             case SeraphShrineMenu.TAB_HARVEST -> drawHarvest(g, x, py);
             case SeraphShrineMenu.TAB_FUSION -> drawFusion(g, x, py);
             case SeraphShrineMenu.TAB_FORGE -> drawForge(g, x, py);
+            case SeraphShrineMenu.TAB_CRAFT -> drawCraft(g, x, py, mx, my);
             default -> { }
         }
         g.drawString(font, WSLang.t("shrine.inventory"), x + 8, py + 113, th[9], false);
@@ -178,6 +190,60 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
         else if (n <= 0) sum = WSLang.t("shrine.fuse_nothing", menu.fusionCost());
         else sum = WSLang.t("shrine.fuse_summary", n * menu.fusionCost(), in.getHoverName().getString(), n, new ItemStack(next).getHoverName().getString());
         g.drawWordWrap(font, net.minecraft.network.chat.FormattedText.of(sum), x + 7, py + 89, 162, th[8]);
+    }
+
+
+    // ─── Artisanat ───
+
+    private void drawCraft(GuiGraphics g, int x, int py, int mx, int my) {
+        List<CraftConfig.Craft> list = CraftConfig.crafts();
+        if (list.isEmpty()) { g.drawString(font, WSLang.t("shrine.craft_none"), x + 8, py + 24, th[8], false); return; }
+        craftSel = Math.max(0, Math.min(craftSel, list.size() - 1));
+        craftScroll = Math.max(0, Math.min(craftScroll, Math.max(0, list.size() - CRAFT_ROWS)));
+        var player = minecraft.player;
+        // Liste
+        g.fill(x + 7, py + 20, x + 90, py + 20 + CRAFT_ROWS * CRAFT_ROW_H + 2, th[0]);
+        g.fill(x + 8, py + 21, x + 89, py + 19 + CRAFT_ROWS * CRAFT_ROW_H + 2, th[4]);
+        for (int r = 0; r < CRAFT_ROWS && craftScroll + r < list.size(); r++) {
+            int idx = craftScroll + r;
+            CraftConfig.Craft c = list.get(idx);
+            int ry = py + 22 + r * CRAFT_ROW_H;
+            boolean cons = !"profaned".equals(c.align());
+            if (idx == craftSel) {
+                g.fill(x + 9, ry - 1, x + 88, ry + CRAFT_ROW_H - 2, th[6]);
+                g.fill(x + 9, ry - 1, x + 11, ry + CRAFT_ROW_H - 2, th[5]);
+            }
+            boolean ok = CraftRecipes.canAfford(player, c);
+            String nm = CraftRecipes.result(c).getHoverName().getString();
+            g.drawString(font, fit(nm, 72), x + 14, ry + 1, ok ? (cons ? 0xFFF2C14E : 0xFFD06BFF) : 0xFF8A8A92, false);
+        }
+        if (list.size() > CRAFT_ROWS) {
+            if (craftScroll > 0) g.drawString(font, "▲", x + 80, py + 12, th[8], false);
+            if (craftScroll + CRAFT_ROWS < list.size()) g.drawString(font, "▼", x + 80, py + 22 + CRAFT_ROWS * CRAFT_ROW_H + 2, th[8], false);
+        }
+        // Détail
+        CraftConfig.Craft c = list.get(craftSel);
+        boolean cons = !"profaned".equals(c.align());
+        g.fill(x + 94, py + 20, x + 169, py + 86, th[0]);
+        g.fill(x + 95, py + 21, x + 168, py + 85, th[4]);
+        ItemStack res = CraftRecipes.result(c);
+        g.fill(x + 98, py + 24, x + 118, py + 44, th[5]);
+        g.fill(x + 99, py + 25, x + 117, py + 43, th[6]);
+        g.renderItem(res, x + 100, py + 26);
+        g.renderItemDecorations(font, res, x + 100, py + 26);
+        small(g, fit((cons ? "§e" : "§d") + res.getHoverName().getString(), 96), x + 122, py + 28, 0.8f, false, 70);
+        small(g, WSLang.t("shrine.craft_cost"), x + 98, py + 48, 0.75f, false, 60);
+        for (int i = 0; i < c.cost().size() && i < 4; i++) {
+            CraftConfig.Cost k = c.cost().get(i);
+            int have = CraftRecipes.count(player, k.item());
+            ItemStack ic = CraftRecipes.icon(k.item());
+            int ly = py + 57 + i * 7;
+            String line = (have >= k.count() ? "§a" : "§c") + Math.min(have, 999) + "/" + k.count() + " §7" + (ic.isEmpty() ? k.item() : ic.getHoverName().getString());
+            small(g, fit(line, 118), x + 98, ly, 0.7f, false, 68);
+        }
+        drawButton(g, x + 100, py + 90, 64, 14, WSLang.t("shrine.craft_make"), CraftRecipes.canAfford(player, c));
+        // Info-bulle de l'objet fabriqué
+        if (mx >= x + 98 && mx < x + 118 && my >= py + 24 && my < py + 44 && !res.isEmpty()) tipItem = res;
     }
 
     // ─── Forge ───
@@ -342,8 +408,10 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
         super.render(g, mx, my, pt);
         renderTooltip(g, mx, my);
         if (menu.tab == SeraphShrineMenu.TAB_FORGE) forgeTooltip(g, mx, my);
+        if (menu.tab == SeraphShrineMenu.TAB_CRAFT && !tipItem.isEmpty()) g.renderTooltip(font, tipItem, mx, my);
+        tipItem = ItemStack.EMPTY;
         // Info-bulle des onglets
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < TAB_X.length; i++) {
             int tx = leftPos + TAB_X[i];
             if (mx >= tx && mx < tx + 28 && my >= topPos + 2 && my < topPos + PANEL_Y + 2) {
                 String tip = WSLang.t("shrine.tab." + i) + (TAB_ENABLED[i] ? "" : " §8(" + WSLang.t("shrine.tab_soon") + ")");
@@ -357,7 +425,7 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
         if (button == 0) {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < TAB_X.length; i++) {
                 int tx = leftPos + TAB_X[i];
                 if (TAB_ENABLED[i] && mx >= tx && mx < tx + 28 && my >= topPos + 2 && my < topPos + PANEL_Y + 2) {
                     if (menu.tab != i) {
@@ -368,6 +436,16 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
                 }
             }
             int py = topPos + PANEL_Y;
+            if (menu.tab == SeraphShrineMenu.TAB_CRAFT) {
+                List<CraftConfig.Craft> cl = CraftConfig.crafts();
+                for (int r = 0; r < CRAFT_ROWS && craftScroll + r < cl.size(); r++) {
+                    if (hit(mx, my, leftPos + 8, py + 21 + r * CRAFT_ROW_H, 81, CRAFT_ROW_H)) { craftSel = craftScroll + r; return true; }
+                }
+                if (!cl.isEmpty() && hit(mx, my, leftPos + 100, py + 90, 64, 14)) {
+                    minecraft.gameMode.handleInventoryButtonClick(menu.containerId, SeraphShrineMenu.BTN_CRAFT + Math.min(craftSel, cl.size() - 1));
+                    return true;
+                }
+            }
             if (menu.tab == SeraphShrineMenu.TAB_OFFER && hit(mx, my, leftPos + 11, py + 66, 44, 14)) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, SeraphShrineMenu.BTN_OFFER);
                 return true;
@@ -390,6 +468,15 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
             }
         }
         return super.mouseClicked(mx, my, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mx, double my, double delta) {
+        if (menu.tab == SeraphShrineMenu.TAB_CRAFT) {
+            craftScroll = Math.max(0, craftScroll - (int) Math.signum(delta));
+            return true;
+        }
+        return super.mouseScrolled(mx, my, delta);
     }
 
     private static boolean hit(double mx, double my, int x, int y, int w, int h) {

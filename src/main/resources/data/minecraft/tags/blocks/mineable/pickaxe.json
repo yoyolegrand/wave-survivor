@@ -14,6 +14,10 @@
     "wavesurvivor:tainted_stone_wall",
     "wavesurvivor:tainted_stone_column",
     "wavesurvivor:polished_tainted_stone",
-    "wavesurvivor:chiseled_tainted_stone"
+    "wavesurvivor:chiseled_tainted_stone",
+    "wavesurvivor:holy_fountain",
+    "wavesurvivor:bait_totem",
+    "wavesurvivor:profane_obelisk",
+    "wavesurvivor:blood_altar"
   ]
 }

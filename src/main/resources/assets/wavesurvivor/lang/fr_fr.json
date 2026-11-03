@@ -180,5 +180,11 @@
   "block.wavesurvivor.tainted_stone_wall": "Muret de pierre profanée",
   "block.wavesurvivor.tainted_stone_column": "Colonne de pierre profanée",
   "block.wavesurvivor.polished_tainted_stone": "Pierre profanée polie",
-  "block.wavesurvivor.chiseled_tainted_stone": "Pierre profanée sculptée"
+  "block.wavesurvivor.chiseled_tainted_stone": "Pierre profanée sculptée",
+  "block.wavesurvivor.grace_lantern": "Lanterne de grâce",
+  "block.wavesurvivor.holy_fountain": "Fontaine sacrée",
+  "block.wavesurvivor.votive_candle": "Bougie votive",
+  "block.wavesurvivor.bait_totem": "Totem d'appât",
+  "block.wavesurvivor.profane_obelisk": "Obélisque profane",
+  "block.wavesurvivor.blood_altar": "Autel de sang"
 }

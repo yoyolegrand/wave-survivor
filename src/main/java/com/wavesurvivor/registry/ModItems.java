@@ -103,6 +103,19 @@ public class ModItems {
                 }
             });
 
+    public static final RegistryObject<Item> GRACE_LANTERN_ITEM = ITEMS.register("grace_lantern",
+            () -> new BlockItem(ModBlocks.GRACE_LANTERN.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> HOLY_FOUNTAIN_ITEM = ITEMS.register("holy_fountain",
+            () -> new BlockItem(ModBlocks.HOLY_FOUNTAIN.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> VOTIVE_CANDLE_ITEM = ITEMS.register("votive_candle",
+            () -> new BlockItem(ModBlocks.VOTIVE_CANDLE.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> BAIT_TOTEM_ITEM = ITEMS.register("bait_totem",
+            () -> new BlockItem(ModBlocks.BAIT_TOTEM.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> PROFANE_OBELISK_ITEM = ITEMS.register("profane_obelisk",
+            () -> new BlockItem(ModBlocks.PROFANE_OBELISK.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> BLOOD_ALTAR_ITEM = ITEMS.register("blood_altar",
+            () -> new BlockItem(ModBlocks.BLOOD_ALTAR.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
     public static final RegistryObject<Item> RELIQUAIRE_SCELLE = ITEMS.register("reliquaire_scelle",
             () -> new com.wavesurvivor.item.RelicCacheItem(new Item.Properties()));
@@ -403,6 +416,13 @@ public class ModItems {
                         output.accept(GRACE_FEAST_ITEM.get());
                         // Artisanat sacré et profane : blocs de décoration
                         for (RegistryObject<Item> d : com.wavesurvivor.craft.CraftDecor.ITEMS) output.accept(d.get());
+                        // Artisanat sacré et profane : blocs utilitaires
+                        output.accept(GRACE_LANTERN_ITEM.get());
+                        output.accept(HOLY_FOUNTAIN_ITEM.get());
+                        output.accept(VOTIVE_CANDLE_ITEM.get());
+                        output.accept(BAIT_TOTEM_ITEM.get());
+                        output.accept(PROFANE_OBELISK_ITEM.get());
+                        output.accept(BLOOD_ALTAR_ITEM.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());

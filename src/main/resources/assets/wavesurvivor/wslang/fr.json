@@ -3483,5 +3483,20 @@
   "craft.food.tainted_meat": "§7Force I (30 s)\n§cPuis Faim (10 s)",
   "craft.food.void_fruit": "§7Vitesse II (20 s)\n§cNausée au début (3 s)",
   "craft.food.black_wine": "§7+20 % de dégâts (60 s)\n§c-2 cœurs max pendant ce temps",
-  "craft.food.raw_heart": "§7+40 % de dégâts (120 s)\n§cAucune régénération naturelle pendant ce temps"
+  "craft.food.raw_heart": "§7+40 % de dégâts (120 s)\n§cAucune régénération naturelle pendant ce temps",
+  "shrine.tab.4": "Artisanat",
+  "shrine.craft_make": "Fabriquer",
+  "shrine.craft_cost": "Coût",
+  "shrine.craft_none": "Aucune fabrication.",
+  "shrine.craft_need": "Il te manque des ingrédients.",
+  "shrine.craft_done": "§aFabriqué : {0}",
+  "craft.block.cooldown": "§cRecharge : {0} s",
+  "craft.block.bait_on": "§5Les monstres sont attirés pendant {0} s.",
+  "craft.block.altar_weak": "§cTu es trop faible pour ce sacrifice.",
+  "craft.block.grace_lantern": "§7Lumière 15\n§7Morts-vivants et Corrompus à moins de 8 blocs : -20 % de dégâts infligés",
+  "craft.block.holy_fountain": "§7Joueurs à moins de 5 blocs : Régénération I\n§cInactive pendant un combat de boss",
+  "craft.block.votive_candle": "§7Clic droit pour l'allumer ou l'éteindre\n§7Allumée : aucune apparition naturelle de monstres à moins de 12 blocs\n§8(n'empêche pas les vagues des hordes)",
+  "craft.block.bait_totem": "§7Clic droit : attire les monstres à moins de 16 blocs pendant 30 s (sauf boss)\n§cRecharge 60 s",
+  "craft.block.profane_obelisk": "§7Monstres à moins de 6 blocs : 1 dégât par seconde\n§cJoueurs à moins de 6 blocs : Faim",
+  "craft.block.blood_altar": "§7Clic droit : sacrifiez 4 cœurs contre de l'expérience\n§cRecharge 30 s"
 }

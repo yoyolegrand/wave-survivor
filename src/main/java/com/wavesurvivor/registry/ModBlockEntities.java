@@ -34,6 +34,14 @@ public class ModBlockEntities {
                     () -> BlockEntityType.Builder.of(com.wavesurvivor.shrine.SeraphShrineBlockEntity::new,
                             ModBlocks.SERAPH_SHRINE.get()).build(null));
 
+    /** Artisanat sacré et profane : les 6 blocs utilitaires (zones, recharges). */
+    @SuppressWarnings("DataFlowIssue")
+    public static final RegistryObject<BlockEntityType<com.wavesurvivor.craft.CraftUtilityBlockEntity>> CRAFT_UTILITY =
+            BLOCK_ENTITIES.register("craft_utility",
+                    () -> BlockEntityType.Builder.of(com.wavesurvivor.craft.CraftUtilityBlockEntity::new,
+                            ModBlocks.GRACE_LANTERN.get(), ModBlocks.HOLY_FOUNTAIN.get(), ModBlocks.VOTIVE_CANDLE.get(),
+                            ModBlocks.BAIT_TOTEM.get(), ModBlocks.PROFANE_OBELISK.get(), ModBlocks.BLOOD_ALTAR.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

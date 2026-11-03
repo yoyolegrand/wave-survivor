@@ -120,3 +120,14 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Variantes à la table de fabrication (escalier 6→4, dalle 3→6, muret 6→6, colonne 2→2, poli 4→4, sculpté = 2 dalles) et à la scie à pierre.
 - [ ] Escaliers (tous les angles, haut/bas), dalles (haut/bas/double), murets (connexions), colonne (3 axes) s'affichent bien ; tous les blocs lâchent leur objet à la pioche ; dalle double = 2 objets.
 - [ ] Lumière faible (niveau 4) sur tous les blocs. À faire plus tard : textures définitives (veines dorées / fissures roses lumineuses).
+
+## Artisanat sacré et profane — étape 3 : onglet Artisanat + blocs utilitaires
+- [ ] Le Sanctuaire a un 5e onglet « Artisanat » (icône : Cœur de grâce) ; thème doré/violet selon la fabrication choisie ; liste à gauche (molette si besoin), coût à droite (vert = assez, rouge = manque), bouton « Fabriquer » ; les ingrédients sont pris dans l'inventaire du joueur.
+- [ ] Chaque fabrication consomme les bons ingrédients (config : shrineCrafts) et donne le bloc ; sans ingrédients : message et rien ne se passe.
+- [ ] Lanterne de grâce : lumière 15 ; un mort-vivant / Corrompu à moins de 8 blocs inflige -20 % de dégâts.
+- [ ] Fontaine sacrée : Régénération I aux joueurs à moins de 5 blocs, rien pendant un combat de boss.
+- [ ] Bougie votive : clic droit allume/éteint ; allumée, plus d'apparition naturelle de monstres à moins de 12 blocs (les vagues de horde apparaissent toujours).
+- [ ] Totem d'appât : clic droit → attire les monstres à moins de 16 blocs 30 s (sauf boss), recharge 60 s (message si en recharge).
+- [ ] Obélisque profane : monstres à moins de 6 blocs -1 PV/s ; joueurs à moins de 6 blocs : Faim.
+- [ ] Autel de sang : clic droit → -4 cœurs, +120 points d'expérience, recharge 30 s ; refusé si on a 4 cœurs ou moins.
+- [ ] Les 6 blocs sont aussi dans l'onglet créatif ; textures vanilla provisoires ; se cassent et se récupèrent.

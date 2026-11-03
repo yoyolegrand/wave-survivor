@@ -180,5 +180,11 @@
   "block.wavesurvivor.tainted_stone_wall": "Tainted Stone Wall",
   "block.wavesurvivor.tainted_stone_column": "Tainted Stone Column",
   "block.wavesurvivor.polished_tainted_stone": "Polished Tainted Stone",
-  "block.wavesurvivor.chiseled_tainted_stone": "Chiseled Tainted Stone"
+  "block.wavesurvivor.chiseled_tainted_stone": "Chiseled Tainted Stone",
+  "block.wavesurvivor.grace_lantern": "Lantern of Grace",
+  "block.wavesurvivor.holy_fountain": "Holy Fountain",
+  "block.wavesurvivor.votive_candle": "Votive Candle",
+  "block.wavesurvivor.bait_totem": "Bait Totem",
+  "block.wavesurvivor.profane_obelisk": "Profane Obelisk",
+  "block.wavesurvivor.blood_altar": "Blood Altar"
 }

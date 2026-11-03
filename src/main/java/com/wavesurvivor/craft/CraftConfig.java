@@ -96,4 +96,41 @@ public final class CraftConfig {
     public static float feastSaturation() { return (float) Math.max(0, HordeJson.dbl(sub(cfg(), "feast"), "saturation", 0.8)); }
 
     public static float feastHeal() { return (float) Math.max(0, HordeJson.dbl(sub(cfg(), "feast"), "heal", 8)); }
+
+    // ─── Blocs utilitaires ───
+
+    /** Réglage numérique d'un bloc utilitaire (« blocks.<bloc>.<clé> »). */
+    public static double blockNum(String block, String key, double def) {
+        return HordeJson.dbl(sub(sub(cfg(), "blocks"), block), key, def);
+    }
+
+    // ─── Fabrications de l'onglet Artisanat du Sanctuaire ───
+
+    /** Un ingrédient : objet « mod:id » ou tag « #mod:tag ». */
+    public record Cost(String item, int count) {}
+
+    /** Une fabrication : align = « consecrated » ou « profaned ». */
+    public record Craft(String id, String result, int count, String align, List<Cost> cost) {}
+
+    public static List<Craft> crafts() {
+        List<Craft> out = new ArrayList<>();
+        JsonObject c = cfg();
+        if (!c.has("shrineCrafts") || !c.get("shrineCrafts").isJsonArray()) return out;
+        for (JsonElement e : c.getAsJsonArray("shrineCrafts")) {
+            if (!e.isJsonObject()) continue;
+            JsonObject o = e.getAsJsonObject();
+            String id = HordeJson.str(o, "id", ""), result = HordeJson.str(o, "result", "");
+            if (id.isEmpty() || result.isEmpty()) continue;
+            List<Cost> cost = new ArrayList<>();
+            if (o.has("cost") && o.get("cost").isJsonArray()) {
+                for (JsonElement ce : o.getAsJsonArray("cost")) {
+                    if (!ce.isJsonObject()) continue;
+                    String it = HordeJson.str(ce.getAsJsonObject(), "item", "");
+                    if (!it.isEmpty()) cost.add(new Cost(it, Math.max(1, HordeJson.num(ce.getAsJsonObject(), "count", 1))));
+                }
+            }
+            out.add(new Craft(id, result, Math.max(1, HordeJson.num(o, "count", 1)), HordeJson.str(o, "align", "consecrated"), cost));
+        }
+        return out;
+    }
 }

@@ -37,10 +37,34 @@
       "damageBonusPercent": 40, "noRegen": true, "buffSeconds": 120
     }
   },
+  "shrineCrafts_comment": "Onglet Artisanat du Sanctuaire : shrineCrafts = liste des fabrications (cost : objets ou #tags du joueur consommés ; align : consecrated ou profaned, donne la couleur). Un tableau est remplacé en entier par la config du joueur.",
   "feast": {
     "_comment": "Festin de grâce (bloc posable, 6 parts) : faim et soin (en PV : 8 = 4 cœurs) par portion.",
     "nutrition": 8,
     "saturation": 0.8,
     "heal": 8
-  }
+  },
+  "blocks": {
+    "_comment": "Blocs utilitaires de l'Artisanat (fabriqués dans l'onglet Artisanat du Sanctuaire). Rayons en blocs, durées en secondes.",
+    "grace_lantern": { "radius": 8, "damageReductionPercent": 20 },
+    "holy_fountain": { "radius": 5, "amplifier": 0, "intervalSeconds": 2 },
+    "votive_candle": { "radius": 12 },
+    "bait_totem": { "radius": 16, "activeSeconds": 30, "cooldownSeconds": 60 },
+    "profane_obelisk": { "radius": 6, "damagePerSecond": 1, "hungerSeconds": 4 },
+    "blood_altar": { "healthCost": 8, "xp": 120, "cooldownSeconds": 30 }
+  },
+  "shrineCrafts": [
+    { "id": "grace_lantern", "result": "wavesurvivor:grace_lantern", "count": 1, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_fragment", "count": 2 }, { "item": "minecraft:lantern", "count": 1 } ] },
+    { "id": "holy_fountain", "result": "wavesurvivor:holy_fountain", "count": 1, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_fragment", "count": 4 }, { "item": "wavesurvivor:blessed_marble", "count": 4 } ] },
+    { "id": "votive_candle", "result": "wavesurvivor:votive_candle", "count": 1, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_fragment", "count": 1 }, { "item": "#minecraft:candles", "count": 1 } ] },
+    { "id": "bait_totem", "result": "wavesurvivor:bait_totem", "count": 1, "align": "profaned",
+      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 2 }, { "item": "minecraft:bone_block", "count": 1 } ] },
+    { "id": "profane_obelisk", "result": "wavesurvivor:profane_obelisk", "count": 1, "align": "profaned",
+      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 4 }, { "item": "wavesurvivor:tainted_stone", "count": 4 } ] },
+    { "id": "blood_altar", "result": "wavesurvivor:blood_altar", "count": 1, "align": "profaned",
+      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 3 }, { "item": "minecraft:enchanting_table", "count": 1 } ] }
+  ]
 }

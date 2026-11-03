@@ -155,6 +155,32 @@ public class ModBlocks {
             () -> new com.wavesurvivor.craft.GraceFeastBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.GOLD).strength(0.5f).sound(SoundType.WOOL).noOcclusion().lightLevel(s -> 6)));
 
+    /** Artisanat sacré et profane : blocs utilitaires (fabriqués dans l'onglet Artisanat du Sanctuaire). */
+    public static final RegistryObject<Block> GRACE_LANTERN = BLOCKS.register("grace_lantern",
+            () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.GOLD)
+                    .strength(2.0f, 6.0f).sound(SoundType.LANTERN).lightLevel(s -> 15).noOcclusion(),
+                    com.wavesurvivor.craft.CraftUtilityBlock.Kind.LANTERN));
+    public static final RegistryObject<Block> HOLY_FOUNTAIN = BLOCKS.register("holy_fountain",
+            () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ)
+                    .strength(2.0f, 6.0f).sound(SoundType.STONE).lightLevel(s -> 8).requiresCorrectToolForDrops(),
+                    com.wavesurvivor.craft.CraftUtilityBlock.Kind.FOUNTAIN));
+    public static final RegistryObject<Block> VOTIVE_CANDLE = BLOCKS.register("votive_candle",
+            () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
+                    .strength(2.0f, 6.0f).sound(SoundType.CANDLE).lightLevel(s -> s.getValue(com.wavesurvivor.craft.CraftUtilityBlock.LIT) ? 7 : 0).noOcclusion(),
+                    com.wavesurvivor.craft.CraftUtilityBlock.Kind.CANDLE));
+    public static final RegistryObject<Block> BAIT_TOTEM = BLOCKS.register("bait_totem",
+            () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
+                    .strength(2.0f, 6.0f).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).requiresCorrectToolForDrops(),
+                    com.wavesurvivor.craft.CraftUtilityBlock.Kind.BAIT));
+    public static final RegistryObject<Block> PROFANE_OBELISK = BLOCKS.register("profane_obelisk",
+            () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
+                    .strength(2.0f, 6.0f).sound(SoundType.DEEPSLATE).lightLevel(s -> 6).requiresCorrectToolForDrops(),
+                    com.wavesurvivor.craft.CraftUtilityBlock.Kind.OBELISK));
+    public static final RegistryObject<Block> BLOOD_ALTAR = BLOCKS.register("blood_altar",
+            () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+                    .strength(2.0f, 6.0f).sound(SoundType.STONE).lightLevel(s -> 5).requiresCorrectToolForDrops(),
+                    com.wavesurvivor.craft.CraftUtilityBlock.Kind.ALTAR));
+
     public static void register(IEventBus eventBus) {
         com.wavesurvivor.craft.CraftDecor.init(); // blocs de décoration de l'Artisanat
         BLOCKS.register(eventBus);

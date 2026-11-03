@@ -21,7 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Menu du SANCTUAIRE DU SÉRAPHIN (4 onglets : 0 Offrandes · 1 Récolte · 2 Fusion · 3 Forge).
+ * Menu du SANCTUAIRE DU SÉRAPHIN (5 onglets : 0 Offrandes · 1 Récolte · 2 Fusion · 3 Forge · 4 Artisanat, sans emplacement : on paie avec l'inventaire).
  * Emplacements : 0 = offrande · 1 = fusion (entrée) · 2 = fusion (sortie, prise seulement) · 3 = forge (équipement) · 4 = forge (fragment) · 5-31 = inventaire · 32-40 = barre d'objets.
  * Les emplacements d'un autre onglet sont désactivés (isActive).
  * Boutons (clickMenuButton) : 0-3 = changer d'onglet · 10 = Offrir · 11 = Récolter · 12 = Fusionner · 13 = Insérer · 14 = Retirer.
@@ -29,8 +29,10 @@ import net.minecraft.world.item.ItemStack;
  */
 public class SeraphShrineMenu extends AbstractContainerMenu {
 
-    public static final int TAB_OFFER = 0, TAB_HARVEST = 1, TAB_FUSION = 2, TAB_FORGE = 3;
+    public static final int TAB_OFFER = 0, TAB_HARVEST = 1, TAB_FUSION = 2, TAB_FORGE = 3, TAB_CRAFT = 4;
     public static final int BTN_OFFER = 10, BTN_HARVEST = 11, BTN_FUSE = 12, BTN_INSERT = 13, BTN_REMOVE = 14;
+    /** Onglet Artisanat : bouton 20 + n = fabriquer la n-ième fabrication de la config (CraftConfig.crafts). */
+    public static final int BTN_CRAFT = 20;
     /** Positions (relatives à la fenêtre 176 × 234) : le panneau commence à y = 24, voir SeraphShrineScreen. */
     public static final int OFFER_X = 25, OFFER_Y = 65, FUSE_IN_X = 37, FUSE_OUT_X = 109, FUSE_Y = 65, FORGE_X = 15, EQUIP_Y = 53, FRAG_Y = 85;
     public static final int INV_X = 8, INV_Y = 149, HOT_Y = 207;
@@ -124,8 +126,19 @@ public class SeraphShrineMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (id >= 0 && id <= 3) {
+        if (id >= 0 && id <= TAB_CRAFT) {
             tab = id;
+            return true;
+        }
+        if (id >= BTN_CRAFT) {
+            java.util.List<com.wavesurvivor.craft.CraftConfig.Craft> list = com.wavesurvivor.craft.CraftConfig.crafts();
+            int n = id - BTN_CRAFT;
+            if (!(player instanceof ServerPlayer csp) || n >= list.size()) return false;
+            com.wavesurvivor.craft.CraftConfig.Craft c = list.get(n);
+            if (!com.wavesurvivor.craft.CraftRecipes.craft(csp, c)) { say(csp, "shrine.craft_need"); return false; }
+            csp.level().playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.7f, 1.3f);
+            say(csp, "shrine.craft_done", com.wavesurvivor.craft.CraftRecipes.result(c).getHoverName().getString());
+            broadcastChanges();
             return true;
         }
         if (!(player instanceof ServerPlayer sp) || !(player.level().getBlockEntity(pos) instanceof SeraphShrineBlockEntity be)) return false;

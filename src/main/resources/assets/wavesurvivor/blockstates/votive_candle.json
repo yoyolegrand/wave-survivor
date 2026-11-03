@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "wavesurvivor:block/votive_candle"
+    },
+    "lit=true": {
+      "model": "wavesurvivor:block/votive_candle_lit"
+    }
+  }
+}

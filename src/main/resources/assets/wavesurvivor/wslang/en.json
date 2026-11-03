@@ -4217,5 +4217,20 @@
   "craft.food.tainted_meat": "§7Strength I (30 s)\n§cThen Hunger (10 s)",
   "craft.food.void_fruit": "§7Speed II (20 s)\n§cNausea at first (3 s)",
   "craft.food.black_wine": "§7+20% damage (60 s)\n§c-2 max hearts meanwhile",
-  "craft.food.raw_heart": "§7+40% damage (120 s)\n§cNo natural regeneration meanwhile"
+  "craft.food.raw_heart": "§7+40% damage (120 s)\n§cNo natural regeneration meanwhile",
+  "shrine.tab.4": "Crafting",
+  "shrine.craft_make": "Craft",
+  "shrine.craft_cost": "Cost",
+  "shrine.craft_none": "Nothing to craft.",
+  "shrine.craft_need": "You are missing ingredients.",
+  "shrine.craft_done": "§aCrafted: {0}",
+  "craft.block.cooldown": "§cCooldown: {0} s",
+  "craft.block.bait_on": "§5Monsters are lured for {0} s.",
+  "craft.block.altar_weak": "§cYou are too weak for this sacrifice.",
+  "craft.block.grace_lantern": "§7Light 15\n§7Undead and Corrupted within 8 blocks: -20% damage dealt",
+  "craft.block.holy_fountain": "§7Players within 5 blocks: Regeneration I\n§cInactive during a boss fight",
+  "craft.block.votive_candle": "§7Right click to light or snuff it\n§7Lit: no natural monster spawns within 12 blocks\n§8(does not stop horde waves)",
+  "craft.block.bait_totem": "§7Right click: lures monsters within 16 blocks for 30 s (not bosses)\n§c60 s cooldown",
+  "craft.block.profane_obelisk": "§7Monsters within 6 blocks: 1 damage per second\n§cPlayers within 6 blocks: Hunger",
+  "craft.block.blood_altar": "§7Right click: sacrifice 4 hearts for experience\n§c30 s cooldown"
 }
