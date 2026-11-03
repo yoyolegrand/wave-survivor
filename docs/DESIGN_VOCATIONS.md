@@ -28,7 +28,7 @@
 
 ## 3. Arbres : règles communes
 
-- **Paliers** dans une branche : talent 1 libre, talent 2 = 2 points dans la branche, talent 3 = 5 points, talent 4 = 8 points.
+- **Paliers** : talent 1 libre, talent 2 = 2 points dépensés dans l'arbre du rôle (toutes branches), talent 3 = 5 points, talent 4 = 8 points ; il faut en plus avoir pris (au moins 1 rang) chaque talent précédent de sa colonne.
 - **Ultime** : 15 points dépensés dans l'arbre + **150 PR** pour le débloquer ; **un seul** des deux.
 - **Réinitialiser** l'arbre : **50 PR** (rend tous les points ; l'ultime débloqué reste payé mais doit être re-choisi).
 - Changer ses talents : **hors partie** uniquement (à l'autel de Renaissance).

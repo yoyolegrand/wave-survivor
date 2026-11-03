@@ -148,3 +148,7 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 ## Forge du Sanctuaire — attributs visibles sur l'arme
 - [ ] Une arme avec Célérité (vitesse d'attaque) ou Force sacrée (dégâts) affiche maintenant « +X % Attack Speed / Attack Damage » dans son info-bulle (« When in Main Hand ») ; la vitesse réelle de frappe change bien (barre de recharge).
 - [ ] Les malus (Rage aveugle : -vitesse d'attaque) s'affichent aussi ; pas de double application (comparer avec un objet sans amélioration).
+
+## Vocations — nouvelle règle de palier
+- [ ] Le 2e / 3e / 4e talent d'une colonne demande 2 / 5 / 8 points dépensés dans TOUT l'arbre du rôle (toutes branches) ET que les talents précédents de la colonne aient au moins 1 rang. Ex. Chasseur de primes : 6 points en Contrats + 4 en La chasse = 10 → « Contrats instructifs » (8) s'achète si les 3 premiers de la colonne sont pris.
+- [ ] Infobulle d'un talent verrouillé : « Requiert N point(s) dépensés dans l'arbre du rôle » ou « Prends d'abord les talents précédents de cette colonne » ; le lien entre deux talents devient vert quand le suivant est débloqué.

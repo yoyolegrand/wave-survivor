@@ -275,11 +275,12 @@ public class VocationsScreen extends Screen {
                 int y = top + 66 + i * BOX_STEP;
                 int rank = VocationsClient.rank(r, t.id());
                 int req = Vocations.requiredBranchPoints(tree, t.id());
-                boolean unlocked = bpts >= req;
+                int lock = Vocations.lockReason(tree, t.id(), id -> VocationsClient.rank(r, id));
+                boolean unlocked = lock == 0;
                 boolean maxed = rank >= t.ranks();
                 if (i < b.talents().size() - 1 && i < 3) { // lien vers le talent suivant
                     int need = Vocations.requiredBranchPoints(tree, b.talents().get(i + 1).id());
-                    g.fill(cx + BOX_W / 2 - 1, y + BOX_H, cx + BOX_W / 2 + 1, y + BOX_STEP, bpts >= need ? 0xFF5DBB63 : 0xFF45445A);
+                    g.fill(cx + BOX_W / 2 - 1, y + BOX_H, cx + BOX_W / 2 + 1, y + BOX_STEP, Vocations.lockReason(tree, b.talents().get(i + 1).id(), id -> VocationsClient.rank(r, id)) == 0 ? 0xFF5DBB63 : 0xFF45445A);
                 }
                 boolean hover = mx >= cx && mx < cx + BOX_W && my >= y && my < y + BOX_H;
                 int fill, border, txt;
@@ -321,7 +322,7 @@ public class VocationsScreen extends Screen {
                     g.fill(sx, sy, sx + 4, sy + 4, k < rank ? 0xFF7FE08A : 0xFF55546A);
                 }
                 hits.add(new Hit(cx, y, BOX_W, BOX_H, K_TALENT, t.id(), r));
-                if (hover) tip = talentTip(r, t, rank, req, bpts, unlocked);
+                if (hover) tip = talentTip(r, t, rank, req, lock);
             }
         }
 
@@ -371,7 +372,7 @@ public class VocationsScreen extends Screen {
         return Component.literal("§7" + sb);
     }
 
-    private List<Component> talentTip(KingdomRoles.Role r, Talent t, int rank, int req, int bpts, boolean unlocked) {
+    private List<Component> talentTip(KingdomRoles.Role r, Talent t, int rank, int req, int lock) {
         List<Component> tip = new ArrayList<>();
         tip.add(Component.literal("§6" + WSLang.t("voc.talent." + r.id + "." + t.id())));
         for (var line : font.split(Component.literal(WSLang.t("voc.talent." + r.id + "." + t.id() + ".d")), 170)) tip.add(wrap(line));
@@ -381,7 +382,8 @@ public class VocationsScreen extends Screen {
         }
         tip.add(Component.literal("§7" + WSLang.t("voc.ui.rank", rank, t.ranks())));
         if (t.wip()) tip.add(Component.literal(WSLang.t("voc.ui.soon")));
-        else if (!unlocked) tip.add(Component.literal("§c" + WSLang.t("voc.ui.requires", req)));
+        else if (lock == 2) tip.add(Component.literal("§c" + WSLang.t("voc.ui.requires_prev")));
+        else if (lock != 0) tip.add(Component.literal("§c" + WSLang.t("voc.ui.requires", req)));
         return tip;
     }
 

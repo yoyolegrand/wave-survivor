@@ -25,7 +25,7 @@ public final class Vocations {
     private Vocations() {}
 
     /** Résultat d'une action sur l'arbre. */
-    public enum Result { OK, UNKNOWN, IN_GAME, NO_POINTS, MAX_RANK, LOCKED, NOT_ENOUGH_PR, ULT_LOCKED, ULT_ALREADY, NOTHING, NOT_READY }
+    public enum Result { OK, UNKNOWN, IN_GAME, NO_POINTS, MAX_RANK, LOCKED, LOCKED_CHAIN, NOT_ENOUGH_PR, ULT_LOCKED, ULT_ALREADY, NOTHING, NOT_READY }
 
     /** Données brutes du joueur (lecture : synchronisation vers le client). */
     static CompoundTag root(Player p) {
@@ -112,6 +112,23 @@ public final class Vocations {
         return 0;
     }
 
+    /**
+     * Pourquoi un talent est verrouillé : 0 = débloqué ; 1 = pas assez de points dépensés dans TOUT l'arbre du rôle (palier de sa ligne : 0 / 2 / 5 / 8) ;
+     * 2 = un talent précédent de sa colonne n'a encore aucun point. {@code rank} donne le rang acquis d'un talent (identifiant → rang).
+     */
+    public static int lockReason(RoleTree tree, String talentId, java.util.function.ToIntFunction<String> rank) {
+        for (Branch b : tree.branches()) {
+            for (int i = 0; i < b.talents().size(); i++) {
+                if (!b.talents().get(i).id().equals(talentId)) continue;
+                for (int j = 0; j < i; j++) if (rank.applyAsInt(b.talents().get(j).id()) <= 0) return 2;
+                int total = 0;
+                for (Branch o : tree.branches()) for (Talent t : o.talents()) total += rank.applyAsInt(t.id());
+                return total >= VocationsConfig.branchTier(i) ? 0 : 1;
+            }
+        }
+        return 0;
+    }
+
     // ─── Talent ultime ───
 
     /** Identifiant de l'ultime choisi ("" si aucun). */
@@ -138,7 +155,9 @@ public final class Vocations {
         int rank = rank(p, r, talent.id());
         if (rank >= talent.ranks()) return Result.MAX_RANK;
         if (pointsFree(p, r) <= 0) return Result.NO_POINTS;
-        if (branchPoints(p, r, branch.id()) < requiredBranchPoints(tree, talent.id())) return Result.LOCKED;
+        int lock = lockReason(tree, talent.id(), id -> rank(p, r, id));
+        if (lock == 2) return Result.LOCKED_CHAIN;
+        if (lock != 0) return Result.LOCKED;
         CompoundTag t = role(p, r).getCompound("t");
         t.putInt(talent.id(), rank + 1);
         role(p, r).put("t", t);
