@@ -176,13 +176,27 @@ public final class ShrineGear {
         return out;
     }
 
+    /** Total d'une clé d'effet sur UN seul objet (mêmes règles que totals : plafond sur les bonus, malus sans limite). */
+    public static double itemTotal(ItemStack st, String key) {
+        double pos = 0, neg = 0, single = 0;
+        for (Applied a : upgradesOf(st)) {
+            ShrineUpgrades.Def d = ShrineUpgrades.get(a.id());
+            if (d == null) continue;
+            for (ShrineUpgrades.Fx fx : d.effects()) {
+                if (!fx.key().equals(key)) continue;
+                double v = fx.at(a.tier());
+                if (v >= 0) { pos += v; single = Math.max(single, v); } else neg += v;
+            }
+        }
+        if (ShrineUpgrades.isCapped(key)) pos = Math.min(pos, Math.max(ShrineUpgrades.cap(), single));
+        return pos + neg;
+    }
+
     // ─── Bonus par attributs ───
 
     private record AttrFx(String key, Attribute attr, AttributeModifier.Operation op) {}
 
     private static final List<AttrFx> ATTRS = List.of(
-            new AttrFx("damage_pct", Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.MULTIPLY_TOTAL),
-            new AttrFx("atkspeed_pct", Attributes.ATTACK_SPEED, AttributeModifier.Operation.MULTIPLY_TOTAL),
             new AttrFx("armor_pct", Attributes.ARMOR, AttributeModifier.Operation.MULTIPLY_TOTAL),
             new AttrFx("toughness_pct", Attributes.ARMOR_TOUGHNESS, AttributeModifier.Operation.MULTIPLY_TOTAL),
             new AttrFx("speed_pct", Attributes.MOVEMENT_SPEED, AttributeModifier.Operation.MULTIPLY_TOTAL),
@@ -191,7 +205,10 @@ public final class ShrineGear {
 
     private static final Map<UUID, Map<String, Double>> LAST = new HashMap<>();
 
-    private static UUID uuid(String key) {
+    /** Les bonus de dégâts et de vitesse d'attaque de l'ARME passent par l'objet lui-même (voir ShrineGearEvents.onItemAttributes) : l'info-bulle les affiche. */
+    public static final String[] WEAPON_KEYS = {"damage_pct", "atkspeed_pct"};
+
+    public static UUID uuid(String key) {
         return UUID.nameUUIDFromBytes(("ws_shrine_gear_" + key).getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 

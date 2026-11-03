@@ -144,3 +144,7 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 ## Artisanat sacré et profane — étape 5 : textes, Codex, CHANGELOG
 - [ ] Codex : page « Artisanat sacré et profane » (après Sanctuaire du Séraphin), texte FR et EN complet et lisible (défilement) ; la page du Sanctuaire mentionne l'onglet 5.
 - [ ] Aucun texte brut / clé manquante dans les infobulles, messages et l'onglet Artisanat (FR et EN).
+
+## Forge du Sanctuaire — attributs visibles sur l'arme
+- [ ] Une arme avec Célérité (vitesse d'attaque) ou Force sacrée (dégâts) affiche maintenant « +X % Attack Speed / Attack Damage » dans son info-bulle (« When in Main Hand ») ; la vitesse réelle de frappe change bien (barre de recharge).
+- [ ] Les malus (Rage aveugle : -vitesse d'attaque) s'affichent aussi ; pas de double application (comparer avec un objet sans amélioration).

@@ -12,7 +12,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -132,6 +136,20 @@ public class ShrineGearEvents {
     }
 
     // ─── Équipement porté : attributs ───
+
+    /**
+     * Bonus de dégâts et de vitesse d'attaque d'une ARME améliorée : portés par l'objet (main principale), donc visibles dans son info-bulle
+     * (« +10 % Attack Speed ») et dans le calcul de la vitesse réelle.
+     */
+    @SubscribeEvent
+    public void onItemAttributes(ItemAttributeModifierEvent e) {
+        if (e.getSlotType() != EquipmentSlot.MAINHAND) return;
+        ItemStack st = e.getItemStack();
+        if (!st.hasTag() || !st.getTag().contains(ShrineGear.UPGRADES) || !e.getModifiers().containsKey(Attributes.ATTACK_DAMAGE)) return;
+        double dmg = ShrineGear.itemTotal(st, "damage_pct"), spd = ShrineGear.itemTotal(st, "atkspeed_pct");
+        if (dmg != 0) e.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(ShrineGear.uuid("damage_pct"), "ws_shrine_damage_pct", dmg, AttributeModifier.Operation.MULTIPLY_TOTAL));
+        if (spd != 0) e.addModifier(Attributes.ATTACK_SPEED, new AttributeModifier(ShrineGear.uuid("atkspeed_pct"), "ws_shrine_atkspeed_pct", spd, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    }
 
     @SubscribeEvent
     public void onEquipment(LivingEquipmentChangeEvent e) {
