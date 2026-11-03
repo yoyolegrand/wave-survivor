@@ -72,6 +72,15 @@ public final class CraftConfig {
     /** Réglages de l'aliment « id » (ex. « blessed_bread »), ou valeurs neutres si absent. */
     public static Food food(String id) {
         JsonObject o = sub(sub(cfg(), "food"), id);
+        List<FoodEffect> list = effectsOf(o);
+        return new Food(Math.max(0, HordeJson.num(o, "nutrition", 4)), (float) Math.max(0, HordeJson.dbl(o, "saturation", 0.6)),
+                Math.max(0, HordeJson.num(o, "cleanse", 0)), list,
+                HordeJson.num(o, "damageBonusPercent", 0), Math.max(0, HordeJson.num(o, "maxHealthLoss", 0)),
+                HordeJson.bool(o, "noRegen", false), Math.max(1, HordeJson.num(o, "buffSeconds", 60)));
+    }
+
+    /** Liste « effects » d'un objet JSON (effet, amplificateur, secondes, délai). */
+    private static List<FoodEffect> effectsOf(JsonObject o) {
         List<FoodEffect> list = new ArrayList<>();
         if (o.has("effects") && o.get("effects").isJsonArray()) {
             for (JsonElement e : o.getAsJsonArray("effects")) {
@@ -83,13 +92,13 @@ public final class CraftConfig {
                         Math.max(1, HordeJson.num(eo, "seconds", 10)), Math.max(0, HordeJson.num(eo, "delay", 0))));
             }
         }
-        return new Food(Math.max(0, HordeJson.num(o, "nutrition", 4)), (float) Math.max(0, HordeJson.dbl(o, "saturation", 0.6)),
-                Math.max(0, HordeJson.num(o, "cleanse", 0)), list,
-                HordeJson.num(o, "damageBonusPercent", 0), Math.max(0, HordeJson.num(o, "maxHealthLoss", 0)),
-                HordeJson.bool(o, "noRegen", false), Math.max(1, HordeJson.num(o, "buffSeconds", 60)));
+        return list;
     }
 
     // ─── Festin de grâce ───
+
+    /** Effets de potion donnés par chaque part du Festin de grâce. */
+    public static List<FoodEffect> feastEffects() { return effectsOf(sub(cfg(), "feast")); }
 
     public static int feastNutrition() { return Math.max(0, HordeJson.num(sub(cfg(), "feast"), "nutrition", 8)); }
 

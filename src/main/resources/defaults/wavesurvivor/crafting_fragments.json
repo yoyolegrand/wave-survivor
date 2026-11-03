@@ -39,10 +39,14 @@
   },
   "shrineCrafts_comment": "Onglet Artisanat du Sanctuaire : shrineCrafts = liste des fabrications (cost : objets ou #tags du joueur consommés ; align : consecrated ou profaned, donne la couleur). Un tableau est remplacé en entier par la config du joueur.",
   "feast": {
-    "_comment": "Festin de grâce (bloc posable, 6 parts) : faim et soin (en PV : 8 = 4 cœurs) par portion.",
+    "_comment": "Festin de grâce (bloc posable, 6 parts) : faim, soin (en PV : 8 = 4 cœurs) et effets de potion par portion.",
     "nutrition": 8,
     "saturation": 0.8,
-    "heal": 8
+    "heal": 8,
+    "effects": [
+      { "effect": "minecraft:regeneration", "amplifier": 1, "seconds": 10 },
+      { "effect": "minecraft:absorption", "amplifier": 1, "seconds": 60 }
+    ]
   },
   "blocks": {
     "_comment": "Blocs utilitaires de l'Artisanat (fabriqués dans l'onglet Artisanat du Sanctuaire). Rayons en blocs, durées en secondes.",

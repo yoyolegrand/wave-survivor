@@ -36,7 +36,8 @@ public final class CraftGearItems {
 
     /** Lame de l'aube (Consacrée) : épée en diamant, +50 % contre morts-vivants et Corrompus, brille la nuit. */
     public static class DawnBlade extends SwordItem implements FixedAlign {
-        public DawnBlade(Properties props) { super(Tiers.DIAMOND, 3, -2.4f, props); }
+        /** Niveau Netherite : 8 de dégâts (3 de l'épée + 4 du matériau + 1 de base). */
+        public DawnBlade(Properties props) { super(Tiers.NETHERITE, 3, -2.4f, props); }
 
         @Override public String align() { return ShrineGear.CONSECRATED; }
 
@@ -51,7 +52,8 @@ public final class CraftGearItems {
 
     /** Faux de la souillure (Profanée) : balayage large, vol de vie, un coup manqué coûte un cœur. */
     public static class TaintScythe extends SwordItem implements FixedAlign {
-        public TaintScythe(Properties props) { super(Tiers.DIAMOND, 2, -2.6f, props); }
+        /** 1 de plus que la Lame : 9 de dégâts. */
+        public TaintScythe(Properties props) { super(Tiers.NETHERITE, 4, -2.6f, props); }
 
         @Override public String align() { return ShrineGear.PROFANED; }
 

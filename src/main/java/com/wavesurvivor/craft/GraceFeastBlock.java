@@ -63,6 +63,10 @@ public class GraceFeastBlock extends Block {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         p.getFoodData().eat(CraftConfig.feastNutrition(), CraftConfig.feastSaturation());
         p.heal(CraftConfig.feastHeal());
+        for (CraftConfig.FoodEffect fe : CraftConfig.feastEffects()) {
+            net.minecraft.world.effect.MobEffect eff = net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT.get(fe.effect());
+            if (eff != null) p.addEffect(new net.minecraft.world.effect.MobEffectInstance(eff, fe.seconds() * 20, fe.amplifier(), false, true, true));
+        }
         level.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 1f, 1f);
         int bites = state.getValue(BITES);
         if (bites + 1 >= PORTIONS) level.removeBlock(pos, false);

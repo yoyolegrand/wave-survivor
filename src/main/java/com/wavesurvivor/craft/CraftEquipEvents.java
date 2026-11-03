@@ -23,12 +23,12 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -51,7 +51,7 @@ public class CraftEquipEvents {
 
     /** Balayage de la Faux en cours (évite que les dégâts de balayage ne déclenchent un nouveau balayage). */
     private static boolean sweeping;
-    private static final Map<UUID, Long> LAST_HIT = new HashMap<>(), PENDING_MISS = new HashMap<>();
+    private static final Map<UUID, Long> LAST_HIT = new HashMap<>(), PENDING_MISS = new HashMap<>(), LAST_MINING = new HashMap<>();
 
     /** Totem de souillure : fin du bonus de dégâts, fin du malus de PV max (temps de jeu) et malus déjà appliqué. */
     private static final class TaintState {
@@ -79,6 +79,7 @@ public class CraftEquipEvents {
         if (src.getEntity() instanceof ServerPlayer ap && src.getDirectEntity() == ap && victim != ap) {
             if (holds(ap, ModItems.DAWN_BLADE.get()) && undeadOrCorrupted(victim)) {
                 amt *= 1f + (float) CraftConfig.equipNum("dawn_blade", "undeadBonusPercent", 50) / 100f;
+                if (ap.level() instanceof ServerLevel sl) sl.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, victim.getX(), victim.getY(0.6), victim.getZ(), 6, 0.25, 0.3, 0.25, 0.05);
             }
             if (holds(ap, ModItems.TAINT_SCYTHE.get())) {
                 ap.heal(amt * (float) CraftConfig.equipNum("taint_scythe", "lifestealPercent", 5) / 100f);
@@ -128,10 +129,20 @@ public class CraftEquipEvents {
         if (e.getEntity() instanceof ServerPlayer p) LAST_HIT.put(p.getUUID(), p.level().getGameTime());
     }
 
-    /** Appelé quand le joueur balance la Faux : sans cible en vue (ni entité, ni bloc à portée), le coup sera compté comme manqué au tick suivant. */
+    /** Un clic gauche sur un bloc (on le casse) n'est pas un coup manqué : on note le tick pour ignorer le balancement qui l'accompagne. */
+    @SubscribeEvent
+    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock e) {
+        if (e.getEntity() instanceof ServerPlayer p) LAST_MINING.put(p.getUUID(), p.level().getGameTime());
+    }
+
+    /** Tant qu'on mine, la vitesse de minage est recalculée à chaque tick. */
+    @SubscribeEvent
+    public void onBreakSpeed(PlayerEvent.BreakSpeed e) {
+        if (e.getEntity() instanceof ServerPlayer p) LAST_MINING.put(p.getUUID(), p.level().getGameTime());
+    }
+
+    /** Appelé quand le joueur balance la Faux : si aucune entité n'est touchée et qu'il ne mine pas, le coup est compté comme manqué au tick suivant. */
     static void onScytheSwing(ServerPlayer p) {
-        HitResult hr = p.pick(4.5, 1.0f, false);
-        if (hr.getType() == HitResult.Type.BLOCK) return; // on casse ou on frappe un bloc : pas de pénalité
         PENDING_MISS.put(p.getUUID(), p.level().getGameTime());
     }
 
@@ -141,11 +152,15 @@ public class CraftEquipEvents {
     public void onTick(TickEvent.PlayerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !(e.player instanceof ServerPlayer p)) return;
         long now = p.level().getGameTime();
+        if (now % 8 == 0 && p.getMainHandItem().is(ModItems.DAWN_BLADE.get()) && p.level().getDayTime() % 24000L >= 13000L && p.level() instanceof ServerLevel nl) {
+            nl.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, p.getX(), p.getY(1.0), p.getZ(), 2, 0.4, 0.5, 0.4, 0.01); // la Lame de l'aube brille la nuit
+        }
         Long swing = PENDING_MISS.get(p.getUUID());
         if (swing != null && now > swing) {
             PENDING_MISS.remove(p.getUUID());
             Long hit = LAST_HIT.get(p.getUUID());
-            boolean touched = hit != null && Math.abs(hit - swing) <= 1;
+            Long mine = LAST_MINING.get(p.getUUID());
+            boolean touched = (hit != null && Math.abs(hit - swing) <= 1) || (mine != null && Math.abs(mine - swing) <= 1);
             float cost = (float) CraftConfig.equipNum("taint_scythe", "missCost", 2);
             if (!touched && holds(p, ModItems.TAINT_SCYTHE.get()) && p.getHealth() > cost + 1) {
                 p.hurt(p.damageSources().magic(), cost);
@@ -233,6 +248,7 @@ public class CraftEquipEvents {
             clearTaint(p);
             PENDING_MISS.remove(p.getUUID());
             LAST_HIT.remove(p.getUUID());
+            LAST_MINING.remove(p.getUUID());
         }
     }
 }

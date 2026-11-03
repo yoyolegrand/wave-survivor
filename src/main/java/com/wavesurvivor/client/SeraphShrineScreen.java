@@ -215,11 +215,16 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
             }
             boolean ok = CraftRecipes.canAfford(player, c);
             String nm = CraftRecipes.result(c).getHoverName().getString();
-            g.drawString(font, fit(nm, 72), x + 14, ry + 1, ok ? (cons ? 0xFFF2C14E : 0xFFD06BFF) : 0xFF8A8A92, false);
+            g.drawString(font, fit(nm, 66), x + 14, ry + 1, ok ? (cons ? 0xFFF2C14E : 0xFFD06BFF) : 0xFF8A8A92, false);
         }
         if (list.size() > CRAFT_ROWS) {
-            if (craftScroll > 0) g.drawString(font, "▲", x + 80, py + 12, th[8], false);
-            if (craftScroll + CRAFT_ROWS < list.size()) g.drawString(font, "▼", x + 80, py + 22 + CRAFT_ROWS * CRAFT_ROW_H + 2, th[8], false);
+            // Barre de défilement (cliquer en haut / en bas ou molette) + position
+            int trackY = py + 21, trackH = CRAFT_ROWS * CRAFT_ROW_H, trackX = x + 83;
+            g.fill(trackX, trackY, trackX + 4, trackY + trackH, th[0]);
+            int thumbH = Math.max(8, trackH * CRAFT_ROWS / list.size());
+            int thumbY = trackY + (trackH - thumbH) * craftScroll / Math.max(1, list.size() - CRAFT_ROWS);
+            g.fill(trackX, thumbY, trackX + 4, thumbY + thumbH, th[2]);
+            g.drawString(font, WSLang.t("shrine.craft_scroll", craftScroll + 1, Math.min(list.size(), craftScroll + CRAFT_ROWS), list.size()), x + 9, py + 102, th[8], false);
         }
         // Détail
         CraftConfig.Craft c = list.get(craftSel);
@@ -438,6 +443,10 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
             int py = topPos + PANEL_Y;
             if (menu.tab == SeraphShrineMenu.TAB_CRAFT) {
                 List<CraftConfig.Craft> cl = CraftConfig.crafts();
+                if (cl.size() > CRAFT_ROWS && hit(mx, my, leftPos + 82, py + 21, 6, CRAFT_ROWS * CRAFT_ROW_H)) {
+                    craftScroll = Math.max(0, Math.min(cl.size() - CRAFT_ROWS, craftScroll + (my < py + 21 + CRAFT_ROWS * CRAFT_ROW_H / 2 ? -1 : 1)));
+                    return true;
+                }
                 for (int r = 0; r < CRAFT_ROWS && craftScroll + r < cl.size(); r++) {
                     if (hit(mx, my, leftPos + 8, py + 21 + r * CRAFT_ROW_H, 81, CRAFT_ROW_H)) { craftSel = craftScroll + r; return true; }
                 }
@@ -473,7 +482,7 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
     @Override
     public boolean mouseScrolled(double mx, double my, double delta) {
         if (menu.tab == SeraphShrineMenu.TAB_CRAFT) {
-            craftScroll = Math.max(0, craftScroll - (int) Math.signum(delta));
+            craftScroll = Math.max(0, Math.min(Math.max(0, CraftConfig.crafts().size() - CRAFT_ROWS), craftScroll - (int) Math.signum(delta)));
             return true;
         }
         return super.mouseScrolled(mx, my, delta);

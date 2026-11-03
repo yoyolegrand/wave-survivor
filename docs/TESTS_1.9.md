@@ -152,3 +152,10 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 ## Vocations — nouvelle règle de palier
 - [ ] Le 2e / 3e / 4e talent d'une colonne demande 2 / 5 / 8 points dépensés dans TOUT l'arbre du rôle (toutes branches) ET que les talents précédents de la colonne aient au moins 1 rang. Ex. Chasseur de primes : 6 points en Contrats + 4 en La chasse = 10 → « Contrats instructifs » (8) s'achète si les 3 premiers de la colonne sont pris.
 - [ ] Infobulle d'un talent verrouillé : « Requiert N point(s) dépensés dans l'arbre du rôle » ou « Prends d'abord les talents précédents de cette colonne » ; le lien entre deux talents devient vert quand le suivant est débloqué.
+
+## Artisanat — retours du 1er test (armes, festin)
+- [ ] Onglet Artisanat : barre de défilement visible + « 1-6 / 12 (molette) » ; clic en haut/bas de la barre ou molette pour atteindre les 6 équipements (Lame, Flèches, Totems, Faux…).
+- [ ] Lame de l'aube 8 de dégâts, Faux 9 ; Lame = plus grande en main (1re et 3e personne) ; Faux = plus grande ; dire si la lame de la Faux est toujours « retournée ».
+- [ ] Faux : coup en l'air (même avec un bloc derrière) = -1 cœur ; casser un bloc ou toucher un monstre = aucune perte. En créatif la perte de vie ne s'applique pas.
+- [ ] Lame : contre un zombie / cheval zombie, étincelles blanches (END_ROD) quand le bonus de +50 % s'applique ; la nuit, étincelles autour du porteur + reflet enchanté.
+- [ ] Festin de grâce : chaque part donne aussi Régénération II 10 s et Absorption II 60 s (config feast.effects).
