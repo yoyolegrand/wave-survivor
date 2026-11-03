@@ -60,8 +60,34 @@ public class CraftEquipEvents {
     }
     private static final Map<UUID, TaintState> TAINT = new HashMap<>();
 
+    /** Lame de l aube : bloc de lumière invisible posé près du porteur la nuit (un seul par joueur, retiré dès que possible). */
+    private record Glow(ServerLevel level, net.minecraft.core.BlockPos pos) {}
+    private static final Map<UUID, Glow> GLOW = new HashMap<>();
+    private static final int GLOW_LEVEL = 10;
+
+    private static void removeGlow(UUID id) {
+        Glow g = GLOW.remove(id);
+        if (g != null && g.level().getBlockState(g.pos()).is(net.minecraft.world.level.block.Blocks.LIGHT)) {
+            g.level().setBlock(g.pos(), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+        }
+    }
+
+    private static void updateGlow(ServerPlayer p) {
+        boolean want = holds(p, ModItems.DAWN_BLADE.get()) && p.level().getDayTime() % 24000L >= 13000L && p.isAlive();
+        Glow cur = GLOW.get(p.getUUID());
+        if (!want) { if (cur != null) removeGlow(p.getUUID()); return; }
+        net.minecraft.core.BlockPos at = net.minecraft.core.BlockPos.containing(p.getX(), p.getEyeY(), p.getZ());
+        if (cur != null && cur.level() == p.level() && cur.pos().equals(at)) return;
+        net.minecraft.world.level.block.state.BlockState st = p.level().getBlockState(at);
+        if (!st.isAir()) return; // pas d air à cet endroit : on garde l ancienne lumière
+        if (cur != null) removeGlow(p.getUUID());
+        p.level().setBlock(at, net.minecraft.world.level.block.Blocks.LIGHT.defaultBlockState()
+                .setValue(net.minecraft.world.level.block.LightBlock.LEVEL, GLOW_LEVEL), 3);
+        GLOW.put(p.getUUID(), new Glow((ServerLevel) p.level(), at));
+    }
+
     private static boolean undeadOrCorrupted(LivingEntity v) {
-        if (v.getMobType() == MobType.UNDEAD) return true;
+        if (v.getMobType() == MobType.UNDEAD || v instanceof net.minecraft.world.entity.monster.Zombie || v instanceof net.minecraft.world.entity.monster.AbstractSkeleton) return true;
         ResourceLocation id = ForgeRegistries.ENTITY_TYPES.getKey(v.getType());
         return id != null && CORRUPTED.contains(id.toString());
     }
@@ -80,6 +106,7 @@ public class CraftEquipEvents {
             if (holds(ap, ModItems.DAWN_BLADE.get()) && undeadOrCorrupted(victim)) {
                 amt *= 1f + (float) CraftConfig.equipNum("dawn_blade", "undeadBonusPercent", 50) / 100f;
                 if (ap.level() instanceof ServerLevel sl) sl.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, victim.getX(), victim.getY(0.6), victim.getZ(), 6, 0.25, 0.3, 0.25, 0.05);
+                ap.displayClientMessage(Component.literal(WSLang.t("craft.item.dawn_bonus", Math.round(amt))), true);
             }
             if (holds(ap, ModItems.TAINT_SCYTHE.get())) {
                 ap.heal(amt * (float) CraftConfig.equipNum("taint_scythe", "lifestealPercent", 5) / 100f);
@@ -152,6 +179,7 @@ public class CraftEquipEvents {
     public void onTick(TickEvent.PlayerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !(e.player instanceof ServerPlayer p)) return;
         long now = p.level().getGameTime();
+        if (now % 4 == 0) updateGlow(p);
         if (now % 8 == 0 && p.getMainHandItem().is(ModItems.DAWN_BLADE.get()) && p.level().getDayTime() % 24000L >= 13000L && p.level() instanceof ServerLevel nl) {
             nl.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, p.getX(), p.getY(1.0), p.getZ(), 2, 0.4, 0.5, 0.4, 0.01); // la Lame de l'aube brille la nuit
         }
@@ -235,6 +263,17 @@ public class CraftEquipEvents {
 
     // ─── Nettoyage ───
 
+    /** Arrêt du serveur : plus aucun bloc de lumière ne doit rester dans le monde. */
+    @SubscribeEvent
+    public void onServerStopping(net.minecraftforge.event.server.ServerStoppingEvent e) {
+        for (UUID id : new java.util.ArrayList<>(GLOW.keySet())) removeGlow(id);
+    }
+
+    @SubscribeEvent
+    public void onDeathGlow(net.minecraftforge.event.entity.living.LivingDeathEvent e) {
+        if (e.getEntity() instanceof ServerPlayer p) removeGlow(p.getUUID());
+    }
+
     @SubscribeEvent
     public void onClone(PlayerEvent.Clone e) {
         TAINT.remove(e.getEntity().getUUID());
@@ -245,6 +284,7 @@ public class CraftEquipEvents {
     @SubscribeEvent
     public void onLogout(PlayerEvent.PlayerLoggedOutEvent e) {
         if (e.getEntity() instanceof ServerPlayer p) {
+            removeGlow(p.getUUID());
             clearTaint(p);
             PENDING_MISS.remove(p.getUUID());
             LAST_HIT.remove(p.getUUID());

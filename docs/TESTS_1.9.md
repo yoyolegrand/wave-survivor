@@ -159,3 +159,7 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Faux : coup en l'air (même avec un bloc derrière) = -1 cœur ; casser un bloc ou toucher un monstre = aucune perte. En créatif la perte de vie ne s'applique pas.
 - [ ] Lame : contre un zombie / cheval zombie, étincelles blanches (END_ROD) quand le bonus de +50 % s'applique ; la nuit, étincelles autour du porteur + reflet enchanté.
 - [ ] Festin de grâce : chaque part donne aussi Régénération II 10 s et Absorption II 60 s (config feast.effects).
+
+## Lame de l'aube — lumière et bonus (2e retour)
+- [ ] La nuit, tenue en main : un bloc de lumière invisible (niveau 10) suit le porteur ; il disparaît quand on range la Lame, de jour, à la mort, à la déconnexion et à l'arrêt du serveur (vérifier qu'aucune lumière ne reste dans le monde).
+- [ ] Frapper un zombie / squelette / cheval zombie avec la Lame : message « Dégâts bénis contre les morts-vivants : N » dans la barre d'action + étincelles ; N = dégâts × 1,5. Si le message n'apparaît pas, envoyer une capture avec le type de monstre.
