@@ -186,5 +186,11 @@
   "block.wavesurvivor.votive_candle": "Votive Candle",
   "block.wavesurvivor.bait_totem": "Bait Totem",
   "block.wavesurvivor.profane_obelisk": "Profane Obelisk",
-  "block.wavesurvivor.blood_altar": "Blood Altar"
+  "block.wavesurvivor.blood_altar": "Blood Altar",
+  "item.wavesurvivor.dawn_blade": "Dawnblade",
+  "item.wavesurvivor.blessed_arrow": "Blessed Arrow",
+  "item.wavesurvivor.grace_totem": "Totem of Grace",
+  "item.wavesurvivor.taint_scythe": "Scythe of Taint",
+  "item.wavesurvivor.tainted_arrow": "Tainted Arrow",
+  "item.wavesurvivor.taint_totem": "Totem of Taint"
 }

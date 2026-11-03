@@ -79,6 +79,7 @@ public final class ShrineGear {
 
     /** « consecrated », « profaned » ou null (pas encore d'amélioration). */
     public static String alignOf(ItemStack st) {
+        if (st.getItem() instanceof com.wavesurvivor.craft.CraftGearItems.FixedAlign fa) return fa.align(); // Lame de l'aube, Faux de la souillure
         return st.hasTag() && st.getTag().contains(ALIGN) ? st.getTag().getString(ALIGN) : null;
     }
 

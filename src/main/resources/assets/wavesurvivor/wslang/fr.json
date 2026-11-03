@@ -3498,5 +3498,12 @@
   "craft.block.votive_candle": "§7Clic droit pour l'allumer ou l'éteindre\n§7Allumée : aucune apparition naturelle de monstres à moins de 12 blocs\n§8(n'empêche pas les vagues des hordes)",
   "craft.block.bait_totem": "§7Clic droit : attire les monstres à moins de 16 blocs pendant 30 s (sauf boss)\n§cRecharge 60 s",
   "craft.block.profane_obelisk": "§7Monstres à moins de 6 blocs : 1 dégât par seconde\n§cJoueurs à moins de 6 blocs : Faim",
-  "craft.block.blood_altar": "§7Clic droit : sacrifiez 4 cœurs contre de l'expérience\n§cRecharge 30 s"
+  "craft.block.blood_altar": "§7Clic droit : sacrifiez 4 cœurs contre de l'expérience\n§cRecharge 30 s",
+  "craft.item.dawn_blade": "§7Dégâts d'une épée en diamant\n§7+50 % contre les morts-vivants et les Corrompus\n§7Brille la nuit\n§eConsacrée : améliorable avec des fragments de grâce",
+  "craft.item.blessed_arrow": "§7Embrase et repousse les morts-vivants et les Corrompus",
+  "craft.item.grace_totem": "§7Tenu en main, remplace la mort (comme un totem d'immortalité)\n§7Soigne aussi les alliés à moins de 6 blocs (4 cœurs)",
+  "craft.item.taint_scythe": "§7Arme de zone (balayage large), vol de vie 5 %\n§cUn coup manqué coûte 1 cœur\n§dProfanée : améliorable avec des fragments de souillure",
+  "craft.item.tainted_arrow": "§7Wither I (4 s) et Lenteur I",
+  "craft.item.taint_totem": "§7Tenu en main, vous ramène à la vie : +50 % de dégâts pendant 30 s\n§cPuis 4 cœurs max pendant 2 min",
+  "craft.item.scythe_miss": "§cCoup manqué : -1 cœur"
 }

@@ -131,3 +131,12 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Obélisque profane : monstres à moins de 6 blocs -1 PV/s ; joueurs à moins de 6 blocs : Faim.
 - [ ] Autel de sang : clic droit → -4 cœurs, +120 points d'expérience, recharge 30 s ; refusé si on a 4 cœurs ou moins.
 - [ ] Les 6 blocs sont aussi dans l'onglet créatif ; textures vanilla provisoires ; se cassent et se récupèrent.
+
+## Artisanat sacré et profane — étape 4 : équipement
+- [ ] Les 6 objets sont dans l'onglet créatif et dans la liste de l'onglet Artisanat du Sanctuaire (12 entrées au total, molette) ; flèches par 8. Icônes provisoires vanilla : Flèche souillée, Totem de souillure.
+- [ ] Lame de l'aube : dégâts d'une épée en diamant, +50 % contre morts-vivants et Corrompus, brille (reflet enchanté) la nuit.
+- [ ] Faux de la souillure : balayage large (60 % des dégâts aux ennemis dans 3 blocs), vol de vie 5 %, un coup manqué en l'air = -1 cœur (pas de pénalité sur un bloc ni à 1 cœur de la mort).
+- [ ] Forge du Sanctuaire : la Lame n'accepte que des fragments de grâce, la Faux que des fragments de souillure (message sinon) ; les améliorations s'appliquent bien et le thème de l'écran suit l'alignement.
+- [ ] Flèche bénie : embrase et repousse un mort-vivant / Corrompu. Flèche souillée : Wither I 4 s + Lenteur I. Les deux se tirent à l'arc et à l'arbalète.
+- [ ] Totem de grâce (en main) : remplace la mort (1 cœur, Régénération, Absorption, Résistance au feu) et soigne les alliés à moins de 6 blocs de 4 cœurs.
+- [ ] Totem de souillure (en main) : remplace la mort, vie pleine, +50 % de dégâts 30 s, puis 4 cœurs max pendant 2 min (retour à la normale ensuite, aussi après mort ou déconnexion).

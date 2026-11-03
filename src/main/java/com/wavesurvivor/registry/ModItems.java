@@ -116,6 +116,20 @@ public class ModItems {
     public static final RegistryObject<Item> BLOOD_ALTAR_ITEM = ITEMS.register("blood_altar",
             () -> new BlockItem(ModBlocks.BLOOD_ALTAR.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
 
+    // ─── Artisanat sacré et profane : équipement ───
+    public static final RegistryObject<Item> DAWN_BLADE = ITEMS.register("dawn_blade",
+            () -> new com.wavesurvivor.craft.CraftGearItems.DawnBlade(new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)));
+    public static final RegistryObject<Item> BLESSED_ARROW = ITEMS.register("blessed_arrow",
+            () -> new com.wavesurvivor.craft.CraftGearItems.MarkedArrow("blessed", new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> GRACE_TOTEM = ITEMS.register("grace_totem",
+            () -> new com.wavesurvivor.craft.CraftGearItems.CraftTotem("grace_totem", new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC)));
+    public static final RegistryObject<Item> TAINT_SCYTHE = ITEMS.register("taint_scythe",
+            () -> new com.wavesurvivor.craft.CraftGearItems.TaintScythe(new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)));
+    public static final RegistryObject<Item> TAINTED_ARROW = ITEMS.register("tainted_arrow",
+            () -> new com.wavesurvivor.craft.CraftGearItems.MarkedArrow("tainted", new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> TAINT_TOTEM = ITEMS.register("taint_totem",
+            () -> new com.wavesurvivor.craft.CraftGearItems.CraftTotem("taint_totem", new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC)));
+
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
     public static final RegistryObject<Item> RELIQUAIRE_SCELLE = ITEMS.register("reliquaire_scelle",
             () -> new com.wavesurvivor.item.RelicCacheItem(new Item.Properties()));
@@ -423,6 +437,13 @@ public class ModItems {
                         output.accept(BAIT_TOTEM_ITEM.get());
                         output.accept(PROFANE_OBELISK_ITEM.get());
                         output.accept(BLOOD_ALTAR_ITEM.get());
+                        // Artisanat sacré et profane : équipement
+                        output.accept(DAWN_BLADE.get());
+                        output.accept(BLESSED_ARROW.get());
+                        output.accept(GRACE_TOTEM.get());
+                        output.accept(TAINT_SCYTHE.get());
+                        output.accept(TAINTED_ARROW.get());
+                        output.accept(TAINT_TOTEM.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());

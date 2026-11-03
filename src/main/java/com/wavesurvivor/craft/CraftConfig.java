@@ -104,6 +104,11 @@ public final class CraftConfig {
         return HordeJson.dbl(sub(sub(cfg(), "blocks"), block), key, def);
     }
 
+    /** Réglage numérique d'un équipement (« equipment.<objet>.<clé> »). */
+    public static double equipNum(String item, String key, double def) {
+        return HordeJson.dbl(sub(sub(cfg(), "equipment"), item), key, def);
+    }
+
     // ─── Fabrications de l'onglet Artisanat du Sanctuaire ───
 
     /** Un ingrédient : objet « mod:id » ou tag « #mod:tag ». */

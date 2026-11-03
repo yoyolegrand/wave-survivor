@@ -4232,5 +4232,12 @@
   "craft.block.votive_candle": "§7Right click to light or snuff it\n§7Lit: no natural monster spawns within 12 blocks\n§8(does not stop horde waves)",
   "craft.block.bait_totem": "§7Right click: lures monsters within 16 blocks for 30 s (not bosses)\n§c60 s cooldown",
   "craft.block.profane_obelisk": "§7Monsters within 6 blocks: 1 damage per second\n§cPlayers within 6 blocks: Hunger",
-  "craft.block.blood_altar": "§7Right click: sacrifice 4 hearts for experience\n§c30 s cooldown"
+  "craft.block.blood_altar": "§7Right click: sacrifice 4 hearts for experience\n§c30 s cooldown",
+  "craft.item.dawn_blade": "§7Deals diamond sword damage\n§7+50% against undead and the Corrupted\n§7Glows at night\n§eConsecrated: can be upgraded with grace fragments",
+  "craft.item.blessed_arrow": "§7Sets undead and the Corrupted ablaze and knocks them back",
+  "craft.item.grace_totem": "§7Held in hand, replaces death (like a totem of undying)\n§7Also heals allies within 6 blocks (4 hearts)",
+  "craft.item.taint_scythe": "§7Area weapon (wide sweep), 5% life steal\n§cA missed swing costs 1 heart\n§dProfaned: can be upgraded with taint fragments",
+  "craft.item.tainted_arrow": "§7Wither I (4 s) and Slowness I",
+  "craft.item.taint_totem": "§7Held in hand, brings you back to life: +50% damage for 30 s\n§cThen 4 max hearts for 2 min",
+  "craft.item.scythe_miss": "§cMissed swing: -1 heart"
 }

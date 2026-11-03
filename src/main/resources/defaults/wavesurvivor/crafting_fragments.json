@@ -53,6 +53,15 @@
     "profane_obelisk": { "radius": 6, "damagePerSecond": 1, "hungerSeconds": 4 },
     "blood_altar": { "healthCost": 8, "xp": 120, "cooldownSeconds": 30 }
   },
+  "equipment": {
+    "_comment": "Équipement de l'Artisanat. Pourcentages en %, durées en secondes, vie en PV (2 = un cœur).",
+    "dawn_blade": { "undeadBonusPercent": 50 },
+    "blessed_arrow": { "fireSeconds": 5, "knockback": 1.5 },
+    "grace_totem": { "allyRadius": 6, "allyHeal": 8 },
+    "taint_scythe": { "sweepRadius": 3, "sweepPercent": 60, "lifestealPercent": 5, "missCost": 2 },
+    "tainted_arrow": { "witherSeconds": 4, "slownessSeconds": 4 },
+    "taint_totem": { "damageBonusPercent": 50, "bonusSeconds": 30, "maxHealth": 8, "penaltySeconds": 120 }
+  },
   "shrineCrafts": [
     { "id": "grace_lantern", "result": "wavesurvivor:grace_lantern", "count": 1, "align": "consecrated",
       "cost": [ { "item": "wavesurvivor:grace_fragment", "count": 2 }, { "item": "minecraft:lantern", "count": 1 } ] },
@@ -65,6 +74,18 @@
     { "id": "profane_obelisk", "result": "wavesurvivor:profane_obelisk", "count": 1, "align": "profaned",
       "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 4 }, { "item": "wavesurvivor:tainted_stone", "count": 4 } ] },
     { "id": "blood_altar", "result": "wavesurvivor:blood_altar", "count": 1, "align": "profaned",
-      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 3 }, { "item": "minecraft:enchanting_table", "count": 1 } ] }
+      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 3 }, { "item": "minecraft:enchanting_table", "count": 1 } ] },
+    { "id": "dawn_blade", "result": "wavesurvivor:dawn_blade", "count": 1, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_heart", "count": 1 }, { "item": "minecraft:diamond_sword", "count": 1 } ] },
+    { "id": "blessed_arrow", "result": "wavesurvivor:blessed_arrow", "count": 8, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_fragment", "count": 1 }, { "item": "minecraft:arrow", "count": 8 } ] },
+    { "id": "grace_totem", "result": "wavesurvivor:grace_totem", "count": 1, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_heart", "count": 1 }, { "item": "minecraft:totem_of_undying", "count": 1 } ] },
+    { "id": "taint_scythe", "result": "wavesurvivor:taint_scythe", "count": 1, "align": "profaned",
+      "cost": [ { "item": "wavesurvivor:taint_heart", "count": 1 }, { "item": "minecraft:diamond_hoe", "count": 1 } ] },
+    { "id": "tainted_arrow", "result": "wavesurvivor:tainted_arrow", "count": 8, "align": "profaned",
+      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 1 }, { "item": "minecraft:arrow", "count": 8 } ] },
+    { "id": "taint_totem", "result": "wavesurvivor:taint_totem", "count": 1, "align": "profaned",
+      "cost": [ { "item": "wavesurvivor:taint_heart", "count": 1 }, { "item": "minecraft:totem_of_undying", "count": 1 } ] }
   ]
 }

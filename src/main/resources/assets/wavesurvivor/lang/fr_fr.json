@@ -186,5 +186,11 @@
   "block.wavesurvivor.votive_candle": "Bougie votive",
   "block.wavesurvivor.bait_totem": "Totem d'appât",
   "block.wavesurvivor.profane_obelisk": "Obélisque profane",
-  "block.wavesurvivor.blood_altar": "Autel de sang"
+  "block.wavesurvivor.blood_altar": "Autel de sang",
+  "item.wavesurvivor.dawn_blade": "Lame de l'aube",
+  "item.wavesurvivor.blessed_arrow": "Flèche bénie",
+  "item.wavesurvivor.grace_totem": "Totem de grâce",
+  "item.wavesurvivor.taint_scythe": "Faux de la souillure",
+  "item.wavesurvivor.tainted_arrow": "Flèche souillée",
+  "item.wavesurvivor.taint_totem": "Totem de souillure"
 }
