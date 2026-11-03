@@ -22,7 +22,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * FESTIN DE GRÂCE : bloc posable à 6 parts (comme un gâteau). Chaque part rend de la faim et des PV (config) ;
+ * FESTIN DE GRÂCE : bloc posable à 6 parts (modèle 3D sur assiette, 6 stades). Chaque part rend de la faim et des PV (config) ;
  * toute l'équipe peut en manger. Ce n'est PAS une nourriture spéciale : il ne remplace pas l'effet d'une autre.
  */
 public class GraceFeastBlock extends Block {
@@ -30,10 +30,8 @@ public class GraceFeastBlock extends Block {
     public static final int PORTIONS = 6;
     public static final IntegerProperty BITES = IntegerProperty.create("bites", 0, PORTIONS - 1);
 
-    private static final VoxelShape[] SHAPES = new VoxelShape[PORTIONS];
-    static {
-        for (int i = 0; i < PORTIONS; i++) SHAPES[i] = Block.box(1 + i * 2, 0, 1, 15, 8, 15);
-    }
+    /** Forme fixe sur l'assiette (le modèle 3D ne rétrécit pas comme un gâteau). */
+    private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 4, 15);
 
     public GraceFeastBlock(Properties props) {
         super(props);
@@ -44,7 +42,7 @@ public class GraceFeastBlock extends Block {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) { b.add(BITES); }
 
     @Override
-    public VoxelShape getShape(BlockState s, BlockGetter l, BlockPos p, CollisionContext c) { return SHAPES[s.getValue(BITES)]; }
+    public VoxelShape getShape(BlockState s, BlockGetter l, BlockPos p, CollisionContext c) { return SHAPE; }
 
     @Override
     public boolean canSurvive(BlockState s, LevelReader l, BlockPos p) { return l.getBlockState(p.below()).isSolid(); }
