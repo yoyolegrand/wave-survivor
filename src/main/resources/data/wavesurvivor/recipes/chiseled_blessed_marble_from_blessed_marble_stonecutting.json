@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "wavesurvivor:blessed_marble"
+  },
+  "result": "wavesurvivor:chiseled_blessed_marble",
+  "count": 1
+}

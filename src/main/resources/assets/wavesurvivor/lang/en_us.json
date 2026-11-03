@@ -166,5 +166,19 @@
   "item.wavesurvivor.void_fruit": "Void Fruit",
   "item.wavesurvivor.black_wine": "Black Wine",
   "item.wavesurvivor.raw_heart": "Raw Heart",
-  "block.wavesurvivor.grace_feast": "Feast of Grace"
+  "block.wavesurvivor.grace_feast": "Feast of Grace",
+  "block.wavesurvivor.blessed_marble": "Blessed Marble",
+  "block.wavesurvivor.blessed_marble_stairs": "Blessed Marble Stairs",
+  "block.wavesurvivor.blessed_marble_slab": "Blessed Marble Slab",
+  "block.wavesurvivor.blessed_marble_wall": "Blessed Marble Wall",
+  "block.wavesurvivor.blessed_marble_column": "Blessed Marble Column",
+  "block.wavesurvivor.polished_blessed_marble": "Polished Blessed Marble",
+  "block.wavesurvivor.chiseled_blessed_marble": "Chiseled Blessed Marble",
+  "block.wavesurvivor.tainted_stone": "Tainted Stone",
+  "block.wavesurvivor.tainted_stone_stairs": "Tainted Stone Stairs",
+  "block.wavesurvivor.tainted_stone_slab": "Tainted Stone Slab",
+  "block.wavesurvivor.tainted_stone_wall": "Tainted Stone Wall",
+  "block.wavesurvivor.tainted_stone_column": "Tainted Stone Column",
+  "block.wavesurvivor.polished_tainted_stone": "Polished Tainted Stone",
+  "block.wavesurvivor.chiseled_tainted_stone": "Chiseled Tainted Stone"
 }

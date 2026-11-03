@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "wavesurvivor:block/tainted_stone_slab"
+    },
+    "type=top": {
+      "model": "wavesurvivor:block/tainted_stone_slab_top"
+    },
+    "type=double": {
+      "model": "wavesurvivor:block/tainted_stone"
+    }
+  }
+}

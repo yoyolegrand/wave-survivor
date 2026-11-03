@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "wavesurvivor:block/blessed_marble_column"
+    },
+    "axis=z": {
+      "model": "wavesurvivor:block/blessed_marble_column_horizontal",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "wavesurvivor:block/blessed_marble_column_horizontal",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

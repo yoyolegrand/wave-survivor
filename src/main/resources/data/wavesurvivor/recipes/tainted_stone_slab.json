@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "wavesurvivor:tainted_stone"
+    }
+  },
+  "result": {
+    "item": "wavesurvivor:tainted_stone_slab",
+    "count": 6
+  }
+}

@@ -166,5 +166,19 @@
   "item.wavesurvivor.void_fruit": "Fruit du néant",
   "item.wavesurvivor.black_wine": "Vin noir",
   "item.wavesurvivor.raw_heart": "Cœur cru",
-  "block.wavesurvivor.grace_feast": "Festin de grâce"
+  "block.wavesurvivor.grace_feast": "Festin de grâce",
+  "block.wavesurvivor.blessed_marble": "Marbre béni",
+  "block.wavesurvivor.blessed_marble_stairs": "Escalier de marbre béni",
+  "block.wavesurvivor.blessed_marble_slab": "Dalle de marbre béni",
+  "block.wavesurvivor.blessed_marble_wall": "Muret de marbre béni",
+  "block.wavesurvivor.blessed_marble_column": "Colonne de marbre béni",
+  "block.wavesurvivor.polished_blessed_marble": "Marbre béni poli",
+  "block.wavesurvivor.chiseled_blessed_marble": "Marbre béni sculpté",
+  "block.wavesurvivor.tainted_stone": "Pierre profanée",
+  "block.wavesurvivor.tainted_stone_stairs": "Escalier de pierre profanée",
+  "block.wavesurvivor.tainted_stone_slab": "Dalle de pierre profanée",
+  "block.wavesurvivor.tainted_stone_wall": "Muret de pierre profanée",
+  "block.wavesurvivor.tainted_stone_column": "Colonne de pierre profanée",
+  "block.wavesurvivor.polished_tainted_stone": "Pierre profanée polie",
+  "block.wavesurvivor.chiseled_tainted_stone": "Pierre profanée sculptée"
 }

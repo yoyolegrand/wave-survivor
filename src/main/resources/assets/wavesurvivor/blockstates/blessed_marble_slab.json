@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "wavesurvivor:block/blessed_marble_slab"
+    },
+    "type=top": {
+      "model": "wavesurvivor:block/blessed_marble_slab_top"
+    },
+    "type=double": {
+      "model": "wavesurvivor:block/blessed_marble"
+    }
+  }
+}

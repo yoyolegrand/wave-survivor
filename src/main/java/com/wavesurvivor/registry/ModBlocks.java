@@ -156,6 +156,7 @@ public class ModBlocks {
                     .mapColor(MapColor.GOLD).strength(0.5f).sound(SoundType.WOOL).noOcclusion().lightLevel(s -> 6)));
 
     public static void register(IEventBus eventBus) {
+        com.wavesurvivor.craft.CraftDecor.init(); // blocs de décoration de l'Artisanat
         BLOCKS.register(eventBus);
     }
 }

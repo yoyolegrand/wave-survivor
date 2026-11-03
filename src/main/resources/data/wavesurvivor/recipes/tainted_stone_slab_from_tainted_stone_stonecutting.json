@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "wavesurvivor:tainted_stone"
+  },
+  "result": "wavesurvivor:tainted_stone_slab",
+  "count": 2
+}

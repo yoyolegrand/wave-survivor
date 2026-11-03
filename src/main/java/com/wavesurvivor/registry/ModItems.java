@@ -401,6 +401,8 @@ public class ModItems {
                         output.accept(BLACK_WINE.get());
                         output.accept(RAW_HEART.get());
                         output.accept(GRACE_FEAST_ITEM.get());
+                        // Artisanat sacré et profane : blocs de décoration
+                        for (RegistryObject<Item> d : com.wavesurvivor.craft.CraftDecor.ITEMS) output.accept(d.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());
@@ -437,6 +439,7 @@ public class ModItems {
                     .build());
 
     public static void register(IEventBus eventBus) {
+        com.wavesurvivor.craft.CraftDecor.init();
         ITEMS.register(eventBus);
         TABS.register(eventBus);
     }

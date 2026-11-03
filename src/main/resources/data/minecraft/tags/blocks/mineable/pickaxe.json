@@ -1,8 +1,19 @@
 {
   "replace": false,
   "values": [
-    "wavesurvivor:renaissance_altar",
-    "wavesurvivor:altar_runic",
-    "wavesurvivor:roulette_chest"
+    "wavesurvivor:blessed_marble",
+    "wavesurvivor:blessed_marble_stairs",
+    "wavesurvivor:blessed_marble_slab",
+    "wavesurvivor:blessed_marble_wall",
+    "wavesurvivor:blessed_marble_column",
+    "wavesurvivor:polished_blessed_marble",
+    "wavesurvivor:chiseled_blessed_marble",
+    "wavesurvivor:tainted_stone",
+    "wavesurvivor:tainted_stone_stairs",
+    "wavesurvivor:tainted_stone_slab",
+    "wavesurvivor:tainted_stone_wall",
+    "wavesurvivor:tainted_stone_column",
+    "wavesurvivor:polished_tainted_stone",
+    "wavesurvivor:chiseled_tainted_stone"
   ]
 }

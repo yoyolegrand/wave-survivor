@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "wavesurvivor:block/tainted_stone_column"
+    },
+    "axis=z": {
+      "model": "wavesurvivor:block/tainted_stone_column_horizontal",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "wavesurvivor:block/tainted_stone_column_horizontal",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

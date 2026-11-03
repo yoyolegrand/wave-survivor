@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "wavesurvivor:blessed_marble"
+    }
+  },
+  "result": {
+    "item": "wavesurvivor:blessed_marble_wall",
+    "count": 6
+  }
+}

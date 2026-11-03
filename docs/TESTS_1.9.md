@@ -113,3 +113,10 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Vin noir : +20 % de dégâts, -2 cœurs max pendant 60 s puis retour à la normale. Cœur cru : +40 %, aucune régénération naturelle 120 s (soin de potion toujours permis).
 - [ ] Festin de grâce : se pose sur un bloc plein, 6 parts (+8 faim, +4 cœurs), tout joueur peut manger, rendu en gâteau (provisoire), se récupère s'il est intact.
 - [ ] Effets effacés à la mort et à la déconnexion. /ws reload recharge la config.
+
+## Artisanat sacré et profane — étape 2 : blocs de décoration
+- [ ] Marbre béni et Pierre profanée (+ escalier, dalle, muret, colonne, poli, sculpté) sont dans l'onglet créatif, 14 blocs, textures vanilla provisoires.
+- [ ] Recettes : 8 calcite + 1 Éclat de grâce → 8 marbre béni ; 8 ardoise des abîmes + 1 Éclat de souillure → 8 pierre profanée.
+- [ ] Variantes à la table de fabrication (escalier 6→4, dalle 3→6, muret 6→6, colonne 2→2, poli 4→4, sculpté = 2 dalles) et à la scie à pierre.
+- [ ] Escaliers (tous les angles, haut/bas), dalles (haut/bas/double), murets (connexions), colonne (3 axes) s'affichent bien ; tous les blocs lâchent leur objet à la pioche ; dalle double = 2 objets.
+- [ ] Lumière faible (niveau 4) sur tous les blocs. À faire plus tard : textures définitives (veines dorées / fissures roses lumineuses).
