@@ -81,6 +81,28 @@ public class ModItems {
             () -> new Item(new Item.Properties().stacksTo(16).rarity(net.minecraft.world.item.Rarity.EPIC)) {
                 @Override public boolean isFoil(ItemStack stack) { return true; }
             });
+    // ─── Artisanat sacré et profane : nourriture (config : crafting_fragments.json) ───
+    public static final RegistryObject<Item> BLESSED_BREAD = ITEMS.register("blessed_bread",
+            () -> new com.wavesurvivor.craft.CraftFoodItem("blessed_bread", false, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> SANCTIFIED_APPLE = ITEMS.register("sanctified_apple",
+            () -> new com.wavesurvivor.craft.CraftFoodItem("sanctified_apple", false, new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> CELESTIAL_MEAD = ITEMS.register("celestial_mead",
+            () -> new com.wavesurvivor.craft.CraftFoodItem("celestial_mead", true, new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> TAINTED_MEAT = ITEMS.register("tainted_meat",
+            () -> new com.wavesurvivor.craft.CraftFoodItem("tainted_meat", false, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> VOID_FRUIT = ITEMS.register("void_fruit",
+            () -> new com.wavesurvivor.craft.CraftFoodItem("void_fruit", false, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> BLACK_WINE = ITEMS.register("black_wine",
+            () -> new com.wavesurvivor.craft.CraftFoodItem("black_wine", true, new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> RAW_HEART = ITEMS.register("raw_heart",
+            () -> new com.wavesurvivor.craft.CraftFoodItem("raw_heart", false, new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> GRACE_FEAST_ITEM = ITEMS.register("grace_feast",
+            () -> new BlockItem(ModBlocks.GRACE_FEAST.get(), new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)) {
+                @Override public void appendHoverText(ItemStack st, net.minecraft.world.level.Level lv, List<Component> tip, net.minecraft.world.item.TooltipFlag fl) {
+                    for (String line : com.wavesurvivor.i18n.WSLang.t("craft.food.grace_feast").split("\n")) tip.add(Component.literal(line));
+                }
+            });
+
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
     public static final RegistryObject<Item> RELIQUAIRE_SCELLE = ITEMS.register("reliquaire_scelle",
             () -> new com.wavesurvivor.item.RelicCacheItem(new Item.Properties()));
@@ -370,6 +392,15 @@ public class ModItems {
                         output.accept(TAINT_SHARD.get());
                         output.accept(TAINT_FRAGMENT.get());
                         output.accept(TAINT_HEART.get());
+                        // Artisanat sacré et profane : nourriture
+                        output.accept(BLESSED_BREAD.get());
+                        output.accept(SANCTIFIED_APPLE.get());
+                        output.accept(CELESTIAL_MEAD.get());
+                        output.accept(TAINTED_MEAT.get());
+                        output.accept(VOID_FRUIT.get());
+                        output.accept(BLACK_WINE.get());
+                        output.accept(RAW_HEART.get());
+                        output.accept(GRACE_FEAST_ITEM.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());

@@ -150,6 +150,11 @@ public class ModBlocks {
                             .noOcclusion()
             ));
 
+    /** Artisanat sacré et profane : Festin de grâce (bloc posable à 6 parts). */
+    public static final RegistryObject<Block> GRACE_FEAST = BLOCKS.register("grace_feast",
+            () -> new com.wavesurvivor.craft.GraceFeastBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.GOLD).strength(0.5f).sound(SoundType.WOOL).noOcclusion().lightLevel(s -> 6)));
+
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }

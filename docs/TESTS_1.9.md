@@ -103,3 +103,13 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] **Chasseur** `choice_of_two` (bouton « Changer de contrat », 1×/Calme, seulement si le contrat n'a pas avancé) ; `secondary_contract` (2e contrat de monstres, payé au Calme).
 - [ ] **Récupérateur** `recycle_items` (objets inutiles → Pierre/Bois), `recycle_gear` (équipement en main → Essence) ; `tame_ram` (bélier abattu → allié 60 s), ultime Arsenal de siège (toute unité de siège, 15 %).
 - [ ] Boutons de talents du Monolithe visibles seulement avec le talent, sans chevaucher le bloc Maîtrise.
+
+## Artisanat sacré et profane — étape 1 : nourriture
+- [ ] Les 7 aliments + le Festin de grâce sont dans l'onglet créatif (icônes OK ; Pain béni = pain vanilla provisoire).
+- [ ] Les 8 recettes fonctionnent à la table de fabrication (cf. docs/DESIGN_ARTISANAT.md §2) ; Vin noir avec une bouteille d'eau, Viande souillée avec n'importe quelle viande crue.
+- [ ] Chaque aliment donne sa faim et ses effets (config : crafting_fragments.json) ; Hydromel et Vin noir rendent une fiole vide.
+- [ ] Garde-fou : manger un 2e aliment spécial retire les effets du 1er (potions, dégâts, PV max, régénération).
+- [ ] Pomme sanctifiée : retire 1 effet négatif. Viande souillée : Faim 30 s après le repas. Fruit du néant : Nausée 3 s.
+- [ ] Vin noir : +20 % de dégâts, -2 cœurs max pendant 60 s puis retour à la normale. Cœur cru : +40 %, aucune régénération naturelle 120 s (soin de potion toujours permis).
+- [ ] Festin de grâce : se pose sur un bloc plein, 6 parts (+8 faim, +4 cœurs), tout joueur peut manger, rendu en gâteau (provisoire), se récupère s'il est intact.
+- [ ] Effets effacés à la mort et à la déconnexion. /ws reload recharge la config.

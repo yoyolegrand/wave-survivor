@@ -3476,5 +3476,12 @@
   "ui.kingdom.claim_shape_hint": "(le cercle a la même surface que le carré)",
   "raid.open_where": "§7La Porte du Roi est au §f{0}§7, à environ §f{1}§7 blocs du Monolithe : approche-toi d'elle pour entrer dans l'arène.",
   "raid.no_skip": "§cLa Porte du Roi est ouverte : entre dans l'arène et vaincs le boss avant de continuer.",
-  "bless.family_empty": "§cAucune bénédiction disponible dans la famille « {0} » (déjà au niveau maximal, bannies ou déjà présentes) : cartes tirées au hasard."
+  "bless.family_empty": "§cAucune bénédiction disponible dans la famille « {0} » (déjà au niveau maximal, bannies ou déjà présentes) : cartes tirées au hasard.",
+  "craft.food.blessed_bread": "§7Régénération I (5 s)",
+  "craft.food.sanctified_apple": "§7Absorption I (60 s)\n§7Retire un effet négatif",
+  "craft.food.celestial_mead": "§7Résistance I (60 s)",
+  "craft.food.tainted_meat": "§7Force I (30 s)\n§cPuis Faim (10 s)",
+  "craft.food.void_fruit": "§7Vitesse II (20 s)\n§cNausée au début (3 s)",
+  "craft.food.black_wine": "§7+20 % de dégâts (60 s)\n§c-2 cœurs max pendant ce temps",
+  "craft.food.raw_heart": "§7+40 % de dégâts (120 s)\n§cAucune régénération naturelle pendant ce temps"
 }

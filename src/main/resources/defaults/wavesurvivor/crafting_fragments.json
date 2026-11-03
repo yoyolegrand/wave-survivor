@@ -1,0 +1,46 @@
+{
+  "_comment": "Artisanat sacré et profane : nourriture fabriquée avec les fragments du Sanctuaire. Pour personnaliser, crée config/wavesurvivor/crafting_fragments.json avec seulement les champs à changer (un tableau comme « effects » est remplacé en entier), puis /ws reload. Les RECETTES sont des recettes vanilla (datapack : data/wavesurvivor/recipes/). Un seul effet de nourriture spéciale à la fois : en manger une 2e remplace la 1re.",
+  "food": {
+    "_comment": "nutrition = points de faim (1 = une demi-cuisse), saturation = coefficient (comme vanilla), cleanse = nombre d'effets négatifs retirés, effects = effets de potion (seconds, delay = secondes avant application), damageBonusPercent / maxHealthLoss (en PV : 2 = un cœur) / noRegen durent buffSeconds.",
+    "blessed_bread": {
+      "nutrition": 6, "saturation": 1.2,
+      "effects": [ { "effect": "minecraft:regeneration", "amplifier": 0, "seconds": 5 } ]
+    },
+    "sanctified_apple": {
+      "nutrition": 4, "saturation": 0.6, "cleanse": 1,
+      "effects": [ { "effect": "minecraft:absorption", "amplifier": 0, "seconds": 60 } ]
+    },
+    "celestial_mead": {
+      "nutrition": 4, "saturation": 0.6,
+      "effects": [ { "effect": "minecraft:resistance", "amplifier": 0, "seconds": 60 } ]
+    },
+    "tainted_meat": {
+      "nutrition": 10, "saturation": 0.8,
+      "effects": [
+        { "effect": "minecraft:strength", "amplifier": 0, "seconds": 30 },
+        { "effect": "minecraft:hunger", "amplifier": 0, "seconds": 10, "delay": 30 }
+      ]
+    },
+    "void_fruit": {
+      "nutrition": 4, "saturation": 0.4,
+      "effects": [
+        { "effect": "minecraft:speed", "amplifier": 1, "seconds": 20 },
+        { "effect": "minecraft:nausea", "amplifier": 0, "seconds": 3 }
+      ]
+    },
+    "black_wine": {
+      "nutrition": 0, "saturation": 0,
+      "damageBonusPercent": 20, "maxHealthLoss": 4, "buffSeconds": 60
+    },
+    "raw_heart": {
+      "nutrition": 2, "saturation": 0.2,
+      "damageBonusPercent": 40, "noRegen": true, "buffSeconds": 120
+    }
+  },
+  "feast": {
+    "_comment": "Festin de grâce (bloc posable, 6 parts) : faim et soin (en PV : 8 = 4 cœurs) par portion.",
+    "nutrition": 8,
+    "saturation": 0.8,
+    "heal": 8
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "minecraft:beef"
+      },
+      {
+        "item": "minecraft:porkchop"
+      },
+      {
+        "item": "minecraft:mutton"
+      },
+      {
+        "item": "minecraft:chicken"
+      },
+      {
+        "item": "minecraft:rabbit"
+      }
+    ],
+    {
+      "item": "wavesurvivor:taint_shard"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:tainted_meat",
+    "count": 1
+  }
+}

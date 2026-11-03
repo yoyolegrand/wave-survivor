@@ -158,5 +158,13 @@
   "advancement.wavesurvivor.invasion_10.title": "Rempart des villages",
   "advancement.wavesurvivor.invasion_10.desc": "Repousse 10 invasions de village.",
   "advancement.wavesurvivor.invasion_flawless.title": "Sans une égratignure",
-  "advancement.wavesurvivor.invasion_flawless.desc": "Repousse une invasion sans perdre un seul villageois."
+  "advancement.wavesurvivor.invasion_flawless.desc": "Repousse une invasion sans perdre un seul villageois.",
+  "item.wavesurvivor.blessed_bread": "Pain béni",
+  "item.wavesurvivor.sanctified_apple": "Pomme sanctifiée",
+  "item.wavesurvivor.celestial_mead": "Hydromel céleste",
+  "item.wavesurvivor.tainted_meat": "Viande souillée",
+  "item.wavesurvivor.void_fruit": "Fruit du néant",
+  "item.wavesurvivor.black_wine": "Vin noir",
+  "item.wavesurvivor.raw_heart": "Cœur cru",
+  "block.wavesurvivor.grace_feast": "Festin de grâce"
 }

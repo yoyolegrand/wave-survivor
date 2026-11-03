@@ -158,5 +158,13 @@
   "advancement.wavesurvivor.invasion_10.title": "Rampart of the Villages",
   "advancement.wavesurvivor.invasion_10.desc": "Repel 10 village invasions.",
   "advancement.wavesurvivor.invasion_flawless.title": "Not a Scratch",
-  "advancement.wavesurvivor.invasion_flawless.desc": "Repel an invasion without losing a single villager."
+  "advancement.wavesurvivor.invasion_flawless.desc": "Repel an invasion without losing a single villager.",
+  "item.wavesurvivor.blessed_bread": "Blessed Bread",
+  "item.wavesurvivor.sanctified_apple": "Sanctified Apple",
+  "item.wavesurvivor.celestial_mead": "Celestial Mead",
+  "item.wavesurvivor.tainted_meat": "Tainted Meat",
+  "item.wavesurvivor.void_fruit": "Void Fruit",
+  "item.wavesurvivor.black_wine": "Black Wine",
+  "item.wavesurvivor.raw_heart": "Raw Heart",
+  "block.wavesurvivor.grace_feast": "Feast of Grace"
 }

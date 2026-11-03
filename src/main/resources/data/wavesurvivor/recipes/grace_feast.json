@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "wavesurvivor:grace_heart"
+    },
+    {
+      "item": "wavesurvivor:blessed_bread"
+    },
+    {
+      "item": "wavesurvivor:blessed_bread"
+    },
+    {
+      "item": "wavesurvivor:blessed_bread"
+    },
+    {
+      "item": "minecraft:golden_apple"
+    },
+    {
+      "item": "minecraft:golden_apple"
+    },
+    {
+      "item": "minecraft:golden_apple"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:grace_feast",
+    "count": 1
+  }
+}

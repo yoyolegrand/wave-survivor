@@ -4210,5 +4210,12 @@
   "ui.kingdom.claim_shape_hint": "(a circle has the same area as the square)",
   "raid.open_where": "§7The King's Gate is to the §f{0}§7, about §f{1}§7 blocks from the Monolith: walk up to it to enter the arena.",
   "raid.no_skip": "§cThe King's Gate is open: enter the arena and defeat the boss before moving on.",
-  "bless.family_empty": "§cNo blessing available in the \"{0}\" family (already at max level, banned or already shown): random cards drawn instead."
+  "bless.family_empty": "§cNo blessing available in the \"{0}\" family (already at max level, banned or already shown): random cards drawn instead.",
+  "craft.food.blessed_bread": "§7Regeneration I (5 s)",
+  "craft.food.sanctified_apple": "§7Absorption I (60 s)\n§7Removes one negative effect",
+  "craft.food.celestial_mead": "§7Resistance I (60 s)",
+  "craft.food.tainted_meat": "§7Strength I (30 s)\n§cThen Hunger (10 s)",
+  "craft.food.void_fruit": "§7Speed II (20 s)\n§cNausea at first (3 s)",
+  "craft.food.black_wine": "§7+20% damage (60 s)\n§c-2 max hearts meanwhile",
+  "craft.food.raw_heart": "§7+40% damage (120 s)\n§cNo natural regeneration meanwhile"
 }
