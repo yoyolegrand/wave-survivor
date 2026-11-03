@@ -50,6 +50,7 @@ public class ClientModEvents {
 
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(com.wavesurvivor.client.armor.SeraphArmorModel.LAYER, com.wavesurvivor.client.armor.SeraphArmorModel::createBodyLayer); // Armure du Séraphin
         event.registerLayerDefinition(DjinnModel.LAYER, DjinnModel::createBodyLayer); // Djinn : turban et queue de fumée
         event.registerLayerDefinition(ScarabModel.LAYER, ScarabModel::createBodyLayer); // Scarabée (modèle sur mesure)
         event.registerLayerDefinition(ScorpionModel.LAYER, ScorpionModel::createBodyLayer); // Scorpion (modèle sur mesure)

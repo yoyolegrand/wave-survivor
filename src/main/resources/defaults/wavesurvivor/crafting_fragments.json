@@ -64,7 +64,8 @@
     "grace_totem": { "allyRadius": 6, "allyHeal": 8 },
     "taint_scythe": { "sweepRadius": 3, "sweepPercent": 60, "lifestealPercent": 5, "missCost": 2 },
     "tainted_arrow": { "witherSeconds": 4, "slownessSeconds": 4 },
-    "taint_totem": { "damageBonusPercent": 50, "bonusSeconds": 30, "maxHealth": 8, "penaltySeconds": 120 }
+    "taint_totem": { "damageBonusPercent": 50, "bonusSeconds": 30, "maxHealth": 8, "penaltySeconds": 120 },
+    "seraph_set": { "undeadReductionPercent": 15 }
   },
   "shrineCrafts": [
     { "id": "grace_lantern", "result": "wavesurvivor:grace_lantern", "count": 1, "align": "consecrated",
@@ -90,6 +91,14 @@
     { "id": "tainted_arrow", "result": "wavesurvivor:tainted_arrow", "count": 8, "align": "profaned",
       "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 1 }, { "item": "minecraft:arrow", "count": 8 } ] },
     { "id": "taint_totem", "result": "wavesurvivor:taint_totem", "count": 1, "align": "profaned",
-      "cost": [ { "item": "wavesurvivor:taint_heart", "count": 1 }, { "item": "minecraft:totem_of_undying", "count": 1 } ] }
+      "cost": [ { "item": "wavesurvivor:taint_heart", "count": 1 }, { "item": "minecraft:totem_of_undying", "count": 1 } ] },
+    { "id": "seraph_helmet", "result": "wavesurvivor:seraph_helmet", "count": 1, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_fragment", "count": 4 }, { "item": "minecraft:diamond_helmet", "count": 1 } ] },
+    { "id": "seraph_chestplate", "result": "wavesurvivor:seraph_chestplate", "count": 1, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_heart", "count": 1 }, { "item": "wavesurvivor:grace_fragment", "count": 6 }, { "item": "minecraft:diamond_chestplate", "count": 1 } ] },
+    { "id": "seraph_leggings", "result": "wavesurvivor:seraph_leggings", "count": 1, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_fragment", "count": 5 }, { "item": "minecraft:diamond_leggings", "count": 1 } ] },
+    { "id": "seraph_boots", "result": "wavesurvivor:seraph_boots", "count": 1, "align": "consecrated",
+      "cost": [ { "item": "wavesurvivor:grace_fragment", "count": 3 }, { "item": "minecraft:diamond_boots", "count": 1 } ] }
   ]
 }

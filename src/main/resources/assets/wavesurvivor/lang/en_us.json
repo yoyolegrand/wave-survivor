@@ -192,5 +192,9 @@
   "item.wavesurvivor.grace_totem": "Totem of Grace",
   "item.wavesurvivor.taint_scythe": "Scythe of Taint",
   "item.wavesurvivor.tainted_arrow": "Tainted Arrow",
-  "item.wavesurvivor.taint_totem": "Totem of Taint"
+  "item.wavesurvivor.taint_totem": "Totem of Taint",
+  "item.wavesurvivor.seraph_helmet": "Seraph Helm",
+  "item.wavesurvivor.seraph_chestplate": "Seraph Chestplate",
+  "item.wavesurvivor.seraph_leggings": "Seraph Greaves",
+  "item.wavesurvivor.seraph_boots": "Seraph Sabatons"
 }

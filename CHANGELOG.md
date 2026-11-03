@@ -38,6 +38,7 @@ Grace and taint fragments from the Seraph Shrine now craft **food, blocks and ge
 - 🔨 New **Crafting tab** in the Shrine screen: pick a craft, see the cost in green or red and click **Craft** — ingredients come straight from your inventory.
 - 🕯 **6 utility blocks**: **Lantern of Grace**, **Holy Fountain**, **Votive Candle** (no natural spawns around it), **Bait Totem**, **Profane Obelisk** and **Blood Altar**.
 - ⚔ **6 pieces of gear**: **Dawnblade** and **Blessed Arrows**, **Totem of Grace** — against **Scythe of Taint** (a missed swing costs a heart), **Tainted Arrows** and **Totem of Taint**. The Dawnblade and the Scythe can be upgraded at the Shrine's Forge, keeping their alignment.
+- 👼 **Seraph Armor**: a full armor set (helm, chestplate, greaves, sabatons) with an original winged 3D model, crafted at the Shrine from diamond pieces and Grace Fragments. Wearing all four gives the **Blessing of the Seraph** (-15% damage from undead and the Corrupted). Consecrated: upgradable at the Forge with grace fragments.
 - 📖 New **Sacred & Profane Crafting** page in the Codex. Every value (effects, durations, radii, the craft list) is in `crafting_fragments.json`.
 
 ### 🔧 Under the hood

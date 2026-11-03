@@ -192,5 +192,9 @@
   "item.wavesurvivor.grace_totem": "Totem de grâce",
   "item.wavesurvivor.taint_scythe": "Faux de la souillure",
   "item.wavesurvivor.tainted_arrow": "Flèche souillée",
-  "item.wavesurvivor.taint_totem": "Totem de souillure"
+  "item.wavesurvivor.taint_totem": "Totem de souillure",
+  "item.wavesurvivor.seraph_helmet": "Heaume du Séraphin",
+  "item.wavesurvivor.seraph_chestplate": "Plastron du Séraphin",
+  "item.wavesurvivor.seraph_leggings": "Jambières du Séraphin",
+  "item.wavesurvivor.seraph_boots": "Solerets du Séraphin"
 }

@@ -163,3 +163,12 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 ## Lame de l'aube — lumière et bonus (2e retour)
 - [ ] La nuit, tenue en main : un bloc de lumière invisible (niveau 10) suit le porteur ; il disparaît quand on range la Lame, de jour, à la mort, à la déconnexion et à l'arrêt du serveur (vérifier qu'aucune lumière ne reste dans le monde).
 - [ ] Frapper un zombie / squelette / cheval zombie avec la Lame : message « Dégâts bénis contre les morts-vivants : N » dans la barre d'action + étincelles ; N = dégâts × 1,5. Si le message n'apparaît pas, envoyer une capture avec le type de monstre.
+
+## Armure du Séraphin
+- [ ] Les 4 pièces sont dans l'onglet créatif (icônes de diamant provisoires) et dans l'onglet Artisanat du Sanctuaire (4 entrées de plus).
+- [ ] Porter chaque pièce SEULE (casque, plastron, jambières, bottes) : rien ne flotte ni ne se décale, la visière est face à l'avant, les ailes dorsales dans le dos, le halo derrière la tête.
+- [ ] Porter l'ensemble, de face, de dos et de profil ; en marchant / courant / accroupi : épaulières et genouillères suivent bras et jambes.
+- [ ] Armure vanilla sur un emplacement + Séraphin sur un autre : les deux rendus cohabitent (et sur un zombie / joueur tiers).
+- [ ] Valeurs : casque 3, plastron 8, jambières 6, bottes 3, robustesse 2,5 ; réparable avec un Fragment de grâce ; son d'équipement doré.
+- [ ] Bonus d'ensemble : avec les 4 pièces, -15 % de dégâts d'un mort-vivant ou d'un Corrompu ; avec 3 pièces, rien.
+- [ ] Forge du Sanctuaire : n'accepte que des fragments de grâce sur ces pièces.

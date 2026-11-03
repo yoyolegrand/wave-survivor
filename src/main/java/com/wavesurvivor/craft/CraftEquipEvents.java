@@ -92,6 +92,12 @@ public class CraftEquipEvents {
         return id != null && CORRUPTED.contains(id.toString());
     }
 
+    /** Les quatre pièces de l'Armure du Séraphin sont portées. */
+    public static boolean fullSeraph(ServerPlayer p) {
+        for (ItemStack a : p.getInventory().armor) if (!(a.getItem() instanceof com.wavesurvivor.item.SeraphArmorItem)) return false;
+        return true;
+    }
+
     private static boolean holds(ServerPlayer p, Item item) { return p.getMainHandItem().is(item); }
 
     // ─── Dégâts : Lame, Faux, flèches, bonus du Totem de souillure ───
@@ -124,6 +130,11 @@ public class CraftEquipEvents {
                 victim.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) CraftConfig.equipNum("tainted_arrow", "witherSeconds", 4) * 20, 0));
                 victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (int) CraftConfig.equipNum("tainted_arrow", "slownessSeconds", 4) * 20, 0));
             }
+        }
+
+        // Bénédiction du Séraphin (les 4 pièces) : moins de dégâts des morts-vivants et des Corrompus
+        if (victim instanceof ServerPlayer vp && src.getEntity() instanceof LivingEntity att && undeadOrCorrupted(att) && fullSeraph(vp)) {
+            amt *= 1f - (float) CraftConfig.equipNum("seraph_set", "undeadReductionPercent", 15) / 100f;
         }
 
         if (src.getEntity() instanceof ServerPlayer tp) {

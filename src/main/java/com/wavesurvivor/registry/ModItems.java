@@ -130,6 +130,16 @@ public class ModItems {
     public static final RegistryObject<Item> TAINT_TOTEM = ITEMS.register("taint_totem",
             () -> new com.wavesurvivor.craft.CraftGearItems.CraftTotem("taint_totem", new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC)));
 
+    // ─── Armure du Séraphin ───
+    public static final RegistryObject<Item> SERAPH_HELMET = ITEMS.register("seraph_helmet",
+            () -> new com.wavesurvivor.item.SeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> SERAPH_CHESTPLATE = ITEMS.register("seraph_chestplate",
+            () -> new com.wavesurvivor.item.SeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> SERAPH_LEGGINGS = ITEMS.register("seraph_leggings",
+            () -> new com.wavesurvivor.item.SeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> SERAPH_BOOTS = ITEMS.register("seraph_boots",
+            () -> new com.wavesurvivor.item.SeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
+
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
     public static final RegistryObject<Item> RELIQUAIRE_SCELLE = ITEMS.register("reliquaire_scelle",
             () -> new com.wavesurvivor.item.RelicCacheItem(new Item.Properties()));
@@ -444,6 +454,11 @@ public class ModItems {
                         output.accept(TAINT_SCYTHE.get());
                         output.accept(TAINTED_ARROW.get());
                         output.accept(TAINT_TOTEM.get());
+                        // Armure du Séraphin
+                        output.accept(SERAPH_HELMET.get());
+                        output.accept(SERAPH_CHESTPLATE.get());
+                        output.accept(SERAPH_LEGGINGS.get());
+                        output.accept(SERAPH_BOOTS.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());
