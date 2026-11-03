@@ -118,6 +118,14 @@ public final class CraftConfig {
         return HordeJson.dbl(sub(sub(cfg(), "equipment"), item), key, def);
     }
 
+    /** Liste de textes d'« equipment.<clé> » (ex. mots-clés de noms de morts-vivants). */
+    public static List<String> equipStrings(String key) {
+        List<String> out = new ArrayList<>();
+        JsonObject e = sub(cfg(), "equipment");
+        if (e.has(key) && e.get(key).isJsonArray()) for (JsonElement x : e.getAsJsonArray(key)) if (x.isJsonPrimitive()) out.add(x.getAsString().toLowerCase(java.util.Locale.ROOT));
+        return out;
+    }
+
     // ─── Fabrications de l'onglet Artisanat du Sanctuaire ───
 
     /** Un ingrédient : objet « mod:id » ou tag « #mod:tag ». */

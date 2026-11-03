@@ -86,10 +86,26 @@ public class CraftEquipEvents {
         GLOW.put(p.getUUID(), new Glow((ServerLevel) p.level(), at));
     }
 
-    private static boolean undeadOrCorrupted(LivingEntity v) {
+    private static final java.util.List<net.minecraft.tags.TagKey<net.minecraft.world.entity.EntityType<?>>> UNDEAD_TAGS = java.util.List.of(
+            entityTag("wavesurvivor", "undead"), entityTag("forge", "undead"), entityTag("c", "undead"), entityTag("minecraft", "undead"));
+
+    private static net.minecraft.tags.TagKey<net.minecraft.world.entity.EntityType<?>> entityTag(String ns, String path) {
+        return net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, new ResourceLocation(ns, path));
+    }
+
+    /**
+     * Mort-vivant ou Corrompu, y compris les monstres d'autres mods : type « mort-vivant » du jeu, tags d'entité
+     * (wavesurvivor:undead — modifiable par datapack —, forge:undead, c:undead, minecraft:undead), identifiants Corrompus, ou mot-clé
+     * du nom de l'entité (config « equipment.undeadNameHints »).
+     */
+    public static boolean undeadOrCorrupted(LivingEntity v) {
         if (v.getMobType() == MobType.UNDEAD || v instanceof net.minecraft.world.entity.monster.Zombie || v instanceof net.minecraft.world.entity.monster.AbstractSkeleton) return true;
+        for (net.minecraft.tags.TagKey<net.minecraft.world.entity.EntityType<?>> t : UNDEAD_TAGS) if (v.getType().is(t)) return true;
         ResourceLocation id = ForgeRegistries.ENTITY_TYPES.getKey(v.getType());
-        return id != null && CORRUPTED.contains(id.toString());
+        if (id == null) return false;
+        if (CORRUPTED.contains(id.toString())) return true;
+        for (String hint : CraftConfig.equipStrings("undeadNameHints")) if (!hint.isBlank() && id.getPath().contains(hint)) return true;
+        return false;
     }
 
     /** Les quatre pièces de l'Armure du Séraphin sont portées. */
@@ -167,20 +183,18 @@ public class CraftEquipEvents {
         if (e.getEntity() instanceof ServerPlayer p) LAST_HIT.put(p.getUUID(), p.level().getGameTime());
     }
 
-    /** Un clic gauche sur un bloc (on le casse) n'est pas un coup manqué : on note le tick pour ignorer le balancement qui l'accompagne. */
+    /** Un bloc cassé (récolte, feuilles, herbe…) n'est pas un coup manqué : on note le tick pour ignorer le balancement qui l'accompagne. */
     @SubscribeEvent
-    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock e) {
-        if (e.getEntity() instanceof ServerPlayer p) LAST_MINING.put(p.getUUID(), p.level().getGameTime());
+    public void onBlockBreak(net.minecraftforge.event.level.BlockEvent.BreakEvent e) {
+        if (e.getPlayer() instanceof ServerPlayer p) LAST_MINING.put(p.getUUID(), p.level().getGameTime());
     }
 
-    /** Tant qu'on mine, la vitesse de minage est recalculée à chaque tick. */
-    @SubscribeEvent
-    public void onBreakSpeed(PlayerEvent.BreakSpeed e) {
-        if (e.getEntity() instanceof ServerPlayer p) LAST_MINING.put(p.getUUID(), p.level().getGameTime());
-    }
-
-    /** Appelé quand le joueur balance la Faux : si aucune entité n'est touchée et qu'il ne mine pas, le coup est compté comme manqué au tick suivant. */
+    /**
+     * Appelé quand le joueur balance la Faux : si aucune entité n'est touchée (et qu'aucun bloc n'est cassé), le coup est compté comme manqué au tick suivant.
+     * Un balancement déjà en cours (bouton maintenu sur un bloc) ne compte pas une 2e fois.
+     */
     static void onScytheSwing(ServerPlayer p) {
+        if (p.swinging) return;
         PENDING_MISS.put(p.getUUID(), p.level().getGameTime());
     }
 
@@ -200,7 +214,7 @@ public class CraftEquipEvents {
             Long hit = LAST_HIT.get(p.getUUID());
             Long mine = LAST_MINING.get(p.getUUID());
             boolean touched = (hit != null && Math.abs(hit - swing) <= 1) || (mine != null && Math.abs(mine - swing) <= 1);
-            float cost = (float) CraftConfig.equipNum("taint_scythe", "missCost", 2);
+            float cost = (float) CraftConfig.equipNum("taint_scythe", "missCost", 1);
             if (!touched && holds(p, ModItems.TAINT_SCYTHE.get()) && p.getHealth() > cost + 1) {
                 p.hurt(p.damageSources().magic(), cost);
                 p.displayClientMessage(Component.literal(WSLang.t("craft.item.scythe_miss")), true);

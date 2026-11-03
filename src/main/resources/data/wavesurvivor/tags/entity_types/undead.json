@@ -1,0 +1,34 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:zombie",
+    "minecraft:husk",
+    "minecraft:drowned",
+    "minecraft:zombie_villager",
+    "minecraft:zombified_piglin",
+    "minecraft:zombie_horse",
+    "minecraft:skeleton",
+    "minecraft:stray",
+    "minecraft:wither_skeleton",
+    "minecraft:skeleton_horse",
+    "minecraft:wither",
+    "minecraft:phantom",
+    "minecraft:zoglin",
+    {
+      "id": "cataclysm:draugr",
+      "required": false
+    },
+    {
+      "id": "cataclysm:elite_draugr",
+      "required": false
+    },
+    {
+      "id": "cataclysm:royal_draugr",
+      "required": false
+    },
+    {
+      "id": "cataclysm:ignited_revenant",
+      "required": false
+    }
+  ]
+}

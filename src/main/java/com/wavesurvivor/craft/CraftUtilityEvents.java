@@ -19,8 +19,7 @@ public class CraftUtilityEvents {
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onHurt(LivingHurtEvent e) {
         if (!(e.getSource().getEntity() instanceof LivingEntity att) || att.level().isClientSide) return;
-        boolean target = att.getMobType() == MobType.UNDEAD || att instanceof com.wavesurvivor.entity.Rootling || att instanceof com.wavesurvivor.entity.StoneBrute;
-        if (!target) return;
+        if (!CraftEquipEvents.undeadOrCorrupted(att)) return;
         double r = CraftConfig.blockNum("grace_lantern", "radius", 8);
         double pct = CraftConfig.blockNum("grace_lantern", "damageReductionPercent", 20);
         for (BlockPos p : CraftUtilityBlockEntity.loaded(att.level(), CraftUtilityBlock.Kind.LANTERN)) {
