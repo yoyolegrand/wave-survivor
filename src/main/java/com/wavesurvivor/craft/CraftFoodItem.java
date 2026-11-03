@@ -35,6 +35,13 @@ public class CraftFoodItem extends Item {
         this.drink = drink;
     }
 
+    /** Faim et saturation lues dans la config (barre de faim, aperçu des mods d'affichage) et non les valeurs figées du registre. */
+    @Override
+    public FoodProperties getFoodProperties(ItemStack stack, LivingEntity entity) {
+        CraftConfig.Food f = CraftConfig.food(id);
+        return new FoodProperties.Builder().nutrition(f.nutrition()).saturationMod(f.saturation()).alwaysEat().build();
+    }
+
     @Override
     public UseAnim getUseAnimation(ItemStack stack) { return drink ? UseAnim.DRINK : UseAnim.EAT; }
 
