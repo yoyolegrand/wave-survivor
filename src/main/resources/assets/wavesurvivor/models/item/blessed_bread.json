@@ -1,6 +1,4 @@
 {
   "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "minecraft:item/bread"
-  }
+  "textures": { "layer0": "wavesurvivor:item/blessed_bread" }
 }
