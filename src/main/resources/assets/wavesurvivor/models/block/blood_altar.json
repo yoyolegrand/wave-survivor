@@ -1,6 +1,105 @@
 {
-  "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "minecraft:block/crying_obsidian"
-  }
+    "side": "wavesurvivor:block/blood_altar_side",
+    "blood": "wavesurvivor:block/blood_altar_top",
+    "particle": "wavesurvivor:block/blood_altar_side"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        9,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#side"
+        },
+        "down": {
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        9,
+        1
+      ],
+      "to": [
+        15,
+        12,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "up": {
+          "texture": "#blood"
+        },
+        "down": {
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        11.9,
+        1
+      ],
+      "to": [
+        15,
+        12,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#blood"
+        },
+        "south": {
+          "texture": "#blood"
+        },
+        "east": {
+          "texture": "#blood"
+        },
+        "west": {
+          "texture": "#blood"
+        },
+        "up": {
+          "texture": "#blood"
+        },
+        "down": {
+          "texture": "#blood"
+        }
+      }
+    }
+  ]
 }

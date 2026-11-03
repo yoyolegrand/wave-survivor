@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "minecraft:block/quartz_block_bottom"
+    "all": "wavesurvivor:block/blessed_marble_polished"
   }
 }

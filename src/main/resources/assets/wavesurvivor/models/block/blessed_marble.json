@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "minecraft:block/calcite"
+    "all": "wavesurvivor:block/blessed_marble"
   }
 }

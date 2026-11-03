@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/wall_inventory",
   "textures": {
-    "wall": "minecraft:block/deepslate"
+    "wall": "wavesurvivor:block/tainted_stone"
   }
 }

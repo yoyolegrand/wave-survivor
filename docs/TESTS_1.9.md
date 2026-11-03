@@ -172,3 +172,10 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Valeurs : casque 3, plastron 8, jambières 6, bottes 3, robustesse 2,5 ; réparable avec un Fragment de grâce ; son d'équipement doré.
 - [ ] Bonus d'ensemble : avec les 4 pièces, -15 % de dégâts d'un mort-vivant ou d'un Corrompu ; avec 3 pièces, rien.
 - [ ] Forge du Sanctuaire : n'accepte que des fragments de grâce sur ces pièces.
+
+## Artisanat — textures provisoires générées par code
+- [ ] Marbre béni : blanc veiné d'or (base, poli, sculpté avec soleil, colonne) ; Pierre profanée : sombre avec fissures roses qui BRILLENT dans le noir sur les cubes (base, poli, sculpté, colonne) ; escaliers / dalles / murets sans lueur.
+- [ ] Blocs utilitaires : lanterne et bougie dorées, fontaine (bassin + eau), totem d'appât (tête avec œil rose), obélisque (runes lumineuses), autel de sang (bassin rouge) ; collisions et ombres cohérentes avec la forme ; icônes d'inventaire correctes.
+- [ ] Faux : un coup dans le vide / sur un bloc non cassé coûte 1 PV (magique, ignore l'armure) ; frapper un monstre ou casser un bloc ne coûte rien.
+- [ ] Lame : bonus aussi sur les morts-vivants d'autres mods (tag wavesurvivor:undead, forge:undead, mots-clés de noms dans la config).
+- Textures PixelLab à venir : voir docs/BRIEF_TEXTURES_ARTISANAT.md.

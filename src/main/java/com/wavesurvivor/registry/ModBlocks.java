@@ -162,7 +162,7 @@ public class ModBlocks {
                     com.wavesurvivor.craft.CraftUtilityBlock.Kind.LANTERN));
     public static final RegistryObject<Block> HOLY_FOUNTAIN = BLOCKS.register("holy_fountain",
             () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ)
-                    .strength(2.0f, 6.0f).sound(SoundType.STONE).lightLevel(s -> 8).requiresCorrectToolForDrops(),
+                    .strength(2.0f, 6.0f).sound(SoundType.STONE).lightLevel(s -> 8).noOcclusion().requiresCorrectToolForDrops(),
                     com.wavesurvivor.craft.CraftUtilityBlock.Kind.FOUNTAIN));
     public static final RegistryObject<Block> VOTIVE_CANDLE = BLOCKS.register("votive_candle",
             () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
@@ -170,15 +170,15 @@ public class ModBlocks {
                     com.wavesurvivor.craft.CraftUtilityBlock.Kind.CANDLE));
     public static final RegistryObject<Block> BAIT_TOTEM = BLOCKS.register("bait_totem",
             () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
-                    .strength(2.0f, 6.0f).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).requiresCorrectToolForDrops(),
+                    .strength(2.0f, 6.0f).sound(SoundType.BONE_BLOCK).lightLevel(s -> 4).noOcclusion().requiresCorrectToolForDrops(),
                     com.wavesurvivor.craft.CraftUtilityBlock.Kind.BAIT));
     public static final RegistryObject<Block> PROFANE_OBELISK = BLOCKS.register("profane_obelisk",
             () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
-                    .strength(2.0f, 6.0f).sound(SoundType.DEEPSLATE).lightLevel(s -> 6).requiresCorrectToolForDrops(),
+                    .strength(2.0f, 6.0f).sound(SoundType.DEEPSLATE).lightLevel(s -> 6).noOcclusion().requiresCorrectToolForDrops(),
                     com.wavesurvivor.craft.CraftUtilityBlock.Kind.OBELISK));
     public static final RegistryObject<Block> BLOOD_ALTAR = BLOCKS.register("blood_altar",
             () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
-                    .strength(2.0f, 6.0f).sound(SoundType.STONE).lightLevel(s -> 5).requiresCorrectToolForDrops(),
+                    .strength(2.0f, 6.0f).sound(SoundType.STONE).lightLevel(s -> 5).noOcclusion().requiresCorrectToolForDrops(),
                     com.wavesurvivor.craft.CraftUtilityBlock.Kind.ALTAR));
 
     public static void register(IEventBus eventBus) {

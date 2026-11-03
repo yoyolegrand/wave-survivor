@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/cube_column_horizontal",
   "textures": {
-    "end": "minecraft:block/polished_deepslate",
-    "side": "minecraft:block/deepslate"
+    "end": "wavesurvivor:block/tainted_stone_column_top",
+    "side": "wavesurvivor:block/tainted_stone_column_side"
   }
 }

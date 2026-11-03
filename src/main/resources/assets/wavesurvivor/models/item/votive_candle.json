@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/white_candle"
+    "layer0": "wavesurvivor:block/votive_candle"
   }
 }

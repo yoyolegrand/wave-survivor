@@ -49,6 +49,9 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
 
     private static final VoxelShape LANTERN_SHAPE = Block.box(4, 0, 4, 12, 10, 12);
     private static final VoxelShape CANDLE_SHAPE = Block.box(6, 0, 6, 10, 7, 10);
+    private static final VoxelShape FOUNTAIN_SHAPE = Block.box(0, 0, 0, 16, 15, 16);
+    private static final VoxelShape TOTEM_SHAPE = Block.box(2, 0, 2, 14, 16, 14);
+    private static final VoxelShape ALTAR_SHAPE = Block.box(0, 0, 0, 16, 12, 16);
 
     public final Kind kind;
 
@@ -66,6 +69,9 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
         return switch (kind) {
             case LANTERN -> LANTERN_SHAPE;
             case CANDLE -> CANDLE_SHAPE;
+            case FOUNTAIN -> FOUNTAIN_SHAPE;
+            case BAIT, OBELISK -> TOTEM_SHAPE;
+            case ALTAR -> ALTAR_SHAPE;
             default -> super.getShape(s, l, p, c);
         };
     }

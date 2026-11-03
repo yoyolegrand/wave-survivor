@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/template_candle",
   "textures": {
-    "all": "minecraft:block/white_candle",
-    "particle": "minecraft:block/white_candle"
+    "all": "wavesurvivor:block/votive_candle",
+    "particle": "wavesurvivor:block/votive_candle"
   }
 }
