@@ -61,7 +61,7 @@
 
 ## 6. Visuels
 - **Icônes FAITES** (PixelLab, 32 × 32) dans `textures/item/` : `sanctified_apple`, `celestial_mead`, `grace_feast`, `tainted_meat`, `void_fruit`, `black_wine`, `raw_heart`, `dawn_blade`, `blessed_arrow`, `grace_totem`, `taint_scythe`.
-- **Icônes MANQUANTES** (à venir, Claude chat) : `blessed_bread`, `tainted_arrow`, `taint_totem` — en attendant, utiliser une texture provisoire (ex. pain, flèche, totem vanilla) pour pouvoir tester.
+- **Icônes MANQUANTES** (à venir, Claude chat) : `tainted_arrow`, `taint_totem` — en attendant, utiliser une texture provisoire (flèche, totem vanilla). `blessed_bread` est maintenant **FAITE**.
 - Blocs (marbre béni, pierre profanée, blocs utilitaires) : textures à faire plus tard ; utiliser des textures provisoires (calcite, pierre des abîmes…) pour les tests.
 
 ## 7. À faire (ordre conseillé)

@@ -19,7 +19,7 @@
    - Rareté épique, noms FR / EN (« Heaume du Séraphin », « Plastron du Séraphin », « Jambières du Séraphin », « Solerets du Séraphin »), onglet créatif.
 4. **Obtention** : fabrication dans l'onglet **Artisanat** du Sanctuaire (voir `docs/DESIGN_ARTISANAT.md`), alignement **Consacré** uniquement. Proposition : la pièce de diamant correspondante + Fragments de grâce (casque 4, plastron 6, jambières 5, bottes 3) + 1 Cœur de grâce pour le plastron. Compatible avec la forge du Sanctuaire (améliorations Consacrées seulement).
 5. **Bonus d'ensemble** (les 4 pièces, proposition) : *Bénédiction du Séraphin* — -15 % de dégâts subis des morts-vivants et des Corrompus, et le halo du heaume luit faiblement (calque lumineux à prévoir plus tard).
-6. **Icônes** des 4 objets : à générer par Claude chat (PixelLab, 32 × 32) ; en attendant, utiliser les icônes du diamant.
+6. **Icônes** des 4 objets : **FAITES** (PixelLab, 32 × 32) dans `textures/item/` : `seraph_helmet.png`, `seraph_chestplate.png`, `seraph_leggings.png`, `seraph_boots.png`. Créer les modèles d'objet `models/item/seraph_*.json` (parent `item/generated`).
 7. Textes FR / EN, page du Codex, CHANGELOG.
 
 ## 3. Vérifications en jeu
