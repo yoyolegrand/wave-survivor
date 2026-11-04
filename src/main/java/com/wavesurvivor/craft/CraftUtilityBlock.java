@@ -46,8 +46,11 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
 
     /** Bougie votive : allumée ou non (propriété partagée par tous les blocs pour garder un seul état). */
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
+    /** Lanterne de grâce suspendue au plafond (inutilisée par les autres blocs : toujours faux). */
+    public static final BooleanProperty HANGING = BlockStateProperties.HANGING;
 
     private static final VoxelShape LANTERN_SHAPE = Block.box(4, 0, 4, 12, 10, 12);
+    private static final VoxelShape LANTERN_HANGING_SHAPE = Block.box(4, 1, 4, 12, 16, 12);
     private static final VoxelShape CANDLE_SHAPE = Block.box(6, 0, 6, 10, 7, 10);
     private static final VoxelShape FOUNTAIN_SHAPE = Block.box(0, 0, 0, 16, 15, 16);
     private static final VoxelShape TOTEM_SHAPE = Block.box(2, 0, 2, 14, 16, 14);
@@ -58,16 +61,16 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
     public CraftUtilityBlock(Properties props, Kind kind) {
         super(props);
         this.kind = kind;
-        registerDefaultState(stateDefinition.any().setValue(LIT, kind != Kind.CANDLE));
+        registerDefaultState(stateDefinition.any().setValue(LIT, kind != Kind.CANDLE).setValue(HANGING, false));
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) { b.add(LIT); }
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) { b.add(LIT, HANGING); }
 
     @Override
     public VoxelShape getShape(BlockState s, BlockGetter l, BlockPos p, CollisionContext c) {
         return switch (kind) {
-            case LANTERN -> LANTERN_SHAPE;
+            case LANTERN -> s.getValue(HANGING) ? LANTERN_HANGING_SHAPE : LANTERN_SHAPE;
             case CANDLE -> CANDLE_SHAPE;
             case FOUNTAIN -> FOUNTAIN_SHAPE;
             case BAIT, OBELISK -> TOTEM_SHAPE;
@@ -78,12 +81,29 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
 
     @Override
     public boolean canSurvive(BlockState s, net.minecraft.world.level.LevelReader l, BlockPos p) {
-        return (kind != Kind.LANTERN && kind != Kind.CANDLE) || l.getBlockState(p.below()).isFaceSturdy(l, p.below(), net.minecraft.core.Direction.UP);
+        if (kind != Kind.LANTERN && kind != Kind.CANDLE) return true;
+        if (kind == Kind.LANTERN && s.getValue(HANGING)) return l.getBlockState(p.above()).isFaceSturdy(l, p.above(), net.minecraft.core.Direction.DOWN);
+        return l.getBlockState(p.below()).isFaceSturdy(l, p.below(), net.minecraft.core.Direction.UP);
+    }
+
+    /** Lanterne : suspendue si on vise le dessous d'un bloc (comme la lanterne vanilla), posée sinon. */
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(net.minecraft.world.item.context.BlockPlaceContext ctx) {
+        BlockState def = defaultBlockState();
+        if (kind != Kind.LANTERN) return def.canSurvive(ctx.getLevel(), ctx.getClickedPos()) ? def : null;
+        for (net.minecraft.core.Direction d : ctx.getNearestLookingDirections()) {
+            if (d.getAxis() != net.minecraft.core.Direction.Axis.Y) continue;
+            BlockState st = def.setValue(HANGING, d == net.minecraft.core.Direction.UP);
+            if (st.canSurvive(ctx.getLevel(), ctx.getClickedPos())) return st;
+        }
+        return null;
     }
 
     @Override
     public BlockState updateShape(BlockState s, net.minecraft.core.Direction d, BlockState n, net.minecraft.world.level.LevelAccessor l, BlockPos p, BlockPos np) {
-        return d == net.minecraft.core.Direction.DOWN && !s.canSurvive(l, p) ? net.minecraft.world.level.block.Blocks.AIR.defaultBlockState()
+        net.minecraft.core.Direction support = kind == Kind.LANTERN && s.getValue(HANGING) ? net.minecraft.core.Direction.UP : net.minecraft.core.Direction.DOWN;
+        return d == support && !s.canSurvive(l, p) ? net.minecraft.world.level.block.Blocks.AIR.defaultBlockState()
                 : super.updateShape(s, d, n, l, p, np);
     }
 

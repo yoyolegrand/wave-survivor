@@ -47,7 +47,7 @@ public class ArenaStructure extends Structure {
         int my0 = ctx.chunkGenerator().getFirstOccupiedHeight(mx0, mz0, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState());
         var biome = ctx.biomeSource().getNoiseBiome(QuartPos.fromBlock(mx0), QuartPos.fromBlock(my0), QuartPos.fromBlock(mz0), ctx.randomState().sampler());
         if (!ctx.validBiome().test(biome)) { REFUS_BIOME.incrementAndGet(); return Optional.empty(); }
-        if (bp.square() && ArenaSettings.avoidNeighbors()) { // grand terrain : jamais par-dessus une autre structure
+        if (bp.square() && bp.maxSlope() < 0 && ArenaSettings.avoidNeighbors()) { // grand terrain : jamais par-dessus une autre structure
             String voisine = nearOtherStructure(ctx, c0);
             if (voisine != null) {
                 int n = REFUS_VOISINE.incrementAndGet();
@@ -170,7 +170,8 @@ public class ArenaStructure extends Structure {
         int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE, count = 0;
         long sum = 0;
         java.util.List<Integer> tops = new java.util.ArrayList<>();
-        int step = bp.square() ? 12 : 3; // terrain complet : un échantillon tous les 12 blocs suffit (≈ 225 mesures au lieu de 3 600, /locate bien plus rapide)
+        boolean forced = bp.square() && bp.maxSlope() < 0; // terrain complet de Kingdom : posé de force ; une ruine carrée (maxSlope fixé) refuse pente et eau
+        int step = forced ? 12 : bp.square() ? 4 : 3; // terrain complet : un échantillon tous les 12 blocs suffit (≈ 225 mesures au lieu de 3 600, /locate bien plus rapide)
         for (int x = 0; x < d[0]; x += step) for (int z = 0; z < d[1]; z += step) {
             if (!bp.square() && Math.hypot(x - mx, z - mz) > radius) continue;
             int wx = ox + x, wz = oz + z;
@@ -182,7 +183,7 @@ public class ArenaStructure extends Structure {
                 continue;
             }
             int top = ctx.chunkGenerator().getFirstOccupiedHeight(wx, wz, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState()) - 1;
-            if (!bp.floating() && !bp.square()) { // terrain complet : l'eau ne l'arrête pas (le lac est comblé à la pose)
+            if (!bp.floating() && !forced) { // terrain complet : l'eau ne l'arrête pas (le lac est comblé à la pose)
                 NoiseColumn col = ctx.chunkGenerator().getBaseColumn(wx, wz, ctx.heightAccessor(), ctx.randomState());
                 if (!col.getBlock(top).getFluidState().isEmpty()) return Optional.empty();
             }
@@ -203,7 +204,7 @@ public class ArenaStructure extends Structure {
             if (max > y0 + 6) return Optional.empty();       // et pas contre une falaise
         } else {
             int slope = bp.maxSlope() >= 0 ? bp.maxSlope() : ArenaSettings.maxSlope();
-            if (bp.square()) { // terrain complet : posé de force (ni pente ni eau refusées), niveau du sol = médiane des hauteurs, le relief autour est remodelé
+            if (forced) { // terrain complet : posé de force (ni pente ni eau refusées), niveau du sol = médiane des hauteurs, le relief autour est remodelé
                 java.util.Collections.sort(tops);
                 y0 = tops.get(tops.size() / 2);
             } else {

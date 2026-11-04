@@ -1,7 +1,6 @@
 {
   "variants": {
-    "": {
-      "model": "wavesurvivor:block/grace_lantern"
-    }
+    "hanging=false": { "model": "wavesurvivor:block/grace_lantern" },
+    "hanging=true": { "model": "wavesurvivor:block/grace_lantern_hanging" }
   }
 }
