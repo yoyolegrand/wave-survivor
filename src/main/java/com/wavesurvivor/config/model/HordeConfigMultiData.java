@@ -41,6 +41,10 @@ public class HordeConfigMultiData {
         @SerializedName("consolationPercent")
         public int consolationPercent = -1;
 
+        /** Bouton « Prêt » pendant les pauses (hordes classiques, Boss Rush, sans fin, invasion ; pas en Kingdom). */
+        @SerializedName("ready")
+        public ReadySettings ready = new ReadySettings();
+
         /** Fin de vague forcée : secondes laissées quand il reste ≤ 10 % de la vague (0 = désactivé). */
         @SerializedName("forceEndSeconds")
         public int forceEndSeconds = 60;
@@ -275,6 +279,20 @@ public class HordeConfigMultiData {
         @SerializedName("seconds") public int seconds = 150;
         @SerializedName("reward") public Reward reward = new Reward(20, 0, 0, 0, 1);
         @SerializedName("drops") public java.util.List<com.wavesurvivor.horde.model.ChaosEvent.Drop> drops;
+    }
+
+    /**
+     * Bouton « Prêt » (1.9) : pendant une pause entre deux vagues, les joueurs peuvent se déclarer prêts ; quand tous le sont, la vague suivante démarre
+     * et ils reçoivent un bonus d'enchaînement. Type : « coins » (émeraudes), « pr » (points de Renaissance) ou un effet (strength, speed, resistance,
+     * regeneration, haste). « amount » = quantité (ou durée en secondes pour un effet), « level » = niveau de l'effet.
+     */
+    public static class ReadySettings {
+        @SerializedName("allow") public boolean allow = true;
+        @SerializedName("bonusType") public String bonusType = "coins";
+        @SerializedName("amount") public int amount = 3;
+        @SerializedName("level") public int level = 1;
+        /** Bonus proportionnel au temps restant de la pause : enchaîner tout de suite = bonus maximal. */
+        @SerializedName("proportional") public boolean proportional = true;
     }
 
     /** Boss Rush (1.6) : la horde jouée avec ses seuls boss, à la suite. Réglages par horde (éditeur › Boss Rush). */

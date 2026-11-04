@@ -197,5 +197,7 @@
   "item.wavesurvivor.seraph_chestplate": "Seraph Chestplate",
   "item.wavesurvivor.seraph_leggings": "Seraph Greaves",
   "item.wavesurvivor.seraph_boots": "Seraph Sabatons",
-  "item.wavesurvivor.survivor_notebook": "Survivor's Notebook"
+  "item.wavesurvivor.survivor_notebook": "Survivor's Notebook",
+  "key.wavesurvivor.ready": "Ready (wave break)",
+  "key.categories.wavesurvivor": "Wave Survivor"
 }

@@ -256,6 +256,7 @@ public class HordeManager {
         String name = activeHorde != null ? activeHorde.hordeName : "?";
         WaveSurvivorMod.LOGGER.info("[HordeManager] Horde '{}' arrêtée manuellement (vague {}).", name, currentWave);
         if (!quietStop) broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.horde_d97e") + com.wavesurvivor.i18n.WSLang.t(name) + com.wavesurvivor.i18n.WSLang.t("srv.arretee")).withStyle(ChatFormatting.RED));
+        com.wavesurvivor.horde.ready.ReadyManager.clearAll();
         killAllActiveMobs();
         com.wavesurvivor.altar.AltarDefense.onHordeEnd(server, false);
         com.wavesurvivor.horde.skill.NecroTracker.clearAll();
@@ -571,6 +572,15 @@ public class HordeManager {
                 long delaySec = (pause != null) ? pause.pauseDuration : (com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.pauseSeconds() : cfg.delayBetweenWaves);
                 nextActionTick = now + Math.max(20, delaySec * 20L);
                 currentDelaySeconds = (int) delaySec;
+                // Bouton « Prêt » : la pause est confiée au moteur (tous prêts = la vague suivante démarre tout de suite)
+                com.wavesurvivor.horde.ready.ReadyManager.begin(this, new com.wavesurvivor.horde.ready.ReadyManager.Pause() {
+                    public java.util.List<ServerPlayer> players() {
+                        java.util.List<ServerPlayer> l = new java.util.ArrayList<>();
+                        for (ServerPlayer p : srv.getPlayerList().getPlayers()) if (!p.isSpectator()) l.add(p);
+                        return l;
+                    }
+                    public void skip() { nextActionTick = srv.getTickCount(); }
+                }, cfg.ready, now, nextActionTick);
                 broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.vague_5e08") + currentWave + com.wavesurvivor.i18n.WSLang.t("srv.nettoyee")).withStyle(ChatFormatting.GREEN));
                 if (pause != null) {
                     broadcast(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.pause_plus_longue") + pause.pauseDuration + "s").withStyle(ChatFormatting.AQUA));
@@ -608,6 +618,7 @@ public class HordeManager {
         if (now < nextActionTick) return;
 
         if (state == State.WAITING_NEXT_WAVE || state == State.PAUSED) {
+            com.wavesurvivor.horde.ready.ReadyManager.end(this);
             // Marchands : despawn (avec poof + son) au moment où la vague suivante va démarrer
             MerchantSpawner.despawnAll(srv);
             // Roulette chests : despawn (même cycle)

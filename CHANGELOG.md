@@ -52,6 +52,11 @@ A guide book every player receives on their first login (craftable with a book a
 ### 🏳 Consolation prize
 A lost game now pays a **consolation prize** on top of the wave and boss Rebirth Points: **30 %** of the victory bonuses (+5, and +15 on a first win), scaled by the waves you survived. Set it globally in `rules.json` (`consolationPercent`) or per horde in the editor (-1 = general setting, 0 = off). The end-of-game message shows it.
 
+### ⏩ Ready button
+During a break between two waves, every player can press the new **Ready** key (G by default, rebindable under Controls › Wave Survivor). When **everyone** is ready the next wave starts right away and each player gets a **chaining bonus**; the horde bar shows `Ready 2/3`.
+- Works in classic hordes, Endless, Boss Rush and Invasions (not Kingdom: the Calm has its own logic).
+- Per horde in the editor (Waves tab): **Allow Ready** (turn it off before a boss, for example), bonus type (**emeralds**, **Rebirth Points**, or a timed effect: Strength, Speed, Resistance, Regeneration, Haste), quantity (or seconds and level for an effect) and **proportional to time left** (chain at once = full bonus, just before the break ends = almost nothing). Default: Ready allowed, 3 emeralds scaled by the time left.
+
 ### 🔧 Under the hood
 - 🗂 Everything lives in **`vocations.json`** (XP curve, XP per action, ranks, values, tiers, costs, base role effects), layered like the other configs: put only the fields you change in `config/wavesurvivor/vocations.json`; `/ws reload` applies them. The server sends the trees to clients, so servers can tune them freely.
 

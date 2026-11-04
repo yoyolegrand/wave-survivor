@@ -20,6 +20,9 @@ import net.minecraft.world.BossEvent;
  */
 public class HordeHudManager {
 
+    /** Dernier suffixe « Prêts » affiché (la barre se rafraîchit quand il change). */
+    private static String lastReadySuffix = "";
+
     private static ServerBossEvent hordeBar;
     private static String hordeName = "?";
 
@@ -85,8 +88,10 @@ public class HordeHudManager {
         if (hordeBar == null) return;
 
         HordeManager.State targetState = isPaused ? HordeManager.State.PAUSED : HordeManager.State.WAITING_NEXT_WAVE;
+        String readySuffix = com.wavesurvivor.horde.ready.ReadyManager.hudSuffix(HordeManager.get());
         if (lastState == targetState && secondsRemaining == lastSecondsRemaining
-                && currentWave == lastWave && totalWaves == lastTotal) return;
+                && currentWave == lastWave && totalWaves == lastTotal && readySuffix.equals(lastReadySuffix)) return;
+        lastReadySuffix = readySuffix;
 
         lastState = targetState;
         lastMobCount = -1;
@@ -109,7 +114,7 @@ public class HordeHudManager {
             barColor = BossEvent.BossBarColor.YELLOW;
         }
         String label = prefix + secondsRemaining + com.wavesurvivor.i18n.WSLang.t("srv.s_vague") + nextWave + (totalWaves > 0 ? " / " + totalWaves : " ∞");
-        hordeBar.setName(Component.literal(label).withStyle(labelColor, ChatFormatting.BOLD));
+        hordeBar.setName(Component.literal(label + readySuffix).withStyle(labelColor, ChatFormatting.BOLD));
         hordeBar.setColor(barColor);
 
         // Progress bar : se vide au fur et à mesure que le countdown avance

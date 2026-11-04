@@ -158,6 +158,9 @@ public class NetworkHandler {
         // Carnet du Survivant (/ws carnet, clic droit)
         CHANNEL.registerMessage(id++, CarnetPacket.class,
                 CarnetPacket::encode, CarnetPacket::decode, CarnetPacket::handle);
+        // Bouton « Prêt » pendant les pauses
+        CHANNEL.registerMessage(id++, ReadyPacket.class,
+                ReadyPacket::encode, ReadyPacket::decode, ReadyPacket::handle);
         // Éditeur de hordes à plusieurs (verrous par onglet)
         CHANNEL.registerMessage(id++, HordeCollabPackets.Presence.class,
                 HordeCollabPackets.Presence::encode, HordeCollabPackets.Presence::decode, HordeCollabPackets.Presence::handle);

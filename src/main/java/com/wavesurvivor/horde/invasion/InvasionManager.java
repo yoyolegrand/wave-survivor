@@ -297,11 +297,19 @@ public class InvasionManager {
                         v.phase = Phase.BREAK;
                         v.phaseStart = now;
                         v.phaseEnd = now + Math.max(5, v.s.waveDelaySeconds) * 20L;
+                        com.wavesurvivor.horde.ready.ReadyManager.begin(v, new com.wavesurvivor.horde.ready.ReadyManager.Pause() {
+                            public java.util.List<ServerPlayer> players() {
+                                java.util.List<ServerPlayer> l = new java.util.ArrayList<>();
+                                for (ServerPlayer p : v.level.players()) if (!p.isSpectator() && near(p, v)) l.add(p);
+                                return l;
+                            }
+                            public void skip() { v.phaseEnd = srv.getTickCount(); }
+                        }, v.cfg == null ? null : v.cfg.ready, now, v.phaseEnd);
                         for (ServerPlayer p : v.level.players()) if (near(p, v)) com.wavesurvivor.network.EventFeedPacket.say(p, Component.literal(WSLang.t("invasion.wave_done", v.wave, v.waves)));
                     }
                 }
             }
-            case BREAK -> { if (now >= v.phaseEnd) startWave(v, v.wave + 1, now); }
+            case BREAK -> { if (now >= v.phaseEnd) { com.wavesurvivor.horde.ready.ReadyManager.end(v); startWave(v, v.wave + 1, now); } }
             case END -> { if (now >= v.phaseEnd) { cleanup(srv, v.won); return; } }
         }
         updateBar(v, now);
@@ -546,6 +554,7 @@ public class InvasionManager {
 
     /** Retire les envahisseurs restants, la barre et les restes d'événements. */
     private static void cleanup(MinecraftServer srv, boolean won) {
+        com.wavesurvivor.horde.ready.ReadyManager.clearAll();
         Inv v = cur;
         if (v == null) return;
         cur = null;
@@ -588,7 +597,7 @@ public class InvasionManager {
             }
             case BREAK -> {
                 int sec = (int) Math.max(0, (v.phaseEnd - now) / 20);
-                title = WSLang.t("invasion.bar_break", name, v.villagersAlive, v.villagersStart, v.wave, v.waves, sec);
+                title = WSLang.t("invasion.bar_break", name, v.villagersAlive, v.villagersStart, v.wave, v.waves, sec) + com.wavesurvivor.horde.ready.ReadyManager.hudSuffix(v);
                 progress = 1f - (float) (now - v.phaseStart) / Math.max(1, v.phaseEnd - v.phaseStart);
             }
             case END -> {

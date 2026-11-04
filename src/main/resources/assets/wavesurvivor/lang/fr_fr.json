@@ -197,5 +197,7 @@
   "item.wavesurvivor.seraph_chestplate": "Plastron du Séraphin",
   "item.wavesurvivor.seraph_leggings": "Jambières du Séraphin",
   "item.wavesurvivor.seraph_boots": "Solerets du Séraphin",
-  "item.wavesurvivor.survivor_notebook": "Carnet du Survivant"
+  "item.wavesurvivor.survivor_notebook": "Carnet du Survivant",
+  "key.wavesurvivor.ready": "Prêt (pause entre vagues)",
+  "key.categories.wavesurvivor": "Wave Survivor"
 }

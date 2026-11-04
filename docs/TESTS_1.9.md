@@ -204,3 +204,13 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Sans fin au-delà de la vague de base : pas de consolation (le bonus +5 est déjà versé)
 - [ ] Éditeur › vagues : champ « Consolation (défaite, %) » : -1 = général, 0 = aucun, 50 = 50 % ; `config/wavesurvivor/rules.json` `{"consolationPercent": 0}` + `/ws reload` désactive par défaut
 - [ ] Kingdom : défaite pendant un Assaut = prorata sur `maxCycles`
+
+## Bouton « Prêt »
+- [ ] Contrôles › Wave Survivor : touche « Prêt (pause entre vagues) » (G par défaut), réglable
+- [ ] Horde classique, entre deux vagues : message « Appuie sur ta touche Prêt… bonus : 3 émeraude(s) » ; appuyer → « Prêts : 1/1 » et la vague suivante démarre tout de suite avec le bonus ; barre de la horde : « · Prêts n/N »
+- [ ] Multijoueur : la vague ne démarre que quand tous sont prêts ; ré-appuyer retire le « prêt » ; un joueur qui se déconnecte ne bloque pas
+- [ ] Bonus proportionnel : enchaîner tout de suite = 3 ; à mi-pause ≈ 2 ; décoché = toujours 3
+- [ ] Éditeur › vagues : « Autoriser Prêt » décoché = aucun message, la touche ne fait rien ; types Pièces / PR / Force / Vitesse / Résistance / Régénération / Célérité ; quantité (secondes pour un effet) et niveau
+- [ ] Pauses longues (vagues avec pause plus longue), sans fin, Boss Rush : mêmes règles ; Invasion de village : barre « Prêts » pendant la pause entre vagues
+- [ ] Kingdom : aucune ligne « Prêt » dans l'éditeur, la touche ne fait rien
+

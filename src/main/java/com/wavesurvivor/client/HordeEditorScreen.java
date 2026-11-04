@@ -848,6 +848,34 @@ public class HordeEditorScreen extends Screen {
         fInt(30, HordeJson.num(cd, "consolationPercent", -1), v -> cd.addProperty("consolationPercent", Math.max(-1, Math.min(100, v))));
         fl(t("ui.consolation_hint"));
         y += 20;
+        // Bouton « Prêt » pendant les pauses (pas en Kingdom : le Calme a sa propre logique)
+        if (!kingdom()) {
+            JsonObject rd = HordeJson.obj(cd, "ready");
+            toggle(x, y, 150, t("ui.ready_allow"), rd, "allow", true);
+            toggle(x + 156, y, 190, t("ui.ready_prop"), rd, "proportional", true);
+            y += 20;
+            flow(x, y);
+            fl(t("ui.ready_bonus"));
+            String rt = HordeJson.str(rd, "bonusType", "coins");
+            boolean fx = !rt.equals("coins") && !rt.equals("pr");
+            fBtn(110, t("ui.ready_type." + rt), () -> {
+                java.util.List<String> types = new java.util.ArrayList<>(java.util.List.of("coins", "pr"));
+                types.addAll(com.wavesurvivor.horde.ready.ReadyManager.EFFECTS);
+                rd.addProperty("bonusType", types.get((Math.max(0, types.indexOf(rt)) + 1) % types.size()));
+                changed();
+                init();
+            });
+            fInt(34, HordeJson.num(rd, "amount", 3), v -> rd.addProperty("amount", Math.max(0, v)));
+            fl(t(fx ? "ui.ready_seconds" : rt.equals("pr") ? "ui.ready_unit_pr" : "ui.ready_unit_coins"));
+            if (fx) {
+                fl(t("ui.ready_level"));
+                fInt(24, HordeJson.num(rd, "level", 1), v -> rd.addProperty("level", Math.max(1, Math.min(5, v))));
+            }
+            y += 20;
+            flow(x, y);
+            fl(t("ui.ready_hint"));
+            y += 20;
+        }
         // Bonus si la vague est nettoyée avant la fin du décompte
         {
             JsonObject fb = HordeJson.obj(cd, "forceEndBonus");
