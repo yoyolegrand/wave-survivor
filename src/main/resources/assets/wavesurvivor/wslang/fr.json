@@ -3587,5 +3587,6 @@
   "carnet.obj.offering": "Faire une offrande",
   "carnet.obj.offering.d": "Dépose un objet dans l'onglet Offrandes du Sanctuaire du Séraphin.",
   "carnet.obj.kingdom": "Jouer une partie Kingdom",
-  "carnet.obj.kingdom.d": "Lance une horde en mode Kingdom."
+  "carnet.obj.kingdom.d": "Lance une horde en mode Kingdom.",
+  "ruin.altar.wave": "§5Les Corrompus surgissent de la terre souillée !"
 }

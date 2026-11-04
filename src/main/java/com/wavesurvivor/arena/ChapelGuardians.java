@@ -53,6 +53,13 @@ public class ChapelGuardians {
             return level.getServer().overworld().getDataStorage().computeIfAbsent(Data::load, Data::new, "wavesurvivor_chapels");
         }
 
+        /** Marque une ruine comme déclenchée ; faux si elle l'était déjà. */
+        public boolean claim(long key) {
+            if (!done.add(key)) return false;
+            setDirty();
+            return true;
+        }
+
         static Data load(CompoundTag tag) {
             Data d = new Data();
             for (Tag t : tag.getList("done", Tag.TAG_LONG)) d.done.add(((LongTag) t).getAsLong());
@@ -73,15 +80,11 @@ public class ChapelGuardians {
         if (e.phase != TickEvent.Phase.END || !(e.player instanceof ServerPlayer p) || p.isSpectator()) return;
         ServerLevel level = p.serverLevel();
         if (level.getGameTime() % 20 != 0 || level.getDifficulty() == Difficulty.PEACEFUL) return;
-        Structure structure = level.registryAccess().registryOrThrow(Registries.STRUCTURE).get(new ResourceLocation("wavesurvivor", ARENA_ID));
-        if (structure == null) return;
-        StructureStart start = level.structureManager().getStructureAt(p.blockPosition(), structure);
-        if (!start.isValid()) return;
-        ArenaPiece piece = null;
-        for (var sp : start.getPieces()) if (sp instanceof ArenaPiece ap) { piece = ap; break; }
-        if (piece == null) return;
-        ArenaBlueprint bp = ArenaBlueprint.load(piece.arena());
-        if (bp == null) return;
+        Found f = locate(level, p.blockPosition(), ARENA_ID);
+        if (f == null) return;
+        StructureStart start = f.start();
+        ArenaPiece piece = f.piece();
+        ArenaBlueprint bp = f.bp();
         Rotation rot = piece.rotation();
         Data data = Data.get(level);
         long key = start.getChunkPos().toLong();
@@ -89,6 +92,21 @@ public class ChapelGuardians {
         data.done.add(key);
         data.setDirty();
         awaken(level, p, bp, piece, rot);
+    }
+
+    /** Ruine générée sous un point : sa structure, sa pièce et son plan (null si le point n'est pas dans cette ruine). */
+    public record Found(StructureStart start, ArenaPiece piece, ArenaBlueprint bp) {}
+
+    public static Found locate(ServerLevel level, BlockPos pos, String id) {
+        Structure structure = level.registryAccess().registryOrThrow(Registries.STRUCTURE).get(new ResourceLocation("wavesurvivor", id));
+        if (structure == null) return null;
+        StructureStart start = level.structureManager().getStructureAt(pos, structure);
+        if (!start.isValid()) return null;
+        ArenaPiece piece = null;
+        for (var sp : start.getPieces()) if (sp instanceof ArenaPiece ap) { piece = ap; break; }
+        if (piece == null) return null;
+        ArenaBlueprint bp = ArenaBlueprint.load(piece.arena());
+        return bp == null ? null : new Found(start, piece, bp);
     }
 
     private static boolean inZone(ArenaBlueprint bp, ArenaPiece piece, Rotation rot, BlockPos pos) {

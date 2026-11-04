@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "wavesurvivor:autel_souille",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 52,
+    "separation": 22,
+    "salt": 1741226933
+  }
+}

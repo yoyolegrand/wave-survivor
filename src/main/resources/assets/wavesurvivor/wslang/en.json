@@ -4321,5 +4321,6 @@
   "carnet.obj.offering": "Make an offering",
   "carnet.obj.offering.d": "Drop an item in the Offerings tab of the Seraph Shrine.",
   "carnet.obj.kingdom": "Play a Kingdom game",
-  "carnet.obj.kingdom.d": "Start a horde in Kingdom mode."
+  "carnet.obj.kingdom.d": "Start a horde in Kingdom mode.",
+  "ruin.altar.wave": "§5The Corrupted rise from the tainted earth!"
 }
