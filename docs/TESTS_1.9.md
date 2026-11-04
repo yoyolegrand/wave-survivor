@@ -179,3 +179,11 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Faux : un coup dans le vide / sur un bloc non cassé coûte 1 PV (magique, ignore l'armure) ; frapper un monstre ou casser un bloc ne coûte rien.
 - [ ] Lame : bonus aussi sur les morts-vivants d'autres mods (tag wavesurvivor:undead, forge:undead, mots-clés de noms dans la config).
 - Textures PixelLab à venir : voir docs/BRIEF_TEXTURES_ARTISANAT.md.
+
+## Ruine « La Chapelle »
+- [ ] `/ws arena place chapelle [0|90|180|270]` : la chapelle se pose, tourne bien (escaliers, portes, cloche), cimetière et abords raccordés
+- [ ] Lanternes de grâce : 3 suspendues dans la nef, 4 posées sur piliers sur le chemin ; bougies votives allumées sur l'autel
+- [ ] Un monde neuf (ou une zone non explorée) : `/locate structure wavesurvivor:chapelle` trouve une chapelle (plaines, prairies, forêts), rare, sur terrain plat
+- [ ] Coffre de l'autel : 6–10 Éclats, 1–2 Fragments de grâce, parfois un Cœur ; pillable une seule fois
+- [ ] Entrer dans la nef ou le cimetière d'une chapelle **générée** : la cloche sonne, 4–6 gardiens (zombies/squelettes casqués) apparaissent ; une seule fois par chapelle (pas pour une chapelle posée à la commande)
+- [ ] Lanterne : se pose au plafond quand on vise le dessous d'un bloc, casse si le support disparaît

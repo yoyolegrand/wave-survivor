@@ -2185,9 +2185,13 @@
   "shrine.fuse": "Fusionner",
   "shrine.grace_box": "Grâce",
   "shrine.taint_box": "Souillure",
-  "shrine.stock": "Stock : {0} / {1}",
+  "shrine.stock": "Stock : {0} / {1}",
+
+
+
   "shrine.fuse_in": "{0} requis",
-  "shrine.fuse_summary": "{0} × {1} → {2} × {3}",
+  "shrine.fuse_summary": "{0} × {1} → {2} × {3}",
+
   "shrine.fuse_nothing": "Rien à fusionner : il en faut {0}.",
   "shrine.fuse_heart": "Les Cœurs sont du niveau maximal.",
   "shrine.title": "Sanctuaire du Séraphin",
@@ -2208,7 +2212,8 @@
   "shrine.up": "▲ {0} : +{1}",
   "shrine.down": "▼ {0} : −{1}",
   "shrine.max_pure": "Pureté maximale",
-  "shrine.max_corrupt": "Corruption maximale",
+  "shrine.max_corrupt": "Corruption maximale",
+
   "shrine.last": "Dernière variation : {0}",
   "shrine.inventory": "Inventaire",
   "shrine.full_pure": "Le Sanctuaire est déjà au maximum de pureté.",
@@ -3512,5 +3517,6 @@
   "voc.ui.requires_prev": "Prends d'abord les talents précédents de cette colonne",
   "shrine.craft_scroll": "{0}-{1} / {2} (molette)",
   "craft.item.dawn_bonus": "§e✦ Dégâts bénis contre les morts-vivants : {0}",
-  "craft.item.seraph_armor": "§eConsacrée : améliorable avec des fragments de grâce\n§6Ensemble — Bénédiction du Séraphin (4 pièces) :\n§7-15 % de dégâts subis des morts-vivants et des Corrompus"
+  "craft.item.seraph_armor": "§eConsacrée : améliorable avec des fragments de grâce\n§6Ensemble — Bénédiction du Séraphin (4 pièces) :\n§7-15 % de dégâts subis des morts-vivants et des Corrompus",
+  "ruin.chapel.guardians": "§6Les cloches de la chapelle sonnent... les gardiens se réveillent !"
 }

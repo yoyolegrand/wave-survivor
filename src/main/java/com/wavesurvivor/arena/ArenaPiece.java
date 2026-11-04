@@ -56,6 +56,11 @@ public class ArenaPiece extends StructurePiece {
         tag.putInt("D", depth);
     }
 
+    public String arena() { return arena; }
+    public int ox() { return ox; }
+    public int oz() { return oz; }
+    public int y0() { return y0; }
+
     /** Rotation de la pièce. */
     public Rotation rotation() { return Rotation.values()[Math.max(0, Math.min(3, rot))]; }
 

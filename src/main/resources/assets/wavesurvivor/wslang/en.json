@@ -2736,9 +2736,13 @@
   "shrine.fuse": "Fuse",
   "shrine.grace_box": "Grace",
   "shrine.taint_box": "Taint",
-  "shrine.stock": "Stock: {0} / {1}",
+  "shrine.stock": "Stock: {0} / {1}",
+
+
+
   "shrine.fuse_in": "{0} needed",
-  "shrine.fuse_summary": "{0} × {1} → {2} × {3}",
+  "shrine.fuse_summary": "{0} × {1} → {2} × {3}",
+
   "shrine.fuse_nothing": "Nothing to fuse: you need {0}.",
   "shrine.fuse_heart": "Hearts are the highest level.",
   "shrine.title": "Seraph Shrine",
@@ -2759,7 +2763,8 @@
   "shrine.up": "▲ {0}: +{1}",
   "shrine.down": "▼ {0}: −{1}",
   "shrine.max_pure": "Maximum purity",
-  "shrine.max_corrupt": "Maximum corruption",
+  "shrine.max_corrupt": "Maximum corruption",
+
   "shrine.last": "Last change: {0}",
   "shrine.inventory": "Inventory",
   "shrine.full_pure": "The Shrine is already at maximum purity.",
@@ -4246,5 +4251,6 @@
   "voc.ui.requires_prev": "Take the previous talents of this column first",
   "shrine.craft_scroll": "{0}-{1} / {2} (scroll)",
   "craft.item.dawn_bonus": "§e✦ Blessed damage against undead: {0}",
-  "craft.item.seraph_armor": "§eConsecrated: can be upgraded with grace fragments\n§6Set — Blessing of the Seraph (4 pieces):\n§7-15% damage taken from undead and the Corrupted"
+  "craft.item.seraph_armor": "§eConsecrated: can be upgraded with grace fragments\n§6Set — Blessing of the Seraph (4 pieces):\n§7-15% damage taken from undead and the Corrupted",
+  "ruin.chapel.guardians": "§6The chapel bell tolls... the guardians awaken!"
 }

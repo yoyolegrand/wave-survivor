@@ -292,6 +292,12 @@ public final class ArenaBlueprint {
         return world;
     }
 
+    /** Un point du plan (x, y, z du plan) en coordonnées du monde, pour une arène posée avec ce coin nord-ouest et cette rotation. */
+    public BlockPos worldPos(int ox, int oz, int y0, Rotation rot, int px, int py, int pz) {
+        int[] r = rot(px, pz, rot);
+        return new BlockPos(ox + r[0], y0 - planGroundY + py, oz + r[1]);
+    }
+
     /** Positions (monde) de tous les blocs du plan désignés par ce caractère de la palette (rotation comprise). */
     public List<BlockPos> cellsOf(char c, int ox, int oz, int y0, Rotation rot) {
         List<BlockPos> out = new ArrayList<>();
