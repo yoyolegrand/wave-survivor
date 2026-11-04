@@ -1866,6 +1866,17 @@ public class HordeEditorScreen extends Screen {
         fl(t("ui.en.boss_power"));
         fDbl(30, HordeJson.dbl(en, "bossPowerPercent", 15), v -> en.addProperty("bossPowerPercent", Math.max(0, Math.min(200, v))));
         fl("%");
+        y += 22;
+        flow(x, y);
+        fl(t("ui.en.tier_every"));
+        fInt(26, HordeJson.num(en, "tierEvery", 10), v -> en.addProperty("tierEvery", Math.max(0, Math.min(1000, v))));
+        fl(t("ui.en.cash"));
+        fInt(26, HordeJson.num(en, "cashPercent", 90), v -> en.addProperty("cashPercent", Math.max(0, Math.min(100, v))));
+        fl("%");
+        fl(t("ui.en.vote_s"));
+        fInt(26, HordeJson.num(en, "voteSeconds", 20), v -> en.addProperty("voteSeconds", Math.max(5, Math.min(120, v))));
+        y += 22;
+        toggle(x, y, 200, t("ui.en.host"), en, "hostDecides", false);
         y += 28;
         label(x, y, t("ui.en.hint"));
     }

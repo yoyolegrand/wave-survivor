@@ -77,6 +77,11 @@ public class Endless {
 
     public static boolean active() { return active; }
 
+    /** Réglages de la partie en cours et dernière vague normale (pour les paliers). */
+    static HordeConfigMultiData.EndlessSettings settings() { return cfg; }
+
+    static int baseTotal() { return baseTotal; }
+
     /** Démarrage de la horde : active le sans fin si l'autel l'a demandé et que la horde le permet. */
     public static boolean begin(MinecraftServer srv, HordeConfigMultiData horde) {
         boolean wanted = pending;
@@ -97,6 +102,7 @@ public class Endless {
 
     /** Fin de horde (défaite, arrêt) : plus de sans fin en cours. */
     public static void clear() {
+        EndlessTiers.clear();
         active = false;
         pending = false;
         lost = false;
@@ -270,6 +276,7 @@ public class Endless {
     public void onServerTick(TickEvent.ServerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !active || lost) return;
         MinecraftServer srv = e.getServer();
+        EndlessTiers.tick(srv);
         if (srv.getTickCount() % 20 != 0 || !HordeManager.get().isRunning()) return;
         long elapsed = srv.getTickCount() - startTick;
         int wave = Math.max(1, HordeManager.get().getCurrentWave());

@@ -161,6 +161,11 @@ public class NetworkHandler {
         // Bouton « Prêt » pendant les pauses
         CHANNEL.registerMessage(id++, ReadyPacket.class,
                 ReadyPacket::encode, ReadyPacket::decode, ReadyPacket::handle);
+        // Paliers du mode Sans fin : écran de choix (serveur → client) et vote (client → serveur)
+        CHANNEL.registerMessage(id++, EndlessTierPacket.class,
+                EndlessTierPacket::encode, EndlessTierPacket::decode, EndlessTierPacket::handle);
+        CHANNEL.registerMessage(id++, EndlessVotePacket.class,
+                EndlessVotePacket::encode, EndlessVotePacket::decode, EndlessVotePacket::handle);
         // Éditeur de hordes à plusieurs (verrous par onglet)
         CHANNEL.registerMessage(id++, HordeCollabPackets.Presence.class,
                 HordeCollabPackets.Presence::encode, HordeCollabPackets.Presence::decode, HordeCollabPackets.Presence::handle);

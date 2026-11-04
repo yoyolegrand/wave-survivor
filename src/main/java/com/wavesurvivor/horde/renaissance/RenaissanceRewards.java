@@ -27,6 +27,10 @@ public class RenaissanceRewards {
     private static int bosses = 0;
     private static boolean kingdom = false;
     private static boolean defeat = false;
+    /** Sans fin : part des gains versée quand l'équipe encaisse à un palier (1 = tout). Remise à 1 après le versement. */
+    private static double cashScale = 1.0;
+
+    public static void setCashScale(double s) { cashScale = Math.max(0, Math.min(1, s)); }
 
     /** Nouvelle horde : compteurs remis à zéro. */
     public static void reset(boolean isKingdom) {
@@ -114,7 +118,7 @@ public class RenaissanceRewards {
                     consolation = (int) Math.round(pct / 100.0 * frac * (5 + (firstEligible ? 15 : 0)) * diff * muta * personal);
                 }
             }
-            int total = (int) Math.round((base + bonusWin) * diff * muta * personal) + first + consolation;
+            int total = (int) Math.round(((int) Math.round((base + bonusWin) * diff * muta * personal) + first + consolation) * cashScale);
             // 1.6 — Défi du jour : première victoire du jour avec la difficulté et les 3 mutateurs imposés
             int daily = victory ? com.wavesurvivor.horde.daily.DailyServer.claim(p, kingdom) : 0;
             if (daily > 0) RenaissanceStore.addPoints(p, daily);
@@ -123,11 +127,13 @@ public class RenaissanceRewards {
             p.sendSystemMessage(Component.literal(WSLang.t("pr.earned", total, base, bonusWin,
                     String.format("%.2f", diff * muta), (int) Math.round((personal - 1.0) * 100))
                     + (first > 0 ? WSLang.t("pr.first", first) : "")
-                    + (consolation > 0 ? WSLang.t("pr.consolation", consolation) : "")));
+                    + (consolation > 0 ? WSLang.t("pr.consolation", consolation) : "")
+                    + (cashScale < 1.0 ? WSLang.t("pr.cashed", (int) Math.round(cashScale * 100)) : "")));
             p.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1f, 1.4f);
             WaveSurvivorMod.LOGGER.info("[PR] {} +{} PR ({} vagues, {} boss, victoire={})", p.getGameProfile().getName(), total, waves, bosses, victory);
         }
         waves = 0;
         bosses = 0;
+        cashScale = 1.0;
     }
 }

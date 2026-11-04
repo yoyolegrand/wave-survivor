@@ -273,7 +273,7 @@ public class HordeManager {
         KillTracker.stopTracking();
         HordeHudManager.hide();
         MobRegistry.clear();
-        if (defeat) com.wavesurvivor.horde.benediction.BlessingStats.recordRun(server, false); // statistiques des bénédictions (1.8)
+        if (defeat && !com.wavesurvivor.horde.endless.EndlessTiers.cashedOut()) com.wavesurvivor.horde.benediction.BlessingStats.recordRun(server, false); // statistiques des bénédictions (1.8)
         RogueUpgradeManager.clearAllPlayers(server);
         MerchantSpawner.despawnAll(server);
         RouletteChestSpawner.despawnAll(server);
@@ -572,8 +572,10 @@ public class HordeManager {
                 long delaySec = (pause != null) ? pause.pauseDuration : (com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.pauseSeconds() : cfg.delayBetweenWaves);
                 nextActionTick = now + Math.max(20, delaySec * 20L);
                 currentDelaySeconds = (int) delaySec;
+                // Palier du mode Sans fin : coffre puis choix Continuer / Encaisser (pas de « Prêt » pendant le choix)
+                boolean tierVote = com.wavesurvivor.horde.endless.EndlessTiers.onPause(srv, currentWave, now);
                 // Bouton « Prêt » : la pause est confiée au moteur (tous prêts = la vague suivante démarre tout de suite)
-                com.wavesurvivor.horde.ready.ReadyManager.begin(this, new com.wavesurvivor.horde.ready.ReadyManager.Pause() {
+                if (!tierVote) com.wavesurvivor.horde.ready.ReadyManager.begin(this, new com.wavesurvivor.horde.ready.ReadyManager.Pause() {
                     public java.util.List<ServerPlayer> players() {
                         java.util.List<ServerPlayer> l = new java.util.ArrayList<>();
                         for (ServerPlayer p : srv.getPlayerList().getPlayers()) if (!p.isSpectator()) l.add(p);
@@ -1044,6 +1046,15 @@ public class HordeManager {
     /** Vagues terminées (la vague en cours ne compte pas tant qu'elle n'est pas nettoyée). */
     public int wavesCleared() { return state == State.RUNNING ? Math.max(0, currentWave - 1) : Math.max(0, currentWave); }
     public long getStartedAtTick() { return startedAtTick; }
+    /** Prolonge la pause en cours jusqu'à ce tick (palier du mode Sans fin : laisser le temps de choisir). */
+    public void extendPause(long untilTick, long now) {
+        if (state != State.WAITING_NEXT_WAVE && state != State.PAUSED) return;
+        if (untilTick > nextActionTick) {
+            nextActionTick = untilTick;
+            currentDelaySeconds = (int) Math.max(1, (untilTick - now) / 20);
+        }
+    }
+
     public boolean isRunning() { return state == State.RUNNING || state == State.WAITING_NEXT_WAVE || state == State.PAUSED; }
 
     /** Vrai si la horde en cours bloque l'apparition naturelle des créatures (réglage « blockNaturalSpawns »). */

@@ -384,6 +384,34 @@ public class HordeConfigMultiData {
         @SerializedName("requiresCompletion") public boolean requiresCompletion = true;
         /** Nombre de scores gardés au classement. */
         @SerializedName("topSize") public int topSize = 10;
+        /** Paliers (1.9) : tous les N vagues (à partir de la dernière vague normale), coffre de palier puis choix Continuer / Encaisser (0 = aucun palier). */
+        @SerializedName("tierEvery") public int tierEvery = 10;
+        /** Part des gains (PR) versée quand l'équipe encaisse à un palier ; continuer jusqu'à la défaite rapporte 100 %. */
+        @SerializedName("cashPercent") public int cashPercent = 90;
+        /** Durée du choix (secondes) pendant la pause du palier. */
+        @SerializedName("voteSeconds") public int voteSeconds = 20;
+        /** Faux : l'équipe encaisse à la majorité (les joueurs qui ne votent pas comptent comme « Continuer ») ; vrai : seul l'hôte décide. */
+        @SerializedName("hostDecides") public boolean hostDecides = false;
+        /** Contenu du coffre de palier : « count » au premier palier, « perTier » de plus à chaque palier suivant ; « pr » = points de Renaissance. */
+        @SerializedName("tierChest") public java.util.List<TierItem> tierChest = defaultTierChest();
+
+        private static java.util.List<TierItem> defaultTierChest() {
+            java.util.List<TierItem> l = new java.util.ArrayList<>();
+            l.add(new TierItem("minecraft:emerald", 10, 5));
+            l.add(new TierItem("minecraft:golden_apple", 1, 1));
+            l.add(new TierItem("minecraft:experience_bottle", 8, 4));
+            l.add(new TierItem("pr", 5, 3));
+            return l;
+        }
+    }
+
+    /** Un objet du coffre de palier. */
+    public static class TierItem {
+        @SerializedName("item") public String item = "minecraft:emerald";
+        @SerializedName("count") public int count = 1;
+        @SerializedName("perTier") public int perTier = 0;
+        public TierItem() {}
+        public TierItem(String item, int count, int perTier) { this.item = item; this.count = count; this.perTier = perTier; }
     }
 
     /** Purification : des foyers de corruption à casser ; aucun = Assaut suivant plus fort, tous = plus faible. */

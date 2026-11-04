@@ -214,3 +214,13 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Pauses longues (vagues avec pause plus longue), sans fin, Boss Rush : mêmes règles ; Invasion de village : barre « Prêts » pendant la pause entre vagues
 - [ ] Kingdom : aucune ligne « Prêt » dans l'éditeur, la touche ne fait rien
 
+## Paliers du mode Sans fin
+- [ ] Sans fin, au passage de la vague 10 (horde de 5 vagues normales) : message de palier, coffre reçu (émeraudes, pomme dorée, fioles d'XP, PR), écran « Palier 1 — vague 10 » avec compte à rebours 20 s ; la pause est prolongée au besoin
+- [ ] Palier suivant (vague 20) : coffre plus généreux (+5 émeraudes, +1 pomme, +4 fioles, +3 PR)
+- [ ] « Continuer » (ou ne rien faire, ou Échap) : la partie continue ; jusqu'à la défaite : PR à 100 %
+- [ ] « Encaisser » seul : la partie s'arrête, PR à 90 % (message « encaissé à 90 % »), score enregistré au classement (`/ws endless`)
+- [ ] Multijoueur : majorité (2 sur 3 = encaisse ; non-votants = continuer) ; avec « L'hôte décide » : seul l'hôte compte ; l'écran se ferme chez tous à la décision
+- [ ] Écran ouvert pendant le choix d'une bénédiction : il apparaît quand la bénédiction est choisie, tant que le temps n'est pas écoulé
+- [ ] Pas de bouton « Prêt » pendant un palier ; « Prêt » normal aux autres vagues
+- [ ] Éditeur (vue Sans fin) : intervalle (0 = aucun palier), % encaissé, durée du choix, l'hôte décide
+

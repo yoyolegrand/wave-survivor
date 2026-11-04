@@ -57,6 +57,13 @@ During a break between two waves, every player can press the new **Ready** key (
 - Works in classic hordes, Endless, Boss Rush and Invasions (not Kingdom: the Calm has its own logic).
 - Per horde in the editor (Waves tab): **Allow Ready** (turn it off before a boss, for example), bonus type (**emeralds**, **Rebirth Points**, or a timed effect: Strength, Speed, Resistance, Regeneration, Haste), quantity (or seconds and level for an effect) and **proportional to time left** (chain at once = full bonus, just before the break ends = almost nothing). Default: Ready allowed, 3 emeralds scaled by the time left.
 
+### ♾ Endless tiers
+Every **10 waves** (from the last normal wave; adjustable), the team gets a **tier chest** — more generous at each tier — then a 20-second choice during the break:
+- **Continue**: keep going; playing until defeat pays **100 %** of the winnings (Rebirth Points), no penalty.
+- **Cash out and stop**: the game ends with **90 %** of the winnings (adjustable).
+- In a team the decision is by **majority** (players who do not vote count as Continue) or by the **host alone**, per horde. The leaderboard records the wave reached either way.
+- Editor (Endless view): tier interval, cash-out %, choice time, host decides; the chest contents (`tierChest`: item, count, +perTier, or `pr`) are in the horde's `endless` block.
+
 ### 🔧 Under the hood
 - 🗂 Everything lives in **`vocations.json`** (XP curve, XP per action, ranks, values, tiers, costs, base role effects), layered like the other configs: put only the fields you change in `config/wavesurvivor/vocations.json`; `/ws reload` applies them. The server sends the trees to clients, so servers can tune them freely.
 
