@@ -187,3 +187,13 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Coffre de l'autel : 6–10 Éclats, 1–2 Fragments de grâce, parfois un Cœur ; pillable une seule fois
 - [ ] Entrer dans la nef ou le cimetière d'une chapelle **générée** : la cloche sonne, 4–6 gardiens (zombies/squelettes casqués) apparaissent ; une seule fois par chapelle (pas pour une chapelle posée à la commande)
 - [ ] Lanterne : se pose au plafond quand on vise le dessous d'un bloc, casse si le support disparaît
+
+## Carnet du Survivant
+- [ ] Nouveau monde : le carnet est remis à la première connexion (message dans le chat) ; monde existant : remis à la prochaine connexion, sans récompenses pour ce qui est déjà accompli
+- [ ] Clic droit sur le carnet et `/ws carnet` ouvrent l'écran ; `/ws carnet` en redonne un si on l'a perdu ; craft : livre + papier
+- [ ] Onglet Démarrage : 5 pages, le bouton « Voir dans le Codex » ouvre la bonne page (autel/start, bénédictions, Renaissance, Sanctuaire, Kingdom)
+- [ ] Onglet Objectifs : lier une horde, survivre à 5 vagues, choisir une bénédiction, dépenser des PR, équiper une relique (patienter ~5 s), finir une horde, faire une offrande, jouer une partie Kingdom → case cochée, récompense reçue, annonce dans le fil d'événements, progression 0/5 → 5/5
+- [ ] Onglet Ressources : 8 fiches (icône, où le gagner, à quoi ça sert), texte défilant si long
+- [ ] Onglet Codex : taper « relique », « Kingdom », « Séraphin »… → résultats cliquables ouvrant la page du Codex ; accents et majuscules ignorés
+- [ ] `/ws reload` après modification de `config/wavesurvivor/carnet.json` (objectifs, récompenses, `autoGive: false`)
+

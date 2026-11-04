@@ -21,7 +21,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class CodexScreen extends Screen {
 
-    private static final String[] PAGES = {
+    static final String[] PAGES = {
             "start", "classic", "frost", "desert", "breaches", "blessings", "difficulty", "daily", "boss", "bossrush", "endless", "invasion",
             "kingdom", "objectives", "treasury", "monolith", "defenses", "workshop", "tools",
             "roles", "vocations", "alchemy", "omens", "relics", "shrine", "crafting", "arenas", "ruins", "renaissance", "stats", "interface", "editor"
@@ -71,6 +71,12 @@ public class CodexScreen extends Screen {
         Minecraft.getInstance().setScreen(new CodexScreen(parent));
     }
 
+    /** Ouvre le Codex directement sur la page « id » (ex. depuis le Carnet du Survivant). */
+    public static void openAt(Screen parent, String id) {
+        for (int i = 0; i < PAGES.length; i++) if (PAGES[i].equals(id)) lastPage = i;
+        Minecraft.getInstance().setScreen(new CodexScreen(parent));
+    }
+
     @Override
     protected void init() {
         clearWidgets();
@@ -113,7 +119,7 @@ public class CodexScreen extends Screen {
     private int maxScroll() { return Math.max(0, lines.size() - visibleLines()); }
 
     /** Paragraphes de la page : texte du codex (lignes séparées par \n) + listes générées. */
-    private List<String> content(String id) {
+    static List<String> content(String id) {
         List<String> out = new ArrayList<>();
         body(out, "codex." + id + ".body");
         switch (id) {

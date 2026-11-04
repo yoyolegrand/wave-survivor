@@ -1,0 +1,71 @@
+{
+  "autoGive": true,
+  "objectives": [
+    {
+      "id": "link_altar",
+      "stat": "altars_linked",
+      "threshold": 1,
+      "pr": 5
+    },
+    {
+      "id": "waves_5",
+      "stat": "waves_cleared",
+      "threshold": 5,
+      "pr": 5
+    },
+    {
+      "id": "blessing",
+      "stat": "blessings_picked",
+      "threshold": 1,
+      "pr": 5
+    },
+    {
+      "id": "spend_pr",
+      "stat": "pr_spent",
+      "threshold": 1,
+      "pr": 0,
+      "items": [
+        {
+          "item": "minecraft:emerald",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "id": "relic",
+      "stat": "relic_equipped",
+      "threshold": 1,
+      "pr": 5
+    },
+    {
+      "id": "win_horde",
+      "stat": "hordes_won",
+      "threshold": 1,
+      "pr": 10
+    },
+    {
+      "id": "offering",
+      "stat": "shrine_offerings",
+      "threshold": 1,
+      "pr": 0,
+      "items": [
+        {
+          "item": "wavesurvivor:grace_shard",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "id": "kingdom",
+      "stat": "kingdom_games",
+      "threshold": 1,
+      "pr": 10,
+      "items": [
+        {
+          "item": "minecraft:emerald",
+          "count": 5
+        }
+      ]
+    }
+  ]
+}

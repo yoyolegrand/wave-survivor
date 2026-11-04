@@ -169,6 +169,7 @@ public class SeraphShrineMenu extends AbstractContainerMenu {
         offer.setChanged();
         be.offerFeedback(v > 0);
         be.addFaith(v * units);
+        com.wavesurvivor.horde.stats.PlayerStats.add(sp, "shrine_offerings", 1); // Carnet
         broadcastChanges();
     }
 

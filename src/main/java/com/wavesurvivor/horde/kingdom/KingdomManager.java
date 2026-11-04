@@ -348,6 +348,7 @@ public final class KingdomManager {
         center = c;
         cfg = h.configData.kingdom();
         arenaGates = com.wavesurvivor.arena.ArenaAltar.kingdomGates(lvl, c);
+        com.wavesurvivor.horde.stats.PlayerStats.addForAll(server, "kingdom_games", 1); // Carnet
         cycle = 0;
         KingdomReport.stop();
         pendingSpecial = null;

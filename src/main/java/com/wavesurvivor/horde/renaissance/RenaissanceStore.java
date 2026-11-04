@@ -39,6 +39,7 @@ public class RenaissanceStore {
     public static void addPoints(Player p, int delta) {
         CompoundTag d = data(p);
         d.putInt("points", Math.max(0, d.getInt("points") + delta));
+        if (delta < 0 && p instanceof net.minecraft.server.level.ServerPlayer sp) com.wavesurvivor.horde.stats.PlayerStats.add(sp, "pr_spent", -delta); // Carnet
         if (delta > 0) d.putInt("totalEarned", d.getInt("totalEarned") + delta);
     }
 

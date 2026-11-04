@@ -37,7 +37,9 @@ public class PlayerStats extends SavedData {
         Map<String, Long> m = s.data.computeIfAbsent(p.getUUID(), k -> new HashMap<>());
         m.merge(key, n, Long::sum);
         s.setDirty();
-        Achievements.check(p, s.snapshot(p.getUUID()));
+        Map<String, Long> snap = s.snapshot(p.getUUID());
+        Achievements.check(p, snap);
+        com.wavesurvivor.carnet.CarnetObjectives.check(p, snap);
     }
 
     /** Garde le maximum entre la valeur actuelle et {@code v} (meilleure vague, meilleure série…). */
@@ -48,7 +50,9 @@ public class PlayerStats extends SavedData {
         if (m.getOrDefault(key, 0L) >= v) return;
         m.put(key, v);
         s.setDirty();
-        Achievements.check(p, s.snapshot(p.getUUID()));
+        Map<String, Long> snap = s.snapshot(p.getUUID());
+        Achievements.check(p, snap);
+        com.wavesurvivor.carnet.CarnetObjectives.check(p, snap);
     }
 
     /** Ajoute {@code n} à tous les joueurs connectés qui ne sont pas spectateurs. */

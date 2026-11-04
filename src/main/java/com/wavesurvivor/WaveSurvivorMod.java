@@ -75,6 +75,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.shrine.ShrineGearEvents()); // équipements améliorés à la Forge du Sanctuaire
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.craft.CraftEquipEvents()); // Artisanat : lame, faux, flèches, totems
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.arena.ChapelGuardians()); // Ruine Chapelle : gardiens et cloche
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.carnet.CarnetEvents()); // Carnet du Survivant
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.craft.CraftUtilityEvents()); // Artisanat : lanterne et bougie
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.craft.CraftBuffs()); // Artisanat : nourritures spéciales (un seul effet à la fois)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.shrine.ShrineEvents()); // Sanctuaire du Séraphin : foi et événements proches
@@ -233,6 +234,7 @@ public class WaveSurvivorMod {
         com.wavesurvivor.altar.AltarRecipes.load();
         com.wavesurvivor.shrine.ShrineConfig.load();
         com.wavesurvivor.craft.CraftConfig.load();
+        com.wavesurvivor.carnet.CarnetConfig.load();
         com.wavesurvivor.arena.ArenaSettings.load();
         com.wavesurvivor.shrine.ShrineUpgrades.load();
         com.wavesurvivor.horde.kingdom.vocation.VocationsConfig.load();

@@ -155,6 +155,9 @@ public class NetworkHandler {
         // Codex (/ws codex)
         CHANNEL.registerMessage(id++, CodexPacket.class,
                 CodexPacket::encode, CodexPacket::decode, CodexPacket::handle);
+        // Carnet du Survivant (/ws carnet, clic droit)
+        CHANNEL.registerMessage(id++, CarnetPacket.class,
+                CarnetPacket::encode, CarnetPacket::decode, CarnetPacket::handle);
         // Éditeur de hordes à plusieurs (verrous par onglet)
         CHANNEL.registerMessage(id++, HordeCollabPackets.Presence.class,
                 HordeCollabPackets.Presence::encode, HordeCollabPackets.Presence::decode, HordeCollabPackets.Presence::handle);

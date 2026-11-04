@@ -363,6 +363,7 @@ public class AltarManager {
         AltarRecipes.Style style = AltarRecipes.getStyle(hordeName);
         if (style != null) applyStyle(level, pos, entry, style.dye(), style.particles);
         AltarStore.register(entry);
+        com.wavesurvivor.horde.stats.PlayerStats.add(player, "altars_linked", 1); // Carnet : première horde liée
 
         // Zone (claim) : le sol se transforme en onde autour de l'autel
         if (zone != null) AltarZone.transform(level, pos, zone);

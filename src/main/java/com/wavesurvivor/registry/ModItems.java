@@ -82,6 +82,8 @@ public class ModItems {
                 @Override public boolean isFoil(ItemStack stack) { return true; }
             });
     // ─── Artisanat sacré et profane : nourriture (config : crafting_fragments.json) ───
+    public static final RegistryObject<Item> SURVIVOR_NOTEBOOK = ITEMS.register("survivor_notebook",
+            () -> new com.wavesurvivor.carnet.CarnetItem(new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final RegistryObject<Item> BLESSED_BREAD = ITEMS.register("blessed_bread",
             () -> new com.wavesurvivor.craft.CraftFoodItem("blessed_bread", false, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final RegistryObject<Item> SANCTIFIED_APPLE = ITEMS.register("sanctified_apple",
@@ -422,6 +424,7 @@ public class ModItems {
                         output.accept(KINGDOM_COLLECTOR_ITEM.get());
                         output.accept(KINGDOM_WORKSHOP_ITEM.get());
                         output.accept(OFFERING_BRAZIER_ITEM.get());
+                        output.accept(SURVIVOR_NOTEBOOK.get());
                         output.accept(SERAPH_SHRINE_ITEM.get());
                         output.accept(GRACE_SHARD.get());
                         output.accept(GRACE_FRAGMENT.get());

@@ -41,6 +41,14 @@ Grace and taint fragments from the Seraph Shrine now craft **food, blocks and ge
 - 👼 **Seraph Armor**: a full armor set (helm, chestplate, greaves, sabatons) with an original winged 3D model, crafted at the Shrine from diamond pieces and Grace Fragments. Wearing all four gives the **Blessing of the Seraph** (-15% damage from undead and the Corrupted). Consecrated: upgradable at the Forge with grace fragments.
 - 📖 New **Sacred & Profane Crafting** page in the Codex. Every value (effects, durations, radii, the craft list) is in `crafting_fragments.json`.
 
+### 📖 Survivor's Notebook
+A guide book every player receives on their first login (craftable with a book and paper, or `/ws carnet`).
+- 🚀 **Getting started**: five short pages (altar and waves, blessings, Rebirth and relics, Seraph Shrine, Kingdom) each with a **See in the Codex** button.
+- ✅ **Objectives** ticked automatically, with a small reward (Rebirth Points, emeralds or grace shards) announced in the event feed: link a horde, clear 5 waves, pick a blessing, spend RP, equip a relic, finish a horde, make a Shrine offering, play a Kingdom game. Only progress made after you receive the notebook counts. The list and rewards are in `carnet.json`.
+- 💎 **Resources**: where each currency or resource is earned and what it is for (coins, Breach Essence, RP, grace and taint fragments, Alchemist reagents, Mastery).
+- 🔎 **Codex search**: full-text search through every Codex page, with clickable results.
+- 🏚 New **Ruins** page in the Codex, and the first ruin: the **Chapel** (rare, in plains and forests, with a grace-fragment chest and undead guardians woken by its bell).
+
 ### 🔧 Under the hood
 - 🗂 Everything lives in **`vocations.json`** (XP curve, XP per action, ranks, values, tiers, costs, base role effects), layered like the other configs: put only the fields you change in `config/wavesurvivor/vocations.json`; `/ws reload` applies them. The server sends the trees to clients, so servers can tune them freely.
 

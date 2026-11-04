@@ -146,6 +146,11 @@ public class HordeCommand {
                     com.wavesurvivor.network.CodexPacket.openFor(ctx.getSource().getPlayerOrException());
                     return 1;
                 }))
+                // Carnet du Survivant : ouvre le carnet (et en redonne un si le joueur n'en a plus)
+                .then(Commands.literal("carnet").executes(ctx -> {
+                    com.wavesurvivor.carnet.CarnetEvents.open(ctx.getSource().getPlayerOrException());
+                    return 1;
+                }))
                 .then(com.wavesurvivor.horde.kingdom.vocation.VocationCommand.build())
                 .then(Commands.literal("list").requires(src -> src.hasPermission(2)).executes(HordeCommand::list))
                 .then(Commands.literal("reload").requires(src -> src.hasPermission(2)).executes(HordeCommand::reload))
