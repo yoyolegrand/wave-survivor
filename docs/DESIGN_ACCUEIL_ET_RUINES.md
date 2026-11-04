@@ -15,6 +15,8 @@ Un livre (écran dédié, style des autres écrans du mod) remis **automatiqueme
 3. **Ressources** — une fiche par monnaie / ressource du mod (pièces, Essence, PR, fragments de grâce et de souillure, clés, réactifs de l'Alchimiste, Maîtrise…) avec : icône, **où on la gagne**, **à quoi elle sert**. Le contenu doit rester à jour quand on ajoute une ressource (lire les textes depuis les fichiers de langue).
 4. **Codex** — une **recherche** plein texte dans toutes les pages du Codex (titre et contenu), résultats cliquables.
 
+> **Note (Claude Code)** : le Carnet du Survivant n'est pas encore codé. À sa création, ajouter dans l'onglet Ressources la fiche « Fragments de grâce » avec la source « chapelles » (voir la page du Codex `codex.ruins`).
+
 ## 2. Les ruines à explorer
 Trois petites structures **rares**, générées naturellement (même système que les arènes : `ArenaBlueprint` ou structures du jeu), toutes réglables en config (activée, fréquence, biomes, butin) :
 
