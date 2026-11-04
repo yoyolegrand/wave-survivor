@@ -1,10 +1,28 @@
 {
   "variants": {
-    "lit=false": {
+    "candles=1,lit=false": {
       "model": "wavesurvivor:block/votive_candle"
     },
-    "lit=true": {
+    "candles=1,lit=true": {
       "model": "wavesurvivor:block/votive_candle_lit"
+    },
+    "candles=2,lit=false": {
+      "model": "wavesurvivor:block/votive_candle_2"
+    },
+    "candles=2,lit=true": {
+      "model": "wavesurvivor:block/votive_candle_lit_2"
+    },
+    "candles=3,lit=false": {
+      "model": "wavesurvivor:block/votive_candle_3"
+    },
+    "candles=3,lit=true": {
+      "model": "wavesurvivor:block/votive_candle_lit_3"
+    },
+    "candles=4,lit=false": {
+      "model": "wavesurvivor:block/votive_candle_4"
+    },
+    "candles=4,lit=true": {
+      "model": "wavesurvivor:block/votive_candle_lit_4"
     }
   }
 }

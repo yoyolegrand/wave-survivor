@@ -48,10 +48,18 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     /** Lanterne de grâce suspendue au plafond (inutilisée par les autres blocs : toujours faux). */
     public static final BooleanProperty HANGING = BlockStateProperties.HANGING;
+    /** Nombre de bougies votives sur le bloc (1 à 4, comme les bougies vanilla ; 1 pour les autres blocs). */
+    public static final net.minecraft.world.level.block.state.properties.IntegerProperty CANDLES = BlockStateProperties.CANDLES;
 
     private static final VoxelShape LANTERN_SHAPE = Block.box(4, 0, 4, 12, 10, 12);
     private static final VoxelShape LANTERN_HANGING_SHAPE = Block.box(4, 1, 4, 12, 16, 12);
-    private static final VoxelShape CANDLE_SHAPE = Block.box(6, 0, 6, 10, 7, 10);
+    private static final VoxelShape[] CANDLE_SHAPES = {Block.box(7, 0, 7, 9, 6, 9), Block.box(5, 0, 6, 11, 6, 9), Block.box(5, 0, 6, 10, 6, 11), Block.box(5, 0, 5, 11, 6, 10)};
+    /** Position des flammes (fractions de bloc) selon le nombre de bougies, comme les bougies vanilla. */
+    private static final double[][][] CANDLE_FLAMES = {
+            {{0.5, 0.5, 0.5}},
+            {{0.375, 0.44, 0.5}, {0.625, 0.5, 0.44}},
+            {{0.5, 0.313, 0.625}, {0.375, 0.44, 0.5}, {0.56, 0.5, 0.44}},
+            {{0.44, 0.313, 0.56}, {0.625, 0.44, 0.56}, {0.375, 0.44, 0.375}, {0.56, 0.5, 0.375}}};
     private static final VoxelShape FOUNTAIN_SHAPE = Block.box(0, 0, 0, 16, 15, 16);
     private static final VoxelShape TOTEM_SHAPE = Block.box(2, 0, 2, 14, 16, 14);
     private static final VoxelShape ALTAR_SHAPE = Block.box(0, 0, 0, 16, 12, 16);
@@ -61,17 +69,17 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
     public CraftUtilityBlock(Properties props, Kind kind) {
         super(props);
         this.kind = kind;
-        registerDefaultState(stateDefinition.any().setValue(LIT, kind != Kind.CANDLE).setValue(HANGING, false));
+        registerDefaultState(stateDefinition.any().setValue(LIT, kind != Kind.CANDLE).setValue(HANGING, false).setValue(CANDLES, 1));
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) { b.add(LIT, HANGING); }
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) { b.add(LIT, HANGING, CANDLES); }
 
     @Override
     public VoxelShape getShape(BlockState s, BlockGetter l, BlockPos p, CollisionContext c) {
         return switch (kind) {
             case LANTERN -> s.getValue(HANGING) ? LANTERN_HANGING_SHAPE : LANTERN_SHAPE;
-            case CANDLE -> CANDLE_SHAPE;
+            case CANDLE -> CANDLE_SHAPES[s.getValue(CANDLES) - 1];
             case FOUNTAIN -> FOUNTAIN_SHAPE;
             case BAIT, OBELISK -> TOTEM_SHAPE;
             case ALTAR -> ALTAR_SHAPE;
@@ -91,6 +99,10 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
     @Override
     public BlockState getStateForPlacement(net.minecraft.world.item.context.BlockPlaceContext ctx) {
         BlockState def = defaultBlockState();
+        if (kind == Kind.CANDLE) { // une bougie de plus sur la même case (jusqu'à 4), comme les bougies vanilla
+            BlockState here = ctx.getLevel().getBlockState(ctx.getClickedPos());
+            if (here.is(this)) return here.setValue(CANDLES, Math.min(4, here.getValue(CANDLES) + 1));
+        }
         if (kind != Kind.LANTERN) return def.canSurvive(ctx.getLevel(), ctx.getClickedPos()) ? def : null;
         for (net.minecraft.core.Direction d : ctx.getNearestLookingDirections()) {
             if (d.getAxis() != net.minecraft.core.Direction.Axis.Y) continue;
@@ -98,6 +110,27 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
             if (st.canSurvive(ctx.getLevel(), ctx.getClickedPos())) return st;
         }
         return null;
+    }
+
+    @Override
+    public boolean canBeReplaced(BlockState s, net.minecraft.world.item.context.BlockPlaceContext ctx) {
+        if (kind == Kind.CANDLE && !ctx.isSecondaryUseActive() && ctx.getItemInHand().is(this.asItem()) && s.getValue(CANDLES) < 4) return true;
+        return super.canBeReplaced(s, ctx);
+    }
+
+    /** Bougie allumée : flammes dorées au bout de chaque mèche, un peu de fumée et de crépitement. */
+    @Override
+    public void animateTick(BlockState s, Level level, BlockPos p, net.minecraft.util.RandomSource r) {
+        if (kind != Kind.CANDLE || !s.getValue(LIT)) return;
+        for (double[] o : CANDLE_FLAMES[s.getValue(CANDLES) - 1]) {
+            double x = p.getX() + o[0], y = p.getY() + o[1], z = p.getZ() + o[2];
+            float f = r.nextFloat();
+            if (f < 0.2f) {
+                level.addParticle(net.minecraft.core.particles.ParticleTypes.SMOKE, x, y, z, 0, 0, 0);
+                if (f < 0.1f) level.playLocalSound(x, y, z, SoundEvents.CANDLE_AMBIENT, SoundSource.BLOCKS, 1f + r.nextFloat(), r.nextFloat() * 0.7f + 0.3f, false);
+            }
+            level.addParticle(com.wavesurvivor.registry.ModParticles.GOLD_FLAME.get(), x, y, z, 0, 0, 0);
+        }
     }
 
     @Override
@@ -126,6 +159,7 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player p, InteractionHand hand, BlockHitResult hit) {
         if (kind != Kind.CANDLE && kind != Kind.BAIT && kind != Kind.ALTAR) return InteractionResult.PASS;
+        if (kind == Kind.CANDLE && p.getItemInHand(hand).is(this.asItem()) && state.getValue(CANDLES) < 4) return InteractionResult.PASS; // on empile au lieu d'allumer
         if (level.isClientSide) return InteractionResult.SUCCESS;
         long now = level.getGameTime();
         CraftUtilityBlockEntity be = level.getBlockEntity(pos) instanceof CraftUtilityBlockEntity e ? e : null;

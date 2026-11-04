@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wavesurvivor:block/grace_lantern"
+    "layer0": "wavesurvivor:item/grace_lantern"
   }
 }

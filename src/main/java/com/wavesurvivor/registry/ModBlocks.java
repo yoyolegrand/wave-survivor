@@ -166,7 +166,7 @@ public class ModBlocks {
                     com.wavesurvivor.craft.CraftUtilityBlock.Kind.FOUNTAIN));
     public static final RegistryObject<Block> VOTIVE_CANDLE = BLOCKS.register("votive_candle",
             () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
-                    .strength(2.0f, 6.0f).sound(SoundType.CANDLE).lightLevel(s -> s.getValue(com.wavesurvivor.craft.CraftUtilityBlock.LIT) ? 7 : 0).noOcclusion(),
+                    .strength(2.0f, 6.0f).sound(SoundType.CANDLE).lightLevel(s -> s.getValue(com.wavesurvivor.craft.CraftUtilityBlock.LIT) ? 7 + 2 * (s.getValue(com.wavesurvivor.craft.CraftUtilityBlock.CANDLES) - 1) : 0).noOcclusion(),
                     com.wavesurvivor.craft.CraftUtilityBlock.Kind.CANDLE));
     public static final RegistryObject<Block> BAIT_TOTEM = BLOCKS.register("bait_totem",
             () -> new com.wavesurvivor.craft.CraftUtilityBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)

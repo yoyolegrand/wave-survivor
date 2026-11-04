@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_four_candles",
+  "textures": {
+    "all": "wavesurvivor:block/votive_candle_lit",
+    "particle": "wavesurvivor:block/votive_candle"
+  }
+}

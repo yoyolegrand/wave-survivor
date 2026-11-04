@@ -7,12 +7,54 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "wavesurvivor:votive_candle"
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
+          "name": "wavesurvivor:votive_candle",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "wavesurvivor:votive_candle",
+                  "properties": {
+                    "candles": "2"
+                  }
+                }
+              ],
+              "count": 2,
+              "add": true
+            },
+            {
+              "function": "minecraft:set_count",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "wavesurvivor:votive_candle",
+                  "properties": {
+                    "candles": "3"
+                  }
+                }
+              ],
+              "count": 3,
+              "add": true
+            },
+            {
+              "function": "minecraft:set_count",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "wavesurvivor:votive_candle",
+                  "properties": {
+                    "candles": "4"
+                  }
+                }
+              ],
+              "count": 4,
+              "add": true
+            },
+            {
+              "function": "minecraft:explosion_decay"
+            }
+          ]
         }
       ]
     }

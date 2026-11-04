@@ -36,6 +36,12 @@ public class ClientModEvents {
         });
     }
 
+    /** Flamme dorée : même rendu que la petite flamme vanilla, avec notre texture. */
+    @SubscribeEvent
+    public static void onParticleProviders(net.minecraftforge.client.event.RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(com.wavesurvivor.registry.ModParticles.GOLD_FLAME.get(), net.minecraft.client.particle.FlameParticle.SmallFlameProvider::new);
+    }
+
     /** Fil d'événements (notifications à gauche de l'écran). */
     @SubscribeEvent
     public static void onFeedOverlay(net.minecraftforge.client.event.RegisterGuiOverlaysEvent event) {
