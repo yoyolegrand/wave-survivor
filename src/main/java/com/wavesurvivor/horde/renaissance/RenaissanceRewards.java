@@ -18,7 +18,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *   + 5 en cas de victoire + 15 la première fois qu'il gagne cette horde (variantes comprises).
  * Multiplicateurs : difficulté (×0,75 / ×1 / ×1,5 / ×2), mutateurs actifs, puis bonus personnels
  * (+5 % par rang de Renaissance, +10 % Héritage Marchand 4, +10 % set Fortune 3).
- * Défaite (chute du Monolithe, équipe vaincue) : vagues et boss acquis, sans bonus de victoire. /ws stop : rien.
+ * Défaite (chute du Monolithe, équipe vaincue) : vagues et boss acquis, sans bonus de victoire, plus un prix de consolation
+ * (30 % des bonus de victoire au prorata des vagues survécues ; réglable : rules.json et éditeur). /ws stop : rien.
  */
 public class RenaissanceRewards {
 
@@ -58,6 +59,12 @@ public class RenaissanceRewards {
         if (com.wavesurvivor.horde.boss.BossManager.isBoss(e.getEntity().getUUID())) bosses++;
     }
 
+    /** Pourcentage de consolation de cette horde : son réglage (éditeur) s'il est donné, sinon le réglage général (rules.json). */
+    private static int consolationPercent(HordeConfigMultiData horde) {
+        int own = horde.configData != null ? horde.configData.consolationPercent : -1;
+        return own >= 0 ? Math.min(100, own) : com.wavesurvivor.config.RulesConfig.consolationPercent();
+    }
+
     private static double difficultyMult() {
         var d = com.wavesurvivor.horde.difficulty.HordeDifficulty.active();
         if (d == null) return 1.0;
@@ -86,15 +93,28 @@ public class RenaissanceRewards {
             int bonusWin = victory ? (rush ? com.wavesurvivor.horde.bossrush.BossRush.prVictory() : 5)
                     : (com.wavesurvivor.horde.endless.Endless.reachedBase() ? 5 : 0); // sans fin : vagues normales terminées = comme une horde réussie
             int first = 0;
-            if (victory) {
+            boolean firstEligible = false; // première victoire de cette horde possible (jamais gagnée, hors Boss Rush)
+            {
                 boolean done = false;
                 for (String fam : com.wavesurvivor.altar.AltarRecipes.familyOf(horde.hordeName)) {
                     if (progress.best(p.getUUID(), fam) >= 0) { done = true; break; }
                 }
-                if (!done && !rush) first = 15;
+                firstEligible = !done && !rush;
+                if (victory && firstEligible) first = 15;
             }
             double personal = Heritage.prMultiplier(p) * com.wavesurvivor.item.RelicSets.prMultiplier(p);
-            int total = (int) Math.round((base + bonusWin) * diff * muta * personal) + first;
+            // Prix de consolation (1.9) : défaite sans bonus de victoire déjà versé (le sans fin en donne un après la dernière vague normale) :
+            // une part (30 % par défaut) des bonus de victoire, au prorata des vagues survécues, avec les mêmes multiplicateurs.
+            int consolation = 0;
+            if (!victory && !rush && bonusWin == 0) {
+                int pct = consolationPercent(horde);
+                if (pct > 0) {
+                    int denom = Math.max(1, kingdom ? horde.configData.kingdom().maxCycles : horde.configData.totalWaves);
+                    double frac = Math.min(1.0, waves / (double) denom);
+                    consolation = (int) Math.round(pct / 100.0 * frac * (5 + (firstEligible ? 15 : 0)) * diff * muta * personal);
+                }
+            }
+            int total = (int) Math.round((base + bonusWin) * diff * muta * personal) + first + consolation;
             // 1.6 — Défi du jour : première victoire du jour avec la difficulté et les 3 mutateurs imposés
             int daily = victory ? com.wavesurvivor.horde.daily.DailyServer.claim(p, kingdom) : 0;
             if (daily > 0) RenaissanceStore.addPoints(p, daily);
@@ -102,7 +122,8 @@ public class RenaissanceRewards {
             RenaissanceStore.addPoints(p, total);
             p.sendSystemMessage(Component.literal(WSLang.t("pr.earned", total, base, bonusWin,
                     String.format("%.2f", diff * muta), (int) Math.round((personal - 1.0) * 100))
-                    + (first > 0 ? WSLang.t("pr.first", first) : "")));
+                    + (first > 0 ? WSLang.t("pr.first", first) : "")
+                    + (consolation > 0 ? WSLang.t("pr.consolation", consolation) : "")));
             p.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1f, 1.4f);
             WaveSurvivorMod.LOGGER.info("[PR] {} +{} PR ({} vagues, {} boss, victoire={})", p.getGameProfile().getName(), total, waves, bosses, victory);
         }

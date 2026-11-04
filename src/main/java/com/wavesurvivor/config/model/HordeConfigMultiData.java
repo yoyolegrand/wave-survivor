@@ -37,6 +37,10 @@ public class HordeConfigMultiData {
         @SerializedName("delayBetweenWaves")
         public int delayBetweenWaves = 30;
 
+        /** Prix de consolation en cas de défaite (% des bonus de victoire, au prorata des vagues survécues) : -1 = réglage général (rules.json), 0 = aucun. */
+        @SerializedName("consolationPercent")
+        public int consolationPercent = -1;
+
         /** Fin de vague forcée : secondes laissées quand il reste ≤ 10 % de la vague (0 = désactivé). */
         @SerializedName("forceEndSeconds")
         public int forceEndSeconds = 60;

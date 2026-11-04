@@ -49,6 +49,9 @@ A guide book every player receives on their first login (craftable with a book a
 - 🔎 **Codex search**: full-text search through every Codex page, with clickable results.
 - 🏚 New **Ruins** page in the Codex, and the first ruin: the **Chapel** (rare, in plains and forests, with a grace-fragment chest and undead guardians woken by its bell).
 
+### 🏳 Consolation prize
+A lost game now pays a **consolation prize** on top of the wave and boss Rebirth Points: **30 %** of the victory bonuses (+5, and +15 on a first win), scaled by the waves you survived. Set it globally in `rules.json` (`consolationPercent`) or per horde in the editor (-1 = general setting, 0 = off). The end-of-game message shows it.
+
 ### 🔧 Under the hood
 - 🗂 Everything lives in **`vocations.json`** (XP curve, XP per action, ranks, values, tiers, costs, base role effects), layered like the other configs: put only the fields you change in `config/wavesurvivor/vocations.json`; `/ws reload` applies them. The server sends the trees to clients, so servers can tune them freely.
 

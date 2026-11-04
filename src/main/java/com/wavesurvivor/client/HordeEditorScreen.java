@@ -842,6 +842,12 @@ public class HordeEditorScreen extends Screen {
         fInt(30, HordeJson.num(cd, "forceEndSeconds", 60), v -> cd.addProperty("forceEndSeconds", Math.max(0, v)));
         fl(t("ui.force_end_hint"));
         y += 20;
+        // Prix de consolation en cas de défaite (-1 = réglage général)
+        flow(x, y);
+        fl(t("ui.consolation"));
+        fInt(30, HordeJson.num(cd, "consolationPercent", -1), v -> cd.addProperty("consolationPercent", Math.max(-1, Math.min(100, v))));
+        fl(t("ui.consolation_hint"));
+        y += 20;
         // Bonus si la vague est nettoyée avant la fin du décompte
         {
             JsonObject fb = HordeJson.obj(cd, "forceEndBonus");

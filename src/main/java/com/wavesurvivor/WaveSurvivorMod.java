@@ -236,6 +236,7 @@ public class WaveSurvivorMod {
         com.wavesurvivor.shrine.ShrineConfig.load();
         com.wavesurvivor.craft.CraftConfig.load();
         com.wavesurvivor.carnet.CarnetConfig.load();
+        com.wavesurvivor.config.RulesConfig.load();
         com.wavesurvivor.arena.ArenaSettings.load();
         com.wavesurvivor.shrine.ShrineUpgrades.load();
         com.wavesurvivor.horde.kingdom.vocation.VocationsConfig.load();

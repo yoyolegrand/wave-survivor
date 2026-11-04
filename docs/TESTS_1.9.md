@@ -197,3 +197,10 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Onglet Codex : taper « relique », « Kingdom », « Séraphin »… → résultats cliquables ouvrant la page du Codex ; accents et majuscules ignorés
 - [ ] `/ws reload` après modification de `config/wavesurvivor/carnet.json` (objectifs, récompenses, `autoGive: false`)
 
+## Prix de consolation
+- [ ] Perdre une horde classique à mi-parcours (ex. vague 3/5) : message de PR avec « Défaite — prix de consolation : +X PR » (30 % × (5 + 15 si jamais gagnée) × 3/5, multiplié par difficulté/mutateurs/bonus)
+- [ ] Même horde, déjà gagnée une fois : consolation = 30 % × 5 × part de vagues
+- [ ] `/ws stop` manuel : aucun PR, pas de consolation ; Boss Rush : pas de consolation
+- [ ] Sans fin au-delà de la vague de base : pas de consolation (le bonus +5 est déjà versé)
+- [ ] Éditeur › vagues : champ « Consolation (défaite, %) » : -1 = général, 0 = aucun, 50 = 50 % ; `config/wavesurvivor/rules.json` `{"consolationPercent": 0}` + `/ws reload` désactive par défaut
+- [ ] Kingdom : défaite pendant un Assaut = prorata sur `maxCycles`
