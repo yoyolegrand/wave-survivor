@@ -50,6 +50,8 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
     public static final BooleanProperty HANGING = BlockStateProperties.HANGING;
     /** Nombre de bougies votives sur le bloc (1 à 4, comme les bougies vanilla ; 1 pour les autres blocs). */
     public static final net.minecraft.world.level.block.state.properties.IntegerProperty CANDLES = BlockStateProperties.CANDLES;
+    /** Obélisque profane : bloc double de 2 blocs de haut (moitié basse qui porte le modèle, moitié haute invisible) ; toujours « basse » pour les autres blocs. */
+    public static final net.minecraft.world.level.block.state.properties.EnumProperty<net.minecraft.world.level.block.state.properties.DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     private static final VoxelShape LANTERN_SHAPE = Block.box(4, 0, 4, 12, 10, 12);
     private static final VoxelShape LANTERN_HANGING_SHAPE = Block.box(4, 1, 4, 12, 16, 12);
@@ -62,6 +64,9 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
             {{0.44, 0.313, 0.56}, {0.625, 0.44, 0.56}, {0.375, 0.44, 0.375}, {0.56, 0.5, 0.375}}};
     private static final VoxelShape FOUNTAIN_SHAPE = Block.box(0, 0, 0, 16, 15, 16);
     private static final VoxelShape TOTEM_SHAPE = Block.box(2, 0, 2, 14, 16, 14);
+    /** Obélisque : socle (1 à 15, de 0 à 4) et fût (5 à 11) sur la moitié basse ; le fût seul sur la moitié haute. */
+    private static final VoxelShape OBELISK_LOWER = net.minecraft.world.phys.shapes.Shapes.or(Block.box(1, 0, 1, 15, 4, 15), Block.box(5, 0, 5, 11, 16, 11));
+    private static final VoxelShape OBELISK_UPPER = Block.box(5, 0, 5, 11, 16, 11);
     /** Autel de sang : socle (0 à 2,5), corps étroit (jusqu'à 10) et plateau pleine largeur (10 à 13) ; les chandeliers au-dessus n'ont pas de collision. */
     private static final VoxelShape ALTAR_SHAPE = net.minecraft.world.phys.shapes.Shapes.or(
             Block.box(0, 0, 0, 16, 1, 16), Block.box(1, 1, 1, 15, 2.5, 15), Block.box(2, 2.5, 2, 14, 10, 14), Block.box(0, 10, 0, 16, 13, 16));
@@ -71,11 +76,11 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
     public CraftUtilityBlock(Properties props, Kind kind) {
         super(props);
         this.kind = kind;
-        registerDefaultState(stateDefinition.any().setValue(LIT, kind != Kind.CANDLE).setValue(HANGING, false).setValue(CANDLES, 1));
+        registerDefaultState(stateDefinition.any().setValue(LIT, kind != Kind.CANDLE).setValue(HANGING, false).setValue(CANDLES, 1).setValue(HALF, net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER));
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) { b.add(LIT, HANGING, CANDLES); }
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) { b.add(LIT, HANGING, CANDLES, HALF); }
 
     @Override
     public VoxelShape getShape(BlockState s, BlockGetter l, BlockPos p, CollisionContext c) {
@@ -83,7 +88,8 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
             case LANTERN -> s.getValue(HANGING) ? LANTERN_HANGING_SHAPE : LANTERN_SHAPE;
             case CANDLE -> CANDLE_SHAPES[s.getValue(CANDLES) - 1];
             case FOUNTAIN -> FOUNTAIN_SHAPE;
-            case BAIT, OBELISK -> TOTEM_SHAPE;
+            case BAIT -> TOTEM_SHAPE;
+            case OBELISK -> s.getValue(HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER ? OBELISK_UPPER : OBELISK_LOWER;
             case ALTAR -> ALTAR_SHAPE;
             default -> super.getShape(s, l, p, c);
         };
@@ -91,6 +97,10 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
 
     @Override
     public boolean canSurvive(BlockState s, net.minecraft.world.level.LevelReader l, BlockPos p) {
+        if (kind == Kind.OBELISK && s.getValue(HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER) {
+            BlockState below = l.getBlockState(p.below());
+            return below.is(this) && below.getValue(HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER;
+        }
         if (kind != Kind.LANTERN && kind != Kind.CANDLE) return true;
         if (kind == Kind.LANTERN && s.getValue(HANGING)) return l.getBlockState(p.above()).isFaceSturdy(l, p.above(), net.minecraft.core.Direction.DOWN);
         return l.getBlockState(p.below()).isFaceSturdy(l, p.below(), net.minecraft.core.Direction.UP);
@@ -104,6 +114,10 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
         if (kind == Kind.CANDLE) { // une bougie de plus sur la même case (jusqu'à 4), comme les bougies vanilla
             BlockState here = ctx.getLevel().getBlockState(ctx.getClickedPos());
             if (here.is(this)) return here.setValue(CANDLES, Math.min(4, here.getValue(CANDLES) + 1));
+        }
+        if (kind == Kind.OBELISK) { // il faut la place de la moitié haute
+            BlockPos at = ctx.getClickedPos();
+            return at.getY() < ctx.getLevel().getMaxBuildHeight() - 1 && ctx.getLevel().getBlockState(at.above()).canBeReplaced(ctx) ? def : null;
         }
         if (kind != Kind.LANTERN) return def.canSurvive(ctx.getLevel(), ctx.getClickedPos()) ? def : null;
         for (net.minecraft.core.Direction d : ctx.getNearestLookingDirections()) {
@@ -135,8 +149,43 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
         }
     }
 
+    /** Obélisque : pose la moitié haute (invisible) au-dessus de la moitié basse. */
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
+        if (kind == Kind.OBELISK) {
+            level.setBlock(pos.above(), state.setValue(HALF, net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER), 3);
+        }
+        super.setPlacedBy(level, pos, state, placer, stack);
+    }
+
+    /**
+     * Obélisque : casser une moitié casse l'autre. Le butin vient de la moitié basse : cassée en haut, on le donne ici (outil correct requis,
+     * sauf en créatif) ; la moitié retirée ne donne jamais de butin elle-même.
+     */
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (kind == Kind.OBELISK && !level.isClientSide) {
+            boolean upper = state.getValue(HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER;
+            BlockPos other = upper ? pos.below() : pos.above();
+            BlockState os = level.getBlockState(other);
+            if (os.is(this) && os.getValue(HALF) != state.getValue(HALF)) {
+                if (upper && !player.isCreative() && player.hasCorrectToolForDrops(os)) dropResources(os, level, other, null, player, player.getMainHandItem());
+                level.setBlock(other, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 35);
+                level.levelEvent(player, 2001, other, Block.getId(os));
+            }
+        }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+
     @Override
     public BlockState updateShape(BlockState s, net.minecraft.core.Direction d, BlockState n, net.minecraft.world.level.LevelAccessor l, BlockPos p, BlockPos np) {
+        if (kind == Kind.OBELISK) { // moitié basse sans moitié haute (ou l'inverse) : le bloc disparaît
+            boolean upper = s.getValue(HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER;
+            if (d.getAxis() == net.minecraft.core.Direction.Axis.Y && upper == (d == net.minecraft.core.Direction.DOWN)) {
+                return n.is(this) && n.getValue(HALF) != s.getValue(HALF) ? s : net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+            }
+            return s;
+        }
         net.minecraft.core.Direction support = kind == Kind.LANTERN && s.getValue(HANGING) ? net.minecraft.core.Direction.UP : net.minecraft.core.Direction.DOWN;
         return d == support && !s.canSurvive(l, p) ? net.minecraft.world.level.block.Blocks.AIR.defaultBlockState()
                 : super.updateShape(s, d, n, l, p, np);
@@ -145,7 +194,10 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
     // ─── Bloc entité ───
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new CraftUtilityBlockEntity(pos, state); }
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        if (kind == Kind.OBELISK && state.getValue(HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER) return null; // un seul effet par obélisque
+        return new CraftUtilityBlockEntity(pos, state);
+    }
 
     @Nullable
     @Override
@@ -153,6 +205,7 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide || type != ModBlockEntities.CRAFT_UTILITY.get()) return null;
         if (kind != Kind.FOUNTAIN && kind != Kind.OBELISK && kind != Kind.BAIT) return null;
+        if (kind == Kind.OBELISK && state.getValue(HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER) return null;
         return (BlockEntityTicker<T>) (BlockEntityTicker<CraftUtilityBlockEntity>) CraftUtilityBlockEntity::serverTick;
     }
 

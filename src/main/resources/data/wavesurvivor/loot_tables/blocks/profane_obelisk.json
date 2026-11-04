@@ -12,6 +12,13 @@
       ],
       "conditions": [
         {
+          "condition": "minecraft:block_state_property",
+          "block": "wavesurvivor:profane_obelisk",
+          "properties": {
+            "half": "lower"
+          }
+        },
+        {
           "condition": "minecraft:survives_explosion"
         }
       ]

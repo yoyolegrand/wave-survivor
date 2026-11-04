@@ -224,3 +224,10 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Pas de bouton « Prêt » pendant un palier ; « Prêt » normal aux autres vagues
 - [ ] Éditeur (vue Sans fin) : intervalle (0 = aucun palier), % encaissé, durée du choix, l'hôte décide
 
+
+## Obélisque profane (bloc double)
+- [ ] Poser l'obélisque : 2 blocs de haut, modèle complet, runes et cristal qui brillent la nuit ; impossible de poser s'il n'y a pas 2 blocs libres
+- [ ] Impossible de poser un bloc « à travers » le haut ; collision : socle + fût, on ne traverse pas
+- [ ] Casser n'importe quelle moitié casse les deux ; un seul obélisque en butin (survie avec pioche), rien sans outil adapté ; créatif : pas de butin en double
+- [ ] Un seul effet de zone par obélisque (pas de doublon)
+- [ ] ⚠ Les obélisques posés avant cette version disparaissent à la prochaine mise à jour de voisinage : à reposer
