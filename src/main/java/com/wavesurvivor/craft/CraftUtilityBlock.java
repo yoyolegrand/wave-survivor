@@ -62,7 +62,9 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
             {{0.44, 0.313, 0.56}, {0.625, 0.44, 0.56}, {0.375, 0.44, 0.375}, {0.56, 0.5, 0.375}}};
     private static final VoxelShape FOUNTAIN_SHAPE = Block.box(0, 0, 0, 16, 15, 16);
     private static final VoxelShape TOTEM_SHAPE = Block.box(2, 0, 2, 14, 16, 14);
-    private static final VoxelShape ALTAR_SHAPE = Block.box(0, 0, 0, 16, 12, 16);
+    /** Autel de sang : socle (0 à 2,5), corps étroit (jusqu'à 10) et plateau pleine largeur (10 à 13) ; les chandeliers au-dessus n'ont pas de collision. */
+    private static final VoxelShape ALTAR_SHAPE = net.minecraft.world.phys.shapes.Shapes.or(
+            Block.box(0, 0, 0, 16, 1, 16), Block.box(1, 1, 1, 15, 2.5, 15), Block.box(2, 2.5, 2, 14, 10, 14), Block.box(0, 10, 0, 16, 13, 16));
 
     public final Kind kind;
 
