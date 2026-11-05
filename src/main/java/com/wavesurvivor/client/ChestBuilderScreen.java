@@ -73,6 +73,7 @@ public class ChestBuilderScreen extends Screen {
     private boolean autoRotate = true;
     private float manualYaw = 0;
     private long testStart = -1;
+    private final com.wavesurvivor.client.roulette.ChestParticlePreview fxPreview = new com.wavesurvivor.client.roulette.ChestParticlePreview();
     private int testColor = 0xFFB52E;
     private ItemStack testItem = new ItemStack(Items.DIAMOND);
 
@@ -136,6 +137,17 @@ public class ChestBuilderScreen extends Screen {
         int lw = (LEFT_W - 6) / 2;
         addRenderableWidget(Button.builder(Component.literal("↺ " + WSLang.t("chest.ed.rotate")), b -> autoRotate = !autoRotate).bounds(8, bottomY - 2, lw, 20).build());
         addRenderableWidget(Button.builder(Component.literal("▶ " + WSLang.t("chest.ed.test")), b -> startTest()).bounds(8 + lw + 2, bottomY - 2, lw, 20).build());
+
+        // Aperçu des particules (onglet Particules) : joue l'effet du moment choisi sur le coffre de gauche
+        if (tab == 3) {
+            addRenderableWidget(Button.builder(Component.literal("✦ " + WSLang.t("chest.ed.pm.preview")), b -> {
+                CustomChestData.Effect e = fx(false);
+                if (e == null || e.a == null || e.a.isBlank() || "none".equalsIgnoreCase(e.a)) return;
+                int ticks = moment == 2 ? 20 : moment == 1 ? 80 : 100;
+                int acc = accent();
+                fxPreview.play(e, acc, ticks);
+            }).bounds(8, bottomY - 24, LEFT_W, 20).build());
+        }
 
         // Onglets
         int tw = Math.min(110, (contentW - 5 * 3) / TAB_IDS.length);
@@ -374,7 +386,7 @@ public class ChestBuilderScreen extends Screen {
         });
         y += 30;
         CustomChestData.Effect cur = e != null ? e : new CustomChestData.Effect();
-        slider(x + 110, y, "density", 1, 10, cur.density, true, v -> fx(true).density = (int) Math.round(v));
+        slider(x + 110, y, "density", 1, 20, cur.density, true, v -> fx(true).density = (int) Math.round(v));
         slider(x + 110, y + 24, "radius", 0.2, 4, cur.radius, false, v -> fx(true).radius = Math.round(v * 10) / 10.0);
         slider(x + 110, y + 48, "height", 0.2, 4, cur.height, false, v -> fx(true).height = Math.round(v * 10) / 10.0);
         slider(x + 110, y + 72, "speed", 1, 10, cur.speed, true, v -> fx(true).speed = (int) Math.round(v));
@@ -465,6 +477,10 @@ public class ChestBuilderScreen extends Screen {
         float tt = testTicks();
         if (tt > ChestPreview.TEST_GIVE + 120) testStart = -1;
         ChestPreview.draw(g, style(), 8 + LEFT_W / 2, (24 + bottomY) / 2 + 20, LEFT_W * 0.78f, yaw, time(), tt, testColor, testItem);
+        g.pose().pushPose();
+        g.pose().translate(0, 0, 400);
+        fxPreview.draw(g, 8 + LEFT_W / 2, (24 + bottomY) / 2 + 20, LEFT_W * 0.78f, yaw);
+        g.pose().popPose();
         // Panneau de l'onglet
         g.fill(contentX - 4, contentY - 4, contentX + contentW + 4, bottomY - 6, 0x80141220);
         for (Swatch s : swatches) {

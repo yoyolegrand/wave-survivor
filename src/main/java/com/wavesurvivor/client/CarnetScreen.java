@@ -71,12 +71,21 @@ public class CarnetScreen extends Screen {
         top = (height - panelH) / 2;
         addRenderableWidget(Button.builder(Component.literal(WSLang.t("ui.fermer")), b -> onClose())
                 .bounds(left + panelW - 66, top + 5, 60, 16).build());
-        int tw = Math.min(92, (panelW - 90 - 120) / TABS.length);
+        // onglets : placés après le titre, largeur selon le texte (réduite proportionnellement si ça ne tient pas)
+        int startX = left + 8 + font.width("§l" + WSLang.t("carnet.title")) + 12;
+        int avail = left + panelW - 72 - startX;
+        int[] ws = new int[TABS.length];
+        int total = 0;
+        for (int i = 0; i < TABS.length; i++) { ws[i] = font.width(WSLang.t("carnet.tab." + TABS[i])) + 12; total += ws[i] + 2; }
+        float k = total > avail ? avail / (float) total : 1f;
+        int bx0 = startX;
         for (int i = 0; i < TABS.length; i++) {
             final int t = i;
+            int w = Math.max(20, (int) (ws[i] * k));
             Button b = Button.builder(Component.literal((i == tab ? "§e" : "§7") + WSLang.t("carnet.tab." + TABS[i])), x -> switchTab(t))
-                    .bounds(left + 112 + i * (tw + 2), top + 5, tw, 16).build();
+                    .bounds(bx0, top + 5, w, 16).build();
             addRenderableWidget(b);
+            bx0 += w + 2;
         }
         search = null;
         if (tab == 3) {
@@ -135,7 +144,7 @@ public class CarnetScreen extends Screen {
 
     private int maxScroll() {
         return switch (tab) {
-            case 1 -> Math.max(0, objectives.size() * OBJ_H - (bodyBottom() - bodyTop() - 4));
+            case 1 -> Math.max(0, objectives.size() * OBJ_H - (bodyBottom() - (top + 46)));
             case 3 -> Math.max(0, hits.size() * 24 - (bodyBottom() - (top + 54)));
             default -> Math.max(0, (lines.size() - visibleLines()) * LINE_H);
         };

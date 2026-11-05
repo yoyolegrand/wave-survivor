@@ -4454,7 +4454,7 @@
   "chest.ed.pm.type_a": "Type A",
   "chest.ed.pm.type_b": "Type B (optional)",
   "chest.ed.pm.pattern": "Emission shape",
-  "chest.ed.pm.density": "Density",
+  "chest.ed.pm.density": "Intensity",
   "chest.ed.pm.radius": "Radius",
   "chest.ed.pm.height": "Height",
   "chest.ed.pm.speed": "Speed",
@@ -4497,5 +4497,6 @@
   "chest.ed.sym.gem": "Gem",
   "chest.ed.sym.leaf": "Leaf",
   "chest.ed.sym.hourglass": "Hourglass",
-  "chest.ed.sym.key": "Key"
+  "chest.ed.sym.key": "Key",
+  "chest.ed.pm.preview": "Preview effect"
 }

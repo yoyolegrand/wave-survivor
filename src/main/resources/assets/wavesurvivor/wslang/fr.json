@@ -3716,7 +3716,7 @@
   "chest.ed.pm.type_a": "Type A",
   "chest.ed.pm.type_b": "Type B (option)",
   "chest.ed.pm.pattern": "Forme d'émission",
-  "chest.ed.pm.density": "Densité",
+  "chest.ed.pm.density": "Intensité",
   "chest.ed.pm.radius": "Rayon",
   "chest.ed.pm.height": "Hauteur",
   "chest.ed.pm.speed": "Vitesse",
@@ -3759,5 +3759,6 @@
   "chest.ed.sym.gem": "Gemme",
   "chest.ed.sym.leaf": "Feuille",
   "chest.ed.sym.hourglass": "Sablier",
-  "chest.ed.sym.key": "Clé"
+  "chest.ed.sym.key": "Clé",
+  "chest.ed.pm.preview": "Voir l'effet"
 }

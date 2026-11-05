@@ -55,6 +55,22 @@ public class ParticlePatterns {
 
     private static final ThreadLocal<Ctx> CTX = new ThreadLocal<>();
 
+    /** Destinataire alternatif des particules (aperçu de l'éditeur : rien n'est envoyé au monde). */
+    public interface Sink { void accept(ParticleOptions p, double x, double y, double z, double dx, double dy, double dz, double speed); }
+    private static final ThreadLocal<Sink> SINK = new ThreadLocal<>();
+
+    /** Émet un effet réglé vers un {@link Sink} (aperçu client, sans niveau). */
+    public static void emitTo(Sink sink, String pattern, long tick, double speed, Ctx ctx) {
+        SINK.set(sink);
+        try { emit(pattern, null, tick, speed, ctx); } finally { SINK.remove(); }
+    }
+
+    private static void send(ServerLevel level, ParticleOptions p, double x, double y, double z, double dx, double dy, double dz, double speed) {
+        Sink k = SINK.get();
+        if (k != null) k.accept(p, x, y, z, dx, dy, dz, speed);
+        else level.sendParticles(p, x, y, z, 1, dx, dy, dz, speed);
+    }
+
     /** Émet une forme avec des réglages : {@code speed} 1 à 10 (5 = nominal) accélère ou ralentit l'animation de la forme. */
     public static void emit(String pattern, ServerLevel level, long tick, double speed, Ctx ctx) {
         CTX.set(ctx);
@@ -344,10 +360,10 @@ public class ParticlePatterns {
                               double dx, double dy, double dz, double speed) {
         Ctx c = CTX.get();
         if (c == null) { // émission classique, sans réglages
-            level.sendParticles(p, x, y, z, 1, dx, dy, dz, speed);
+            send(level, p, x, y, z, dx, dy, dz, speed);
             return;
         }
         double sx = c.cx + (x - c.cx) * c.radius, sy = c.cy + (y - c.cy) * c.height, sz = c.cz + (z - c.cz) * c.radius;
-        for (int i = c.count(); i > 0; i--) level.sendParticles(c.pick(), sx, sy, sz, 1, dx, dy, dz, speed * c.speedMul);
+        for (int i = c.count(); i > 0; i--) send(level, c.pick(), sx, sy, sz, dx, dy, dz, speed * c.speedMul);
     }
 }

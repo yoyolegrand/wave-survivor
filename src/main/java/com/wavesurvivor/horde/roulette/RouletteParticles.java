@@ -13,7 +13,7 @@ import org.joml.Vector3f;
 
 /**
  * EFFETS DE PARTICULES DES COFFRES ROULETTE (1.9) : un effet = type A, type B optionnel (émis en alternance), forme d'émission (les 19 de
- * {@link ParticlePatterns}), densité (1 à 10), rayon et hauteur (multiplicateurs de la forme), vitesse (1 à 10), couleur(s) et taille pour les
+ * {@link ParticlePatterns}), intensité/densité (1 à 20), rayon et hauteur (multiplicateurs de la forme), vitesse (1 à 10), couleur(s) et taille pour les
  * poussières colorées (« dust », « dust_color_transition »). Trois moments : au repos, pendant la roulette, à la révélation.
  */
 public final class RouletteParticles {
@@ -27,14 +27,21 @@ public final class RouletteParticles {
 
     /** Émet une fois (à appeler à chaque tick) l'effet autour de (cx, cy, cz). {@code accent} : couleur des poussières sans couleur choisie. */
     public static void emit(ServerLevel level, double cx, double cy, double cz, CustomChestData.Effect fx, int accent, long tick) {
+        emit(level, null, cx, cy, cz, fx, accent, tick);
+    }
+
+    /** Variante pour l'aperçu de l'éditeur : les particules vont au {@code sink} (pas de niveau). */
+    public static void emit(ServerLevel level, ParticlePatterns.Sink sink, double cx, double cy, double cz, CustomChestData.Effect fx, int accent, long tick) {
         if (!valid(fx)) return;
         ParticleOptions a = option(fx.a, fx, accent);
         ParticleOptions b = fx.b != null && !fx.b.isBlank() && !"none".equalsIgnoreCase(fx.b) ? option(fx.b, fx, accent) : null;
-        double density = Math.max(1, Math.min(10, fx.density)) / 5.0;
+        double density = Math.max(1, Math.min(20, fx.density)) / 5.0; // 1 à 20 : 5 = nominal, 20 = quadruple
         if (isHeavy(a)) density /= 3.0; // particules volumineuses : beaucoup moins nombreuses
         double speed = Math.max(1, Math.min(10, fx.speed));
         ParticlePatterns.Ctx ctx = new ParticlePatterns.Ctx(cx, cy, cz, clamp(fx.radius, 0.2, 4.0), clamp(fx.height, 0.2, 4.0), density, 0.5 + speed / 10.0, a, b);
-        ParticlePatterns.emit(fx.pattern == null || fx.pattern.isBlank() ? "circle" : fx.pattern, level, tick, speed, ctx);
+        String pat = fx.pattern == null || fx.pattern.isBlank() ? "circle" : fx.pattern;
+        if (sink != null) ParticlePatterns.emitTo(sink, pat, tick, speed, ctx);
+        else ParticlePatterns.emit(pat, level, tick, speed, ctx);
     }
 
     /** Répète l'effet pendant {@code ticks} ticks (révélation). */

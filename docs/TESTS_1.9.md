@@ -283,3 +283,8 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Éditer un ancien coffre (sans réglages 1.9) et l'enregistrer sans toucher à l'apparence : son aspect et ses particules ne changent pas
 - [ ] Éditer un des 6 Reliquaires : ses préréglages sont conservés
 
+## Retours du test du 5 nov.
+- [ ] Lanterne de grâce (posée et suspendue) : chaîne creuse, trous transparents comme la lanterne vanilla (modèles en `render_type: cutout`)
+- [ ] Carnet : titre et onglets ne se chevauchent plus (FR et EN, petite et grande fenêtre) ; Objectifs : on peut défiler jusqu'au dernier objectif (« Jouer une partie Kingdom ») et lire sa récompense
+- [ ] Éditeur de coffre › Particules : curseur « Intensité » (1 à 20, 5 = normal) pour les 3 moments
+- [ ] Éditeur de coffre › Particules : bouton « ✦ Voir l'effet » sous l'aperçu : joue l'effet du moment choisi sur le coffre de gauche (approximation en carrés colorés : forme, rayon, hauteur, vitesse, intensité, couleurs de poussière)
