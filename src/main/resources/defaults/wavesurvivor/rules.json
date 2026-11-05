@@ -1,3 +1,6 @@
 {
-  "consolationPercent": 30
+  "consolationPercent": 30,
+  "keyPouchSize": 27,
+  "keyPouchAutoPickup": true,
+  "keyPouchBulk": true
 }

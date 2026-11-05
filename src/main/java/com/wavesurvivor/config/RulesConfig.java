@@ -48,4 +48,11 @@ public final class RulesConfig {
 
     /** Prix de consolation par défaut (% des bonus de victoire, au prorata des vagues survécues) ; 0 = désactivé. */
     public static int consolationPercent() { return Math.max(0, Math.min(100, HordeJson.num(cfg(), "consolationPercent", 30))); }
+
+    /** Bourse à clés : nombre de cases (arrondi au multiple de 9, 9 à 54). */
+    public static int keyPouchSize() { return Math.max(9, Math.min(54, HordeJson.num(cfg(), "keyPouchSize", 27))); }
+    /** Bourse à clés : ramassage automatique des clés autorisé. */
+    public static boolean keyPouchAutoPickup() { return !cfg().has("keyPouchAutoPickup") || cfg().get("keyPouchAutoPickup").getAsBoolean(); }
+    /** Bourse à clés : ouverture en série (accroupi) autorisée. */
+    public static boolean keyPouchBulk() { return !cfg().has("keyPouchBulk") || cfg().get("keyPouchBulk").getAsBoolean(); }
 }

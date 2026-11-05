@@ -64,6 +64,13 @@ Every **10 waves** (from the last normal wave; adjustable), the team gets a **ti
 - In a team the decision is by **majority** (players who do not vote count as Continue) or by the **host alone**, per horde. The leaderboard records the wave reached either way.
 - Editor (Endless view): tier interval, cash-out %, choice time, host decides; the chest contents (`tierChest`: item, count, +perTier, or `pr`) are in the horde's `endless` block.
 
+### 👝 Key Pouch
+- **New item**: right-click to open a 27-slot pouch that only accepts roulette chest keys (contents are saved in the item, like a Shulker Box).
+- **Use it from your inventory**: right-click a roulette chest with no key in hand and a key from the pouch is used; **sneak + right-click** uses every key of that type, with one fast animation and a **summary screen** of all prizes (also shown when you open several keys at once).
+- A key held in hand always comes first. Works with every roulette chest (hordes, Kingdom, Invasions, custom chests…).
+- Keys you pick up go straight into the pouch (sneak + right-click in the air to toggle). Size, auto pickup and bulk opening are set in `rules.json`.
+- Crafting: 4 leather, 2 string, 1 gold ingot, 1 gold nugget. New Codex page and Notebook entry.
+
 ### 🎰 Roulette chests reborn
 A brand-new, fully customizable roulette chest.
 - 🧰 **New 3D chest** (wood box, domed lid, four iron corner pieces with feet, glowing trim, gem lock) drawn in game with grayscale textures **tinted** by your settings: accent, wood (9 presets), fittings (8 presets) and gem colors — or any `#RRGGBB`.

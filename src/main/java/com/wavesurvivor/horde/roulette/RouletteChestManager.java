@@ -298,39 +298,32 @@ public class RouletteChestManager {
         // Animation en cours : le tirage est validé maintenant et mis en file (spam de clés possible)
         boolean busy = ACTIVE.containsKey(pos.immutable());
 
-        // Vérif clé : nouvelle clé (wavesurvivor:roulette_key) ou ancien name_tag, avec NBT rouletteKey=1
-        String heldId = itemInHand.isEmpty() ? "" : BuiltInRegistries.ITEM.getKey(itemInHand.getItem()).toString();
-        if (!"minecraft:name_tag".equals(heldId) && !"wavesurvivor:roulette_key".equals(heldId)) {
-            player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().noKey()).replace("{key}", RouletteKeyItem.keyDisplayName(config.keyName()))));
-            return true;
-        }
-        CompoundTag tag = itemInHand.getTag();
-        if (tag == null || tag.getInt("rouletteKey") != 1) {
-            player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().noKey()).replace("{key}", RouletteKeyItem.keyDisplayName(config.keyName()))));
-            return true;
-        }
-
-        // Vérif que la clé correspond : même nom de clé (ex : toute "Clé Mystérieuse" ouvre toute la série),
-        // même coffre, ou coffre de la clé listé dans allowedChests (comparaison tolérante aux anciens noms).
-        String keyChestName = tag.getString("rouletteChestName");
-        String keyName = tag.contains("rouletteKeyName") ? tag.getString("rouletteKeyName")
-                : net.minecraft.ChatFormatting.stripFormatting(itemInHand.getHoverName().getString());
-        boolean isValid = sameName(keyName, config.keyName()) || sameName(keyChestName, config.chestName());
-        if (!isValid && config.allowedChests() != null) {
-            for (String allowed : config.allowedChests()) {
-                if (allowedMatches(allowed, keyChestName)) { isValid = true; break; }
+        // Clé en main (prioritaire) ou, à défaut, clé prise dans une Bourse à clés du joueur (accroupi : toutes celles du bon type)
+        boolean heldKey = com.wavesurvivor.horde.roulette.KeyPouch.isKey(itemInHand);
+        int keys;
+        boolean fromPouch = false;
+        if (heldKey) {
+            if (!keyMatches(itemInHand, config)) {
+                player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().noKey()).replace("{key}", RouletteKeyItem.keyDisplayName(config.keyName()))));
+                return true;
             }
-        }
-        if (!isValid) {
-            player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().noKey()).replace("{key}", RouletteKeyItem.keyDisplayName(config.keyName()))));
-            return true;
-        }
-
-        // Consomme les clés : TOUTE la pile tenue en main (une seule animation pour toutes), ou 1 si les clés ne sont pas consommées
-        int keys = config.consumeKey() ? Math.max(1, itemInHand.getCount()) : 1;
-        if (config.consumeKey()) {
-            itemInHand.shrink(keys);
-            if (!busy) player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().consumed())), true);
+            // Consomme les clés : TOUTE la pile tenue en main (une seule animation pour toutes), ou 1 si les clés ne sont pas consommées
+            keys = config.consumeKey() ? Math.max(1, itemInHand.getCount()) : 1;
+            if (config.consumeKey()) {
+                itemInHand.shrink(keys);
+                if (!busy) player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().consumed())), true);
+            }
+        } else {
+            boolean all = player.isShiftKeyDown() && com.wavesurvivor.config.RulesConfig.keyPouchBulk() && config.consumeKey();
+            keys = com.wavesurvivor.horde.roulette.KeyPouch.take(player, config, all, config.consumeKey());
+            if (keys <= 0) {
+                if (com.wavesurvivor.horde.roulette.KeyPouch.pouches(player).isEmpty())
+                    player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().noKey()).replace("{key}", RouletteKeyItem.keyDisplayName(config.keyName()))));
+                else player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("pouch.none_for_chest")), true);
+                return true;
+            }
+            fromPouch = true;
+            if (!busy) player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("pouch.used", keys)), true);
         }
 
         // Ajuste les rewards par vague en cours
@@ -354,8 +347,20 @@ public class RouletteChestManager {
             player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("roulette.queued", q.size())), true);
             return true;
         }
-        startAnimation(player, level, pos, config, rolled, false);
+        startAnimation(player, level, pos, config, rolled, fromPouch && keys > 1); // série depuis la bourse : une seule animation accélérée
         return true;
+    }
+
+    /** La clé ouvre-t-elle ce coffre ? Même nom de clé (toute « Clé Mystérieuse » ouvre toute la série), même coffre, ou coffre listé dans allowedChests. */
+    public static boolean keyMatches(ItemStack key, RouletteChestConfig config) {
+        if (!com.wavesurvivor.horde.roulette.KeyPouch.isKey(key)) return false;
+        CompoundTag tag = key.getTag();
+        String keyChestName = tag.getString("rouletteChestName");
+        String keyName = tag.contains("rouletteKeyName") ? tag.getString("rouletteKeyName")
+                : net.minecraft.ChatFormatting.stripFormatting(key.getHoverName().getString());
+        if (sameName(keyName, config.keyName()) || sameName(keyChestName, config.chestName())) return true;
+        if (config.allowedChests() != null) for (String allowed : config.allowedChests()) if (allowedMatches(allowed, keyChestName)) return true;
+        return false;
     }
 
     /** Weighted random selection. */
@@ -594,6 +599,16 @@ public class RouletteChestManager {
             }
         }
         player.sendSystemMessage(com.wavesurvivor.i18n.WSLang.c("roulette.batch", rewards.size(), recap.toString()));
+        // Écran de résumé : tous les gains regroupés, le plus rare en vedette
+        List<com.wavesurvivor.network.RouletteSummaryPacket.Entry> sumEntries = new ArrayList<>();
+        for (var e : sum.entrySet()) {
+            RouletteReward r = byKey.get(e.getKey());
+            ItemStack icon = com.wavesurvivor.horde.loot.LootItems.resolve(r.item(), 1);
+            if (icon.isEmpty()) continue;
+            sumEntries.add(new com.wavesurvivor.network.RouletteSummaryPacket.Entry(icon, r.displayName(), e.getValue(), r.rarity().ordinal()));
+        }
+        com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> player),
+                new com.wavesurvivor.network.RouletteSummaryPacket(config.chestName(), rewards.size(), sumEntries));
         if (bestSound != null) playSound((ServerLevel) player.level(), player.blockPosition(), bestSound, 1.0f, 1.0f);
         WaveSurvivorMod.LOGGER.info("[Roulette] '{}' a ouvert {} coffres d'un coup", player.getName().getString(), rewards.size());
         for (int i = 0; i < rewards.size(); i++) jackpot(server, player, config); // bonus par clé (set Fortune, Héritage)

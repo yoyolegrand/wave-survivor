@@ -199,5 +199,6 @@
   "item.wavesurvivor.seraph_boots": "Seraph Sabatons",
   "item.wavesurvivor.survivor_notebook": "Survivor's Notebook",
   "key.wavesurvivor.ready": "Ready (wave break)",
-  "key.categories.wavesurvivor": "Wave Survivor"
+  "key.categories.wavesurvivor": "Wave Survivor",
+  "item.wavesurvivor.key_pouch": "Key Pouch"
 }

@@ -84,6 +84,8 @@ public class ModItems {
     // ─── Artisanat sacré et profane : nourriture (config : crafting_fragments.json) ───
     public static final RegistryObject<Item> SURVIVOR_NOTEBOOK = ITEMS.register("survivor_notebook",
             () -> new com.wavesurvivor.carnet.CarnetItem(new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> KEY_POUCH = ITEMS.register("key_pouch",
+            () -> new com.wavesurvivor.horde.roulette.KeyPouch(new Item.Properties()));
     public static final RegistryObject<Item> BLESSED_BREAD = ITEMS.register("blessed_bread",
             () -> new com.wavesurvivor.craft.CraftFoodItem("blessed_bread", false, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final RegistryObject<Item> SANCTIFIED_APPLE = ITEMS.register("sanctified_apple",

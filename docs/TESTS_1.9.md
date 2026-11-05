@@ -295,3 +295,13 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Chapelle générée : entrer dans le cimetière ou passer le portail → cloche + 4–6 morts-vivants sortent des tombes (particules d'âmes et de terre), une seule fois
 - [ ] Approcher du grand coffre (< 6 blocs) → 2 gardiens squelettes en armure (36 PV) dans la nef, une seule fois ; message
 - [ ] Chapelle posée à la commande : aucun monstre
+
+## Bourse à clés
+- [ ] Fabrication à l'établi (4 cuirs, 2 ficelles, 1 lingot d'or, 1 pépite d'or) ; icône ; non empilable
+- [ ] Clic droit dans le vide : inventaire de 27 cases, seules les clés de coffres roulette entrent (glisser, Maj + clic) ; le contenu reste dans l'objet (la ranger, la jeter, la reprendre) ; info-bulle avec les clés
+- [ ] Sans clé en main : clic droit sur un coffre roulette → une clé de la bourse est consommée, le coffre s'ouvre normalement ; mauvais type de clé → message « Aucune clé pour ce coffre dans ta bourse »
+- [ ] Accroupi + clic droit sur le coffre : toutes les clés de ce type sont consommées, une seule animation accélérée, puis écran de résumé (×N ouvertures, meilleur gain, liste avec molette)
+- [ ] Une clé tenue en main reste prioritaire sur la bourse ; marche pour les coffres des hordes, Kingdom, Invasions, personnalisés
+- [ ] Ramassage automatique : une clé ramassée va dans la bourse ; accroupi + clic droit dans le vide pour l'activer / couper (message) ; bourse pleine : la clé va dans l'inventaire
+- [ ] `rules.json` : `keyPouchSize` (9 à 54), `keyPouchAutoPickup`, `keyPouchBulk` + `/ws reload`
+- [ ] Codex (page « Bourse à clés ») et Carnet › Ressources, FR et EN
