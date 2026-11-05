@@ -360,3 +360,4 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Seigneur 6 : XP de Maîtrise +25 % ; 7 : plus de ressources de Calme ; 8 : réparations −25 % (devis « Tout réparer » compris) ; 9 : Monolithe +1 PV/s entre les vagues et pendant le Calme
 - [ ] Rang III : +1 choix de bénédiction ; aura colorée par rang (or, orange, rouge, rose, cyan)
 - [ ] Corps : la Robustesse monte jusqu'au niveau 10 (la config du monde de test peut garder l'ancien plafond de 5 : à vérifier)
+- [ ] Héritage : 4e colonne « Corps » (8 stats, clic = +1 niveau, infobulle, on reste sur l'onglet Héritage après l'achat) ; fenêtre élargie (430), autres onglets toujours lisibles

@@ -35,7 +35,7 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class RenaissanceScreen extends Screen {
 
-    private static final int PANEL_W = 325; // +25 % (1.9)
+    private static final int PANEL_W = 430; // +25 % (1.9), puis élargi pour la 4e colonne « Corps » de l'Héritage
     private static final int PANEL_H = 310; // +25 % (1.9), puis +15 pour les 9 nœuds de l'Héritage
     private static final int CELL = 22;
     private static final int ROW_H = 22;
@@ -77,7 +77,8 @@ public class RenaissanceScreen extends Screen {
     // ─── Sync serveur ───
 
     private void applyStateFields(RenaissanceStatePacket pkt) {
-        this.tab = pkt.tab;
+        this.tab = stickTab >= 0 && !pkt.open ? stickTab : pkt.tab;
+        stickTab = -1;
         this.points = pkt.points;
         this.purchases = new HashMap<>(pkt.purchases);
         this.skillTreeAvailable = pkt.skillTreeAvailable;
@@ -151,11 +152,13 @@ public class RenaissanceScreen extends Screen {
 
     private static final com.wavesurvivor.horde.renaissance.Heritage.Branch[] BRANCHES = com.wavesurvivor.horde.renaissance.Heritage.Branch.values();
     private boolean rebirthArmed = false;
+    /** Après un achat de stat depuis l'Héritage, le serveur répond « Boutique » : on reste sur l'onglet Héritage (3). */
+    private int stickTab = -1;
 
     /** Nœuds de l'Héritage : plus larges avec la fenêtre agrandie. */
-    private static final int NODE_W = 96, NODE_H = 17, NODE_PITCH = 19;
+    private static final int NODE_W = 97, NODE_H = 17, NODE_PITCH = 19;
 
-    private int colX(int i) { return left + 12 + i * (NODE_W + 8); }
+    private int colX(int i) { return left + 12 + i * (NODE_W + 6); }
 
     private void buildHeritageWidgets() {
         var H = com.wavesurvivor.horde.renaissance.Heritage.class;
@@ -170,6 +173,21 @@ public class RenaissanceScreen extends Screen {
                     .bounds(colX(i), top + 78 + com.wavesurvivor.horde.renaissance.Heritage.MAX_NODE * NODE_PITCH + 3, NODE_W, 16).build());
             b.active = lvl < com.wavesurvivor.horde.renaissance.Heritage.MAX_NODE
                     && points >= com.wavesurvivor.horde.renaissance.Heritage.NODE_COST[lvl];
+        }
+        // 4e colonne « Corps » : les stats permanentes (un clic = +1 niveau, payé en PR)
+        if (statsAvailable) {
+            int row = 0;
+            for (RenaissanceConfigData.StatUpgrade s : cfg.statUpgrades) {
+                if (row >= com.wavesurvivor.horde.renaissance.Heritage.MAX_NODE) break;
+                int lvl = purchases.getOrDefault("stat:" + s.id, 0);
+                final String sid = "stat:" + s.id;
+                String label = "§f" + lvl + "/" + s.maxLevel + " §r" + com.wavesurvivor.i18n.WSLang.t(s.name);
+                Button sb = addRenderableWidget(Button.builder(Component.literal(fit(label, NODE_W - 8)),
+                        bt -> { stickTab = 3; NetworkHandler.CHANNEL.sendToServer(new RenaissanceBuyPacket(sid, 1)); })
+                        .bounds(colX(3), top + 78 + row * NODE_PITCH, NODE_W, NODE_H).build());
+                sb.active = lvl < s.maxLevel && points >= s.costFor(lvl);
+                row++;
+            }
         }
         // Renaissance (deux clics : armer puis confirmer)
         int rank = com.wavesurvivor.horde.renaissance.Heritage.CLIENT_RANK;
@@ -225,6 +243,27 @@ public class RenaissanceScreen extends Screen {
                             com.wavesurvivor.horde.renaissance.Heritage.NODE_COST[n - 1])));
                     if (!owned && !next) tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("heritage.locked")));
                 }
+            }
+        }
+        // Colonne « Corps » : titre et infobulles des stats
+        if (statsAvailable) {
+            int x = colX(3);
+            g.drawString(font, "§l" + com.wavesurvivor.i18n.WSLang.t("heritage.body"), x, top + 68, 0xFFFFFFFF, false);
+            int row = 0;
+            for (RenaissanceConfigData.StatUpgrade s : cfg.statUpgrades) {
+                if (row >= com.wavesurvivor.horde.renaissance.Heritage.MAX_NODE) break;
+                int y = top + 78 + row * NODE_PITCH;
+                if (mx >= x && mx < x + NODE_W && my >= y && my < y + NODE_H) {
+                    int lvl = purchases.getOrDefault("stat:" + s.id, 0);
+                    tip = new ArrayList<>();
+                    tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t(s.name)));
+                    if (s.description != null) tip.add(Component.literal("§7" + com.wavesurvivor.i18n.WSLang.t(s.description)));
+                    tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.bonus_actuel") + s.formatTotal(lvl)));
+                    tip.add(Component.literal(lvl >= s.maxLevel ? com.wavesurvivor.i18n.WSLang.t("ui.niv_max")
+                            : com.wavesurvivor.i18n.WSLang.t("heritage.cost", s.costFor(lvl))));
+                    tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.permanent_survit_a_la_mort_et_aux_hordes")));
+                }
+                row++;
             }
         }
         // Survol du bouton Renaître : ce qui se passe
