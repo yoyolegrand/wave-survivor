@@ -24,11 +24,11 @@ public class CodexScreen extends Screen {
     static final String[] PAGES = {
             "start", "classic", "frost", "desert", "breaches", "blessings", "difficulty", "daily", "boss", "bossrush", "endless", "invasion",
             "kingdom", "objectives", "treasury", "monolith", "defenses", "workshop", "tools",
-            "roles", "vocations", "alchemy", "omens", "relics", "pouch", "shrine", "crafting", "arenas", "ruins", "renaissance", "stats", "interface", "editor"
+            "roles", "vocations", "alchemy", "omens", "relics", "pouch", "vestige", "shrine", "crafting", "arenas", "ruins", "renaissance", "stats", "interface", "editor"
     };
     private static final String[] ICONS = {"📖", "⚔", "❄", "🏜", "☄", "✚", "🎲", "◷", "☠", "♔", "♾", "🔔",
             "♛", "⚑", "◆", "🏛", "🛡", "⚒", "➤",
-            "♟", "★", "⚗", "👁", "✦", "👝", "✧", "⚒", "⛰", "⛪", "☼", "📊", "⌨", "✎"};
+            "♟", "★", "⚗", "👁", "✦", "👝", "🧭", "✧", "⚒", "⛰", "⛪", "☼", "📊", "⌨", "✎"};
     private static final String[] WORKSHOP_SPECS = {"forge", "armory", "mechanic", "foundry"};
     private static final String[] HERITAGE_BRANCHES = {"survivor", "merchant", "lord"};
 

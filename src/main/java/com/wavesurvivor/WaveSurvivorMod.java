@@ -76,6 +76,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.craft.CraftEquipEvents()); // Artisanat : lame, faux, flèches, totems
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.arena.TaintedAltarWave()); // Ruine Autel souillé : mini-vague de Corrompus
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.roulette.KeyPouch.Events()); // Bourse à clés : ramassage automatique
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.vestige.VestigeRegistry.Events()); // Boussole des Vestiges
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.arena.ChapelGuardians()); // Ruine Chapelle : gardiens et cloche
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.carnet.CarnetEvents()); // Carnet du Survivant
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.craft.CraftUtilityEvents()); // Artisanat : lanterne et bougie

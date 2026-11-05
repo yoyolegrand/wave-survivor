@@ -229,6 +229,9 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, RouletteSummaryPacket.class,
                 RouletteSummaryPacket::encode, RouletteSummaryPacket::decode, RouletteSummaryPacket::handle);
 
+        CHANNEL.registerMessage(id++, VestigeTargetPacket.class,
+                VestigeTargetPacket::encode, VestigeTargetPacket::decode, VestigeTargetPacket::handle);
+
         WaveSurvivorMod.LOGGER.info("[Network] Channel 'main' enregistré (protocol v{}, {} packets)",
                 PROTOCOL_VERSION, id);
     }

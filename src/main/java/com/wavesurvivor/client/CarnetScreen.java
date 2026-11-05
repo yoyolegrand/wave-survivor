@@ -34,7 +34,7 @@ public class CarnetScreen extends Screen {
     private static final String[][] RESOURCES = {
             {"coins", "minecraft:emerald"}, {"essence", "minecraft:echo_shard"}, {"materials", "minecraft:iron_ingot"},
             {"pr", "minecraft:experience_bottle"}, {"grace", "wavesurvivor:grace_fragment"}, {"taint", "wavesurvivor:taint_fragment"},
-            {"reagents", "minecraft:brewing_stand"}, {"mastery", "minecraft:enchanted_book"}, {"pouch", "wavesurvivor:key_pouch"}};
+            {"reagents", "minecraft:brewing_stand"}, {"mastery", "minecraft:enchanted_book"}, {"pouch", "wavesurvivor:key_pouch"}, {"vestige", "wavesurvivor:vestige_compass"}};
     private static final String[] TABS = {"start", "objectives", "resources", "codex"};
 
     private static final int SIDE_W = 128, ROW_H = 16, LINE_H = 10, OBJ_H = 38;

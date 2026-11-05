@@ -53,6 +53,12 @@ public final class RulesConfig {
     public static int keyPouchSize() { return Math.max(9, Math.min(54, HordeJson.num(cfg(), "keyPouchSize", 27))); }
     /** Bourse à clés : ramassage automatique des clés autorisé. */
     public static boolean keyPouchAutoPickup() { return !cfg().has("keyPouchAutoPickup") || cfg().get("keyPouchAutoPickup").getAsBoolean(); }
+    /** Boussole des Vestiges : rayon de recherche (blocs). */
+    public static int vestigeRadius() { return cfg().has("vestigeRadius") ? Math.max(100, Math.min(30000, cfg().get("vestigeRadius").getAsInt())) : 2000; }
+    /** Boussole des Vestiges : vestiges réclamés partagés par tout le serveur (sinon par joueur). */
+    public static boolean vestigeShared() { return cfg().has("vestigeShared") && cfg().get("vestigeShared").getAsBoolean(); }
+    /** Boussole des Vestiges : filtre par type (accroupi + clic droit). */
+    public static boolean vestigeFilter() { return !cfg().has("vestigeFilter") || cfg().get("vestigeFilter").getAsBoolean(); }
     /** Autel souillé : nombre de Corrompus de la mini-vague (difficulté Normal ; ×0,75 en Facile, ×1,5 en Difficile). */
     public static int altarWaveSize() { return cfg().has("altarWaveSize") ? Math.max(1, Math.min(60, cfg().get("altarWaveSize").getAsInt())) : 8; }
     /** Autel souillé : l'estrade s'ouvre (révèle le coffre) une fois la mini-vague vaincue. */

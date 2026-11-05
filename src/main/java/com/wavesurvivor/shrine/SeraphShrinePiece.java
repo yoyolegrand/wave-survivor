@@ -55,6 +55,7 @@ public class SeraphShrinePiece extends StructurePiece {
     public void postProcess(WorldGenLevel level, StructureManager structures, ChunkGenerator gen, RandomSource rand,
                             BoundingBox box, ChunkPos chunkPos, BlockPos pivot) {
         int cx = (boundingBox.minX() + boundingBox.maxX()) / 2, cz = (boundingBox.minZ() + boundingBox.maxZ()) / 2, y = baseY;
+        com.wavesurvivor.vestige.VestigeRegistry.record(level.getLevel(), com.wavesurvivor.vestige.VestigeRegistry.SHRINE, "seraph_shrine", new BlockPos(cx, y, cz)); // Boussole des Vestiges
         BlockState[] floor = {Blocks.SMOOTH_QUARTZ.defaultBlockState(), Blocks.CALCITE.defaultBlockState(), Blocks.QUARTZ_BRICKS.defaultBlockState(),
                 Blocks.MOSSY_STONE_BRICKS.defaultBlockState(), Blocks.CRACKED_STONE_BRICKS.defaultBlockState()};
 

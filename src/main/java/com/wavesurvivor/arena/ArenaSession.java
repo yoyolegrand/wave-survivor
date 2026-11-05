@@ -382,6 +382,9 @@ public final class ArenaSession {
     public static void onVictory(MinecraftServer server) {
         ArenaSession s = cur;
         if (s == null) return;
+        // Boussole des Vestiges : horde de cette arène terminée = vestige réclamé pour les joueurs présents
+        for (net.minecraft.server.level.ServerPlayer pl : server.getPlayerList().getPlayers())
+            com.wavesurvivor.vestige.VestigeRegistry.claimNear(pl, com.wavesurvivor.vestige.VestigeRegistry.HORDE, s.altar, 120, s.bp.id);
         s.bossLit = false;
         s.relight();
         if (ArenaSettings.magmaCools()) {

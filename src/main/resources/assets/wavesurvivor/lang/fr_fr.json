@@ -201,5 +201,6 @@
   "key.wavesurvivor.ready": "Prêt (pause entre vagues)",
   "key.categories.wavesurvivor": "Wave Survivor",
   "item.wavesurvivor.key_pouch": "Bourse à clés",
-  "block.wavesurvivor.reliquary_seal": "Sceau du reliquaire"
+  "block.wavesurvivor.reliquary_seal": "Sceau du reliquaire",
+  "item.wavesurvivor.vestige_compass": "Boussole des Vestiges"
 }

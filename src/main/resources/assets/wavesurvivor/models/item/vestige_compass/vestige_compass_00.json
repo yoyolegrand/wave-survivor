@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wavesurvivor:item/vestige_compass/vestige_compass_00"
+  }
+}

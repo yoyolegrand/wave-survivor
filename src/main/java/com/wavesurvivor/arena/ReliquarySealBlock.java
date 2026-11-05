@@ -73,6 +73,7 @@ public class ReliquarySealBlock extends Block {
             return InteractionResult.CONSUME;
         }
         open((ServerLevel) level, pos);
+        if (p instanceof net.minecraft.server.level.ServerPlayer sp) com.wavesurvivor.vestige.VestigeRegistry.claimNear(sp, com.wavesurvivor.vestige.VestigeRegistry.RUIN, pos, 30, "reliquaire_scelle"); // Boussole des Vestiges
         p.displayClientMessage(Component.literal(WSLang.t("reliquary_seal.opened")), true);
         return InteractionResult.CONSUME;
     }

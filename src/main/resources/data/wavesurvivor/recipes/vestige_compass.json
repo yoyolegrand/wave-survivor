@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:compass"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "wavesurvivor:grace_shard"
+    },
+    {
+      "item": "wavesurvivor:grace_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:vestige_compass",
+    "count": 1
+  }
+}

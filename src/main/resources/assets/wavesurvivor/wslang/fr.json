@@ -3802,5 +3802,19 @@
   "heritage.lord.8": "Kingdom : réparations −25 % de coût",
   "heritage.lord.9": "Monolithe : +1 PV/s entre les vagues",
   "heritage.migrated": "§6Héritage refondu : ta branche Survivant est remise à zéro et {0} PR te sont rendus. Réinvestis-les !",
-  "heritage.body": "💪 Corps"
+  "heritage.body": "💪 Corps",
+  "vestige.tip": "Pointe vers le vestige non réclamé le plus proche. Clic droit : distance.",
+  "vestige.tip_filter": "Accroupi + clic droit : change le type visé.",
+  "vestige.unknown": "§6Vestige inconnu à {0} blocs",
+  "vestige.none": "§cAucun vestige à proximité",
+  "vestige.filter_set": "Boussole réglée sur : {0}",
+  "vestige.filter.0": "Tout",
+  "vestige.filter.1": "Hordes",
+  "vestige.filter.2": "Sanctuaires",
+  "vestige.filter.3": "Ruines",
+  "codex.vestige": "Boussole des Vestiges",
+  "codex.vestige.body": "§7La §fBoussole des Vestiges§7 te guide vers les structures du mod que tu n'as pas encore explorées, sans jamais dire de quoi il s'agit.\n\n§6§lUtilisation\n§7• L'aiguille (pointe dorée) vise le §fvestige non réclamé le plus proche§7 : arène de horde, Sanctuaire du Séraphin ou ruine. Sans cible, elle tourne au hasard.\n§7• §fClic droit§7 : « Vestige inconnu à N blocs » (jamais le nom ni le type).\n§7• §fAccroupi + clic droit§7 : filtre Tout → Hordes → Sanctuaires → Ruines.\n\n§6§lRéclamer un vestige\n§7• Arène : terminer sa horde. Sanctuaire : toucher la statue. Ruine : ouvrir son coffre (Reliquaire : ouvrir le sceau).\n§7• Ensuite la boussole vise automatiquement le suivant. Le suivi est propre à chaque joueur (réglable pour tout le serveur).\n§7• Elle ne connaît que les structures §fdéjà générées§7 : explore pour en découvrir de nouvelles.\n\n§6§lFabrication\n§7• 1 boussole, 4 lingots d'or, 2 Éclats de grâce et 2 Éclats de souillure (établi). Réglages dans §frules.json§7 : §evestigeRadius§7, §evestigeShared§7, §evestigeFilter§7.",
+  "carnet.res.vestige": "Boussole des Vestiges",
+  "carnet.res.vestige.where": "Se fabrique à l'établi : 1 boussole, 4 lingots d'or, 2 Éclats de grâce, 2 Éclats de souillure.",
+  "carnet.res.vestige.use": "Pointe vers la structure du mod non réclamée la plus proche (hordes, Sanctuaires, ruines). Clic droit : distance."
 }

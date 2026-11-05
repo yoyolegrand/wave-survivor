@@ -361,3 +361,15 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Rang III : +1 choix de bénédiction ; aura colorée par rang (or, orange, rouge, rose, cyan)
 - [ ] Corps : la Robustesse monte jusqu'au niveau 10 (la config du monde de test peut garder l'ancien plafond de 5 : à vérifier)
 - [ ] Héritage : 4e colonne « Corps » (8 stats, clic = +1 niveau, infobulle, on reste sur l'onglet Héritage après l'achat) ; fenêtre élargie (430), autres onglets toujours lisibles
+
+## Icônes animées, Sceau animé et Boussole des Vestiges
+- [ ] Icônes animées : Fragment de grâce, Cœur de grâce, Totem de souillure (inventaire, main) ; Sceau du reliquaire animé (lent, interpolé)
+- [ ] Boussole : recette (1 boussole, 4 lingots d'or, 2 Éclats de grâce, 2 de souillure), nom FR / EN, info-bulle, présente dans l'onglet créatif
+- [ ] L'aiguille tourne vers la structure non réclamée la plus proche ; `vestige_compass_00` quand la cible est droit devant, sens horaire ensuite (vérifier gauche / droite / derrière)
+- [ ] Sans cible (rien de généré dans le rayon) : l'aiguille tourne au hasard, clic droit : « Aucun vestige à proximité »
+- [ ] Clic droit : « Vestige inconnu à N blocs » (N = distance horizontale)
+- [ ] Accroupi + clic droit : Tout → Hordes → Sanctuaires → Ruines (message + aiguille mise à jour tout de suite)
+- [ ] Réclamation : horde de l'arène terminée / statue du Sanctuaire touchée / coffre de ruine ouvert / sceau du Reliquaire ouvert ; la cible passe à la structure suivante en ~2 s
+- [ ] `/ws arena place <arène>` : l'arène posée devient une cible ; sauvegarde puis rechargement du monde : cibles et réclamations conservées
+- [ ] rules.json : `vestigeRadius`, `vestigeShared` (réclamations communes à tout le serveur), `vestigeFilter`
+- [ ] Limite connue : seules les structures déjà générées (chunks explorés) sont connues

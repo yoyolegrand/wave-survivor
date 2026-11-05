@@ -32,6 +32,10 @@ public class ClientModEvents {
             net.minecraft.client.renderer.item.ItemProperties.register(com.wavesurvivor.registry.ModItems.ROULETTE_KEY.get(),
                     new net.minecraft.resources.ResourceLocation("wavesurvivor", "key_shape"),
                     (stack, level, entity, seed) -> com.wavesurvivor.horde.roulette.RouletteKeyItem.shapeIndex(stack));
+            // Boussole des Vestiges : même aiguille que la boussole vanilla (image 00 = cible droit devant), cible reçue du serveur
+            net.minecraft.client.renderer.item.ItemProperties.register(com.wavesurvivor.registry.ModItems.VESTIGE_COMPASS.get(),
+                    new net.minecraft.resources.ResourceLocation("angle"),
+                    new net.minecraft.client.renderer.item.CompassItemPropertyFunction((level, stack, entity) -> VestigeClient.target));
             // Boussole du Royaume : aiguille native des boussoles liées, vers la cible choisie sur la carte (sinon elle tourne)
             net.minecraft.client.renderer.item.ItemProperties.register(com.wavesurvivor.registry.ModItems.KINGDOM_COMPASS.get(),
                     new net.minecraft.resources.ResourceLocation("angle"),

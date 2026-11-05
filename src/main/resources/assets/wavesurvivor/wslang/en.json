@@ -4541,5 +4541,19 @@
   "heritage.lord.8": "Kingdom: repairs cost −25%",
   "heritage.lord.9": "Monolith: +1 HP/s between waves",
   "heritage.migrated": "§6Heritage reworked: your Survivor branch is reset and {0} PR are refunded. Spend them again!",
-  "heritage.body": "💪 Body"
+  "heritage.body": "💪 Body",
+  "vestige.tip": "Points to the nearest unclaimed vestige. Right-click: distance.",
+  "vestige.tip_filter": "Sneak + right-click: change the targeted type.",
+  "vestige.unknown": "§6Unknown vestige {0} blocks away",
+  "vestige.none": "§cNo vestige nearby",
+  "vestige.filter_set": "Compass set to: {0}",
+  "vestige.filter.0": "All",
+  "vestige.filter.1": "Hordes",
+  "vestige.filter.2": "Sanctuaries",
+  "vestige.filter.3": "Ruins",
+  "codex.vestige": "Vestige Compass",
+  "codex.vestige.body": "§7The §fVestige Compass§7 guides you to mod structures you have not explored yet, without ever saying what they are.\n\n§6§lUsing it\n§7• The needle (golden tip) points to the §fnearest unclaimed vestige§7: a horde arena, a Seraph Sanctuary or a ruin. With no target it spins randomly.\n§7• §fRight-click§7: \"Unknown vestige N blocks away\" (never the name or type).\n§7• §fSneak + right-click§7: filter All → Hordes → Sanctuaries → Ruins.\n\n§6§lClaiming a vestige\n§7• Arena: finish its horde. Sanctuary: touch the statue. Ruin: open its chest (Reliquary: open the seal).\n§7• The compass then points to the next one. Tracking is per player (can be shared server-wide).\n§7• It only knows structures that are §falready generated§7: explore to discover more.\n\n§6§lCrafting\n§7• 1 compass, 4 gold ingots, 2 Grace Shards and 2 Taint Shards (crafting table). Settings in §frules.json§7: §evestigeRadius§7, §evestigeShared§7, §evestigeFilter§7.",
+  "carnet.res.vestige": "Vestige Compass",
+  "carnet.res.vestige.where": "Crafted at a crafting table: 1 compass, 4 gold ingots, 2 Grace Shards, 2 Taint Shards.",
+  "carnet.res.vestige.use": "Points to the nearest unclaimed mod structure (hordes, Sanctuaries, ruins). Right-click: distance."
 }

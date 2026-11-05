@@ -86,6 +86,9 @@ public class ModItems {
             () -> new com.wavesurvivor.carnet.CarnetItem(new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final RegistryObject<Item> KEY_POUCH = ITEMS.register("key_pouch",
             () -> new com.wavesurvivor.horde.roulette.KeyPouch(new Item.Properties()));
+    /** Boussole des Vestiges : pointe vers la structure du mod non réclamée la plus proche. */
+    public static final RegistryObject<Item> VESTIGE_COMPASS = ITEMS.register("vestige_compass",
+            () -> new com.wavesurvivor.vestige.VestigeCompassItem(new Item.Properties()));
     public static final RegistryObject<Item> BLESSED_BREAD = ITEMS.register("blessed_bread",
             () -> new com.wavesurvivor.craft.CraftFoodItem("blessed_bread", false, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final RegistryObject<Item> SANCTIFIED_APPLE = ITEMS.register("sanctified_apple",
@@ -431,6 +434,7 @@ public class ModItems {
                         output.accept(SURVIVOR_NOTEBOOK.get());
                         output.accept(KEY_POUCH.get());
                         output.accept(com.wavesurvivor.horde.roulette.SealedKey.create(1));
+                        output.accept(VESTIGE_COMPASS.get());
                         output.accept(SERAPH_SHRINE_ITEM.get());
                         output.accept(GRACE_SHARD.get());
                         output.accept(GRACE_FRAGMENT.get());

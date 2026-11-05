@@ -141,6 +141,7 @@ public class SeraphShrineBlock extends BaseEntityBlock {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (player instanceof net.minecraft.server.level.ServerPlayer sp && level.getBlockEntity(pos) instanceof SeraphShrineBlockEntity be) {
             net.minecraftforge.network.NetworkHooks.openScreen(sp, be, buf -> buf.writeBlockPos(pos));
+            com.wavesurvivor.vestige.VestigeRegistry.claimNear(sp, com.wavesurvivor.vestige.VestigeRegistry.SHRINE, pos, 30, null); // Boussole des Vestiges : statue cliquée
         }
         return InteractionResult.CONSUME;
     }

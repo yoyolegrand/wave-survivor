@@ -70,6 +70,7 @@ public class ArenaPiece extends StructurePiece {
         ArenaBlueprint bp = ArenaBlueprint.load(arena);
         if (bp == null) return;
         bp.build(level, ox, oz, y0, rotation(), box, true);
+        com.wavesurvivor.vestige.VestigeRegistry.recordArena(level.getLevel(), arena, getBoundingBox().getCenter()); // Boussole des Vestiges
         ArenaAltar.install(level, bp, ox, oz, y0, rotation(), box);
     }
 }

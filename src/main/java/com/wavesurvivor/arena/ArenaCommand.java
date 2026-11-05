@@ -86,6 +86,7 @@ public final class ArenaCommand {
         ArenaAltar.install(p.serverLevel(), bp, pl.origin().getX(), pl.origin().getZ(), pl.groundY(), rot, null);
         BlockPos altar = pl.marker("monolith");
         if (altar != null) ArenaAltar.adopt(p.serverLevel(), altar);
+        com.wavesurvivor.vestige.VestigeRegistry.recordArena(p.serverLevel(), name, pl.center()); // Boussole des Vestiges
         BlockPos c = pl.center();
         src.sendSuccess(() -> Component.literal("§a[Arènes] « " + name + " » posée (rotation " + rotArg + "°) : centre " + c.getX() + " " + pl.groundY() + " " + c.getZ()
                 + " · " + (System.currentTimeMillis() - t0) + " ms"), true);
