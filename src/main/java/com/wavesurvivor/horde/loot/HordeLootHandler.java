@@ -44,6 +44,16 @@ public class HordeLootHandler {
         if (template != null) added += roll(entity, template.lootTable, event);
         if (bossLoot != null) added += roll(entity, bossLoot, event);
 
+        // Marchand 9 : un boss de horde a 20 % de chance de doubler ses Éclats de grâce / de souillure
+        if (com.wavesurvivor.horde.boss.BossDeathHandler.BOSSES.remove(entity.getUUID()) && entity.getServer() != null
+                && com.wavesurvivor.horde.renaissance.Heritage.anyone(entity.getServer(), com.wavesurvivor.horde.renaissance.Heritage.Branch.MERCHANT, 9)
+                && RNG.nextInt(5) == 0) {
+            for (ItemEntity d : event.getDrops()) {
+                ItemStack st = d.getItem();
+                if (st.is(com.wavesurvivor.registry.ModItems.GRACE_SHARD.get()) || st.is(com.wavesurvivor.registry.ModItems.TAINT_SHARD.get()))
+                    st.setCount(Math.min(64, st.getCount() * 2));
+            }
+        }
         if (added > 0) {
             WaveSurvivorMod.LOGGER.debug("[Loot] {} drop(s) custom pour {}", added,
                     template != null ? template.entityType : entity.getType().toString());

@@ -106,7 +106,8 @@ public class RenaissanceRewards {
                 firstEligible = !done && !rush;
                 if (victory && firstEligible) first = 15;
             }
-            double personal = Heritage.prMultiplier(p) * com.wavesurvivor.item.RelicSets.prMultiplier(p);
+            double personal = Heritage.prMultiplier(p) * com.wavesurvivor.item.RelicSets.prMultiplier(p)
+                    * (rush && Heritage.has(p, Heritage.Branch.SURVIVOR, 6) ? 1.25 : 1.0); // Survivant 6 : Boss Rush +25 % de PR
             // Prix de consolation (1.9) : défaite sans bonus de victoire déjà versé (le sans fin en donne un après la dernière vague normale) :
             // une part (30 % par défaut) des bonus de victoire, au prorata des vagues survécues, avec les mêmes multiplicateurs.
             int consolation = 0;

@@ -69,6 +69,7 @@ public class DailyServer extends SavedData {
         com.wavesurvivor.horde.stats.PlayerStats.add(p, "daily_wins", 1); // 1.7 : statistiques et succès
         com.wavesurvivor.horde.stats.PlayerStats.max(p, "daily_best_streak", streak);
         int pr = DailyChallenge.reward((int) streak, runPlan.difficulty(), kingdom);
+        if (com.wavesurvivor.horde.renaissance.Heritage.has(p, com.wavesurvivor.horde.renaissance.Heritage.Branch.MERCHANT, 8)) pr = (int) Math.round(pr * 1.25); // Marchand 8 : PR du Défi du jour +25 %
         p.sendSystemMessage(Component.literal(WSLang.t("daily.reward", pr, streak)));
         return pr;
     }

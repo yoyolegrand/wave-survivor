@@ -78,7 +78,7 @@ public final class VocationXp {
             if (p == null) continue;
             for (Map.Entry<KingdomRoles.Role, Double> en : e.getValue().entrySet()) {
                 KingdomRoles.Role r = en.getKey();
-                long gain = Math.round(en.getValue() * mult);
+                long gain = Math.round(en.getValue() * mult * (com.wavesurvivor.horde.renaissance.Heritage.has(p, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 6) ? 1.25 : 1.0)); // Seigneur 6 : +25 % d'XP de Maîtrise
                 if (gain <= 0) continue;
                 int before = Vocations.level(p, r);
                 Vocations.addXp(p, r, gain);

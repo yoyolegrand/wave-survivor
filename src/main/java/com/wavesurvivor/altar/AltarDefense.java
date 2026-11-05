@@ -191,8 +191,14 @@ public class AltarDefense {
     /** Régénération : levels[REGEN] × regenPerLevel PV par seconde. */
     private static void tickRegen(ServerLevel level, Session s) {
         int lvl = s.levels[UP_REGEN];
-        if (lvl <= 0 || s.hp >= s.maxHp) return;
-        s.regenCarry += (float) (lvl * s.cfg.regenPerLevel);
+        if (s.hp >= s.maxHp) return;
+        float add = (float) (lvl * s.cfg.regenPerLevel);
+        // Seigneur 9 : +1 PV par seconde entre les vagues (pause de horde, ou Calme du Kingdom)
+        boolean rest = com.wavesurvivor.horde.HordeManager.get().isBetweenWaves()
+                || (com.wavesurvivor.horde.kingdom.KingdomManager.isActive() && com.wavesurvivor.horde.kingdom.KingdomManager.isCalmPhase());
+        if (rest && com.wavesurvivor.horde.renaissance.Heritage.anyone(level.getServer(), com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 9)) add += 1.0f;
+        if (add <= 0) return;
+        s.regenCarry += add;
         int heal = (int) s.regenCarry;
         if (heal <= 0) return;
         s.regenCarry -= heal;

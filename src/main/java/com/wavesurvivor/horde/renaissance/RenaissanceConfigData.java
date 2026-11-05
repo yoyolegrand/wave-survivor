@@ -207,7 +207,7 @@ public class RenaissanceConfigData {
                 "minecraft:feather", "+0.1 vitesse d'attaque par niveau"));
         l.add(stat("armor", "§7Carapace", "armor", 1, "addition", 3, 1, 10,
                 "minecraft:iron_chestplate", "+1 point d'armure par niveau"));
-        l.add(stat("toughness", "§3Robustesse", "armor_toughness", 1, "addition", 4, 2, 5,
+        l.add(stat("toughness", "§3Robustesse", "armor_toughness", 1, "addition", 4, 2, 10,
                 "minecraft:diamond_chestplate", "+1 robustesse d'armure par niveau"));
         l.add(stat("knockback", "§8Ancrage", "knockback_resistance", 0.05, "addition", 3, 1, 10,
                 "minecraft:shield", "+5% résistance au recul par niveau"));

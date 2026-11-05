@@ -49,6 +49,12 @@ public final class RelicForge {
         return new Plan(bestT, bestC, bestTLvl, upgradeCost(bestTLvl));
     }
 
+    /** Même plan avec la remise de l'Héritage (Marchand 7 : −20 %). */
+    public static Plan planUpgrade(List<ItemStack> inv, Item item, net.minecraft.world.entity.player.Player p) {
+        Plan pl = planUpgrade(inv, item);
+        return pl == null ? null : new Plan(pl.targetSlot(), pl.consumeSlot(), pl.fromLevel(), com.wavesurvivor.horde.renaissance.Heritage.forgeCost(p, pl.cost()));
+    }
+
     /** Reliques présentes dans l'inventaire principal → niveaux de chaque copie (ordre d'apparition). */
     public static Map<Item, List<Integer>> relicsIn(List<ItemStack> inv) {
         Map<Item, List<Integer>> out = new LinkedHashMap<>();

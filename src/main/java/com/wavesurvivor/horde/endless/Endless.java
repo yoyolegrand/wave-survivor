@@ -90,7 +90,7 @@ public class Endless {
         if (!wanted || srv == null || !available(horde)) return false;
         cfg = settingsOf(horde);
         baseTotal = horde.configData.totalWaves;
-        lives = Math.max(1, cfg.lives);
+        lives = Math.max(1, cfg.lives) + (com.wavesurvivor.horde.renaissance.Heritage.anyone(srv, com.wavesurvivor.horde.renaissance.Heritage.Branch.SURVIVOR, 7) ? 1 : 0); // Survivant 7 : une vie de plus
         lost = false;
         startTick = srv.getTickCount();
         active = true;

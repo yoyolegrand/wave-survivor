@@ -48,7 +48,7 @@ public class RenaissanceManager {
         }
         if (!(item instanceof com.wavesurvivor.item.RelicItem)) return;
         var inv = p.getInventory().items;
-        com.wavesurvivor.item.RelicForge.Plan plan = com.wavesurvivor.item.RelicForge.planUpgrade(inv, item);
+        com.wavesurvivor.item.RelicForge.Plan plan = com.wavesurvivor.item.RelicForge.planUpgrade(inv, item, p);
         if (plan == null) {
             fail(p, com.wavesurvivor.i18n.WSLang.t("forge.need_duplicate"));
             sendState(p, false, TAB_FORGE, false);

@@ -146,7 +146,7 @@ public class RogueUpgradeManager {
                 if (instance.getModifier(modUuid) != null) {
                     instance.removeModifier(modUuid);
                 }
-                double totalAmount = mod.amount() * lvl * difficultyMult();
+                double totalAmount = mod.amount() * lvl * difficultyMult() * (1.0 + com.wavesurvivor.horde.renaissance.Heritage.blessingPower(p)); // Héritage : Seigneur 1 / 3 / 5
                 String name = "rogue_" + id + "_" + safeAttrName(mod);
                 AttributeModifier newMod = new AttributeModifier(modUuid, name, totalAmount, mod.operation());
                 instance.addTransientModifier(newMod);
@@ -217,7 +217,7 @@ public class RogueUpgradeManager {
         CompoundTag st = root.getCompound(NBT_STATE);
         if (!st.contains("init")) {
             st.putBoolean("init", true);
-            st.putInt("rerolls", Math.max(0, cfgInt("rerolls", "start", 2)));
+            st.putInt("rerolls", Math.max(0, cfgInt("rerolls", "start", 2)) + (com.wavesurvivor.horde.renaissance.Heritage.has(p, com.wavesurvivor.horde.renaissance.Heritage.Branch.SURVIVOR, 8) ? 1 : 0)); // Survivant 8 : +1 relance
             st.putInt("bans", Math.max(0, cfgInt("bans", "start", 1)));
             // pas de cadeau rétroactif si le joueur arrive en cours de partie
             st.putInt("rerollStep", wave / Math.max(1, cfgInt("rerolls", "every", 5)));
@@ -268,8 +268,9 @@ public class RogueUpgradeManager {
 
     private static int menuSize(ServerPlayer p) {
         // Héritage — Seigneur 3 : +1 choix de bénédiction
+        // Seigneur 3 : +1 choix ; Renaissance rang 3 et plus : +1 choix (1.9)
         return Math.max(1, cfgInt("", "choices", MENU_CHOICES)) + (com.wavesurvivor.horde.renaissance.Heritage.has(p,
-                com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 3) ? 1 : 0);
+                com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 3) ? 1 : 0) + (com.wavesurvivor.horde.renaissance.Heritage.rank(p) >= 3 ? 1 : 0);
     }
 
     private static void sendMenu(ServerPlayer p, List<String> ids, int wave) {

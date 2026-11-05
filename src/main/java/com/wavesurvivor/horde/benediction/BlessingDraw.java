@@ -148,6 +148,7 @@ public final class BlessingDraw {
             double v = HordeJson.dbl(base, k, def[i]);
             v *= Math.max(0.1, 1 + HordeJson.dbl(growth, k, defGrowth[i]) * Math.max(0, wave - 1));
             v *= Math.max(0.05, 1 + bonus * HordeJson.dbl(shift, k, defShift[i]));
+            if (i >= 1 && com.wavesurvivor.horde.renaissance.Heritage.has(p, com.wavesurvivor.horde.renaissance.Heritage.Branch.SURVIVOR, 9)) v *= 1.10; // Survivant 9 : bénédictions rares +10 %
             w[i] = Math.max(0, v);
         }
         return w;

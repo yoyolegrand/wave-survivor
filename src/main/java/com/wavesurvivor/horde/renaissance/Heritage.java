@@ -30,8 +30,9 @@ public class Heritage {
 
     public enum Branch { SURVIVOR, MERCHANT, LORD }
 
-    public static final int MAX_NODE = 5;
-    public static final int[] NODE_COST = {5, 10, 15, 25, 40};
+    /** 9 nœuds par branche (1.9) : les 5 premiers d'origine, puis 4 nouveaux. Coût en PR de chaque nœud. */
+    public static final int MAX_NODE = 9;
+    public static final int[] NODE_COST = {5, 10, 15, 25, 40, 50, 60, 75, 90};
     public static final int MAX_RANK = 5;
     public static final int[] RANK_THRESHOLD = {60, 120, 200, 300, 450};
 
@@ -127,6 +128,7 @@ public class Heritage {
                 cost, RenaissanceStore.getPoints(p))));
         p.level().playSound(null, p.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1f, 1.2f);
         applyPassives(p);
+        if (b == Branch.LORD) com.wavesurvivor.horde.benediction.RogueUpgradeManager.reapplyAll(p); // bonus d'effet des bénédictions
         sync(p);
     }
 
@@ -168,12 +170,40 @@ public class Heritage {
     private static final UUID ARMOR_ID = UUID.fromString("4f5b6a21-1c2d-4e3f-9a8b-7c6d5e4f3a22");
     private static final UUID TOUGH_ID = UUID.fromString("4f5b6a21-1c2d-4e3f-9a8b-7c6d5e4f3a23");
 
-    /** Survivant 1 : +2 PV max ; Survivant 4 : +1 armure et +1 robustesse. */
+    /** Plus aucune stat dans les branches (1.9) : elles passent toutes par les stats permanentes « Corps ». Retire les anciens modificateurs (Survivant 1 et 4 d'avant). */
     public static void applyPassives(ServerPlayer p) {
-        mod(p, net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, HP_ID, has(p, Branch.SURVIVOR, 1) ? 6.0 : 0);
-        mod(p, net.minecraft.world.entity.ai.attributes.Attributes.ARMOR, ARMOR_ID, has(p, Branch.SURVIVOR, 4) ? 2.0 : 0);
-        mod(p, net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS, TOUGH_ID, has(p, Branch.SURVIVOR, 4) ? 2.0 : 0);
+        mod(p, net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH, HP_ID, 0);
+        mod(p, net.minecraft.world.entity.ai.attributes.Attributes.ARMOR, ARMOR_ID, 0);
+        mod(p, net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS, TOUGH_ID, 0);
         if (p.getHealth() > p.getMaxHealth()) p.setHealth(p.getMaxHealth());
+    }
+
+    /**
+     * Refonte 1.9 : les nœuds Survivant 1 et 4 ont changé (plus de stats). Une seule fois par joueur, la branche Survivant est remise à zéro
+     * et tous les PR qu'elle a coûtés sont rendus (y compris dans les « PR investis » de la Renaissance).
+     */
+    private static void migrate(ServerPlayer p) {
+        CompoundTag d = data(p);
+        if (d.getInt("v") >= 2) return;
+        d.putInt("v", 2);
+        int lvl = d.getInt("n_SURVIVOR");
+        if (lvl <= 0) return;
+        int refund = 0;
+        for (int i = 0; i < Math.min(lvl, 5); i++) refund += NODE_COST[i];
+        d.putInt("n_SURVIVOR", 0);
+        d.putInt("invested", Math.max(0, d.getInt("invested") - refund));
+        RenaissanceStore.addPoints(p, refund);
+        p.sendSystemMessage(Component.literal(WSLang.t("heritage.migrated", refund)));
+    }
+
+    /** Bonus d'effet des bénédictions (Seigneur 1 / 3 / 5 : +5 % / +10 % / +15 %). */
+    public static double blessingPower(Player p) {
+        return has(p, Branch.LORD, 5) ? 0.15 : has(p, Branch.LORD, 3) ? 0.10 : has(p, Branch.LORD, 1) ? 0.05 : 0.0;
+    }
+
+    /** Coût d'une dépense en PR après la remise du nœud Marchand 7 (Forge des reliques −20 %). */
+    public static int forgeCost(Player p, int cost) {
+        return has(p, Branch.MERCHANT, 7) ? Math.max(1, (int) Math.round(cost * 0.8)) : cost;
     }
 
     private static void mod(ServerPlayer p, net.minecraft.world.entity.ai.attributes.Attribute a, UUID id, double v) {
@@ -267,6 +297,9 @@ public class Heritage {
     public static void onWaveStart(net.minecraft.server.MinecraftServer s) {
         if (s == null) return;
         for (ServerPlayer p : s.getPlayerList().getPlayers()) {
+            if (has(p, Branch.SURVIVOR, 1)) { // 4 cœurs d'Absorption pendant 30 s
+                p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.ABSORPTION, 600, 1, false, true));
+            }
             if (has(p, Branch.SURVIVOR, 2)) {
                 p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION, 200, 1, false, true));
                 p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE, 100, 0, false, true));
@@ -291,6 +324,46 @@ public class Heritage {
         p.level().playSound(null, p.blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 0.6f, 1.6f);
     }
 
+    /** Survivant 4 : dernier coup reçu (tick de jeu) : pendant les 3 s qui suivent, les dégâts sont réduits de 30 %. */
+    private static final java.util.Map<UUID, Long> LAST_HIT = new java.util.HashMap<>();
+
+    @SubscribeEvent
+    public void onHurt(net.minecraftforge.event.entity.living.LivingHurtEvent e) {
+        if (!(e.getEntity() instanceof ServerPlayer p) || p.isCreative() || !has(p, Branch.SURVIVOR, 4)) return;
+        if (!com.wavesurvivor.horde.HordeManager.get().isRunning()) return;
+        long now = p.level().getGameTime();
+        Long last = LAST_HIT.get(p.getUUID());
+        if (last != null && now - last <= 60) e.setAmount(e.getAmount() * 0.7f);
+        else LAST_HIT.put(p.getUUID(), now); // le coup qui ouvre la fenêtre est subi en entier
+    }
+
+    /** Marchand 6 : à la première ouverture d'un coffre de ruine, 2 Éclats de plus (grâce pour la Chapelle, souillure pour l'Autel, un de chaque pour le Reliquaire). */
+    @SubscribeEvent
+    public void onChest(net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock e) {
+        if (!(e.getEntity() instanceof ServerPlayer p) || !has(p, Branch.MERCHANT, 6)) return;
+        if (!(p.level().getBlockEntity(e.getPos()) instanceof net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity rc)) return;
+        String lt = rc.saveWithoutMetadata().getString("LootTable");
+        if (!lt.startsWith("wavesurvivor:chests/")) return;
+        String kind = lt.substring("wavesurvivor:chests/".length());
+        java.util.List<net.minecraft.world.item.ItemStack> extra = new java.util.ArrayList<>();
+        switch (kind) {
+            case "chapelle", "chapelle_lateral" -> extra.add(new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.GRACE_SHARD.get(), 2));
+            case "autel_souille" -> extra.add(new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.TAINT_SHARD.get(), 2));
+            case "reliquaire_scelle" -> {
+                extra.add(new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.GRACE_SHARD.get(), 1));
+                extra.add(new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.TAINT_SHARD.get(), 1));
+            }
+            default -> { return; }
+        }
+        rc.unpackLootTable(p); // le butin est tiré maintenant (une seule fois : la table disparaît du coffre)
+        for (net.minecraft.world.item.ItemStack st : extra) {
+            for (int i = 0; i < rc.getContainerSize(); i++) {
+                if (rc.getItem(i).isEmpty()) { rc.setItem(i, st); break; }
+            }
+        }
+        rc.setChanged();
+    }
+
     /** Marchand 2 : −10 % chez les marchands pendant une horde. */
     @SubscribeEvent
     public void onMerchant(net.minecraftforge.event.entity.player.PlayerContainerEvent.Open e) {
@@ -306,6 +379,7 @@ public class Heritage {
     @SubscribeEvent
     public void onLogin(PlayerEvent.PlayerLoggedInEvent e) {
         if (!(e.getEntity() instanceof ServerPlayer p)) return;
+        migrate(p);
         applyPassives(p);
         applyRelicSlots(p);
         sync(p);
@@ -344,5 +418,10 @@ public class Heritage {
         if (r <= 0 || p.isSpectator() || p.isInvisible() || !(p.level() instanceof ServerLevel sl)) return;
         var type = r >= 5 ? ParticleTypes.END_ROD : r >= 3 ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
         sl.sendParticles(type, p.getX(), p.getY() + 0.1, p.getZ(), r, 0.35, 0.05, 0.35, 0.01);
+        // 1.9 : une poussière colorée par rang (or, orange, rouge, rose, cyan), assortie au titre
+        int[] rgb = switch (Math.min(MAX_RANK, r)) { case 1 -> new int[]{255, 214, 64}; case 2 -> new int[]{255, 140, 30}; case 3 -> new int[]{255, 60, 60};
+            case 4 -> new int[]{255, 90, 210}; default -> new int[]{80, 235, 255}; };
+        sl.sendParticles(new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(rgb[0] / 255f, rgb[1] / 255f, rgb[2] / 255f), 1.0f),
+                p.getX(), p.getY() + 1.0, p.getZ(), 1 + r, 0.4, 0.8, 0.4, 0.0);
     }
 }

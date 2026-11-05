@@ -672,6 +672,7 @@ public final class KingdomDefenses {
             repairCost = Math.max(1, (int) Math.round(repairCost * (1.0 - 0.25 * com.wavesurvivor.item.RelicEffects.mult(fondation))));
         }
         repairCost = Math.max(1, (int) Math.round(repairCost * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.stewardship.supplies")))));
+        if (com.wavesurvivor.horde.renaissance.Heritage.has(p, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 8)) repairCost = Math.max(1, (int) Math.round(repairCost * 0.75)); // Seigneur 8 : réparations −25 %
         if (!AltarDefense.trySpend(p, repairCost)) return;
         KingdomClaim.heal(pos, hp[1] * 0.25f);
         level.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 15, 0.5, 0.6, 0.5, 0);
@@ -745,7 +746,8 @@ public final class KingdomDefenses {
         int c = KingdomRoles.present(KingdomRoles.Role.BUILDER) ? (int) Math.ceil(REPAIR_COST * 1.25 * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.repair_discount")))) : REPAIR_COST;
         int f = com.wavesurvivor.item.RelicEffects.bestLevel(p.server, com.wavesurvivor.registry.ModItems.PIERRE_FONDATION.get());
         if (f > 0) c = Math.max(1, (int) Math.round(c * (1.0 - 0.25 * com.wavesurvivor.item.RelicEffects.mult(f))));
-        return Math.max(1, (int) Math.round(c * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.stewardship.supplies")))));
+        c = Math.max(1, (int) Math.round(c * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.QUARTERMASTER, "quartermaster.stewardship.supplies")))));
+        return com.wavesurvivor.horde.renaissance.Heritage.has(p, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 8) ? Math.max(1, (int) Math.round(c * 0.75)) : c; // Seigneur 8 : réparations −25 %
     }
 
     /** Un soldat de baraquement au hasard (ultime Garde d'élite) ; null s'il n'y en a aucun. */

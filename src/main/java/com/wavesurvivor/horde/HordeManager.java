@@ -712,7 +712,11 @@ public class HordeManager {
         int k = 0;
         for (ChaosEvent ev : activeHorde.configData.chaosEvents) {
             if (ev == null || !isResourceEvent(ev) || ev.guaranteed <= 0) continue;
-            for (int i = 0; i < Math.min(5, ev.guaranteed); i++) {
+            int n = Math.min(5, ev.guaranteed);
+            // Seigneur 7 (Kingdom) : ressources de Calme +20 % (une ressource de plus avec 20 % de chance par ressource garantie)
+            if (com.wavesurvivor.horde.kingdom.KingdomManager.isActive() && com.wavesurvivor.horde.renaissance.Heritage.anyone(srv, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 7)
+                    && java.util.concurrent.ThreadLocalRandom.current().nextDouble() < 0.2 * n) n++;
+            for (int i = 0; i < n; i++) {
                 final ChaosEvent e = ev;
                 int delay = 100 + (k++) * 120;
                 com.wavesurvivor.horde.skill.DelayedActionScheduler.schedule(srv, delay, () -> {
@@ -1056,6 +1060,9 @@ public class HordeManager {
             currentDelaySeconds = (int) Math.max(1, (untilTick - now) / 20);
         }
     }
+
+    /** Entre deux vagues (pause avant la suivante). */
+    public boolean isBetweenWaves() { return state == State.WAITING_NEXT_WAVE; }
 
     public boolean isRunning() { return state == State.RUNNING || state == State.WAITING_NEXT_WAVE || state == State.PAUSED; }
 

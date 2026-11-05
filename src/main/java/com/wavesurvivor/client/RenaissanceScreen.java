@@ -36,7 +36,7 @@ import java.util.Map;
 public class RenaissanceScreen extends Screen {
 
     private static final int PANEL_W = 325; // +25 % (1.9)
-    private static final int PANEL_H = 295; // +25 % (1.9)
+    private static final int PANEL_H = 310; // +25 % (1.9), puis +15 pour les 9 nœuds de l'Héritage
     private static final int CELL = 22;
     private static final int ROW_H = 22;
     private static final int VISIBLE_ROWS = 9;
@@ -153,7 +153,7 @@ public class RenaissanceScreen extends Screen {
     private boolean rebirthArmed = false;
 
     /** Nœuds de l'Héritage : plus larges avec la fenêtre agrandie. */
-    private static final int NODE_W = 96, NODE_H = 20, NODE_PITCH = 24;
+    private static final int NODE_W = 96, NODE_H = 17, NODE_PITCH = 19;
 
     private int colX(int i) { return left + 12 + i * (NODE_W + 8); }
 
@@ -167,7 +167,7 @@ public class RenaissanceScreen extends Screen {
                     : com.wavesurvivor.i18n.WSLang.t("heritage.btn_buy", com.wavesurvivor.horde.renaissance.Heritage.NODE_COST[lvl]);
             Button b = addRenderableWidget(Button.builder(Component.literal(lbl),
                     bt -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.RelicForgePacket("heritage", id)))
-                    .bounds(colX(i), top + 78 + 5 * NODE_PITCH + 4, NODE_W, 18).build());
+                    .bounds(colX(i), top + 78 + com.wavesurvivor.horde.renaissance.Heritage.MAX_NODE * NODE_PITCH + 3, NODE_W, 16).build());
             b.active = lvl < com.wavesurvivor.horde.renaissance.Heritage.MAX_NODE
                     && points >= com.wavesurvivor.horde.renaissance.Heritage.NODE_COST[lvl];
         }
@@ -202,7 +202,7 @@ public class RenaissanceScreen extends Screen {
         } else {
             g.drawString(font, com.wavesurvivor.i18n.WSLang.t("heritage.max_rank"), left + 8, top + 54, 0xFF55FFFF, false);
         }
-        // 3 colonnes de 5 nœuds
+        // 3 colonnes de 9 nœuds
         int[] nodes = com.wavesurvivor.horde.renaissance.Heritage.CLIENT_NODES;
         for (int i = 0; i < BRANCHES.length; i++) {
             int x = colX(i);
@@ -217,7 +217,7 @@ public class RenaissanceScreen extends Screen {
                 g.renderOutline(x, y, NODE_W, NODE_H, owned ? 0xFF66BB6A : next ? 0xFFFFD54F : 0xFF444455);
                 String txt = com.wavesurvivor.i18n.WSLang.t(key + "." + n);
                 String shown = font.width(txt) > NODE_W - 8 ? font.plainSubstrByWidth(txt, NODE_W - 12) + "…" : txt;
-                g.drawString(font, shown, x + 4, y + 6, owned ? 0xFFFFFFFF : next ? 0xFFFFF3C4 : 0xFF777788, false);
+                g.drawString(font, shown, x + 4, y + 5, owned ? 0xFFFFFFFF : next ? 0xFFFFF3C4 : 0xFF777788, false);
                 if (mx >= x && mx < x + NODE_W && my >= y && my < y + NODE_H) {
                     tip = new ArrayList<>();
                     tip.add(Component.literal((owned ? "§a✔ " : next ? "§e" : "§8") + txt));
@@ -272,7 +272,7 @@ public class RenaissanceScreen extends Screen {
         int y = top + 62;
         for (int i = scroll; i < Math.min(forgeRows.size(), scroll + VISIBLE_ROWS); i++) {
             net.minecraft.world.item.Item it = forgeRows.get(i);
-            var plan = com.wavesurvivor.item.RelicForge.planUpgrade(inv, it);
+            var plan = com.wavesurvivor.item.RelicForge.planUpgrade(inv, it, Minecraft.getInstance().player);
             int best = 0;
             for (ItemStack st : inv) if (st.is(it)) best = Math.max(best, com.wavesurvivor.item.RelicEffects.levelOf(st));
             String lbl = plan != null ? com.wavesurvivor.i18n.WSLang.t("forge.btn_upgrade", roman(plan.fromLevel() + 1), plan.cost())

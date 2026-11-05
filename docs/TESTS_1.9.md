@@ -345,3 +345,18 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Ouvrir le sceau puis quitter / recharger la zone en pleine ouverture : les blocs finissent de disparaître
 - [ ] Coffre : Reliquaire scellé OU Cœur (50 / 50 grâce / souillure), 4 à 8 Éclats, émeraudes / or / parfois un diamant
 - [ ] Génération naturelle en montagne (`/locate structure wavesurvivor:reliquaire_scelle`) : très rare, replat (max 4 blocs d'écart), rotation aléatoire
+
+## Héritage refondu (9 nœuds par branche)
+- [ ] Onglet Héritage : 3 colonnes de 9 nœuds visibles en entier, boutons d'achat et bouton Renaître non superposés (plusieurs échelles d'interface)
+- [ ] Migration : un joueur avec des nœuds Survivant voit la branche remise à zéro et les PR rendus (message au login, « PR investis » baissés), une seule fois
+- [ ] Plus de PV / armure / robustesse venant des branches ; les anciens modificateurs disparaissent
+- [ ] Survivant 1 : Absorption 4 cœurs 30 s à chaque début de vague / d'Assaut
+- [ ] Survivant 4 : le coup qui ouvre la fenêtre est subi en entier, les suivants dans les 3 s sont à −30 %
+- [ ] Survivant 6 : Boss Rush +25 % de PR ; 7 : sans fin +1 vie ; 8 : +1 relance de bénédictions au départ ; 9 : cartes rares un peu plus fréquentes
+- [ ] Marchand 6 : à la première ouverture d'un coffre de ruine, +2 Éclats (grâce chapelle, souillure autel, 1 de chaque reliquaire)
+- [ ] Marchand 7 : amélioration des reliques −20 % (prix affiché dans l'écran ET prélevé)
+- [ ] Marchand 8 : Défi du jour +25 % de PR ; 9 : boss, 20 % de doubler les Éclats lâchés
+- [ ] Seigneur 1 / 3 / 5 : bénédictions +5 / +10 / +15 % d'effet (se met à jour dès l'achat, même en pleine horde)
+- [ ] Seigneur 6 : XP de Maîtrise +25 % ; 7 : plus de ressources de Calme ; 8 : réparations −25 % (devis « Tout réparer » compris) ; 9 : Monolithe +1 PV/s entre les vagues et pendant le Calme
+- [ ] Rang III : +1 choix de bénédiction ; aura colorée par rang (or, orange, rouge, rose, cyan)
+- [ ] Corps : la Robustesse monte jusqu'au niveau 10 (la config du monde de test peut garder l'ancien plafond de 5 : à vérifier)
