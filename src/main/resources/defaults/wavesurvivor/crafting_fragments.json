@@ -53,8 +53,8 @@
     "grace_lantern": { "radius": 8, "damageReductionPercent": 20 },
     "holy_fountain": { "radius": 5, "amplifier": 0, "intervalSeconds": 2 },
     "votive_candle": { "radius": 12 },
-    "bait_totem": { "radius": 16, "activeSeconds": 30, "cooldownSeconds": 60 },
-    "profane_obelisk": { "radius": 6, "damagePerSecond": 1, "hungerSeconds": 4 },
+    "bait_totem": { "radius": 64, "activeSeconds": 30, "cooldownSeconds": 60 },
+    "profane_obelisk": { "radius": 12, "damagePerSecond": 1, "hungerSeconds": 4 },
     "blood_altar": { "healthCost": 8, "xp": 120, "cooldownSeconds": 30 }
   },
   "equipment": {

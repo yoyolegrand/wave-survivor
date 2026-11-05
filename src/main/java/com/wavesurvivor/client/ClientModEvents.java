@@ -88,6 +88,7 @@ public class ClientModEvents {
         // Mode Kingdom : structures 3D des défenses (tours, sanctuaire, baraquement)
         event.registerBlockEntityRenderer(ModBlockEntities.DEFENSE.get(), DefenseRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SERAPH_SHRINE.get(), SeraphShrineRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.CRAFT_UTILITY.get(), ObeliskCrystalRenderer::new); // cristal tournant de l'Obélisque profane
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DIABLOTIN.get(), DiablotinRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.BRECHE.get(), BrecheRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ECLAT_NEANT.get(),

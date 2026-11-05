@@ -34,6 +34,13 @@ public class CraftUtilityBlockEntity extends BlockEntity {
     /** Totem d'appât : fin de l'activation (temps de jeu). Totem d'appât et Autel de sang : fin de la recharge. */
     long activeUntil, readyAt;
 
+    /** Poussière rose lumineuse (couleur des runes de l'Obélisque profane). */
+    private static final net.minecraft.core.particles.DustParticleOptions PINK_FLAME =
+            new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(1.0f, 0.3f, 0.78f), 1.2f);
+    /** Totem d'appât : nombre maximal de monstres attirés par passage, et distance de chaque étape de marche (le pathfinding ne porte pas à 64 blocs). */
+    private static final int BAIT_MAX_MOBS = 120;
+    private static final double BAIT_STEP = 22.0;
+
     public CraftUtilityBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CRAFT_UTILITY.get(), pos, state);
     }
@@ -80,6 +87,12 @@ public class CraftUtilityBlockEntity extends BlockEntity {
         tag.putLong("readyAt", readyAt);
     }
 
+    /** Zone de rendu : l'obélisque fait 2 blocs de haut et son cristal flotte tout en haut. */
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox() {
+        return new AABB(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 3, worldPosition.getZ() + 1);
+    }
+
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
@@ -106,7 +119,7 @@ public class CraftUtilityBlockEntity extends BlockEntity {
             }
             case OBELISK -> {
                 if (now % 20 != 0) return;
-                double r = CraftConfig.blockNum("profane_obelisk", "radius", 6);
+                double r = CraftConfig.blockNum("profane_obelisk", "radius", 12);
                 float dmg = (float) CraftConfig.blockNum("profane_obelisk", "damagePerSecond", 1);
                 int hunger = (int) CraftConfig.blockNum("profane_obelisk", "hungerSeconds", 4) * 20;
                 AABB box = new AABB(pos).inflate(r);
@@ -116,13 +129,21 @@ public class CraftUtilityBlockEntity extends BlockEntity {
                 for (ServerPlayer p : sl.getEntitiesOfClass(ServerPlayer.class, box)) {
                     if (p.distanceToSqr(cx, cy, cz) <= r * r) p.addEffect(new MobEffectInstance(MobEffects.HUNGER, hunger, 0, true, true, true));
                 }
-                sl.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, cx, pos.getY() + 1.2, cz, 4, 0.25, 0.3, 0.25, 0.01);
+                // flammes roses, assorties aux runes et au cristal
+                sl.sendParticles(PINK_FLAME, cx, pos.getY() + 1.4, cz, 6, 0.25, 0.5, 0.25, 0.02);
+                sl.sendParticles(PINK_FLAME, cx, pos.getY() + 2.1, cz, 3, 0.12, 0.2, 0.12, 0.01);
             }
             case BAIT -> {
                 if (now >= be.activeUntil || now % 20 != 0) return;
-                double r = CraftConfig.blockNum("bait_totem", "radius", 16);
+                // une fois par seconde seulement (now % 20) ; jusqu'à 64 blocs : les monstres lointains avancent par étapes vers le totem
+                double r = CraftConfig.blockNum("bait_totem", "radius", 64);
+                int n = 0;
                 for (Mob m : sl.getEntitiesOfClass(Mob.class, new AABB(pos).inflate(r), e -> e instanceof Enemy && e.isAlive() && !BossManager.isBoss(e.getUUID()))) {
-                    if (m.distanceToSqr(cx, cy, cz) <= r * r) m.getNavigation().moveTo(cx, pos.getY(), cz, 1.15);
+                    double d2 = m.distanceToSqr(cx, cy, cz);
+                    if (d2 > r * r || d2 < 4.0) continue;
+                    if (++n > BAIT_MAX_MOBS) break;
+                    double d = Math.sqrt(d2), k = Math.min(1.0, BAIT_STEP / d);
+                    m.getNavigation().moveTo(m.getX() + (cx - m.getX()) * k, m.getY() + (pos.getY() - m.getY()) * k, m.getZ() + (cz - m.getZ()) * k, 1.15);
                 }
                 sl.sendParticles(ParticleTypes.SOUL, cx, pos.getY() + 1.4, cz, 6, 0.3, 0.3, 0.3, 0.02);
             }

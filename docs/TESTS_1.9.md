@@ -310,3 +310,9 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Les 16 recettes sans forme (Lame, flèches ×8, totems, Faux, 4 pièces d'armure, lanterne, fontaine, bougie votive, totem d'appât, obélisque, autel de sang) fonctionnent à la table et dans le livre de recettes
 - [ ] Armure : valeurs netherite (3 / 8 / 6 / 3, robustesse 3, recul 0,1), durabilité supérieure à la netherite ; 4 pièces : −15 % des morts-vivants / Corrompus et **+2 cœurs** de PV max (retirés si on enlève une pièce)
 - [ ] Avec Iron's Spells : chaque pièce affiche +6 % de puissance des sorts sacrés et +25 de mana max ; sans le mod, aucun attribut ni crash
+
+## Obélisque profane et Totem d'appât (retours)
+- [ ] Le cristal rose au sommet tourne sur lui-même (un tour / 4 s) avec un léger flottement, en pleine luminosité, même la nuit ; l'icône d'inventaire de l'obélisque garde son cristal fixe ; le cristal reste visible quand on regarde l'obélisque de dessous
+- [ ] Flammes roses (poussière rose lumineuse) autour de l'obélisque, plus de flammes bleues
+- [ ] Portée de l'obélisque : 12 blocs (monstres blessés, joueurs affamés) ; info-bulle et Codex à jour
+- [ ] Totem d'appât : attire les monstres jusqu'à 64 blocs (par étapes, une fois par seconde, 120 monstres au plus par passage) ; pas de ralentissement du serveur ; info-bulle et Codex à jour

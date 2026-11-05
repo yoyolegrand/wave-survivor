@@ -1,5 +1,5 @@
 {
-  "parent": "wavesurvivor:block/profane_obelisk",
+  "parent": "wavesurvivor:block/profane_obelisk_full",
   "display": {
     "gui": {
       "rotation": [
