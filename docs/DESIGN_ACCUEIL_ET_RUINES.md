@@ -28,6 +28,7 @@ Trois petites structures **rares**, générées naturellement (même système qu
 
 - Utiliser les **blocs de l'Artisanat** déjà faits (marbre béni, pierre profanée, colonnes, lanternes, obélisque…) pour la construction.
 - Chaque ruine n'est pillable **qu'une fois** par joueur (ou une fois tout court, réglable).
+- **Clé du reliquaire scellé (décidé)** : une **clé spéciale**, la « Clé scellée » (`sealed_key`), qui n'ouvre que les reliquaires scellés (consommée à l'ouverture). Obtention : butin **rare** des boss de horde (5 à 10 %, réglable) et récompense d'une horde terminée **sans aucune mort**. Apparence : clé composée du système des coffres roulettes (tête **ailée**, panneton **à crochet**, en **or**, gemme blanche) ; elle se range dans la Bourse à clés.
 - Plans des structures : à préparer par Claude chat si besoin (comme les arènes).
 
 ## 3. Le bouton « Prêt » pendant les pauses
