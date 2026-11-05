@@ -42,6 +42,15 @@ public class ClientModEvents {
         event.registerSpriteSet(com.wavesurvivor.registry.ModParticles.GOLD_FLAME.get(), net.minecraft.client.particle.FlameParticle.SmallFlameProvider::new);
     }
 
+    /** Coffre roulette : le modèle et les médaillons composés sont reconstruits après un rechargement des ressources (F3 + T, pack de textures). */
+    @SubscribeEvent
+    public static void onReloadListeners(net.minecraftforge.client.event.RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener((net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> {
+            com.wavesurvivor.client.roulette.RouletteChestModel.reset();
+            com.wavesurvivor.client.roulette.MedallionTextures.clear();
+        });
+    }
+
     /** Fil d'événements (notifications à gauche de l'écran). */
     @SubscribeEvent
     public static void onFeedOverlay(net.minecraftforge.client.event.RegisterGuiOverlaysEvent event) {
@@ -98,6 +107,7 @@ public class ClientModEvents {
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ROOTLING.get(), RootlingRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.STONE_BRUTE.get(), StoneBruteRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.NEANTIDE.get(), NeantideRenderer::new);
+        event.registerBlockEntityRenderer(com.wavesurvivor.registry.ModBlockEntities.ROULETTE_CHEST.get(), com.wavesurvivor.client.roulette.RouletteChestRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.XALTOR_CRYSTAL.get(),
                 net.minecraft.client.renderer.entity.EndCrystalRenderer::new);
     }

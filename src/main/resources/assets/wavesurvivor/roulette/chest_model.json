@@ -1,0 +1,300 @@
+{
+ "texture_size": 16,
+ "note": "Coordonnées en pixels (bloc = 16). part=lid : tourne autour de la charnière (axe X, y=9, z=15). Faces : clé de texture (wood, iron, trim, gem, medallion). Le médaillon avant est l'élément 'front_medallion'.",
+ "elements": [
+  {
+   "name": "body",
+   "from": [
+    1,
+    0,
+    1
+   ],
+   "to": [
+    15,
+    9,
+    15
+   ],
+   "part": "base",
+   "texture": "wood"
+  },
+  {
+   "name": "lid",
+   "from": [
+    1,
+    9,
+    1
+   ],
+   "to": [
+    15,
+    13,
+    15
+   ],
+   "part": "lid",
+   "texture": "wood"
+  },
+  {
+   "name": "lid",
+   "from": [
+    2,
+    13,
+    2
+   ],
+   "to": [
+    14,
+    14.5,
+    14
+   ],
+   "part": "lid",
+   "texture": "wood"
+  },
+  {
+   "name": "trim",
+   "from": [
+    0.9,
+    8.6,
+    0.9
+   ],
+   "to": [
+    15.1,
+    9.4,
+    15.1
+   ],
+   "part": "lid",
+   "texture": "trim"
+  },
+  {
+   "name": "iron",
+   "from": [
+    0.5,
+    0,
+    0.5
+   ],
+   "to": [
+    2.5,
+    13.2,
+    2.5
+   ],
+   "part": "base",
+   "texture": "iron"
+  },
+  {
+   "name": "iron",
+   "from": [
+    13.5,
+    0,
+    0.5
+   ],
+   "to": [
+    15.5,
+    13.2,
+    2.5
+   ],
+   "part": "base",
+   "texture": "iron"
+  },
+  {
+   "name": "iron",
+   "from": [
+    0.5,
+    0,
+    13.5
+   ],
+   "to": [
+    2.5,
+    13.2,
+    15.5
+   ],
+   "part": "base",
+   "texture": "iron"
+  },
+  {
+   "name": "iron",
+   "from": [
+    13.5,
+    0,
+    13.5
+   ],
+   "to": [
+    15.5,
+    13.2,
+    15.5
+   ],
+   "part": "base",
+   "texture": "iron"
+  },
+  {
+   "name": "iron",
+   "from": [
+    0.5,
+    -1,
+    0.5
+   ],
+   "to": [
+    2.5,
+    0,
+    2.5
+   ],
+   "part": "base",
+   "texture": "iron"
+  },
+  {
+   "name": "iron",
+   "from": [
+    13.5,
+    -1,
+    0.5
+   ],
+   "to": [
+    15.5,
+    0,
+    2.5
+   ],
+   "part": "base",
+   "texture": "iron"
+  },
+  {
+   "name": "iron",
+   "from": [
+    0.5,
+    -1,
+    13.5
+   ],
+   "to": [
+    2.5,
+    0,
+    15.5
+   ],
+   "part": "base",
+   "texture": "iron"
+  },
+  {
+   "name": "iron",
+   "from": [
+    13.5,
+    -1,
+    13.5
+   ],
+   "to": [
+    15.5,
+    0,
+    15.5
+   ],
+   "part": "base",
+   "texture": "iron"
+  },
+  {
+   "name": "front_medallion",
+   "from": [
+    4,
+    1.5,
+    0.4
+   ],
+   "to": [
+    12,
+    8.5,
+    1
+   ],
+   "part": "base",
+   "texture": "medallion"
+  },
+  {
+   "name": "gem",
+   "from": [
+    7,
+    10,
+    0.4
+   ],
+   "to": [
+    9,
+    12.5,
+    1
+   ],
+   "part": "lid",
+   "texture": "gem"
+  },
+  {
+   "name": "gem",
+   "from": [
+    6,
+    14.5,
+    6
+   ],
+   "to": [
+    10,
+    15.5,
+    10
+   ],
+   "part": "lid",
+   "texture": "gem"
+  }
+ ],
+ "medallion_slots": {
+  "front": {
+   "from": [
+    4,
+    1.5,
+    0.4
+   ],
+   "to": [
+    12,
+    8.5,
+    1
+   ],
+   "face": "north"
+  },
+  "back": {
+   "from": [
+    4,
+    1.5,
+    15
+   ],
+   "to": [
+    12,
+    8.5,
+    15.6
+   ],
+   "face": "south"
+  },
+  "left": {
+   "from": [
+    0.4,
+    2,
+    4
+   ],
+   "to": [
+    1,
+    9,
+    11
+   ],
+   "face": "west"
+  },
+  "right": {
+   "from": [
+    15,
+    2,
+    4
+   ],
+   "to": [
+    15.6,
+    9,
+    11
+   ],
+   "face": "east"
+  },
+  "top": {
+   "from": [
+    4.5,
+    14.5,
+    4.5
+   ],
+   "to": [
+    11.5,
+    15.2,
+    11.5
+   ],
+   "face": "up",
+   "part": "lid",
+   "replaces": "top gem"
+  }
+ }
+}

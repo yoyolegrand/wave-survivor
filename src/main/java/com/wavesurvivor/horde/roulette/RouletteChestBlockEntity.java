@@ -29,6 +29,21 @@ public class RouletteChestBlockEntity extends BaseContainerBlockEntity {
 
     public int getColor() { return color; }
 
+    /** Angle du couvercle affiché (client) et dernier instant de mise à jour : le couvercle suit sa cible à vitesse constante. */
+    private float lidAngle = 0f;
+    private long lidNanos = 0L;
+
+    /** Déplace le couvercle vers {@code target} (degrés) à {@code speed} degrés par seconde et renvoie son angle actuel. */
+    public float animateLid(float target, float speed) {
+        long now = System.nanoTime();
+        float dt = lidNanos == 0 ? 0 : Math.min(0.1f, (now - lidNanos) / 1.0e9f);
+        lidNanos = now;
+        float step = speed * dt;
+        if (lidAngle < target) lidAngle = Math.min(target, lidAngle + step);
+        else if (lidAngle > target) lidAngle = Math.max(target, lidAngle - step);
+        return lidAngle;
+    }
+
     /** Style résolu du coffre (JSON de {@link RouletteStyle}) : synchronisé au client, qui s'en sert pour le rendu. Vide = style par défaut. */
     private String style = "";
     private RouletteStyle parsed = null;
@@ -44,7 +59,9 @@ public class RouletteChestBlockEntity extends BaseContainerBlockEntity {
 
     /** Style à afficher : celui reçu du serveur, sinon le style par défaut à la couleur d'accent (anciens coffres). */
     public RouletteStyle style() {
-        if (parsed == null) parsed = style.isEmpty() ? RouletteStyle.defaults(color >= 0 ? color : 0x3DDC84) : RouletteStyle.fromJson(style);
+        if (parsed == null) { int accent = color >= 0 ? color : getCustomName() != null ? RouletteKeyItem.colorForName(getCustomName().getString()) : 0x3DDC84;
+            parsed = style.isEmpty() ? RouletteStyle.defaults(accent) : RouletteStyle.fromJson(style);
+        }
         return parsed;
     }
 

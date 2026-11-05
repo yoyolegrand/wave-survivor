@@ -622,6 +622,7 @@ public class RouletteChestManager {
             ItemStack stack = new ItemStack(chestItem);
             stack.setHoverName(Component.literal(config.chestName()));
             stack.getOrCreateTag().putInt("rouletteColor", colorFor(config));
+            stack.getOrCreateTag().putString("rouletteStyle", styleFor(config).toJson()); // l'objet garde l'apparence du coffre
             return stack;
         } catch (Exception e) {
             return ItemStack.EMPTY;

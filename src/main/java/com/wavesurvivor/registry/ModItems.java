@@ -180,7 +180,7 @@ public class ModItems {
 
     /** Coffre Roulette (Reliquaire runique). Le nom de l'item = le coffre (config). */
     public static final RegistryObject<Item> ROULETTE_CHEST_ITEM = ITEMS.register("roulette_chest",
-            () -> new BlockItem(ModBlocks.ROULETTE_CHEST.get(), new Item.Properties()));
+            () -> new com.wavesurvivor.horde.roulette.RouletteChestItem(ModBlocks.ROULETTE_CHEST.get(), new Item.Properties()));
 
     /** Œuf d'apparition du Diablotin. */
     public static final RegistryObject<Item> DIABLOTIN_SPAWN_EGG = ITEMS.register("diablotin_spawn_egg",

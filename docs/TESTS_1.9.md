@@ -237,3 +237,13 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] `config/wavesurvivor/custom_roulette_chests.json` d'avant (sans nouveaux champs) se charge sans erreur dans le journal
 - [ ] Éditer un des 6 coffres de base dans le builder actuel et enregistrer : les nouveaux réglages (bois, ferrures, médaillons, clé, effets) sont conservés
 - [ ] Clés des Reliquaires : nouvelles matières « quartz » (Abysses) et « améthyste » (Arcanique) dans la liste des matières du builder
+
+## Coffres roulette — étape 2 (rendu)
+- [ ] Un coffre roulette posé s'affiche avec le nouveau modèle : caisse en bois teintée, couvercle bombé, 4 cornières en fer avec pieds, liseré lumineux à la jointure, serrure-gemme, gemme sur le dessus
+- [ ] Les 6 Reliquaires ont leurs couleurs : Boss (ébène + obsidienne, soleil doré + crâne violet), Nether (cramoisi + netherite, flamme + crâne), Abysses (biscornu + cuivre oxydé, goutte + étoile), Arcanique (chêne noir + améthyste, rune + œil), Trésors (bouleau + or, couronne + gemme), End (ébène + obsidienne, lune + étoile)
+- [ ] Médaillon avant : plaque sombre, anneau à la couleur d'accent, grand symbole + petit symbole par-dessus avec contour sombre ; il regarde bien vers la direction du bloc sur les 4 orientations
+- [ ] Liseré et gemmes brillent dans le noir et pulsent doucement (~2 s)
+- [ ] Un ancien coffre (sans réglages 1.9) : chêne noir, fer, gemmes de sa couleur, point au centre du cadran
+- [ ] Pendant la roulette (état « ouvert ») le couvercle s'ouvre à 70° autour de sa charnière arrière puis se referme ; plus de couvercle qui lévite
+- [ ] Objet « coffre roulette » en inventaire, en main et au sol : même modèle et mêmes couleurs que le bloc
+- [ ] Clic droit avec la clé, clic gauche (butin possible) : inchangés

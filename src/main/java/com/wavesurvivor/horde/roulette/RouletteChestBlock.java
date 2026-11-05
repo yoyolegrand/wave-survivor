@@ -37,7 +37,7 @@ public class RouletteChestBlock extends BaseEntityBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
-    private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 14, 15);
+    private static final VoxelShape SHAPE = Block.box(0.5, 0, 0.5, 15.5, 14.5, 15.5);
 
     public RouletteChestBlock(Properties props) {
         super(props);
@@ -85,7 +85,7 @@ public class RouletteChestBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.ENTITYBLOCK_ANIMATED; // dessiné par RouletteChestRenderer (teintes, médaillons, couvercle)
     }
 
     @Nullable
