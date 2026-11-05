@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "lock=false,opening=false": {
+      "model": "wavesurvivor:block/reliquary_seal"
+    },
+    "lock=false,opening=true": {
+      "model": "wavesurvivor:block/reliquary_seal"
+    },
+    "lock=true,opening=false": {
+      "model": "wavesurvivor:block/reliquary_seal_lock"
+    },
+    "lock=true,opening=true": {
+      "model": "wavesurvivor:block/reliquary_seal_lock"
+    }
+  }
+}

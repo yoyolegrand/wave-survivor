@@ -105,6 +105,12 @@ public class ModBlocks {
     public static final RegistryObject<Block> TOWN_CRYSTAL = BLOCKS.register("town_crystal",
             () -> new Block(BlockBehaviour.Properties.of().strength(-1.0f, 3600000.0f).noOcclusion().noLootTable()));
 
+    /** Ruine « Reliquaire scellé » : sceau de la porte (incassable, s'ouvre avec une Clé scellée). */
+    public static final RegistryObject<Block> RELIQUARY_SEAL = BLOCKS.register("reliquary_seal",
+            () -> new com.wavesurvivor.arena.ReliquarySealBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DEEPSLATE)
+                    .strength(-1.0f, 3600000.0f).sound(SoundType.DEEPSLATE).noLootTable().lightLevel(s -> 5)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
+
     /** Mode Kingdom : rempart — segment de muraille de 3 blocs de haut (base, corps, sommet crénelé), PV partagés. */
     public static final RegistryObject<Block> KINGDOM_RAMPART = BLOCKS.register("kingdom_rampart",
             () -> new com.wavesurvivor.horde.kingdom.RampartBlock(BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.DEEPSLATE_BRICKS)

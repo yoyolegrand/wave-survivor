@@ -200,5 +200,6 @@
   "item.wavesurvivor.survivor_notebook": "Survivor's Notebook",
   "key.wavesurvivor.ready": "Ready (wave break)",
   "key.categories.wavesurvivor": "Wave Survivor",
-  "item.wavesurvivor.key_pouch": "Key Pouch"
+  "item.wavesurvivor.key_pouch": "Key Pouch",
+  "block.wavesurvivor.reliquary_seal": "Reliquary Seal"
 }

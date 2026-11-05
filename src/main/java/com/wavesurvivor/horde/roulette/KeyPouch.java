@@ -226,6 +226,22 @@ public class KeyPouch extends Item {
         return 0;
     }
 
+    /** Retire une Clé scellée de la première bourse qui en contient une (ouverture d'un sceau de reliquaire). @return vrai si une clé a été prise. */
+    public static boolean takeSealed(Player p) {
+        for (ItemStack pouch : pouches(p)) {
+            Contents c = new Contents(pouch);
+            for (int i = 0; i < c.getContainerSize(); i++) {
+                ItemStack s = c.getItem(i);
+                if (s.isEmpty() || !SealedKey.is(s)) continue;
+                s.shrink(1);
+                if (s.isEmpty()) c.setItem(i, ItemStack.EMPTY);
+                c.setChanged();
+                return true;
+            }
+        }
+        return false;
+    }
+
     // ─── Ramassage automatique ───
 
     public static class Events {

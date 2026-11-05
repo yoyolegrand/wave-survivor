@@ -3786,5 +3786,7 @@
   "Clé scellée": "Clé scellée",
   "sealed_key.flawless": "§b✦ Horde terminée sans aucune mort : tu reçois {0} Clé(s) scellée(s) !",
   "ruin.altar.done": "§5Le rituel est brisé : les obélisques s'éteignent.",
-  "ruin.altar.done_open": "§5Le rituel est brisé : l'estrade s'ouvre sur le coffre !"
+  "ruin.altar.done_open": "§5Le rituel est brisé : l'estrade s'ouvre sur le coffre !",
+  "reliquary_seal.locked": "§cCe sceau ne s'ouvre qu'avec une Clé scellée.",
+  "reliquary_seal.opened": "§6✦ Le sceau se brise."
 }

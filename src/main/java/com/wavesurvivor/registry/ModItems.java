@@ -117,6 +117,8 @@ public class ModItems {
             () -> new BlockItem(ModBlocks.BAIT_TOTEM.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final RegistryObject<Item> PROFANE_OBELISK_ITEM = ITEMS.register("profane_obelisk",
             () -> new BlockItem(ModBlocks.PROFANE_OBELISK.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> RELIQUARY_SEAL_ITEM = ITEMS.register("reliquary_seal",
+            () -> new BlockItem(ModBlocks.RELIQUARY_SEAL.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final RegistryObject<Item> BLOOD_ALTAR_ITEM = ITEMS.register("blood_altar",
             () -> new BlockItem(ModBlocks.BLOOD_ALTAR.get(), new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
 
@@ -454,6 +456,7 @@ public class ModItems {
                         output.accept(BAIT_TOTEM_ITEM.get());
                         output.accept(PROFANE_OBELISK_ITEM.get());
                         output.accept(BLOOD_ALTAR_ITEM.get());
+                        output.accept(RELIQUARY_SEAL_ITEM.get());
                         // Artisanat sacré et profane : équipement
                         output.accept(DAWN_BLADE.get());
                         output.accept(BLESSED_ARROW.get());

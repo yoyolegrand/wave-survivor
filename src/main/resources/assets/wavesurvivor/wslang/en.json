@@ -4525,5 +4525,7 @@
   "Reliquaire scellé": "Sealed Reliquary",
   "sealed_key.flawless": "§b✦ Horde cleared without a single death: you receive {0} Sealed Key(s)!",
   "ruin.altar.done": "§5The ritual is broken: the obelisks go dark.",
-  "ruin.altar.done_open": "§5The ritual is broken: the dais opens onto the chest!"
+  "ruin.altar.done_open": "§5The ritual is broken: the dais opens onto the chest!",
+  "reliquary_seal.locked": "§cThis seal only opens with a Sealed Key.",
+  "reliquary_seal.opened": "§6✦ The seal breaks."
 }
