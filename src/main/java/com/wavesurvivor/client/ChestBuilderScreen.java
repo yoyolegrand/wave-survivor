@@ -77,6 +77,9 @@ public class ChestBuilderScreen extends Screen {
     private int rewardListX, rewardListY, rewardListW;
     private int rewardListVisibleRows;
     private EditBox nameBox;
+    /** Coffre édité et préréglage de particules d'origine : l'apparence 1.9 (couleurs, médaillons, clé, effets) est conservée à l'enregistrement. */
+    private CustomChestData existingRef = null;
+    private String initialParticlesPreset = "none";
     private Button particlesBtn;
     private Button patternBtn;
     private Button deleteBtn;
@@ -94,7 +97,9 @@ public class ChestBuilderScreen extends Screen {
         this.chestName = existing.name;
         this.originalName = existing.name;
         this.isEditMode = true;
-        this.particlesPreset = existing.particles != null ? existing.particles : "none";
+        this.existingRef = existing;
+        this.particlesPreset = existing.particles != null && existing.particles.legacy != null ? existing.particles.legacy : "none";
+        this.initialParticlesPreset = this.particlesPreset;
         this.pattern = existing.pattern != null && !existing.pattern.isBlank() ? existing.pattern : "circle";
         this.chestColor = existing.color != null && !existing.color.isBlank() ? existing.color : "auto";
         this.keyMaterial = existing.keyMaterial != null && !existing.keyMaterial.isBlank() ? existing.keyMaterial : "or";
@@ -576,7 +581,9 @@ public class ChestBuilderScreen extends Screen {
         // Construit le CustomChestData et envoie au serveur
         CustomChestData data = new CustomChestData();
         data.name = finalName;
-        data.particles = particlesPreset;
+        data.particles = CustomChestData.Particles.legacy(particlesPreset);
+        data.copyStyleFrom(existingRef);
+        if (existingRef != null && !particlesPreset.equals(initialParticlesPreset)) data.particles = CustomChestData.Particles.legacy(particlesPreset); // préréglage changé : il remplace les effets
         data.pattern = pattern;
         data.color = chestColor;
         data.keyMaterial = keyMaterial;

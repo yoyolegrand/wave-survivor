@@ -29,6 +29,25 @@ public class RouletteChestBlockEntity extends BaseContainerBlockEntity {
 
     public int getColor() { return color; }
 
+    /** Style résolu du coffre (JSON de {@link RouletteStyle}) : synchronisé au client, qui s'en sert pour le rendu. Vide = style par défaut. */
+    private String style = "";
+    private RouletteStyle parsed = null;
+
+    public void setStyle(String json) {
+        if (json == null) json = "";
+        if (json.equals(style)) return;
+        style = json;
+        parsed = null;
+        setChanged();
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    /** Style à afficher : celui reçu du serveur, sinon le style par défaut à la couleur d'accent (anciens coffres). */
+    public RouletteStyle style() {
+        if (parsed == null) parsed = style.isEmpty() ? RouletteStyle.defaults(color >= 0 ? color : 0x3DDC84) : RouletteStyle.fromJson(style);
+        return parsed;
+    }
+
     /** Appelé par le serveur (config du coffre) ; synchronisé au client seulement si elle change. */
     public void setColor(int rgb) {
         if (rgb == color) return;
@@ -43,12 +62,15 @@ public class RouletteChestBlockEntity extends BaseContainerBlockEntity {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("RouletteColor", color);
+        if (!style.isEmpty()) tag.putString("RouletteStyle", style);
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         color = tag.contains("RouletteColor") ? tag.getInt("RouletteColor") : -1;
+        style = tag.getString("RouletteStyle");
+        parsed = null;
     }
 
     @Override

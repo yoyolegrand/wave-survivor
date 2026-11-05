@@ -98,9 +98,7 @@ public class CustomChestStore {
             RouletteChestConfig cfg = toRouletteConfig(c);
             RouletteChestRegistry.registerCustom(cfg);
             // Pattern d'émission (P6) : override du comportement idle par défaut
-            RouletteChestManager.setPattern(cfg.configKey(), c.pattern);
-            RouletteChestManager.setColor(cfg.configKey(), c.color);
-            RouletteChestManager.setKeyMaterial(cfg.configKey(), c.keyMaterial);
+            applyRuntime(cfg, c);
         }
         WaveSurvivorMod.LOGGER.info("[CustomChestStore] {} chests chargés (base du mod + les vôtres).", CHESTS.size());
     }
@@ -139,11 +137,19 @@ public class CustomChestStore {
         CHESTS.put(data.name, data);
         RouletteChestConfig cfg = toRouletteConfig(data);
         RouletteChestRegistry.registerCustom(cfg);
-        RouletteChestManager.setPattern(cfg.configKey(), data.pattern);
-        RouletteChestManager.setColor(cfg.configKey(), data.color);
-        RouletteChestManager.setKeyMaterial(cfg.configKey(), data.keyMaterial);
+        applyRuntime(cfg, data);
         save();
         return true;
+    }
+
+    /** Réglages d'exécution d'un coffre : pattern de repos, couleur d'accent, matière de la clé et style résolu (1.9). */
+    private static void applyRuntime(RouletteChestConfig cfg, CustomChestData c) {
+        String key = cfg.configKey();
+        RouletteChestManager.setPattern(key, c.idlePattern());
+        boolean accent = c.accentColor != null && !c.accentColor.isBlank() && !"auto".equalsIgnoreCase(c.accentColor);
+        RouletteChestManager.setColor(key, accent ? c.accentColor : c.color);
+        RouletteChestManager.setKeyMaterial(key, c.keyMaterial);
+        RouletteChestManager.setStyle(key, RouletteStyle.resolve(c, RouletteChestManager.colorFor(cfg)));
     }
 
     public static Collection<CustomChestData> all() {
@@ -163,6 +169,7 @@ public class CustomChestStore {
             // Coffre intégré modifié : on remet sa version d'origine
             RouletteChestRegistry.restoreBuiltin(base.configKey());
             RouletteChestManager.removePattern(base.configKey());
+            RouletteChestManager.removeStyle(base.configKey());
             RouletteChestManager.setColor(base.configKey(), "auto");
             RouletteChestManager.setKeyMaterial(base.configKey(), "or");
             save();
@@ -173,6 +180,7 @@ public class CustomChestStore {
         String configKey = "custom_" + slug;
         RouletteChestRegistry.removeCustom(configKey);
         RouletteChestManager.removePattern(configKey);
+        RouletteChestManager.removeStyle(configKey);
         RouletteChestManager.setColor(configKey, "auto");
         RouletteChestManager.setKeyMaterial(configKey, "or");
         save();
@@ -195,7 +203,7 @@ public class CustomChestStore {
         if (current == null) current = base;
         CustomChestData d = new CustomChestData();
         d.name = base.chestName();
-        d.particles = "none"; // « none » = garder les particules d'origine
+        d.particles = CustomChestData.Particles.legacy("none"); // « none » = garder les particules d'origine
         d.tierMessages = CustomChestData.defaultTierMessages();
         for (RouletteReward r : current.rewards()) {
             CustomChestData.Reward cr = new CustomChestData.Reward();
@@ -259,7 +267,7 @@ public class CustomChestStore {
         // messages, durée d'animation, chances par vague) ; seules les récompenses (et les particules si choisies) changent.
         RouletteChestConfig base = RouletteChestRegistry.builtinByName(d.name);
         if (base != null) {
-            boolean keepParticles = d.particles == null || d.particles.isBlank() || "none".equalsIgnoreCase(d.particles);
+            boolean keepParticles = d.particles == null || (!d.particles.hasEffects() && (d.particles.legacy == null || d.particles.legacy.isBlank() || "none".equalsIgnoreCase(d.particles.legacy)));
             return new RouletteChestConfig(
                     base.configKey(), base.chestType(), base.chestName(), base.keyName(),
                     base.consumeKey(), base.allowedChests(), base.showAnimation(), base.animationDurationSeconds(),
@@ -313,6 +321,22 @@ public class CustomChestStore {
             case "LEGENDARY", "LÉGENDAIRE", "LEGENDAIRE" -> LEGENDARY;
             default -> COMMON;
         };
+    }
+
+    /** Particules d'un coffre → [repos, actif] : les types des effets « idle » et « spin » (1.9), sinon l'ancien préréglage. */
+    private static String[] resolveParticles(CustomChestData.Particles p) {
+        if (p != null && p.hasEffects()) {
+            CustomChestData.Effect idle = p.fx.get("idle"), spin = p.fx.get("spin");
+            String a = effectType(idle), b = spin != null ? effectType(spin) : a;
+            return new String[]{a, b.isEmpty() ? a : b};
+        }
+        return resolveParticles(p == null ? "none" : p.legacy);
+    }
+
+    /** Type vanilla d'un effet pour l'ancien moteur de particules (les poussières colorées n'existent pas encore : lueur). */
+    private static String effectType(CustomChestData.Effect e) {
+        if (e == null || e.a == null || e.a.isBlank()) return "";
+        return e.a.equals("dust") || e.a.equals("dust_color_transition") ? "glow" : e.a;
     }
 
     /** Preset → [idle, active] particle ids vanilla. */

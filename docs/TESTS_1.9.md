@@ -231,3 +231,9 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Casser n'importe quelle moitié casse les deux ; un seul obélisque en butin (survie avec pioche), rien sans outil adapté ; créatif : pas de butin en double
 - [ ] Un seul effet de zone par obélisque (pas de doublon)
 - [ ] ⚠ Les obélisques posés avant cette version disparaissent à la prochaine mise à jour de voisinage : à reposer
+
+## Coffres roulette — étape 1 (données)
+- [ ] Un monde existant avec ses coffres roulette : aucun changement visible ni de comportement (clés, particules, récompenses)
+- [ ] `config/wavesurvivor/custom_roulette_chests.json` d'avant (sans nouveaux champs) se charge sans erreur dans le journal
+- [ ] Éditer un des 6 coffres de base dans le builder actuel et enregistrer : les nouveaux réglages (bois, ferrures, médaillons, clé, effets) sont conservés
+- [ ] Clés des Reliquaires : nouvelles matières « quartz » (Abysses) et « améthyste » (Arcanique) dans la liste des matières du builder

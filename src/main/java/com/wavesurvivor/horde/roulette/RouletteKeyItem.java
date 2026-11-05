@@ -90,7 +90,9 @@ public class RouletteKeyItem extends Item {
             new Material("os", "Os", "Clé en os", 0xEFE8CF),
             new Material("obsidienne", "Obsidienne", "Clé en obsidienne", 0x6B4F9E),
             new Material("rouille", "Rouille", "Clé rouillée", 0xA85A32),
-            new Material("or_rose", "Or rose", "Clé en or rose", 0xF2A69A)};
+            new Material("or_rose", "Or rose", "Clé en or rose", 0xF2A69A),
+            new Material("quartz", "Quartz", "Clé en quartz", 0xEEE8E0),
+            new Material("amethyste", "Améthyste", "Clé en améthyste", 0xA060CC)};
 
     public static Material material(String id) {
         if (id != null) for (Material m : MATERIALS) if (m.id().equalsIgnoreCase(id)) return m;

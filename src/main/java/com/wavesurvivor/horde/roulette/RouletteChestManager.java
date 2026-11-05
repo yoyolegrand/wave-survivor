@@ -105,9 +105,25 @@ public class RouletteChestManager {
     /** @param color "auto" / null = couleur déduite du nom, sinon nom de colorant Minecraft (red, cyan...). */
     public static void setColor(String configKey, String color) {
         if (configKey == null) return;
+        if (RouletteColors.isHex(color)) { COLOR_BY_KEY.put(configKey, RouletteColors.parseHex(color, 0)); return; } // couleur libre (1.9)
         net.minecraft.world.item.DyeColor dye = color == null ? null : net.minecraft.world.item.DyeColor.byName(color, null);
         if (dye == null) COLOR_BY_KEY.remove(configKey);
         else COLOR_BY_KEY.put(configKey, com.wavesurvivor.altar.AltarColors.rgb(dye));
+    }
+
+    /** Style résolu des coffres (couleurs, médaillons, clé, effets), par configKey ; absent = style par défaut dérivé de la couleur d'accent. */
+    private static final Map<String, RouletteStyle> STYLE_BY_KEY = new ConcurrentHashMap<>();
+
+    public static void setStyle(String configKey, RouletteStyle style) {
+        if (configKey != null && style != null) STYLE_BY_KEY.put(configKey, style);
+    }
+
+    public static void removeStyle(String configKey) { STYLE_BY_KEY.remove(configKey); }
+
+    /** Style d'un coffre : celui de sa configuration, sinon le style par défaut à la couleur d'accent du coffre. */
+    public static RouletteStyle styleFor(RouletteChestConfig cfg) {
+        RouletteStyle s = cfg == null ? null : STYLE_BY_KEY.get(cfg.configKey());
+        return s != null ? s : RouletteStyle.defaults(colorFor(cfg));
     }
 
     /** Couleur effective d'un coffre (et de sa clé). */
@@ -150,7 +166,7 @@ public class RouletteChestManager {
                 IDLE_LEVEL.put(p, level);
                 // Anciens coffres vanilla → Coffre Roulette (1×/s) + couleur à jour
                 convertIfVanilla(level, p, cfg);
-                if (level.getBlockEntity(p) instanceof RouletteChestBlockEntity be) be.setColor(colorFor(cfg));
+                if (level.getBlockEntity(p) instanceof RouletteChestBlockEntity be) { be.setColor(colorFor(cfg)); be.setStyle(styleFor(cfg).toJson()); }
             } else {
                 level = IDLE_LEVEL.get(p);
             }

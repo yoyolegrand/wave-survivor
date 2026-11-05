@@ -4374,5 +4374,9 @@
   "endless.tier_voted_continue": "Your vote: continue",
   "endless.tier_rule_majority": "Decision: majority (no vote = continue).",
   "endless.tier_rule_host": "Decision: the host alone.",
-  "endless.tier_time": "Time left: {0} s"
+  "endless.tier_time": "Time left: {0} s",
+  "Quartz": "Quartz",
+  "Clé en quartz": "Quartz key",
+  "Améthyste": "Amethyst",
+  "Clé en améthyste": "Amethyst key"
 }

@@ -1,0 +1,228 @@
+{
+ "Reliquaire du Boss": {
+  "accent": "#C85AF0",
+  "wood": "ebony",
+  "iron": "obsidian",
+  "gem": "#C85AF0",
+  "medallions": {
+   "front": [
+    [
+     "sun",
+     "large",
+     "#FAC846"
+    ],
+    [
+     "skull",
+     "small",
+     "#C85AF0"
+    ]
+   ]
+  },
+  "key": [
+   "skull",
+   "double",
+   "netherite"
+  ],
+  "idle": {
+   "a": "soul_fire_flame",
+   "pattern": "circle",
+   "density": 3,
+   "speed": 2
+  },
+  "spin": {
+   "a": "soul",
+   "b": "soul_fire_flame",
+   "pattern": "vortex_down",
+   "density": 7,
+   "speed": 6
+  }
+ },
+ "Reliquaire du Nether": {
+  "accent": "#FA9628",
+  "wood": "crimson",
+  "iron": "netherite",
+  "gem": "#FA9628",
+  "medallions": {
+   "front": [
+    [
+     "flame",
+     "large",
+     "#FA9628"
+    ],
+    [
+     "skull",
+     "small",
+     "#FAC846"
+    ]
+   ]
+  },
+  "key": [
+   "clover",
+   "simple",
+   "copper"
+  ],
+  "idle": {
+   "a": "flame",
+   "b": "ash",
+   "pattern": "ashes",
+   "density": 4,
+   "speed": 3
+  },
+  "spin": {
+   "a": "lava",
+   "pattern": "spiral_up",
+   "density": 6,
+   "speed": 6
+  }
+ },
+ "Reliquaire des Abysses": {
+  "accent": "#5AD2F0",
+  "wood": "warped",
+  "iron": "oxidized_copper",
+  "gem": "#5AD2F0",
+  "medallions": {
+   "front": [
+    [
+     "drop",
+     "large",
+     "#5AD2F0"
+    ],
+    [
+     "star",
+     "small",
+     "#EBEBF0"
+    ]
+   ]
+  },
+  "key": [
+   "star",
+   "simple",
+   "quartz"
+  ],
+  "idle": {
+   "a": "bubble",
+   "pattern": "fireflies",
+   "density": 4,
+   "speed": 2
+  },
+  "spin": {
+   "a": "bubble",
+   "b": "glow_squid_ink",
+   "pattern": "double_helix",
+   "density": 7,
+   "speed": 6
+  }
+ },
+ "Reliquaire Arcanique": {
+  "accent": "#E650C8",
+  "wood": "dark_oak",
+  "iron": "amethyst",
+  "gem": "#50DC82",
+  "medallions": {
+   "front": [
+    [
+     "rune",
+     "large",
+     "#E650C8"
+    ],
+    [
+     "eye",
+     "small",
+     "#FF78C8"
+    ]
+   ]
+  },
+  "key": [
+   "diamond",
+   "hook",
+   "amethyst"
+  ],
+  "idle": {
+   "a": "enchant",
+   "pattern": "pentagram",
+   "density": 4,
+   "speed": 3
+  },
+  "spin": {
+   "a": "end_rod",
+   "pattern": "beam",
+   "density": 7,
+   "speed": 5
+  }
+ },
+ "Reliquaire des Trésors": {
+  "accent": "#FAC846",
+  "wood": "birch",
+  "iron": "gold",
+  "gem": "#5AD2F0",
+  "medallions": {
+   "front": [
+    [
+     "crown",
+     "large",
+     "#FAC846"
+    ],
+    [
+     "gem",
+     "small",
+     "#5AD2F0"
+    ]
+   ]
+  },
+  "key": [
+   "crown",
+   "stairs",
+   "gold"
+  ],
+  "idle": {
+   "a": "dust",
+   "color": "#FAC846",
+   "pattern": "aura_pulse",
+   "density": 3,
+   "speed": 2
+  },
+  "spin": {
+   "a": "firework",
+   "pattern": "firework",
+   "density": 6,
+   "speed": 5
+  }
+ },
+ "Reliquaire de l'End": {
+  "accent": "#C85AF0",
+  "wood": "ebony",
+  "iron": "obsidian",
+  "gem": "#C85AF0",
+  "medallions": {
+   "front": [
+    [
+     "moon",
+     "large",
+     "#5A96F0"
+    ],
+    [
+     "star",
+     "small",
+     "#FAC846"
+    ]
+   ]
+  },
+  "key": [
+   "ring",
+   "hook",
+   "netherite"
+  ],
+  "idle": {
+   "a": "portal",
+   "pattern": "double_ring",
+   "density": 4,
+   "speed": 2
+  },
+  "spin": {
+   "a": "reverse_portal",
+   "pattern": "vortex_down",
+   "density": 7,
+   "speed": 6
+  }
+ }
+}
