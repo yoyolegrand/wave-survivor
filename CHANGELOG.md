@@ -64,6 +64,16 @@ Every **10 waves** (from the last normal wave; adjustable), the team gets a **ti
 - In a team the decision is by **majority** (players who do not vote count as Continue) or by the **host alone**, per horde. The leaderboard records the wave reached either way.
 - Editor (Endless view): tier interval, cash-out %, choice time, host decides; the chest contents (`tierChest`: item, count, +perTier, or `pr`) are in the horde's `endless` block.
 
+### 🎰 Roulette chests reborn
+A brand-new, fully customizable roulette chest.
+- 🧰 **New 3D chest** (wood box, domed lid, four iron corner pieces with feet, glowing trim, gem lock) drawn in game with grayscale textures **tinted** by your settings: accent, wood (9 presets), fittings (8 presets) and gem colors — or any `#RRGGBB`.
+- 🔆 **Layered medallions** on each face (front, back, left, right, top): 18 symbols in two sizes, stacked in layers with their own colors, plus **symbols you draw yourself** on a 10 × 10 grid.
+- 🗝 **Composed keys**: 8 heads × 4 bits, tinted to the material (or a free color), with a gem matching the chest.
+- ✨ **Opening animation**: the dial spins up, slows and stops upright, the lid opens on its hinge, a **beam in the rarity color** rises and the prize floats up inside it before it is given; **reveal bonuses** by rarity (green burst, blue burst and sparks, purple shockwave, golden fireworks with a pillar of light and a harmless lightning flash).
+- 🌌 **Particles** for three moments (at rest, during the roulette, on reveal): type A + optional type B, 19 shapes with density, radius, height and speed, colored dust.
+- 🛠 **New in-game editor** with live preview (rotate, test the opening), tabs Look, Symbols, Key, Particles, Loot and Messages, and presets for the six built-in Reliquaries.
+- Old chests and configs keep working: every new field is optional.
+
 ### 🔧 Under the hood
 - 🗂 Everything lives in **`vocations.json`** (XP curve, XP per action, ranks, values, tiers, costs, base role effects), layered like the other configs: put only the fields you change in `config/wavesurvivor/vocations.json`; `/ws reload` applies them. The server sends the trees to clients, so servers can tune them freely.
 

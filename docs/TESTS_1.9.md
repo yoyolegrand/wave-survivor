@@ -271,3 +271,15 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Les anciens coffres (préréglage texte + forme) émettent exactement comme avant
 - [ ] Réglages d'un effet pris en compte : densité (1 clairsemé, 10 dense), rayon et hauteur (1 = forme d'origine), vitesse (1 lent, 10 rapide), type B en alternance avec le type A ; types volumineux (nuage, fumée de feu de camp…) restent supportables
 - [ ] Effet « reveal » (si réglé) pendant ~1 s à la révélation, en plus du bonus de rareté
+
+## Coffres roulette — étape 6 (éditeur)
+- [ ] `/ws roulettechest create` et l'édition d'un coffre existant ouvrent le nouvel éditeur : aperçu à gauche, 6 onglets, Annuler / Enregistrer (+ Supprimer en édition, avec confirmation)
+- [ ] Aperçu en direct : se met à jour à chaque réglage ; « Tourner » (rotation auto / fixe), glisser sur l'aperçu pour tourner à la main ; « Tester l'ouverture » rejoue la roulette (médaillon, couvercle, faisceau, objet)
+- [ ] Apparence : nom, accent (Auto / palette / #RRGGBB), bois (9 préréglages + libre), ferrures (8 + libre), gemmes (Auto = accent)
+- [ ] Symboles : 5 faces, case « médaillon sur cette face », couches (taille Grand/Petit, couleur, ▲ ▼ ✕), bibliothèque des 18 symboles, « Dessiner un symbole » (grille 10 × 10, nom, aperçu à taille réelle) puis le symbole dessiné apparaît dans la bibliothèque et dans le coffre
+- [ ] Clé : tête (8), panneton (4), matière, couleur libre ; icône de clé composée affichée en grand ; la clé en jeu correspond
+- [ ] Particules : 3 moments, types A / B (liste complète + dust / dust ⇄), forme, curseurs densité / rayon / hauteur / vitesse / taille, couleurs des poussières, préréglages des 6 coffres ; effet visible dans le monde après enregistrement
+- [ ] Butin et Messages : fonctionnent comme avant (ajout par clic dans l'inventaire, % / quantité / rareté, modèles de messages par rareté)
+- [ ] Éditer un ancien coffre (sans réglages 1.9) et l'enregistrer sans toucher à l'apparence : son aspect et ses particules ne changent pas
+- [ ] Éditer un des 6 Reliquaires : ses préréglages sont conservés
+

@@ -63,18 +63,18 @@ public class RouletteChestRenderer implements BlockEntityRenderer<RouletteChestB
         ps.mulPose(Axis.YP.rotationDegrees(yaw));
         ps.translate(-0.5, 0, -0.5);
         renderChest(be.style(), ps, buf, light, overlay, lid, time, spin);
-        if (anim) renderReveal(be, tl, t, time, ps, buf, overlay);
+        if (anim) renderReveal(be.animColor(), be.animStack(), be.getLevel(), be.getBlockPos().asLong(), tl, t, time, ps, buf, overlay);
         ps.popPose();
     }
 
     @Override
     public boolean shouldRenderOffScreen(RouletteChestBlockEntity be) { return false; }
 
-    /** Faisceau à la couleur de la rareté du gain, et objet qui s'élève dedans avant d'être donné. */
-    private static void renderReveal(RouletteChestBlockEntity be, RouletteAnim.Timeline tl, float t, float time, PoseStack ps, MultiBufferSource buf, int overlay) {
+    /** Faisceau à la couleur de la rareté du gain, et objet qui s'élève dedans avant d'être donné (aussi utilisé par l'aperçu de l'éditeur, avec level = null). */
+    public static void renderReveal(int c, net.minecraft.world.item.ItemStack shown, net.minecraft.world.level.Level level, long seed,
+                                    RouletteAnim.Timeline tl, float t, float time, PoseStack ps, MultiBufferSource buf, int overlay) {
         float strength = RouletteAnim.beamStrength(tl, t);
         if (strength > 0.01f) {
-            int c = be.animColor();
             float[] col = {((c >> 16) & 255) / 255f, ((c >> 8) & 255) / 255f, (c & 255) / 255f};
             ps.pushPose();
             ps.translate(0, 1.0, 0); // part du dessus du coffre
@@ -82,14 +82,13 @@ public class RouletteChestRenderer implements BlockEntityRenderer<RouletteChestB
             ps.popPose();
         }
         float rise = RouletteAnim.rise(tl, t);
-        if (rise >= 0 && rise <= 1.05f && !be.animStack().isEmpty() && be.getLevel() != null) {
+        if (rise >= 0 && rise <= 1.05f && shown != null && !shown.isEmpty()) {
             float e = 1f - (1f - Math.min(1f, rise)) * (1f - Math.min(1f, rise)); // décélère en haut du faisceau
             ps.pushPose();
             ps.translate(0.5, 1.15 + 1.35 * e, 0.5);
             ps.mulPose(Axis.YP.rotationDegrees(time * 8f));
             ps.scale(0.8f, 0.8f, 0.8f);
-            Minecraft.getInstance().getItemRenderer().renderStatic(be.animStack(), ItemDisplayContext.GROUND, FULL_BRIGHT, overlay, ps, buf,
-                    be.getLevel(), (int) be.getBlockPos().asLong());
+            Minecraft.getInstance().getItemRenderer().renderStatic(shown, ItemDisplayContext.GROUND, FULL_BRIGHT, overlay, ps, buf, level, (int) seed);
             ps.popPose();
         }
     }
