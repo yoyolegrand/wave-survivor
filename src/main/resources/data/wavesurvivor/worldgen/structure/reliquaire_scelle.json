@@ -1,0 +1,8 @@
+{
+  "type": "wavesurvivor:arena",
+  "arena": "reliquaire_scelle",
+  "biomes": "#wavesurvivor:has_structure/reliquaire_scelle",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}

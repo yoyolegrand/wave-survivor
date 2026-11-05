@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "wavesurvivor:reliquaire_scelle",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 96,
+    "separation": 40,
+    "salt": 1741226957
+  }
+}
