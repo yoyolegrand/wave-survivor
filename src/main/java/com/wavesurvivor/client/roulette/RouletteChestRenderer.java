@@ -5,9 +5,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.wavesurvivor.WaveSurvivorMod;
 import com.wavesurvivor.horde.roulette.RouletteChestBlock;
+import com.wavesurvivor.horde.roulette.RouletteAnim;
 import com.wavesurvivor.horde.roulette.RouletteChestBlockEntity;
 import com.wavesurvivor.horde.roulette.RouletteStyle;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BeaconRenderer;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -49,19 +53,54 @@ public class RouletteChestRenderer implements BlockEntityRenderer<RouletteChestB
         float yaw = 180f - st.getValue(RouletteChestBlock.FACING).toYRot(); // le médaillon avant regarde vers la direction du bloc
         float lid = be.animateLid(st.getValue(RouletteChestBlock.OPEN) ? LID_OPEN : 0f, LID_SPEED);
         float time = be.getLevel() == null ? 0 : be.getLevel().getGameTime() + partial;
+        // Animation d'ouverture : t = ticks depuis le lancement (négatif ou trop grand = aucune animation)
+        float t = be.animStart() < 0 ? -1 : time - be.animStart();
+        boolean anim = t >= 0 && be.animGive() > 0 && t <= be.animGive() + 60;
+        RouletteAnim.Timeline tl = anim ? RouletteAnim.of(be.animGive()) : null;
+        float spin = anim ? RouletteAnim.spinAngle(tl, t) : 0f;
         ps.pushPose();
         ps.translate(0.5, 0, 0.5);
         ps.mulPose(Axis.YP.rotationDegrees(yaw));
         ps.translate(-0.5, 0, -0.5);
-        renderChest(be.style(), ps, buf, light, overlay, lid, time);
+        renderChest(be.style(), ps, buf, light, overlay, lid, time, spin);
+        if (anim) renderReveal(be, tl, t, time, ps, buf, overlay);
         ps.popPose();
     }
 
     @Override
     public boolean shouldRenderOffScreen(RouletteChestBlockEntity be) { return false; }
 
+    /** Faisceau à la couleur de la rareté du gain, et objet qui s'élève dedans avant d'être donné. */
+    private static void renderReveal(RouletteChestBlockEntity be, RouletteAnim.Timeline tl, float t, float time, PoseStack ps, MultiBufferSource buf, int overlay) {
+        float strength = RouletteAnim.beamStrength(tl, t);
+        if (strength > 0.01f) {
+            int c = be.animColor();
+            float[] col = {((c >> 16) & 255) / 255f, ((c >> 8) & 255) / 255f, (c & 255) / 255f};
+            ps.pushPose();
+            ps.translate(0, 1.0, 0); // part du dessus du coffre
+            BeaconRenderer.renderBeaconBeam(ps, buf, BeaconRenderer.BEAM_LOCATION, 0f, 1f, (long) time, 0, 6, col, 0.12f * strength, 0.18f * strength);
+            ps.popPose();
+        }
+        float rise = RouletteAnim.rise(tl, t);
+        if (rise >= 0 && rise <= 1.05f && !be.animStack().isEmpty() && be.getLevel() != null) {
+            float e = 1f - (1f - Math.min(1f, rise)) * (1f - Math.min(1f, rise)); // décélère en haut du faisceau
+            ps.pushPose();
+            ps.translate(0.5, 1.15 + 1.35 * e, 0.5);
+            ps.mulPose(Axis.YP.rotationDegrees(time * 8f));
+            ps.scale(0.8f, 0.8f, 0.8f);
+            Minecraft.getInstance().getItemRenderer().renderStatic(be.animStack(), ItemDisplayContext.GROUND, FULL_BRIGHT, overlay, ps, buf,
+                    be.getLevel(), (int) be.getBlockPos().asLong());
+            ps.popPose();
+        }
+    }
+
     /** Dessine le coffre entier (repère du bloc : 0 à 1). {@code lidAngle} en degrés, {@code time} en ticks (pulsation). */
     public static void renderChest(RouletteStyle style, PoseStack ps, MultiBufferSource buf, int light, int overlay, float lidAngle, float time) {
+        renderChest(style, ps, buf, light, overlay, lidAngle, time, 0f);
+    }
+
+    /** Idem, avec la rotation (degrés) du médaillon avant pendant la roulette. */
+    public static void renderChest(RouletteStyle style, PoseStack ps, MultiBufferSource buf, int light, int overlay, float lidAngle, float time, float frontSpin) {
         RouletteChestModel model = RouletteChestModel.get();
         if (model == null) return;
         float pulse = 0.9f + 0.1f * Mth.sin(time * (float) Math.PI / 20f); // 0,8 à 1,0 sur 40 ticks
@@ -92,6 +131,12 @@ public class RouletteChestRenderer implements BlockEntityRenderer<RouletteChestB
             ResourceLocation t = MedallionTextures.get(layers, style.accent, style.customSymbols);
             ps.pushPose();
             if (slot.lid()) rotateLid(ps, lidAngle);
+            if (face.equals("front") && frontSpin != 0f) { // le cadran tourne sur lui-même (autour de la normale de la face)
+                float cx = (slot.from()[0] + slot.to()[0]) / 32f, cy = (slot.from()[1] + slot.to()[1]) / 32f, cz = slot.from()[2] / 16f;
+                ps.translate(cx, cy, cz);
+                ps.mulPose(Axis.ZP.rotationDegrees(frontSpin));
+                ps.translate(-cx, -cy, -cz);
+            }
             box(buf.getBuffer(RenderType.entityCutoutNoCull(t)), ps.last(), slot.from(), slot.to(), 0xFFFFFF, light, overlay, true, slot.face());
             ps.popPose();
         }

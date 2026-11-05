@@ -29,6 +29,33 @@ public class RouletteChestBlockEntity extends BaseContainerBlockEntity {
 
     public int getColor() { return color; }
 
+    // ─── Animation d'ouverture (1.9) : seulement envoyée au client, jamais sauvegardée ───
+    private long animStart = -1;
+    private int animGive = 0;
+    private int animColor = 0xFFFFFF;
+    private ItemStack animStack = ItemStack.EMPTY;
+
+    /** Lance l'animation : instant de départ (temps du monde), instant de remise du gain (ticks), couleur de rareté et objet qui s'élève dans le faisceau. */
+    public void startAnim(long start, int give, int color, ItemStack shown) {
+        animStart = start;
+        animGive = give;
+        animColor = color;
+        animStack = shown == null ? ItemStack.EMPTY : shown;
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    public void clearAnim() {
+        if (animStart < 0) return;
+        animStart = -1;
+        animStack = ItemStack.EMPTY;
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    public long animStart() { return animStart; }
+    public int animGive() { return animGive; }
+    public int animColor() { return animColor; }
+    public ItemStack animStack() { return animStack; }
+
     /** Angle du couvercle affiché (client) et dernier instant de mise à jour : le couvercle suit sa cible à vitesse constante. */
     private float lidAngle = 0f;
     private long lidNanos = 0L;
@@ -88,6 +115,10 @@ public class RouletteChestBlockEntity extends BaseContainerBlockEntity {
         color = tag.contains("RouletteColor") ? tag.getInt("RouletteColor") : -1;
         style = tag.getString("RouletteStyle");
         parsed = null;
+        animStart = tag.contains("RouletteAnimStart") ? tag.getLong("RouletteAnimStart") : -1;
+        animGive = tag.getInt("RouletteAnimGive");
+        animColor = tag.contains("RouletteAnimColor") ? tag.getInt("RouletteAnimColor") : 0xFFFFFF;
+        animStack = tag.contains("RouletteAnimStack") ? ItemStack.of(tag.getCompound("RouletteAnimStack")) : ItemStack.EMPTY;
     }
 
     @Override
@@ -103,7 +134,14 @@ public class RouletteChestBlockEntity extends BaseContainerBlockEntity {
 
     @Override
     public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+        CompoundTag t = saveWithoutMetadata();
+        if (animStart >= 0) {
+            t.putLong("RouletteAnimStart", animStart);
+            t.putInt("RouletteAnimGive", animGive);
+            t.putInt("RouletteAnimColor", animColor);
+            if (!animStack.isEmpty()) t.put("RouletteAnimStack", animStack.save(new CompoundTag()));
+        }
+        return t;
     }
 
     @Override

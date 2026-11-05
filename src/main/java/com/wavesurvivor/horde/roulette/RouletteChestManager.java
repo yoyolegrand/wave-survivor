@@ -184,7 +184,7 @@ public class RouletteChestManager {
             if (st.remainingTicks <= 0) {
                 it.remove();
                 // Tirage suivant en file d'attente : il enchaîne tout de suite (animation accélérée)
-                if (!startNext(entry.getKey(), st.level)) setLid(st.level, entry.getKey(), false); // le couvercle redescend
+                startNext(entry.getKey(), st.level); // tirage suivant en file ; sinon le couvercle se referme tout seul (voir startAnimation)
             }
         }
     }
@@ -417,12 +417,24 @@ public class RouletteChestManager {
         int seconds = fast ? Math.max(1, Math.round(config.animationDurationSeconds() / 3f)) : config.animationDurationSeconds();
         // Enregistre comme active pour le tick de particules
         int animTicks = seconds * 20;
-        ACTIVE.put(pos.immutable(), new ActiveState(config, level, animTicks));
-        setLid(level, pos, true); // le couvercle lévite pendant la roulette
+        int give = 10 + seconds * 20; // instant de remise du gain (ticks après le lancement)
+        RouletteAnim.Timeline tl = RouletteAnim.of(give);
+        ACTIVE.put(pos.immutable(), new ActiveState(config, level, give + 2));
+        setLid(level, pos, false); // couvercle fermé pendant que le médaillon tourne ; il s'ouvre quand le médaillon s'arrête
+        RouletteReward best = bestOf(rewards);
+        if (level.getBlockEntity(pos) instanceof RouletteChestBlockEntity be) {
+            ItemStack shown = com.wavesurvivor.horde.loot.LootItems.resolve(best.item(), 1);
+            be.startAnim(level.getGameTime(), give, rarityColor(best.rarity()), shown);
+        }
+        final BlockPos chestPos = pos.immutable();
+        DelayedActionScheduler.schedule(server, tl.stop(), () -> {
+            if (!ACTIVE.containsKey(chestPos)) return;
+            setLid(level, chestPos, true);
+            playSound(level, chestPos, config.sounds().opening(), 1.0f, 1.0f); // le couvercle s'ouvre quand le médaillon s'arrête
+        }, "roulette lid open");
 
         // Message (barre d'action, plus dans le chat) + son opening
         player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().opening())), true);
-        playSound(level, pos, config.sounds().opening(), 1.0f, 1.0f);
 
         // Animation rolling : toutes les 5 ticks, aperçu dans la barre d'action + son avec pitch qui monte
         int steps = seconds * 4; // 4 steps par seconde
@@ -441,16 +453,84 @@ public class RouletteChestManager {
         }
 
         // Fin de l'animation : donne toutes les récompenses (une par clé)
-        DelayedActionScheduler.schedule(server, 10 + steps * 5, () -> {
+        DelayedActionScheduler.schedule(server, give, () -> {
+            revealBonus(level, chestPos, best.rarity());
             if (!player.isAlive()) return;
             giveAll(server, player, rewards, config);
         }, "roulette give reward");
+        // Le couvercle se referme ~2 s après le gain (sauf si un autre tirage a pris le relais)
+        DelayedActionScheduler.schedule(server, give + RouletteAnim.CLOSE_AFTER, () -> {
+            if (ACTIVE.containsKey(chestPos)) return;
+            setLid(level, chestPos, false);
+            if (level.getBlockEntity(chestPos) instanceof RouletteChestBlockEntity be) be.clearAnim();
+        }, "roulette lid close");
     }
 
     /**
      * Donne toutes les récompenses d'un coup (une par clé) : une seule récompense → message habituel ;
      * plusieurs → récapitulatif regroupé (« 64 ouvertures : 12× Diamant, … »). Bonus par clé conservés.
      */
+    /** Le gain le plus rare d'un tirage (donne sa couleur au faisceau et l'objet qui s'élève). */
+    private static RouletteReward bestOf(List<RouletteReward> rewards) {
+        RouletteReward best = rewards.get(0);
+        for (RouletteReward r : rewards) if (r.rarity().ordinal() > best.rarity().ordinal()) best = r;
+        return best;
+    }
+
+    /** Couleur du faisceau selon la rareté du gain. */
+    public static int rarityColor(RouletteReward.Rarity r) {
+        return switch (r) {
+            case UNCOMMON -> 0x55E070;
+            case RARE -> 0x4F8BFF;
+            case EPIC -> 0xB35CFF;
+            case LEGENDARY -> 0xFFB52E;
+            default -> 0xE6E6EE;
+        };
+    }
+
+    /**
+     * Bonus de révélation selon la rareté (en plus de l'effet de révélation du coffre) : commun rien ; peu commun petite gerbe verte ; rare gerbe bleue
+     * et étincelles ; épique onde de choc violette ; légendaire feu d'artifice doré, colonne de lumière et éclair sans dégâts.
+     */
+    private static void revealBonus(ServerLevel level, BlockPos pos, RouletteReward.Rarity rarity) {
+        if (level == null || rarity == null || rarity == RouletteReward.Rarity.COMMON) return;
+        double cx = pos.getX() + 0.5, cy = pos.getY() + 1.1, cz = pos.getZ() + 0.5;
+        int color = rarityColor(rarity);
+        ParticleOptions dust = new net.minecraft.core.particles.DustParticleOptions(
+                new org.joml.Vector3f(((color >> 16) & 255) / 255f, ((color >> 8) & 255) / 255f, (color & 255) / 255f), 1.2f);
+        switch (rarity) {
+            case UNCOMMON -> level.sendParticles(dust, cx, cy, cz, 24, 0.25, 0.3, 0.25, 0.12);
+            case RARE -> {
+                level.sendParticles(dust, cx, cy, cz, 36, 0.3, 0.4, 0.3, 0.15);
+                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, cx, cy, cz, 24, 0.4, 0.5, 0.4, 0.3);
+            }
+            case EPIC -> {
+                level.sendParticles(dust, cx, cy, cz, 30, 0.3, 0.4, 0.3, 0.15);
+                MinecraftServer server = level.getServer();
+                for (int i = 0; i < 12; i++) { // onde de choc violette qui s'étend
+                    final long tick = i;
+                    DelayedActionScheduler.schedule(server, i, () -> ParticlePatterns.emit("shockwave", level, cx, pos.getY() + 1.0, cz, dust, tick), "roulette shockwave");
+                }
+            }
+            default -> { // LEGENDARY
+                MinecraftServer server = level.getServer();
+                for (int i = 0; i < 16; i++) {
+                    final long tick = i;
+                    DelayedActionScheduler.schedule(server, i, () -> {
+                        ParticlePatterns.emit("firework", level, cx, pos.getY() + 1.2, cz, dust, tick);
+                        ParticlePatterns.emit("beam", level, cx, pos.getY() + 1.0, cz, ParticleTypes.END_ROD, tick);
+                    }, "roulette firework");
+                }
+                net.minecraft.world.entity.LightningBolt bolt = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(level);
+                if (bolt != null) { // éclair purement visuel : aucun dégât, aucun feu
+                    bolt.moveTo(cx, pos.getY() + 1.0, cz);
+                    bolt.setVisualOnly(true);
+                    level.addFreshEntity(bolt);
+                }
+            }
+        }
+    }
+
     private static void giveAll(MinecraftServer server, ServerPlayer player, List<RouletteReward> rewards, RouletteChestConfig config) {
         if (rewards.size() == 1) {
             giveReward(server, player, rewards.get(0), config);

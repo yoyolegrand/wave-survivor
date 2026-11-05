@@ -254,3 +254,12 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Clés dans l'inventaire, en main, au sol, dans le cadre : bien orientées
 - [ ] Anciennes clés (sans forme) : anneau + simple en or, elles s'empilent toujours entre elles ; une clé d'un coffre par défaut ne porte pas d'étiquette de forme
 - [ ] Ouvrir un coffre avec sa clé fonctionne comme avant
+
+## Coffres roulette — étape 4 (animations)
+- [ ] Clé sur le coffre : le couvercle reste fermé, le médaillon avant tourne sur lui-même en accélérant (~1,5 s), étincelles et particules
+- [ ] Puis il ralentit (~1 s) et s'arrête à l'endroit (symbole droit) ; le couvercle s'ouvre à 70° (~0,4 s) avec le son d'ouverture
+- [ ] Un faisceau de la couleur de rareté du gain jaillit du coffre (commun blanc, peu commun vert, rare bleu, épique violet, légendaire or) ; l'objet gagné s'élève dedans (~1 s) puis est donné
+- [ ] Le couvercle se referme ~2 s après le gain ; le faisceau s'éteint en fondu
+- [ ] Bonus de rareté à la révélation : peu commun gerbe verte ; rare gerbe bleue + étincelles ; épique onde de choc violette ; légendaire feu d'artifice doré + colonne de lumière + éclair visuel (sans dégâts ni feu)
+- [ ] Plusieurs clés d'un coup (pile) : un seul faisceau, couleur et objet du gain le plus rare ; clés enchaînées (file d'attente, animation accélérée) : l'animation reste lisible
+- [ ] Chronologie correcte pour les durées 3 s, 5 s (coffres du mod) et en mode accéléré
