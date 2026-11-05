@@ -164,7 +164,15 @@ public final class ArenaBlueprint {
         if (o.has("markers")) for (Map.Entry<String, JsonElement> e : o.getAsJsonObject("markers").entrySet()) {
             JsonElement v = e.getValue();
             List<int[]> list = new ArrayList<>();
-            if (v.isJsonObject() && v.getAsJsonObject().has("pos")) {
+            if (v.isJsonObject() && v.getAsJsonObject().has("positions")) { // plusieurs positions partageant une table de butin
+                for (JsonElement p : v.getAsJsonObject().getAsJsonArray("positions")) list.add(pos(p.getAsJsonArray()));
+                if (v.getAsJsonObject().has("loot_table")) loot.put(e.getKey(), v.getAsJsonObject().get("loot_table").getAsString());
+            }
+            else if (v.isJsonObject() && v.getAsJsonObject().has("min") && v.getAsJsonObject().has("max")) { // boîte : deux coins
+                list.add(pos(v.getAsJsonObject().getAsJsonArray("min")));
+                list.add(pos(v.getAsJsonObject().getAsJsonArray("max")));
+            }
+            else if (v.isJsonObject() && v.getAsJsonObject().has("pos")) {
                 list.add(pos(v.getAsJsonObject().getAsJsonArray("pos")));
                 if (v.getAsJsonObject().has("loot_table")) loot.put(e.getKey(), v.getAsJsonObject().get("loot_table").getAsString());
             }

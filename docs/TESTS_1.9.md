@@ -288,3 +288,10 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Carnet : titre et onglets ne se chevauchent plus (FR et EN, petite et grande fenêtre) ; Objectifs : on peut défiler jusqu'au dernier objectif (« Jouer une partie Kingdom ») et lire sa récompense
 - [ ] Éditeur de coffre › Particules : curseur « Intensité » (1 à 20, 5 = normal) pour les 3 moments
 - [ ] Éditeur de coffre › Particules : bouton « ✦ Voir l'effet » sous l'aperçu : joue l'effet du moment choisi sur le coffre de gauche (approximation en carrés colorés : forme, rayon, hauteur, vitesse, intensité, couleurs de poussière)
+
+## Chapelle v2
+- [ ] `/ws arena place chapelle` : toit fermé (plus de triangle de ciel), abside ouverte, pignons du transept complets ; intérieur : bancs, tapis, bénitiers (holy_fountain), lutrin, bannières, lustres (lanternes suspendues, chaîne creuse), bougies votives allumées
+- [ ] 3 coffres : grand coffre (autel) = 6–10 Éclats + 1–2 Fragments (+ Cœur 15 %, pain / bougies / émeraudes) ; 2 petits (chapelles latérales) = 2–4 Éclats, Fragment 30 %, livres / papier / bougies
+- [ ] Chapelle générée : entrer dans le cimetière ou passer le portail → cloche + 4–6 morts-vivants sortent des tombes (particules d'âmes et de terre), une seule fois
+- [ ] Approcher du grand coffre (< 6 blocs) → 2 gardiens squelettes en armure (36 PV) dans la nef, une seule fois ; message
+- [ ] Chapelle posée à la commande : aucun monstre

@@ -2,6 +2,10 @@ package com.wavesurvivor.arena;
 
 import com.wavesurvivor.i18n.WSLang;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -35,19 +39,22 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * GARDIENS DE LA CHAPELLE (ruine générée « wavesurvivor:chapelle ») : la première fois qu'un joueur entre dans la nef ou le cimetière, la cloche sonne et
- * 4 à 6 morts-vivants apparaissent aux repères « guardian_spawns » du plan. Une seule fois par chapelle (mémorisé avec le monde).
+ * GARDIENS DE LA CHAPELLE (ruine générée « wavesurvivor:chapelle »), en deux temps, une seule fois chacun par chapelle (mémorisé avec le monde) :
+ * 1. le cimetière se réveille quand un joueur entre dans la zone « trigger_graveyard » ou passe le portail (« entrance ») : la cloche sonne et 4 à 6
+ *    morts-vivants sortent des tombes (« guardian_spawns_graveyard ») ;
+ * 2. les gardiens de la nef (2 squelettes en armure, plus résistants, « guardian_spawns_nave ») apparaissent quand un joueur s'approche du grand coffre
+ *    (« chest_main », à 6 blocs : l'ouvrir suppose d'être plus près).
  * Seules les chapelles générées naturellement (structure) sont gérées : une chapelle posée à la commande reste calme (pratique pour la visiter).
  */
 public class ChapelGuardians {
 
     public static final String ARENA_ID = "chapelle";
-    /** Zones de déclenchement dans le repère du plan (x1, z1, x2, z2) : la nef avec le transept, et le cimetière. */
-    private static final int[][] ZONES = {{10, 18, 22, 45}, {24, 27, 35, 41}};
 
     /** Chapelles dont les gardiens sont déjà sortis (identifiées par le chunk de départ de la structure). */
     public static class Data extends SavedData {
         private final Set<Long> done = new HashSet<>();
+        /** Chapelles dont les gardiens de la nef sont sortis. */
+        private final Set<Long> nave = new HashSet<>();
 
         public static Data get(ServerLevel level) {
             return level.getServer().overworld().getDataStorage().computeIfAbsent(Data::load, Data::new, "wavesurvivor_chapels");
@@ -63,6 +70,7 @@ public class ChapelGuardians {
         static Data load(CompoundTag tag) {
             Data d = new Data();
             for (Tag t : tag.getList("done", Tag.TAG_LONG)) d.done.add(((LongTag) t).getAsLong());
+            for (Tag t : tag.getList("nave", Tag.TAG_LONG)) d.nave.add(((LongTag) t).getAsLong());
             return d;
         }
 
@@ -71,6 +79,9 @@ public class ChapelGuardians {
             ListTag l = new ListTag();
             for (long v : done) l.add(LongTag.valueOf(v));
             tag.put("done", l);
+            ListTag n = new ListTag();
+            for (long v : nave) n.add(LongTag.valueOf(v));
+            tag.put("nave", n);
             return tag;
         }
     }
@@ -88,10 +99,21 @@ public class ChapelGuardians {
         Rotation rot = piece.rotation();
         Data data = Data.get(level);
         long key = start.getChunkPos().toLong();
-        if (data.done.contains(key) || !inZone(bp, piece, rot, p.blockPosition())) return;
-        data.done.add(key);
-        data.setDirty();
-        awaken(level, p, bp, piece, rot);
+        boolean graveyardDone = data.done.contains(key), naveDone = data.nave.contains(key);
+        if (graveyardDone && naveDone) return;
+        var markers = bp.worldMarkers(piece.ox(), piece.oz(), piece.y0(), rot);
+        BlockPos pos = p.blockPosition();
+        if (!graveyardDone && (inBox(markers.get("trigger_graveyard"), 0, pos) || inBox(markers.get("entrance"), 2, pos))) {
+            data.done.add(key);
+            data.setDirty();
+            awakenGraveyard(level, p, markers);
+        }
+        List<BlockPos> chest = markers.getOrDefault("chest_main", List.of());
+        if (!naveDone && !chest.isEmpty() && chest.get(0).closerThan(pos, 6.0)) {
+            data.nave.add(key);
+            data.setDirty();
+            awakenNave(level, p, markers);
+        }
     }
 
     /** Ruine générée sous un point : sa structure, sa pièce et son plan (null si le point n'est pas dans cette ruine). */
@@ -109,32 +131,59 @@ public class ChapelGuardians {
         return bp == null ? null : new Found(start, piece, bp);
     }
 
-    private static boolean inZone(ArenaBlueprint bp, ArenaPiece piece, Rotation rot, BlockPos pos) {
-        for (int[] z : ZONES) {
-            BlockPos a = bp.worldPos(piece.ox(), piece.oz(), piece.y0(), rot, z[0], 0, z[1]);
-            BlockPos b = bp.worldPos(piece.ox(), piece.oz(), piece.y0(), rot, z[2], 12, z[3]);
-            if (BoundingBox.fromCorners(a, b).isInside(pos)) return true;
-        }
-        return false;
+    /** Le point est-il dans la boîte formée par les repères (leurs coins), élargie de {@code grow} blocs ? */
+    private static boolean inBox(List<BlockPos> pts, int grow, BlockPos pos) {
+        if (pts == null || pts.isEmpty()) return false;
+        BoundingBox box = BoundingBox.fromCorners(pts.get(0), pts.get(pts.size() - 1));
+        if (grow > 0) box = box.inflatedBy(grow);
+        return box.isInside(pos);
     }
 
-    private static void awaken(ServerLevel level, ServerPlayer p, ArenaBlueprint bp, ArenaPiece piece, Rotation rot) {
-        var markers = bp.worldMarkers(piece.ox(), piece.oz(), piece.y0(), rot);
+    /** Cimetière : la cloche sonne, 4 à 6 morts-vivants sortent des tombes. */
+    private static void awakenGraveyard(ServerLevel level, ServerPlayer p, java.util.Map<String, List<BlockPos>> markers) {
         List<BlockPos> bells = markers.getOrDefault("bell", List.of());
         BlockPos bell = bells.isEmpty() ? p.blockPosition() : bells.get(0);
         level.playSound(null, bell, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 4f, 0.7f);
         level.playSound(null, bell, SoundEvents.BELL_RESONATE, SoundSource.BLOCKS, 3f, 0.6f);
-        List<BlockPos> spawns = new ArrayList<>(markers.getOrDefault("guardian_spawns", List.of()));
+        List<BlockPos> spawns = new ArrayList<>(markers.getOrDefault("guardian_spawns_graveyard", List.of()));
         Collections.shuffle(spawns, new java.util.Random(level.random.nextLong()));
         int count = Math.min(spawns.size(), 4 + level.random.nextInt(3));
-        for (int i = 0; i < count; i++) spawn(level, p, spawns.get(i), level.random.nextInt(3) != 0);
+        for (int i = 0; i < count; i++) {
+            BlockPos at = spawns.get(i);
+            Mob m = spawn(level, p, at, level.random.nextInt(3) != 0);
+            if (m != null && level.random.nextInt(3) == 0) { // quelques-uns portent de l'or ou de la maille
+                boolean gold = level.random.nextBoolean();
+                m.setItemSlot(EquipmentSlot.CHEST, new ItemStack(gold ? Items.GOLDEN_CHESTPLATE : Items.CHAINMAIL_CHESTPLATE));
+                m.setDropChance(EquipmentSlot.CHEST, 0.05f);
+            }
+            level.sendParticles(ParticleTypes.SOUL, at.getX() + 0.5, at.getY() + 0.3, at.getZ() + 0.5, 8, 0.3, 0.4, 0.3, 0.03);
+            level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()), at.getX() + 0.5, at.getY() + 0.1, at.getZ() + 0.5, 20, 0.4, 0.1, 0.4, 0.1);
+        }
         p.displayClientMessage(Component.literal(WSLang.t("ruin.chapel.guardians")), true);
     }
 
+    /** Nef : 2 gardiens (squelettes en armure, plus résistants) entre le joueur et la sortie. */
+    private static void awakenNave(ServerLevel level, ServerPlayer p, java.util.Map<String, List<BlockPos>> markers) {
+        for (BlockPos at : markers.getOrDefault("guardian_spawns_nave", List.of())) {
+            Mob m = spawn(level, p, at, false);
+            if (m == null) continue;
+            m.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+            m.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.IRON_HELMET));
+            m.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+            m.setDropChance(EquipmentSlot.MAINHAND, 0.05f);
+            m.setDropChance(EquipmentSlot.CHEST, 0.05f);
+            var hp = m.getAttribute(Attributes.MAX_HEALTH);
+            if (hp != null) { hp.setBaseValue(36); m.setHealth(36f); }
+            level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 12, 0.3, 0.5, 0.3, 0.02);
+        }
+        level.playSound(null, p.blockPosition(), SoundEvents.SKELETON_AMBIENT, SoundSource.HOSTILE, 2f, 0.6f);
+        p.displayClientMessage(Component.literal(WSLang.t("ruin.chapel.nave")), true);
+    }
+
     /** Un gardien : zombie (2 sur 3, sinon squelette), casque pour ne pas brûler au soleil, équipement variable ; il vise le joueur. */
-    private static void spawn(ServerLevel level, ServerPlayer target, BlockPos at, boolean zombie) {
+    private static Mob spawn(ServerLevel level, ServerPlayer target, BlockPos at, boolean zombie) {
         Mob m = (Mob) (zombie ? EntityType.ZOMBIE : EntityType.SKELETON).create(level);
-        if (m == null) return;
+        if (m == null) return null;
         m.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, level.random.nextFloat() * 360f, 0f);
         m.finalizeSpawn(level, level.getCurrentDifficultyAt(at), MobSpawnType.EVENT, null, null);
         m.setItemSlot(EquipmentSlot.HEAD, new ItemStack(level.random.nextBoolean() ? Items.IRON_HELMET : Items.CHAINMAIL_HELMET));
@@ -146,5 +195,6 @@ public class ChapelGuardians {
         m.setPersistenceRequired();
         m.setTarget(target);
         level.addFreshEntity(m);
+        return m;
     }
 }
