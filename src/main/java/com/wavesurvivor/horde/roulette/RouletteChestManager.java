@@ -61,11 +61,13 @@ public class RouletteChestManager {
         public final RouletteChestConfig config;
         public final ServerLevel level;
         public int remainingTicks;
+        public final int total;
 
         public ActiveState(RouletteChestConfig config, ServerLevel level, int ticks) {
             this.config = config;
             this.level = level;
             this.remainingTicks = ticks;
+            this.total = ticks;
         }
     }
 
@@ -179,7 +181,7 @@ public class RouletteChestManager {
         while (it.hasNext()) {
             var entry = it.next();
             ActiveState st = entry.getValue();
-            spawnActiveParticles(st.level, entry.getKey(), st.config, now);
+            spawnActiveParticles(st.level, entry.getKey(), st.config, now, st.total - st.remainingTicks, st.total);
             st.remainingTicks--;
             if (st.remainingTicks <= 0) {
                 it.remove();
@@ -199,6 +201,12 @@ public class RouletteChestManager {
 
     /** Particules idle : cercle tournant lentement au-dessus + colonne montante subtile. */
     private static void spawnIdleParticles(ServerLevel level, BlockPos p, RouletteChestConfig cfg, long now) {
+        RouletteStyle style = STYLE_BY_KEY.get(cfg.configKey());
+        CustomChestData.Effect idle = style == null ? null : style.fx.get("idle");
+        if (RouletteParticles.valid(idle)) { // effet 1.9 (au repos)
+            RouletteParticles.emit(level, p.getX() + 0.5, p.getY() + 1.2, p.getZ() + 0.5, idle, style.accent, now);
+            return;
+        }
         ParticleOptions particle = resolveParticle(cfg.particleIdle(), ParticleTypes.HAPPY_VILLAGER);
         double cx = p.getX() + 0.5;
         double cz = p.getZ() + 0.5;
@@ -240,7 +248,18 @@ public class RouletteChestManager {
     }
 
     /** Particules active : cercle rapide + fontaine pendant l'animation (allégé : 1 tick sur 2). */
-    private static void spawnActiveParticles(ServerLevel level, BlockPos p, RouletteChestConfig cfg, long now) {
+    private static void spawnActiveParticles(ServerLevel level, BlockPos p, RouletteChestConfig cfg, long now, int elapsed, int total) {
+        RouletteStyle style = STYLE_BY_KEY.get(cfg.configKey());
+        CustomChestData.Effect spin = style == null ? null : style.fx.get("spin");
+        if (RouletteParticles.valid(spin)) { // effet 1.9 (pendant la roulette) + étincelles sur le médaillon tant qu'il tourne
+            RouletteParticles.emit(level, p.getX() + 0.5, p.getY() + 1.2, p.getZ() + 0.5, spin, style.accent, now);
+            if (elapsed < RouletteAnim.of(Math.max(8, total - 2)).stop() && now % 2 == 0
+                    && level.getBlockState(p).getBlock() instanceof RouletteChestBlock) {
+                net.minecraft.world.phys.Vec3 m = RouletteParticles.frontMedallion(p, level.getBlockState(p).getValue(RouletteChestBlock.FACING));
+                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, m.x, m.y, m.z, 2, 0.18, 0.18, 0.05, 0.08);
+            }
+            return;
+        }
         ParticleOptions particle = resolveParticle(cfg.particleActive(), ParticleTypes.ENCHANTED_HIT);
         boolean heavy = isHeavy(particle);
         if (now % (heavy ? 5 : 2) != 0) return;
@@ -454,6 +473,10 @@ public class RouletteChestManager {
 
         // Fin de l'animation : donne toutes les récompenses (une par clé)
         DelayedActionScheduler.schedule(server, give, () -> {
+            RouletteStyle revealStyle = STYLE_BY_KEY.get(config.configKey());
+            if (revealStyle != null) { // effet de révélation du coffre (en plus du bonus automatique de rareté)
+                RouletteParticles.burst(level, chestPos.getX() + 0.5, chestPos.getY() + 1.2, chestPos.getZ() + 0.5, revealStyle.fx.get("reveal"), revealStyle.accent, 24);
+            }
             revealBonus(level, chestPos, best.rarity());
             if (!player.isAlive()) return;
             giveAll(server, player, rewards, config);

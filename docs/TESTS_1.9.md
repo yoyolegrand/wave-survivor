@@ -263,3 +263,11 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Bonus de rareté à la révélation : peu commun gerbe verte ; rare gerbe bleue + étincelles ; épique onde de choc violette ; légendaire feu d'artifice doré + colonne de lumière + éclair visuel (sans dégâts ni feu)
 - [ ] Plusieurs clés d'un coup (pile) : un seul faisceau, couleur et objet du gain le plus rare ; clés enchaînées (file d'attente, animation accélérée) : l'animation reste lisible
 - [ ] Chronologie correcte pour les durées 3 s, 5 s (coffres du mod) et en mode accéléré
+
+## Coffres roulette — étape 5 (particules étendues)
+- [ ] Au repos, chaque Reliquaire émet son effet : Boss flammes d'âme en cercle · Nether flammes + cendres · Abysses bulles en lucioles · Arcanique enchantement en pentagramme · Trésors poussière dorée en aura pulsante · End portail en double anneau
+- [ ] Pendant la roulette (spin) : Boss vortex d'âmes · Nether spirale de lave · Abysses double hélice bulles + encre luisante · Arcanique colonne d'étincelles de l'End · Trésors feu d'artifice · End portail inversé en vortex ; étincelles sur le médaillon qui tourne
+- [ ] Les poussières « dust » (Trésors) ont la couleur réglée (#FAC846) ; sans couleur : couleur d'accent du coffre
+- [ ] Les anciens coffres (préréglage texte + forme) émettent exactement comme avant
+- [ ] Réglages d'un effet pris en compte : densité (1 clairsemé, 10 dense), rayon et hauteur (1 = forme d'origine), vitesse (1 lent, 10 rapide), type B en alternance avec le type A ; types volumineux (nuage, fumée de feu de camp…) restent supportables
+- [ ] Effet « reveal » (si réglé) pendant ~1 s à la révélation, en plus du bonus de rareté

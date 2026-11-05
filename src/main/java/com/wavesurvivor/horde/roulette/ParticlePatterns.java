@@ -29,6 +29,42 @@ public class ParticlePatterns {
             "ashes", "fireflies", "cloud"
     };
 
+    /**
+     * Réglages d'un effet (1.9), appliqués à la sortie de chaque forme : densité (nombre de particules émises), rayon et hauteur (multiplicateurs de la forme
+     * d'origine, 1 = nominal), vitesse (cadence de l'animation) et type B (émis en alternance avec le type A).
+     */
+    public static final class Ctx {
+        public final double cx, cy, cz, radius, height, density, speedMul;
+        public final ParticleOptions a, b;
+        private int flip = 0;
+
+        public Ctx(double cx, double cy, double cz, double radius, double height, double density, double speedMul, ParticleOptions a, ParticleOptions b) {
+            this.cx = cx; this.cy = cy; this.cz = cz; this.radius = radius; this.height = height;
+            this.density = density; this.speedMul = speedMul; this.a = a; this.b = b;
+        }
+
+        /** Nombre d'émissions pour une particule de la forme : densité 5 = nominal, 10 = double, 1 = une sur cinq. */
+        int count() {
+            int n = (int) density;
+            if (RNG.nextDouble() < density - n) n++;
+            return n;
+        }
+
+        ParticleOptions pick() { return b != null && (flip++ & 1) == 1 ? b : a; }
+    }
+
+    private static final ThreadLocal<Ctx> CTX = new ThreadLocal<>();
+
+    /** Émet une forme avec des réglages : {@code speed} 1 à 10 (5 = nominal) accélère ou ralentit l'animation de la forme. */
+    public static void emit(String pattern, ServerLevel level, long tick, double speed, Ctx ctx) {
+        CTX.set(ctx);
+        try {
+            emit(pattern, level, ctx.cx, ctx.cy, ctx.cz, ctx.a, Math.round(tick * speed / 5.0));
+        } finally {
+            CTX.remove();
+        }
+    }
+
     /** Dispatch principal. */
     public static void emit(String pattern, ServerLevel level, double cx, double cy, double cz,
                             ParticleOptions particle, long tick) {
@@ -301,11 +337,17 @@ public class ParticlePatterns {
     // ═══════════════════════════════════════════════════════════════════
 
     private static void spawn(ServerLevel level, ParticleOptions p, double x, double y, double z) {
-        level.sendParticles(p, x, y, z, 1, 0, 0, 0, 0.01);
+        spawn(level, p, x, y, z, 0, 0, 0, 0.01);
     }
 
     private static void spawn(ServerLevel level, ParticleOptions p, double x, double y, double z,
                               double dx, double dy, double dz, double speed) {
-        level.sendParticles(p, x, y, z, 1, dx, dy, dz, speed);
+        Ctx c = CTX.get();
+        if (c == null) { // émission classique, sans réglages
+            level.sendParticles(p, x, y, z, 1, dx, dy, dz, speed);
+            return;
+        }
+        double sx = c.cx + (x - c.cx) * c.radius, sy = c.cy + (y - c.cy) * c.height, sz = c.cz + (z - c.cz) * c.radius;
+        for (int i = c.count(); i > 0; i--) level.sendParticles(c.pick(), sx, sy, sz, 1, dx, dy, dz, speed * c.speedMul);
     }
 }
