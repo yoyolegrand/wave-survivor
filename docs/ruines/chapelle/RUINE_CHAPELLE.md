@@ -1,14 +1,16 @@
-# Ruine « La Chapelle » — structure du monde (1.9) — version 2
+# Ruine « La Chapelle » — structure du monde (1.9) — version 4
+
+> **v4** (dernière) : ferme le trou à la jonction nef / tour (pans de mur manquants de chaque côté de la tour, vérifié par un test de fuite : plus aucune ouverture hors portail et beffroi), retire les briques moussues, et remplace la croix dorée du clocher par une **flèche dorée** (globe en bloc d'or + paratonnerre). Les repères sont inchangés. Plan précédent gardé : `blueprint_chapelle_v2.json`.
 
 > Rédigée par Claude chat avec Yoann. **v2** : corrige les trous vus en jeu (toit qui ne rejoignait pas les murs, triangle de ciel au-dessus du croisement, pignons du transept incomplets), **ouvre l'abside** (le mur nord du transept la bouchait), ajoute la **décoration intérieure**, **2 coffres latéraux** et les **points d'apparition** des monstres. C'est un **lieu marquant**, donc **rare**.
 
 Fichiers (dans `docs/ruines/chapelle/`) :
-- `blueprint_chapelle.json` — **version 2** (remplace la v1), plan bloc par bloc, même format que les arènes, JSON compact (~74 Ko), 37 × 33 × 55.
+- `blueprint_chapelle.json` — **version 4**, plan bloc par bloc, même format que les arènes, JSON compact (~69 Ko), 37 × 30 × 55.
 - `chapelle_v5.png` — vue d'ensemble corrigée ; `chapelle_interieur.png` — vue en coupe de l'intérieur.
 - (anciens visuels v4 conservés pour comparaison)
 
 ## 1. Contenu
-- Plan en croix : nef 13 × 16, transept 25 de large, abside arrondie (désormais **ouverte** par une grande arche), tour-clocher 7 × 7 (cloche, flèche en ardoise, croix en blocs d'or), grand portail, rosace, vitraux doubles, contreforts à pinacles, toit en tuiles de deepslate **entièrement fermé** (vérifié par programme : plus aucun vide entre murs et toit, aucune case du sol intérieur à ciel ouvert).
+- Plan en croix : nef 13 × 16, transept 25 de large, abside arrondie (désormais **ouverte** par une grande arche), tour-clocher 7 × 7 (cloche, flèche en ardoise, **globe doré + pointe** au sommet), grand portail, rosace, vitraux doubles, contreforts à pinacles, toit en tuiles de deepslate **entièrement fermé** (vérifié par programme : plus aucun vide entre murs et toit, aucune case du sol intérieur à ciel ouvert).
 - **Décoration intérieure** : 6 rangées de bancs (escaliers de bouleau), allée de tapis jaune de l'entrée à l'autel, arcade de colonnes, 2 **bénitiers** (`holy_fountain`) à l'entrée, **pupitre** (lutrin) au croisement, **bannières jaunes** sur les murs de la nef, **lustres** (lanternes de grâce suspendues) dans la nef et les bras du transept, tapis blancs dans les bras, **bougies votives** au pied des colonnes et sur les marches, autel surélevé avec bougies, lanterne et **pots de muguet**.
 - **Chapelles latérales** (une dans chaque bras du transept) : petit autel sculpté avec bougie, **bibliothèques**, **petit coffre**.
 - Abords : chemin bordé de lanternes, cimetière clôturé (tombes, stèles, croix), haie, fleurs.

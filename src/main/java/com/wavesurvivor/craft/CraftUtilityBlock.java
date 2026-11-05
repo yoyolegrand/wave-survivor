@@ -62,7 +62,8 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
             {{0.375, 0.44, 0.5}, {0.625, 0.5, 0.44}},
             {{0.5, 0.313, 0.625}, {0.375, 0.44, 0.5}, {0.56, 0.5, 0.44}},
             {{0.44, 0.313, 0.56}, {0.625, 0.44, 0.56}, {0.375, 0.44, 0.375}, {0.56, 0.5, 0.375}}};
-    private static final VoxelShape FOUNTAIN_SHAPE = Block.box(0, 0, 0, 16, 15, 16);
+    /** Fontaine : bassin (1 à 15, jusqu'à 5 de haut), vasque centrale (jusqu'à 10,8) et boule dorée (jusqu'à 12,5). */
+    private static final VoxelShape FOUNTAIN_SHAPE = net.minecraft.world.phys.shapes.Shapes.or(Block.box(1, 0, 1, 15, 5, 15), Block.box(4, 5, 4, 12, 10.8, 12), Block.box(7, 10.8, 7, 9, 12.5, 9));
     private static final VoxelShape TOTEM_SHAPE = Block.box(2, 0, 2, 14, 16, 14);
     /** Obélisque : socle (1 à 15, de 0 à 4) et fût (5 à 11) sur la moitié basse ; le fût seul sur la moitié haute. */
     private static final VoxelShape OBELISK_LOWER = net.minecraft.world.phys.shapes.Shapes.or(Block.box(1, 0, 1, 15, 4, 15), Block.box(5, 0, 5, 11, 16, 11));
