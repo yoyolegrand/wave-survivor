@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "wavesurvivor:taint_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    },
+    {
+      "item": "wavesurvivor:taint_shard"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:taint_fragment",
+    "count": 1
+  }
+}

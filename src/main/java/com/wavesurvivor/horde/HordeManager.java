@@ -102,6 +102,7 @@ public class HordeManager {
             // Mutateurs cochés sur l'écran de l'autel : activés pour cette horde (« Une seule vie » exclue en Kingdom)
             com.wavesurvivor.horde.mutator.HordeMutators.begin(srv, horde.configData != null && horde.configData.isKingdom());
             // 1.6 — Défi du jour : la horde lancée correspond-elle au défi (difficulté + 3 mutateurs) ?
+            com.wavesurvivor.horde.roulette.SealedKey.resetDeaths();
             com.wavesurvivor.horde.daily.DailyServer.onHordeStart(srv, horde.configData != null && horde.configData.isKingdom());
             // 1.6 — Boss Rush : mode demandé à l'autel (la barre de la horde compte alors les boss)
             if (com.wavesurvivor.horde.bossrush.BossRush.begin(srv, horde) && !(horde.configData != null && horde.configData.isKingdom())) {
@@ -458,6 +459,7 @@ public class HordeManager {
         broadcastImportant(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.horde_59a3") + com.wavesurvivor.i18n.WSLang.t(name) + com.wavesurvivor.i18n.WSLang.t("srv.terminee")).withStyle(ChatFormatting.GREEN));
         if (activeHorde != null && (!com.wavesurvivor.horde.bossrush.BossRush.active() || com.wavesurvivor.horde.bossrush.BossRush.leaderboardRewards())) RewardsDistributor.distribute(activeHorde, srv);
         com.wavesurvivor.horde.bossrush.BossRush.onVictory(srv); // Boss Rush : chrono et classement
+        if (activeHorde != null && !com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.roulette.SealedKey.onHordeWon(srv); // horde sans aucune mort : Clé scellée
         com.wavesurvivor.arena.ArenaSession.onVictory(srv);      // arène : coffre de récompense (une fois par arène)
         // PR gagnés en jouant (avant l'enregistrement de la victoire : on sait si c'est la première)
         if (activeHorde != null) com.wavesurvivor.horde.renaissance.RenaissanceRewards.payout(srv, activeHorde, true);

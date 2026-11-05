@@ -428,6 +428,7 @@ public class ModItems {
                         output.accept(OFFERING_BRAZIER_ITEM.get());
                         output.accept(SURVIVOR_NOTEBOOK.get());
                         output.accept(KEY_POUCH.get());
+                        output.accept(com.wavesurvivor.horde.roulette.SealedKey.create(1));
                         output.accept(SERAPH_SHRINE_ITEM.get());
                         output.accept(GRACE_SHARD.get());
                         output.accept(GRACE_FRAGMENT.get());

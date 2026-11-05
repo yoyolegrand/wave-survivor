@@ -316,3 +316,12 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Flammes roses (poussière rose lumineuse) autour de l'obélisque, plus de flammes bleues
 - [ ] Portée de l'obélisque : 12 blocs (monstres blessés, joueurs affamés) ; info-bulle et Codex à jour
 - [ ] Totem d'appât : attire les monstres jusqu'à 64 blocs (par étapes, une fois par seconde, 120 monstres au plus par passage) ; pas de ralentissement du serveur ; info-bulle et Codex à jour
+
+## Icônes, Clé scellée et recettes d'Éclats
+- [ ] Les icônes des Flèches souillées et du Totem de souillure s'affichent (inventaire, main, sol)
+- [ ] Clé scellée (onglet créatif, après la Bourse) : tête ailée, panneton à crochet, or, gemme blanche ; nom « Clé scellée » / « Sealed Key »
+- [ ] La Clé scellée entre dans la Bourse à clés et ne déclenche aucun coffre roulette ordinaire
+- [ ] Un boss de horde tué lâche parfois une Clé scellée (rules.json : `sealedKeyBossChance`, 7 % par défaut ; tester à 100)
+- [ ] Horde terminée sans aucune mort : chaque joueur reçoit `sealedKeyFlawlessCount` clé(s) et le message ; une seule mort annule
+- [ ] Pas de Clé scellée en Boss Rush
+- [ ] 9 Éclats → 1 Fragment et 1 Fragment → 9 Éclats (grâce et souillure) à la table de fabrication

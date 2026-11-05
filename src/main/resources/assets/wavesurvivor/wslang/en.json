@@ -4520,5 +4520,8 @@
   "codex.pouch.body": "§7The §fKey Pouch§7 stores your roulette chest keys and uses them for you.\n\n§6§lContents\n§7• Right-click in the air: opens the pouch (27 slots by default). Only §froulette chest keys§7 fit.\n§7• The contents stay in the item: store it, drop it or give it away.\n\n§6§lOpening a chest\n§7• §fWith no key in hand§7, right-click a roulette chest: a key of the right type is taken from your pouch (anywhere in your inventory).\n§7• §fSneak§7 + right-click: every key of that type is used, with a single fast animation and a summary screen of all prizes.\n§7• A key held in hand always comes first.\n\n§6§lAuto pickup\n§7• Keys you pick up go straight into the pouch. Sneak + right-click in the air to turn it on or off.\n\n§6§lCrafting\n§7• 4 leather, 2 string, 1 gold ingot and 1 gold nugget (crafting table). Settings in §frules.json§7: size, auto pickup, bulk opening.",
   "carnet.res.pouch": "Key Pouch",
   "carnet.res.pouch.where": "Crafted at a crafting table: 4 leather, 2 string, 1 gold ingot, 1 gold nugget.",
-  "carnet.res.pouch.use": "Stores your roulette chest keys (right-click) and uses them for you on a chest: sneak to use them all at once with a single summary."
+  "carnet.res.pouch.use": "Stores your roulette chest keys (right-click) and uses them for you on a chest: sneak to use them all at once with a single summary.",
+  "Clé scellée": "Sealed Key",
+  "Reliquaire scellé": "Sealed Reliquary",
+  "sealed_key.flawless": "§b✦ Horde cleared without a single death: you receive {0} Sealed Key(s)!"
 }

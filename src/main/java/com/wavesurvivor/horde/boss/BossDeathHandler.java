@@ -10,6 +10,10 @@ public class BossDeathHandler {
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
+        if (!event.getEntity().level().isClientSide && BossManager.isBoss(event.getEntity().getUUID())
+                && !com.wavesurvivor.horde.bossrush.BossRush.active()) {
+            com.wavesurvivor.horde.roulette.SealedKey.onBossKilled(event.getEntity()); // butin rare : Clé scellée
+        }
         BossManager.onBossDeath(event.getEntity().getUUID());
     }
 }

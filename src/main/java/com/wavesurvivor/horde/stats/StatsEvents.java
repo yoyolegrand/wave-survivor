@@ -14,6 +14,7 @@ public class StatsEvents {
         if (e.getEntity().level().isClientSide || !(e.getEntity() instanceof ServerPlayer p)) return;
         if (!HordeManager.get().isRunning()) return;
         PlayerStats.add(p, "deaths", 1);
+        com.wavesurvivor.horde.roulette.SealedKey.onPlayerDeath(); // une mort annule la récompense « sans aucune mort »
     }
 
     /** Toutes les secondes de horde : +20 ticks de temps de jeu pour chaque joueur présent. */

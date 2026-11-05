@@ -53,6 +53,10 @@ public final class RulesConfig {
     public static int keyPouchSize() { return Math.max(9, Math.min(54, HordeJson.num(cfg(), "keyPouchSize", 27))); }
     /** Bourse à clés : ramassage automatique des clés autorisé. */
     public static boolean keyPouchAutoPickup() { return !cfg().has("keyPouchAutoPickup") || cfg().get("keyPouchAutoPickup").getAsBoolean(); }
+    /** Clé scellée : chance (en %) qu'un boss de horde en lâche une. */
+    public static double sealedKeyBossChance() { return cfg().has("sealedKeyBossChance") ? Math.max(0, Math.min(100, cfg().get("sealedKeyBossChance").getAsDouble())) : 7.0; }
+    /** Clé scellée : nombre de clés offertes pour une horde terminée sans aucune mort (0 = désactivé). */
+    public static int sealedKeyFlawlessCount() { return cfg().has("sealedKeyFlawlessCount") ? Math.max(0, cfg().get("sealedKeyFlawlessCount").getAsInt()) : 1; }
     /** Bourse à clés : ouverture en série (accroupi) autorisée. */
     public static boolean keyPouchBulk() { return !cfg().has("keyPouchBulk") || cfg().get("keyPouchBulk").getAsBoolean(); }
 }

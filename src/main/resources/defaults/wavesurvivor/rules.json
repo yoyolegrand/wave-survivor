@@ -2,5 +2,7 @@
   "consolationPercent": 30,
   "keyPouchSize": 27,
   "keyPouchAutoPickup": true,
-  "keyPouchBulk": true
+  "keyPouchBulk": true,
+  "sealedKeyBossChance": 7,
+  "sealedKeyFlawlessCount": 1
 }

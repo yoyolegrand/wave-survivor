@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "wavesurvivor:grace_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:grace_shard",
+    "count": 9
+  }
+}
