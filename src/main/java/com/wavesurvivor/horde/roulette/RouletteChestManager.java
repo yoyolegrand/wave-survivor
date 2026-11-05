@@ -593,8 +593,13 @@ public class RouletteChestManager {
         tag.putString("rouletteChestName", config.chestName());
         tag.putString("rouletteKeyName", config.keyName());
         // Couleur choisie dans le Chest Builder (sinon déduite du nom → les clés restent empilables)
+        // Couleur de la gemme de la clé = celle des gemmes du coffre ; forme et couleur libre de la clé (1.9), seulement si elles diffèrent du défaut
+        RouletteStyle style = styleFor(config);
         Integer chosen = COLOR_BY_KEY.get(config.configKey());
-        if (chosen != null) tag.putInt("rouletteKeyColor", chosen);
+        if (chosen != null || style.gem != RouletteKeyItem.colorForName(config.chestName())) tag.putInt("rouletteKeyColor", style.gem);
+        if (!"ring".equals(style.keyHead)) tag.putString("rouletteKeyHead", style.keyHead);
+        if (!"simple".equals(style.keyBit)) tag.putString("rouletteKeyBit", style.keyBit);
+        if (style.keyColor >= 0) tag.putInt("rouletteKeyBody", style.keyColor);
         // Matériau (sauf or, par défaut : les clés restent empilables avec les anciennes)
         String mat = MATERIAL_BY_KEY.get(config.configKey());
         if (mat != null) tag.putString("rouletteKeyMaterial", mat);

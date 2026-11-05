@@ -94,6 +94,18 @@ public class RouletteKeyItem extends Item {
             new Material("quartz", "Quartz", "Clé en quartz", 0xEEE8E0),
             new Material("amethyste", "Améthyste", "Clé en améthyste", 0xA060CC)};
 
+    /** Têtes et pannetons de clé (ordre = numéro de forme : tête × 4 + panneton). Le premier de chaque liste est la valeur par défaut. */
+    public static final java.util.List<String> HEADS = java.util.List.of("ring", "clover", "crown", "skull", "heart", "star", "diamond", "winged");
+    public static final java.util.List<String> BITS = java.util.List.of("simple", "double", "stairs", "hook");
+
+    /** Numéro de forme de la clé (0 à 31) pour le modèle d'objet ; une ancienne clé (sans étiquette) est « anneau + simple ». */
+    public static int shapeIndex(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag == null) return 0;
+        int h = Math.max(0, HEADS.indexOf(tag.getString("rouletteKeyHead"))), b = Math.max(0, BITS.indexOf(tag.getString("rouletteKeyBit")));
+        return h * 4 + b;
+    }
+
     public static Material material(String id) {
         if (id != null) for (Material m : MATERIALS) if (m.id().equalsIgnoreCase(id)) return m;
         return MATERIALS[0];
@@ -106,6 +118,8 @@ public class RouletteKeyItem extends Item {
 
     /** Couleur du corps (calque 0). */
     public static int bodyColor(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains("rouletteKeyBody")) return tag.getInt("rouletteKeyBody"); // couleur libre choisie pour la clé
         return materialOf(stack).color();
     }
 

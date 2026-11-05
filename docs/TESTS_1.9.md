@@ -247,3 +247,10 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Pendant la roulette (état « ouvert ») le couvercle s'ouvre à 70° autour de sa charnière arrière puis se referme ; plus de couvercle qui lévite
 - [ ] Objet « coffre roulette » en inventaire, en main et au sol : même modèle et mêmes couleurs que le bloc
 - [ ] Clic droit avec la clé, clic gauche (butin possible) : inchangés
+
+## Coffres roulette — étape 3 (clé composée)
+- [ ] Les 6 clés ont chacune leur forme : Boss (crâne + double, netherite), Nether (trèfle + simple, cuivre), Abysses (étoile + simple, quartz), Arcanique (losange + crochet, améthyste), Trésors (couronne + escalier, or), End (anneau + crochet, netherite) — aperçu : `docs/coffres_roulette/apercu_cles_6_coffres.png`
+- [ ] La gemme de la tête reprend la couleur des gemmes du coffre ; contour sombre d'un pixel
+- [ ] Clés dans l'inventaire, en main, au sol, dans le cadre : bien orientées
+- [ ] Anciennes clés (sans forme) : anneau + simple en or, elles s'empilent toujours entre elles ; une clé d'un coffre par défaut ne porte pas d'étiquette de forme
+- [ ] Ouvrir un coffre avec sa clé fonctionne comme avant

@@ -1,7 +1,204 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wavesurvivor:item/roulette_key",
-    "layer1": "wavesurvivor:item/roulette_key_gem"
-  }
+    "layer0": "wavesurvivor:item/roulette_key/outline_ring_simple",
+    "layer1": "wavesurvivor:item/roulette_key/shaft",
+    "layer2": "wavesurvivor:item/roulette_key/bit_simple",
+    "layer3": "wavesurvivor:item/roulette_key/head_ring",
+    "layer4": "wavesurvivor:item/roulette_key/head_ring_gem"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 0
+      },
+      "model": "wavesurvivor:item/roulette_key_ring_simple"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 1
+      },
+      "model": "wavesurvivor:item/roulette_key_ring_double"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 2
+      },
+      "model": "wavesurvivor:item/roulette_key_ring_stairs"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 3
+      },
+      "model": "wavesurvivor:item/roulette_key_ring_hook"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 4
+      },
+      "model": "wavesurvivor:item/roulette_key_clover_simple"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 5
+      },
+      "model": "wavesurvivor:item/roulette_key_clover_double"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 6
+      },
+      "model": "wavesurvivor:item/roulette_key_clover_stairs"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 7
+      },
+      "model": "wavesurvivor:item/roulette_key_clover_hook"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 8
+      },
+      "model": "wavesurvivor:item/roulette_key_crown_simple"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 9
+      },
+      "model": "wavesurvivor:item/roulette_key_crown_double"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 10
+      },
+      "model": "wavesurvivor:item/roulette_key_crown_stairs"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 11
+      },
+      "model": "wavesurvivor:item/roulette_key_crown_hook"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 12
+      },
+      "model": "wavesurvivor:item/roulette_key_skull_simple"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 13
+      },
+      "model": "wavesurvivor:item/roulette_key_skull_double"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 14
+      },
+      "model": "wavesurvivor:item/roulette_key_skull_stairs"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 15
+      },
+      "model": "wavesurvivor:item/roulette_key_skull_hook"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 16
+      },
+      "model": "wavesurvivor:item/roulette_key_heart_simple"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 17
+      },
+      "model": "wavesurvivor:item/roulette_key_heart_double"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 18
+      },
+      "model": "wavesurvivor:item/roulette_key_heart_stairs"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 19
+      },
+      "model": "wavesurvivor:item/roulette_key_heart_hook"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 20
+      },
+      "model": "wavesurvivor:item/roulette_key_star_simple"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 21
+      },
+      "model": "wavesurvivor:item/roulette_key_star_double"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 22
+      },
+      "model": "wavesurvivor:item/roulette_key_star_stairs"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 23
+      },
+      "model": "wavesurvivor:item/roulette_key_star_hook"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 24
+      },
+      "model": "wavesurvivor:item/roulette_key_diamond_simple"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 25
+      },
+      "model": "wavesurvivor:item/roulette_key_diamond_double"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 26
+      },
+      "model": "wavesurvivor:item/roulette_key_diamond_stairs"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 27
+      },
+      "model": "wavesurvivor:item/roulette_key_diamond_hook"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 28
+      },
+      "model": "wavesurvivor:item/roulette_key_winged_simple"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 29
+      },
+      "model": "wavesurvivor:item/roulette_key_winged_double"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 30
+      },
+      "model": "wavesurvivor:item/roulette_key_winged_stairs"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:key_shape": 31
+      },
+      "model": "wavesurvivor:item/roulette_key_winged_hook"
+    }
+  ]
 }

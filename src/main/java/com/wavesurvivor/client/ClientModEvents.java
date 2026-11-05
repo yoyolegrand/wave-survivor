@@ -28,6 +28,10 @@ public class ClientModEvents {
             net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.OFFERING_BRAZIER.get(), OfferingBrazierScreen::new);
             net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.RAMPART.get(), RampartScreen::new);
             net.minecraft.client.gui.screens.MenuScreens.register(com.wavesurvivor.registry.ModMenus.GLEANER.get(), GleanerScreen::new);
+            // Clé de roulette : forme (tête × panneton) choisie par propriété d'objet → 32 modèles
+            net.minecraft.client.renderer.item.ItemProperties.register(com.wavesurvivor.registry.ModItems.ROULETTE_KEY.get(),
+                    new net.minecraft.resources.ResourceLocation("wavesurvivor", "key_shape"),
+                    (stack, level, entity, seed) -> com.wavesurvivor.horde.roulette.RouletteKeyItem.shapeIndex(stack));
             // Boussole du Royaume : aiguille native des boussoles liées, vers la cible choisie sur la carte (sinon elle tourne)
             net.minecraft.client.renderer.item.ItemProperties.register(com.wavesurvivor.registry.ModItems.KINGDOM_COMPASS.get(),
                     new net.minecraft.resources.ResourceLocation("angle"),
@@ -139,9 +143,10 @@ public class ClientModEvents {
         event.register((stack, tintIndex) -> tintIndex == 0 ? AltarColors.rgb(DyeColor.RED) : -1,
                 ModItems.ALTAR_RUNIC_ITEM.get());
         // Clé de roulette : corps (calque 0) = matériau · gemme (calque 1) = couleur du type de clé
-        event.register((stack, tintIndex) -> tintIndex == 0
+        // Calques : 0 contour (non teinté) · 1 tige, 2 panneton, 3 tête = matière · 4 gemme = couleur des gemmes du coffre
+        event.register((stack, tintIndex) -> tintIndex >= 1 && tintIndex <= 3
                         ? com.wavesurvivor.horde.roulette.RouletteKeyItem.bodyColor(stack)
-                        : tintIndex == 1 ? com.wavesurvivor.horde.roulette.RouletteKeyItem.gemColor(stack) : -1,
+                        : tintIndex == 4 ? com.wavesurvivor.horde.roulette.RouletteKeyItem.gemColor(stack) : -1,
                 ModItems.ROULETTE_KEY.get());
         // Coffre Roulette en item : couleur d'après son nom
         event.register((stack, tintIndex) -> {
