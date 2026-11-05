@@ -427,6 +427,7 @@ public class ModItems {
                         output.accept(KINGDOM_WORKSHOP_ITEM.get());
                         output.accept(OFFERING_BRAZIER_ITEM.get());
                         output.accept(SURVIVOR_NOTEBOOK.get());
+                        output.accept(KEY_POUCH.get());
                         output.accept(SERAPH_SHRINE_ITEM.get());
                         output.accept(GRACE_SHARD.get());
                         output.accept(GRACE_FRAGMENT.get());
