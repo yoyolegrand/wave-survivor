@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond_chestplate"
+    },
+    {
+      "item": "wavesurvivor:grace_heart"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:seraph_chestplate",
+    "count": 1
+  }
+}

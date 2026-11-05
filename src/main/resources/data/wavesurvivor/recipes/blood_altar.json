@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:enchanting_table"
+    },
+    {
+      "item": "wavesurvivor:taint_fragment"
+    },
+    {
+      "item": "wavesurvivor:taint_fragment"
+    },
+    {
+      "item": "wavesurvivor:taint_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:blood_altar",
+    "count": 1
+  }
+}

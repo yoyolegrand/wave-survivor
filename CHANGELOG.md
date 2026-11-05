@@ -64,6 +64,10 @@ Every **10 waves** (from the last normal wave; adjustable), the team gets a **ti
 - In a team the decision is by **majority** (players who do not vote count as Continue) or by the **host alone**, per horde. The leaderboard records the wave reached either way.
 - Editor (Endless view): tier interval, cash-out %, choice time, host decides; the chest contents (`tierChest`: item, count, +perTier, or `pr`) are in the horde's `endless` block.
 
+### 🛠️ Crafting-table recipes for sacred & profane gear
+- **Every piece of equipment and utility block can now also be crafted at a crafting table** (same cost as the Shrine's Crafting tab): Dawn Blade, Blessed Arrows, Grace Totem, Taint Scythe, Tainted Arrows, Taint Totem, the four Seraph armor pieces, Grace Lantern, Holy Fountain, Votive Candle, Bait Totem, Profane Obelisk and Blood Altar.
+- **Seraph Armor reworked**: netherite-level protection, toughness and knockback resistance, with more durability than netherite. Full set: −15% damage from undead and the Corrupted, **+2 hearts** of max health. With **Iron's Spells** installed, each piece adds +6% Holy Spell Power and +25 max mana (`seraph_set` in `crafting_fragments.json`).
+
 ### 👝 Key Pouch
 - **New item**: right-click to open a 27-slot pouch that only accepts roulette chest keys (contents are saved in the item, like a Shulker Box).
 - **Use it from your inventory**: right-click a roulette chest with no key in hand and a key from the pouch is used; **sneak + right-click** uses every key of that type, with one fast animation and a **summary screen** of all prizes (also shown when you open several keys at once).

@@ -305,3 +305,8 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Ramassage automatique : une clé ramassée va dans la bourse ; accroupi + clic droit dans le vide pour l'activer / couper (message) ; bourse pleine : la clé va dans l'inventaire
 - [ ] `rules.json` : `keyPouchSize` (9 à 54), `keyPouchAutoPickup`, `keyPouchBulk` + `/ws reload`
 - [ ] Codex (page « Bourse à clés ») et Carnet › Ressources, FR et EN
+
+## Recettes de table de fabrication + Armure du Séraphin
+- [ ] Les 16 recettes sans forme (Lame, flèches ×8, totems, Faux, 4 pièces d'armure, lanterne, fontaine, bougie votive, totem d'appât, obélisque, autel de sang) fonctionnent à la table et dans le livre de recettes
+- [ ] Armure : valeurs netherite (3 / 8 / 6 / 3, robustesse 3, recul 0,1), durabilité supérieure à la netherite ; 4 pièces : −15 % des morts-vivants / Corrompus et **+2 cœurs** de PV max (retirés si on enlève une pièce)
+- [ ] Avec Iron's Spells : chaque pièce affiche +6 % de puissance des sorts sacrés et +25 de mana max ; sans le mod, aucun attribut ni crash

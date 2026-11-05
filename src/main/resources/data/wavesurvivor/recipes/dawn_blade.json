@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond_sword"
+    },
+    {
+      "item": "wavesurvivor:grace_heart"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:dawn_blade",
+    "count": 1
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond_hoe"
+    },
+    {
+      "item": "wavesurvivor:taint_heart"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:taint_scythe",
+    "count": 1
+  }
+}

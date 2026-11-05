@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "wavesurvivor:tainted_stone"
+    },
+    {
+      "item": "wavesurvivor:tainted_stone"
+    },
+    {
+      "item": "wavesurvivor:tainted_stone"
+    },
+    {
+      "item": "wavesurvivor:tainted_stone"
+    },
+    {
+      "item": "wavesurvivor:taint_fragment"
+    },
+    {
+      "item": "wavesurvivor:taint_fragment"
+    },
+    {
+      "item": "wavesurvivor:taint_fragment"
+    },
+    {
+      "item": "wavesurvivor:taint_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:profane_obelisk",
+    "count": 1
+  }
+}

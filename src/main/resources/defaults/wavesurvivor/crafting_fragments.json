@@ -65,7 +65,7 @@
     "taint_scythe": { "sweepRadius": 3, "sweepPercent": 60, "lifestealPercent": 5, "missCost": 1 },
     "tainted_arrow": { "witherSeconds": 4, "slownessSeconds": 4 },
     "taint_totem": { "damageBonusPercent": 50, "bonusSeconds": 30, "maxHealth": 8, "penaltySeconds": 120 },
-    "seraph_set": { "undeadReductionPercent": 15 },
+    "seraph_set": { "undeadReductionPercent": 15, "bonusHearts": 2, "holySpellPowerPercent": 6, "maxMana": 25 },
     "undeadNameHints": [ "zombie", "skeleton", "undead", "draugr", "wraith", "revenant", "lich", "ghoul", "mummy" ]
   },
   "shrineCrafts": [

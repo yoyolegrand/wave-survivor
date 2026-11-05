@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "wavesurvivor:blessed_marble"
+    },
+    {
+      "item": "wavesurvivor:blessed_marble"
+    },
+    {
+      "item": "wavesurvivor:blessed_marble"
+    },
+    {
+      "item": "wavesurvivor:blessed_marble"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:holy_fountain",
+    "count": 1
+  }
+}

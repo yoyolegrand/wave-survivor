@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "minecraft:candles"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:votive_candle",
+    "count": 1
+  }
+}

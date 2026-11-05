@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond_boots"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:seraph_boots",
+    "count": 1
+  }
+}

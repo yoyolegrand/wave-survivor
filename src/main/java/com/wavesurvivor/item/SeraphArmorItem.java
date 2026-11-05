@@ -32,6 +32,32 @@ public class SeraphArmorItem extends ArmorItem implements CraftGearItems.FixedAl
         super(SeraphArmorMaterial.SERAPH, type, props.rarity(Rarity.EPIC));
     }
 
+    private static final java.util.UUID[] UUIDS = {
+            java.util.UUID.fromString("7c1a5f20-5a0e-4d51-9a11-0e5a1f000001"), java.util.UUID.fromString("7c1a5f20-5a0e-4d51-9a11-0e5a1f000002"),
+            java.util.UUID.fromString("7c1a5f20-5a0e-4d51-9a11-0e5a1f000003"), java.util.UUID.fromString("7c1a5f20-5a0e-4d51-9a11-0e5a1f000004")};
+
+    /**
+     * Si Iron's Spells est installé : +6 % de puissance des sorts sacrés et +25 de mana max par pièce (valeurs dans crafting_fragments.json,
+     * « seraph_set » : holySpellPowerPercent, maxMana). Sans le mod, les attributs n'existent pas et rien n'est ajouté.
+     */
+    @Override
+    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier>
+            getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        var base = super.getAttributeModifiers(slot, stack);
+        if (slot != this.type.getSlot()) return base;
+        var b = com.google.common.collect.ImmutableMultimap.<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier>builder();
+        b.putAll(base);
+        var reg = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES;
+        var power = reg.getValue(new net.minecraft.resources.ResourceLocation("irons_spellbooks", "holy_spell_power"));
+        var mana = reg.getValue(new net.minecraft.resources.ResourceLocation("irons_spellbooks", "max_mana"));
+        java.util.UUID id = UUIDS[this.type.ordinal()];
+        double pct = com.wavesurvivor.craft.CraftConfig.equipNum("seraph_set", "holySpellPowerPercent", 6);
+        double mp = com.wavesurvivor.craft.CraftConfig.equipNum("seraph_set", "maxMana", 25);
+        if (power != null && pct != 0) b.put(power, new net.minecraft.world.entity.ai.attributes.AttributeModifier(id, "wavesurvivor_seraph_holy", pct / 100.0, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.MULTIPLY_BASE));
+        if (mana != null && mp != 0) b.put(mana, new net.minecraft.world.entity.ai.attributes.AttributeModifier(UUIDS[(this.type.ordinal() + 1) % 4], "wavesurvivor_seraph_mana_" + this.type.getName(), mp, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADDITION));
+        return b.build();
+    }
+
     @Override
     public String align() { return ShrineGear.CONSECRATED; }
 

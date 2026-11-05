@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond_leggings"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:seraph_leggings",
+    "count": 1
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:diamond_helmet"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    },
+    {
+      "item": "wavesurvivor:grace_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:seraph_helmet",
+    "count": 1
+  }
+}

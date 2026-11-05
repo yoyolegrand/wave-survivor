@@ -198,6 +198,25 @@ public class CraftEquipEvents {
         PENDING_MISS.put(p.getUUID(), p.level().getGameTime());
     }
 
+    private static final UUID SERAPH_HP = UUID.fromString("7c1a5f20-5a0e-4d51-9a11-0e5a1f0000a1");
+
+    /** Ensemble complet du Séraphin : +2 cœurs de PV max (config « seraph_set.bonusHearts »), retirés dès qu'une pièce manque. */
+    private static void updateSeraphHearts(ServerPlayer p) {
+        AttributeInstance hp = p.getAttribute(Attributes.MAX_HEALTH);
+        if (hp == null) return;
+        boolean full = fullSeraph(p);
+        double bonus = CraftConfig.equipNum("seraph_set", "bonusHearts", 2) * 2.0;
+        AttributeModifier cur = hp.getModifier(SERAPH_HP);
+        if (full && bonus > 0) {
+            if (cur != null && cur.getAmount() == bonus) return;
+            if (cur != null) hp.removeModifier(SERAPH_HP);
+            hp.addTransientModifier(new AttributeModifier(SERAPH_HP, "wavesurvivor_seraph_hearts", bonus, AttributeModifier.Operation.ADDITION));
+        } else if (cur != null) {
+            hp.removeModifier(SERAPH_HP);
+            if (p.getHealth() > p.getMaxHealth()) p.setHealth(p.getMaxHealth());
+        }
+    }
+
     // ─── Tick : coup manqué et phases du Totem de souillure ───
 
     @SubscribeEvent
@@ -205,6 +224,7 @@ public class CraftEquipEvents {
         if (e.phase != TickEvent.Phase.END || !(e.player instanceof ServerPlayer p)) return;
         long now = p.level().getGameTime();
         if (now % 4 == 0) updateGlow(p);
+        if (now % 10 == 0) updateSeraphHearts(p);
         if (now % 8 == 0 && p.getMainHandItem().is(ModItems.DAWN_BLADE.get()) && p.level().getDayTime() % 24000L >= 13000L && p.level() instanceof ServerLevel nl) {
             nl.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, p.getX(), p.getY(1.0), p.getZ(), 2, 0.4, 0.5, 0.4, 0.01); // la Lame de l'aube brille la nuit
         }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:bone_block"
+    },
+    {
+      "item": "wavesurvivor:taint_fragment"
+    },
+    {
+      "item": "wavesurvivor:taint_fragment"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:bait_totem",
+    "count": 1
+  }
+}
