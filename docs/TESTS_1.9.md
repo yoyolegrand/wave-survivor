@@ -334,3 +334,14 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Vague vaincue : obélisques éteints, le bloc au-dessus du coffre disparaît (`altarOpenOnVictory` à false : il reste fermé)
 - [ ] Le rituel ne recommence pas ; redémarrer le monde en pleine vague ne le bloque pas
 - [ ] Facile ×0,75 / Difficile ×1,5 (`altarWaveSize`) ; rien en Paisible
+
+## Reliquaire scellé (ruine) et Sceau
+- [ ] `/ws arena place reliquaire_scelle 0` (puis 90 / 180 / 270) : mausolée de quartz, parvis, piliers à lanternes, toit à gradins, intérieur (piédestal + coffre, lanternes de grâce / d'âme) ; rotations cohérentes (escaliers, lierre, coffre)
+- [ ] La porte est fermée par 12 blocs de Sceau (textures provisoires), la serrure au centre ; incassable (main, pioche, TNT, Wither)
+- [ ] Clic droit sans clé : message « ne s'ouvre qu'avec une Clé scellée », rien ne bouge
+- [ ] Clic droit avec une Clé scellée en main : clé consommée (1 seule), blocs qui disparaissent du centre vers l'extérieur, particules dorées et roses, sons
+- [ ] Idem avec la clé dans la Bourse à clés (mains vides)
+- [ ] Clé de roulette ordinaire ou bourse sans Clé scellée : le sceau reste fermé
+- [ ] Ouvrir le sceau puis quitter / recharger la zone en pleine ouverture : les blocs finissent de disparaître
+- [ ] Coffre : Reliquaire scellé OU Cœur (50 / 50 grâce / souillure), 4 à 8 Éclats, émeraudes / or / parfois un diamant
+- [ ] Génération naturelle en montagne (`/locate structure wavesurvivor:reliquaire_scelle`) : très rare, replat (max 4 blocs d'écart), rotation aléatoire
