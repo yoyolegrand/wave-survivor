@@ -3,6 +3,8 @@
   "keyPouchSize": 27,
   "keyPouchAutoPickup": true,
   "keyPouchBulk": true,
+  "altarWaveSize": 8,
+  "altarOpenOnVictory": true,
   "sealedKeyBossChance": 7,
   "sealedKeyFlawlessCount": 1
 }

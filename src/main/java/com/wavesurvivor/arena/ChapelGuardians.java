@@ -60,6 +60,9 @@ public class ChapelGuardians {
             return level.getServer().overworld().getDataStorage().computeIfAbsent(Data::load, Data::new, "wavesurvivor_chapels");
         }
 
+        /** Cette ruine est-elle déjà marquée (sans la marquer) ? */
+        public boolean has(long key) { return done.contains(key); }
+
         /** Marque une ruine comme déclenchée ; faux si elle l'était déjà. */
         public boolean claim(long key) {
             if (!done.add(key)) return false;

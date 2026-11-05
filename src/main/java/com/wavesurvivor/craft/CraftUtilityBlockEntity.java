@@ -34,6 +34,12 @@ public class CraftUtilityBlockEntity extends BlockEntity {
     /** Totem d'appât : fin de l'activation (temps de jeu). Totem d'appât et Autel de sang : fin de la recharge. */
     long activeUntil, readyAt;
 
+    /** Active le totem d'appât jusqu'à ce tick, sans délai de recharge (rituel de l'Autel souillé). */
+    public void activateBait(long untilTick) {
+        activeUntil = Math.max(activeUntil, untilTick);
+        setChanged();
+    }
+
     /** Poussière rose lumineuse (couleur des runes de l'Obélisque profane). */
     private static final net.minecraft.core.particles.DustParticleOptions PINK_FLAME =
             new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(1.0f, 0.3f, 0.78f), 1.2f);

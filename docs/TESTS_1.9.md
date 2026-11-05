@@ -325,3 +325,12 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Horde terminée sans aucune mort : chaque joueur reçoit `sealedKeyFlawlessCount` clé(s) et le message ; une seule mort annule
 - [ ] Pas de Clé scellée en Boss Rush
 - [ ] 9 Éclats → 1 Fragment et 1 Fragment → 9 Éclats (grâce et souillure) à la table de fabrication
+
+## Autel souillé (ruine)
+- [ ] `/ws arena place autel_souille 0` (puis 90 / 180 / 270) : plateforme, 6 obélisques en 2 blocs (moitié basse + haute), autel de sang sur l'estrade encadré de 2 totems d'appât, arches, colonnes, arbres morts ; terrain raccordé, rotations cohérentes (escaliers, chaînes, coffre)
+- [ ] Le coffre est caché sous l'autel (bloc de pierre taillée au-dessus) et contient le butin (6-10 Éclats de souillure, 1-2 Fragments, parfois un Cœur)
+- [ ] Génération naturelle : `/locate structure wavesurvivor:autel_souille` (marais, mangroves, forêts sombres ; rare, terrain plat, rotation aléatoire)
+- [ ] Rituel (ruine générée, pas posée à la commande) : à 16 blocs de l'autel, obélisques éclairés + flammes roses, son grave, 8 Corrompus aux 8 points, totems d'appât actifs
+- [ ] Vague vaincue : obélisques éteints, le bloc au-dessus du coffre disparaît (`altarOpenOnVictory` à false : il reste fermé)
+- [ ] Le rituel ne recommence pas ; redémarrer le monde en pleine vague ne le bloque pas
+- [ ] Facile ×0,75 / Difficile ×1,5 (`altarWaveSize`) ; rien en Paisible
