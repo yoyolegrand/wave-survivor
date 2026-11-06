@@ -460,7 +460,12 @@ public class ChestBuilderScreen extends Screen {
     private float testTicks() { return testStart < 0 ? -1 : (System.currentTimeMillis() - testStart) / 50f; }
 
     private void startTest() {
-        testStart = System.currentTimeMillis();
+        final int lead = 25; // ticks de repos (particules « idle ») avant le lancement
+        testStart = System.currentTimeMillis() + lead * 50L;
+        ensureFx();
+        var tl = com.wavesurvivor.horde.roulette.RouletteAnim.of(ChestPreview.TEST_GIVE);
+        fxPreview.playTest(draft.particles.fx.get("idle"), draft.particles.fx.get("spin"), draft.particles.fx.get("reveal"), accent(),
+                lead, tl.stop(), ChestPreview.TEST_GIVE, ChestPreview.TEST_GIVE + com.wavesurvivor.horde.roulette.RouletteAnim.CLOSE_AFTER + 8);
         int r = (int) (Math.random() * 5);
         testColor = TIER_RGB[r];
         testItem = new ItemStack(r == 4 ? Items.NETHERITE_INGOT : r == 3 ? Items.DIAMOND : r == 2 ? Items.EMERALD : r == 1 ? Items.GOLD_INGOT : Items.IRON_INGOT);

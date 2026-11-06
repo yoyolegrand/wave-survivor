@@ -32,16 +32,37 @@ public final class ChestParticlePreview {
     }
 
     private final List<P> parts = new ArrayList<>();
-    private CustomChestData.Effect fx;
+    /** Un effet joué entre deux instants (ticks depuis le lancement) ; son propre compteur de ticks démarre à {@code from}. */
+    private record Track(CustomChestData.Effect fx, int from, int to) {}
+
+    private final List<Track> tracks = new ArrayList<>();
     private int accent;
     private long startMs = -1, lastTick = -1, lastSimMs = -1;
     private int duration;
 
     /** Lance l'aperçu de l'effet pendant {@code ticks} ticks (20 par seconde). */
     public void play(CustomChestData.Effect effect, int accentRgb, int ticks) {
-        this.fx = effect;
+        begin(accentRgb);
+        tracks.add(new Track(effect, 0, ticks));
+        duration = ticks;
+    }
+
+    /**
+     * Essai d'ouverture : joue les trois moments dans l'ordre réel — repos avant le lancement, roulette pendant la rotation du médaillon (jusqu'à
+     * {@code stop}), révélation au gain ({@code give}, 24 ticks), puis repos jusqu'à la fermeture ({@code end}). Les temps sont en ticks depuis le lancement.
+     */
+    public void playTest(CustomChestData.Effect idle, CustomChestData.Effect spin, CustomChestData.Effect reveal, int accentRgb, int lead, int stop, int give, int end) {
+        begin(accentRgb);
+        tracks.add(new Track(idle, 0, lead));
+        tracks.add(new Track(spin, lead, lead + stop));
+        tracks.add(new Track(reveal, lead + give, lead + give + 24));
+        tracks.add(new Track(idle, lead + give + 24, lead + end));
+        duration = lead + end;
+    }
+
+    private void begin(int accentRgb) {
+        tracks.clear();
         this.accent = accentRgb;
-        this.duration = ticks;
         this.startMs = System.currentTimeMillis();
         this.lastTick = -1;
         this.lastSimMs = this.startMs;
@@ -59,7 +80,8 @@ public final class ChestParticlePreview {
             if (startMs >= 0) {
                 lastTick++;
                 if (lastTick > duration) startMs = -1;
-                else RouletteParticles.emit(null, this::add, 0.5, 1.2, 0.5, fx, accent, lastTick);
+                else for (Track t : tracks)
+                    if (lastTick >= t.from && lastTick < t.to) RouletteParticles.emit(null, this::add, 0.5, 1.2, 0.5, t.fx, accent, lastTick - t.from);
             }
             for (P p : parts) tickP(p);
             parts.removeIf(p -> p.age >= p.life);
