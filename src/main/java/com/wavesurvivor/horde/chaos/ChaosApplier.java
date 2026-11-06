@@ -39,6 +39,8 @@ public class ChaosApplier {
 
     public static void apply(ChaosEvent event, ServerLevel level, BlockPos center, MinecraftServer server) {
         if (event == null) return;
+        // Fiole de mirage : le prochain événement défavorable du désert est annulé
+        if (DesertEvents.consumeShield(event, server)) return;
 
         String type0 = event.type != null ? event.type.toLowerCase() : "";
         boolean resource = "gisement".equals(type0) || "arbre".equals(type0);
@@ -60,6 +62,7 @@ public class ChaosApplier {
             case "arbre"    -> applyGisement(event, level, center, server, true);
             case "tempete"  -> applyStorm(event, level, center);
             case "seisme"   -> applyQuake(event, level, center);
+            case "sables_mouvants", "soleil", "nuee", "mirage", "crue" -> DesertEvents.apply(event, level, center, server);
             default -> WaveSurvivorMod.LOGGER.warn("[Chaos] Type inconnu : {}", event.type);
         }
     }

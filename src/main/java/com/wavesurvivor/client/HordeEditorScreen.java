@@ -40,7 +40,7 @@ public class HordeEditorScreen extends Screen {
     private static final int T_GENERAL = 0, T_MOBS = 1, T_SPECIAL = 2, T_BOSS = 3, T_MERCH = 4, T_CHAOS = 5, T_ALTAR = 6, T_PREVIEW = 7;
     private static final String[] PROFESSIONS = {"armorer", "butcher", "cartographer", "cleric", "farmer", "fisherman",
             "fletcher", "leatherworker", "librarian", "mason", "shepherd", "toolsmith", "weaponsmith", "nitwit", "none"};
-    private static final String[] CHAOS_TYPES = {"spawn", "merchant", "lightning", "totem", "gisement", "arbre", "tempete", "seisme"};
+    private static final String[] CHAOS_TYPES = {"spawn", "merchant", "lightning", "totem", "gisement", "arbre", "tempete", "seisme", "sables_mouvants", "soleil", "nuee", "mirage", "crue"};
     private static final String[] PICKAXE_TIERS = {"bois", "pierre", "fer", "diamant", "netherite"};
     private static final String[] TOTEM_AURAS = {"fureur", "soin", "malediction", "invocation"};
     private static final String[] VANILLA_TYPES = {
@@ -179,7 +179,7 @@ public class HordeEditorScreen extends Screen {
             for (JsonElement e : chaosEvents()) if (e.isJsonObject()) {
                 JsonObject c = e.getAsJsonObject();
                 String t = HordeJson.str(c, "type", "spawn");
-                String icon = switch (t) { case "merchant" -> "§a🛒"; case "lightning" -> "§e⚡"; case "spawn" -> "§c☠"; case "totem" -> "§6⚜"; case "gisement" -> "§e⛏"; case "arbre" -> "§a🪓"; case "tempete" -> "§b❄"; case "seisme" -> "§6🌋"; default -> "§8?"; };
+                String icon = switch (t) { case "merchant" -> "§a🛒"; case "lightning" -> "§e⚡"; case "spawn" -> "§c☠"; case "totem" -> "§6⚜"; case "gisement" -> "§e⛏"; case "arbre" -> "§a🪓"; case "tempete" -> "§b❄"; case "seisme" -> "§6🌋"; case "sables_mouvants" -> "§6≈"; case "soleil" -> "§e☀"; case "nuee" -> "§6🪲"; case "mirage" -> "§d✦"; case "crue" -> "§b🌴"; default -> "§8?"; };
                 l.add(icon + " §f" + HordeJson.str(c, "message", t).replaceAll("§.", "").trim());
             }
             return l;
@@ -1625,6 +1625,38 @@ public class HordeEditorScreen extends Screen {
         fInt(22, HordeJson.num(ev, "quakeRubble", 6), v -> ev.addProperty("quakeRubble", Math.max(0, Math.min(40, v))));
         fy += 24;
         label(x, fy, t("ui.quake.hint"));
+    }
+
+    /** 1.9 — Événements du désert : nombre, rayon, durée, intensité, et phase (Assaut / Calme) en mode Kingdom. */
+    private void buildDesertForm(JsonObject ev, String type, int x, int fy) {
+        flow(x, fy);
+        fl(t("ui.desert.count"));
+        fInt(22, HordeJson.num(ev, "count", 3), v -> ev.addProperty("count", Math.max(1, Math.min(40, v))));
+        if ("sables_mouvants".equals(type)) {
+            fl(t("ui.desert.radius"));
+            fInt(22, (int) HordeJson.dbl(ev, "radius", 5), v -> ev.addProperty("radius", Math.max(2, Math.min(12, v))));
+        }
+        fl(t("ui.desert.duration"));
+        fInt(26, HordeJson.num(ev, "desertDuration", 60), v -> ev.addProperty("desertDuration", Math.max(5, v)));
+        fy += 18;
+        flow(x, fy);
+        fl(t("ui.desert.intensity"));
+        fDbl(24, HordeJson.dbl(ev, "desertIntensity", 1.0), v -> ev.addProperty("desertIntensity", Math.max(0.2, Math.min(5, v))));
+        fl(t("ui.desert.phase"));
+        String ph = HordeJson.str(ev, "phase", "");
+        fBtn(70, t("ui.desert.phase." + ("assaut".equals(ph) ? "assault" : "calme".equals(ph) ? "calm" : "any")), () -> {
+            String cur = HordeJson.str(ev, "phase", "");
+            ev.addProperty("phase", "".equals(cur) ? "assaut" : "assaut".equals(cur) ? "calme" : "");
+            changed();
+            init();
+        });
+        if ("nuee".equals(type)) {
+            fy += 18;
+            label(x, fy + 3, t("ui.entite"));
+            text(x + 44, fy, 120, HordeJson.str(ev, "entityType", "scarabee"), v -> { ev.addProperty("entityType", v.trim()); ev.addProperty("isCustomEntity", true); });
+        }
+        fy += 24;
+        label(x, fy, t("ui.desert.hint." + type));
     }
 
     private void buildStormForm(JsonObject ev, int x, int fy) {
@@ -3389,12 +3421,17 @@ public class HordeEditorScreen extends Screen {
             case "arbre" -> com.wavesurvivor.i18n.WSLang.t("chaos.type.arbre");
             case "tempete" -> com.wavesurvivor.i18n.WSLang.t("chaos.type.tempete");
             case "seisme" -> com.wavesurvivor.i18n.WSLang.t("chaos.type.seisme");
+            case "sables_mouvants", "soleil", "nuee", "mirage", "crue" -> com.wavesurvivor.i18n.WSLang.t("chaos.type." + type);
             default -> "§8" + type + com.wavesurvivor.i18n.WSLang.t("ui.non_gere");
         }, () -> {
             String next = cycle(List.of(CHAOS_TYPES), HordeJson.str(ev, "type", "spawn"), 1);
             ev.addProperty("type", next);
             // Passage en Tempête : rayon large par défaut (celui du totem est trop petit)
             if (("tempete".equals(next) || "seisme".equals(next)) && HordeJson.dbl(ev, "radius", 8) <= 8) ev.addProperty("radius", 40);
+            // Événements du désert : valeurs de départ raisonnables
+            if ("sables_mouvants".equals(next) && HordeJson.dbl(ev, "radius", 8) > 12) ev.addProperty("radius", 5);
+            if ("nuee".equals(next) && HordeJson.str(ev, "entityType", "").isBlank()) ev.addProperty("entityType", "scarabee");
+            if (("nuee".equals(next) || "mirage".equals(next)) && HordeJson.num(ev, "count", 1) < 3) ev.addProperty("count", 8);
             // Passage en Arbre : blocs et butin par défaut (chêne) si rien de personnalisé
             if ("arbre".equals(next)) {
                 JsonArray bl = HordeJson.arr(ev, "blocks");
@@ -3458,6 +3495,7 @@ public class HordeEditorScreen extends Screen {
             }
             case "tempete" -> buildStormForm(ev, x, fy);
             case "seisme" -> buildQuakeForm(ev, x, fy);
+            case "sables_mouvants", "soleil", "nuee", "mirage", "crue" -> buildDesertForm(ev, type, x, fy);
             case "totem" -> {
                 String aura = HordeJson.str(ev, "aura", "fureur");
                 flow(x, fy);

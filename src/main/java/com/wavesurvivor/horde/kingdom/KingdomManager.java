@@ -307,6 +307,41 @@ public final class KingdomManager {
         return true;
     }
 
+    /** Nombre de Portes de la partie (détruites comprises). */
+    public static int gateCount() { return PORTALS.size(); }
+
+    /**
+     * Tablette de reconnaissance (1.9) : par Porte encore debout, les types de troupes de l'Assaut suivant et le seigneur éventuel.
+     * Les effectifs exacts restent secrets : seule la composition est révélée.
+     */
+    public static List<net.minecraft.network.chat.Component> previewNextAssault() {
+        List<net.minecraft.network.chat.Component> out = new ArrayList<>();
+        if (!active || horde == null || horde.configData == null) return out;
+        int next = cycle + 1;
+        var units = horde.configData.hordeEntities == null ? List.<HordeEntity>of() : horde.configData.hordeEntities;
+        for (Portal p : PORTALS) {
+            if (p.destroyed) continue;
+            java.util.LinkedHashSet<String> names = new java.util.LinkedHashSet<>();
+            for (HordeEntity u : units) {
+                if (!activeAt(u, next)) continue;
+                if (u.targetsAltar || u.allowedAtGate(p.num)) names.add(strip(u.customName != null && !u.customName.isBlank() ? u.customName : u.entityType));
+            }
+            StringBuilder sb = new StringBuilder();
+            int k = 0;
+            for (String n : names) { if (k++ > 0) sb.append(", "); sb.append(n); }
+            out.add(WSLang.c("tablet.gate", WSLang.t("kingdom.dir." + p.dir), sb.length() == 0 ? "?" : sb.toString()));
+        }
+        if (horde.configData.useBossWaves && horde.configData.bossWaves != null) {
+            for (var w : horde.configData.bossWaves) {
+                if (w.waveNumber == next && !BOSS_DONE.contains(w.waveNumber))
+                    out.add(WSLang.c("tablet.lord", strip(w.bossName == null ? "?" : w.bossName)));
+            }
+        }
+        return out;
+    }
+
+    private static String strip(String s) { return s == null ? "" : s.replaceAll("§.", "").trim(); }
+
     public static BlockPos gatePos(int gate) {
         return gate >= 0 && gate < PORTALS.size() ? PORTALS.get(gate).pos : null;
     }

@@ -89,6 +89,13 @@ public class ModItems {
     /** Boussole des Vestiges : pointe vers la structure du mod non réclamée la plus proche. */
     public static final RegistryObject<Item> VESTIGE_COMPASS = ITEMS.register("vestige_compass",
             () -> new com.wavesurvivor.vestige.VestigeCompassItem(new Item.Properties()));
+    /** Objets du marché du désert (Oracle des sables) : voir DesertUtilityItem. */
+    public static final RegistryObject<Item> GOURDE_FRAICHE = ITEMS.register("gourde_fraiche",
+            () -> new com.wavesurvivor.item.DesertUtilityItem(com.wavesurvivor.item.DesertUtilityItem.Kind.GOURDE, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> FIOLE_MIRAGE = ITEMS.register("fiole_mirage",
+            () -> new com.wavesurvivor.item.DesertUtilityItem(com.wavesurvivor.item.DesertUtilityItem.Kind.FIOLE, new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final RegistryObject<Item> TABLETTE_RECONNAISSANCE = ITEMS.register("tablette_reconnaissance",
+            () -> new com.wavesurvivor.item.DesertUtilityItem(com.wavesurvivor.item.DesertUtilityItem.Kind.TABLETTE, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final RegistryObject<Item> BLESSED_BREAD = ITEMS.register("blessed_bread",
             () -> new com.wavesurvivor.craft.CraftFoodItem("blessed_bread", false, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final RegistryObject<Item> SANCTIFIED_APPLE = ITEMS.register("sanctified_apple",
@@ -443,6 +450,9 @@ public class ModItems {
                         output.accept(TAINT_FRAGMENT.get());
                         output.accept(TAINT_HEART.get());
                         // Artisanat sacré et profane : nourriture
+                        output.accept(GOURDE_FRAICHE.get());
+                        output.accept(FIOLE_MIRAGE.get());
+                        output.accept(TABLETTE_RECONNAISSANCE.get());
                         output.accept(BLESSED_BREAD.get());
                         output.accept(SANCTIFIED_APPLE.get());
                         output.accept(CELESTIAL_MEAD.get());

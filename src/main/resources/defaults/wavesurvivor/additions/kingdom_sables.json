@@ -322,6 +322,33 @@
               },
               {
                 "input1": "minecraft:emerald",
+                "input1Count": 18,
+                "input2": "",
+                "input2Count": 0,
+                "output": "wavesurvivor:fiole_mirage",
+                "outputCount": 1,
+                "maxUses": 3
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 12,
+                "input2": "",
+                "input2Count": 0,
+                "output": "wavesurvivor:tablette_reconnaissance",
+                "outputCount": 1,
+                "maxUses": 4
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 3,
+                "input2": "",
+                "input2Count": 0,
+                "output": "wavesurvivor:gourde_fraiche",
+                "outputCount": 1,
+                "maxUses": 8
+              },
+              {
+                "input1": "minecraft:emerald",
                 "input1Count": 24,
                 "input2": "",
                 "input2Count": 0,
@@ -1568,6 +1595,89 @@
                 "chance": 20
               }
             ]
+          },
+          {
+            "type": "tempete",
+            "message": "§6§l🏜 UNE TEMPÊTE DE SABLE S'ABAT SUR L'OASIS ! 🏜",
+            "sound": "minecraft:entity.ravager.roar",
+            "radius": 45,
+            "stormDuration": 60,
+            "stormWarning": 6,
+            "stormDamage": 1.0,
+            "stormFreeze": false,
+            "stormWind": 0.015,
+            "stormParticle": "block:minecraft:sand",
+            "stormShelter": [],
+            "stormShelterRadius": 4,
+            "effects": [
+              {
+                "effect": "minecraft:hunger",
+                "level": 1,
+                "target": "joueurs"
+              },
+              {
+                "effect": "minecraft:slowness",
+                "level": 1,
+                "target": "joueurs"
+              },
+              {
+                "effect": "minecraft:speed",
+                "level": 1,
+                "target": "monstres"
+              }
+            ],
+            "stormShelterMode": "cover",
+            "stormLook": "sand",
+            "stormImmuneItem": "wavesurvivor:voile_desert",
+            "phase": "assaut"
+          },
+          {
+            "type": "sables_mouvants",
+            "message": "§6§l≈ LE SABLE SE DÉROBE SOUS LES PORTES ! ≈",
+            "sound": "minecraft:block.sand.break",
+            "count": 4,
+            "desertDuration": 25,
+            "desertIntensity": 1.0,
+            "phase": "",
+            "radius": 5
+          },
+          {
+            "type": "soleil",
+            "message": "§e§l☀ LE SOLEIL DE PLOMB ÉCRASE L'OASIS ! ☀",
+            "sound": "minecraft:entity.blaze.ambient",
+            "count": 1,
+            "desertDuration": 100,
+            "desertIntensity": 1.0,
+            "phase": "calme"
+          },
+          {
+            "type": "nuee",
+            "message": "§6§l🪲 UNE NUÉE DE SCARABÉES JAILLIT DU SABLE ! 🪲",
+            "sound": "minecraft:entity.silverfish.ambient",
+            "count": 8,
+            "desertDuration": 60,
+            "desertIntensity": 1.0,
+            "phase": "calme",
+            "entityType": "scarabee",
+            "isCustomEntity": true
+          },
+          {
+            "type": "mirage",
+            "message": "§d§l✦ DES TROUPES SE DESSINENT À L'HORIZON… ✦",
+            "sound": "minecraft:block.beacon.ambient",
+            "count": 9,
+            "desertDuration": 45,
+            "desertIntensity": 1.0,
+            "phase": "assaut"
+          },
+          {
+            "type": "crue",
+            "message": "§b§l🌴 L'OASIS DÉBORDE : LA CRUE EST BIENFAISANTE ! 🌴",
+            "sound": "minecraft:entity.player.splash",
+            "count": 2,
+            "desertDuration": 60,
+            "desertIntensity": 1.0,
+            "phase": "calme"
           }
         ],
         "blockNaturalSpawns": true,

@@ -455,6 +455,11 @@ public class HordeManager {
         }
     }
 
+    /** Événements du chaos de la horde en cours (vide s'il n'y en a pas). */
+    public List<ChaosEvent> activeChaosEvents() {
+        return activeHorde != null && activeHorde.configData != null && activeHorde.configData.chaosEvents != null ? activeHorde.configData.chaosEvents : List.of();
+    }
+
     /** Événement de ressources (bénéfique) : gisement de minerai ou arbre. */
     public static boolean isResourceEvent(ChaosEvent ev) {
         return ev != null && ("gisement".equalsIgnoreCase(ev.type) || "arbre".equalsIgnoreCase(ev.type));
@@ -763,8 +768,15 @@ public class HordeManager {
         List<ChaosEvent> events = cfg.chaosEvents;
         if (events == null || events.isEmpty()) return;
         if (resourceOnly) {
+            // Calme : ressources, et les événements marqués « calme » (soleil de plomb, nuée, crue de l'oasis…)
             List<ChaosEvent> res = new java.util.ArrayList<>();
-            for (ChaosEvent ev : events) if (isResourceEvent(ev)) res.add(ev);
+            for (ChaosEvent ev : events) if (isResourceEvent(ev) || (ev != null && "calme".equalsIgnoreCase(ev.phase))) res.add(ev);
+            if (res.isEmpty()) return;
+            events = res;
+        } else if (com.wavesurvivor.horde.kingdom.KingdomManager.isActive()) {
+            // Assaut : tout sauf les événements réservés au Calme
+            List<ChaosEvent> res = new java.util.ArrayList<>();
+            for (ChaosEvent ev : events) if (ev != null && !"calme".equalsIgnoreCase(ev.phase)) res.add(ev);
             if (res.isEmpty()) return;
             events = res;
         }
@@ -998,6 +1010,7 @@ public class HordeManager {
         com.wavesurvivor.horde.endless.Endless.clear();
         com.wavesurvivor.horde.frost.StormManager.clearAll();
         com.wavesurvivor.horde.quake.QuakeManager.clearAll();
+        com.wavesurvivor.horde.chaos.DesertEvents.clearAll(server); // 1.9 : mirages, soleil de plomb, Fiole armée
         com.wavesurvivor.horde.skill.IceFx.clearAll(); // fissures, rochers, pics… encore à l'écran
         this.state = State.IDLE;
         this.activeHorde = null;

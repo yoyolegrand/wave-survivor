@@ -126,6 +126,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BenedictionProtection()); // 1.7 : protection pendant le choix (multi)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.invasion.InvasionEvents()); // 1.7 : invasions de village, Mauvais présage
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.quake.QuakeManager()); // 1.7 : séismes (chaos)
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.chaos.DesertEvents()); // 1.9 : événements du désert
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.frost.StormManager()); // 1.6 : tempêtes (chaos et boss)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.RenaissanceRewards()); // 1.5 : PR gagnés en jouant (boss)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.benediction.BenedictionEvents()); // bénédictions conservées à la mort

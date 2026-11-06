@@ -157,6 +157,19 @@ public class ChaosEvent {
     @SerializedName("stormShelterRadius")
     public double stormShelterRadius = 4;
 
+    // ─── Événements du désert (1.9) : sables mouvants, soleil de plomb, nuée, mirage, crue ───
+
+    /** Durée de l'événement du désert (secondes) et intensité (1 = nominal). */
+    @SerializedName("desertDuration")
+    public int desertDuration = 60;
+
+    @SerializedName("desertIntensity")
+    public double desertIntensity = 1.0;
+
+    /** Kingdom : quand l'événement peut tomber — « assaut », « calme » ou vide (comme avant : Assaut, et Calme pour les ressources). */
+    @SerializedName("phase")
+    public String phase = "";
+
     public static class AuraEffect {
         /** Ex : minecraft:blindness */
         @SerializedName("effect") public String effect;

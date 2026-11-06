@@ -202,5 +202,8 @@
   "key.categories.wavesurvivor": "Wave Survivor",
   "item.wavesurvivor.key_pouch": "Key Pouch",
   "block.wavesurvivor.reliquary_seal": "Reliquary Seal",
-  "item.wavesurvivor.vestige_compass": "Vestige Compass"
+  "item.wavesurvivor.vestige_compass": "Vestige Compass",
+  "item.wavesurvivor.gourde_fraiche": "Cool Waterskin",
+  "item.wavesurvivor.fiole_mirage": "Mirage Vial",
+  "item.wavesurvivor.tablette_reconnaissance": "Reconnaissance Tablet"
 }

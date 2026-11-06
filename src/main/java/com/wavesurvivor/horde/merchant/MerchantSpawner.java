@@ -254,6 +254,26 @@ public class MerchantSpawner {
         return com.wavesurvivor.horde.loot.LootItems.resolve(output, count);
     }
 
+    /** Crue de l'oasis : baisse de {@code pct} % le prix de chaque offre des marchands présents (arrondi à l'inférieur, jamais gratuit). @return nombre de marchands touchés. */
+    public static int discount(MinecraftServer server, int pct) {
+        if (server == null || pct <= 0) return 0;
+        int n = 0;
+        for (UUID id : ACTIVE_MERCHANTS) {
+            for (ServerLevel level : server.getAllLevels()) {
+                Entity e = level.getEntity(id);
+                if (!(e instanceof Villager v)) continue;
+                for (MerchantOffer o : v.getOffers()) {
+                    int cost = o.getBaseCostA().getCount();
+                    int off = (int) Math.floor(cost * pct / 100.0);
+                    if (off > 0 && cost - off >= 1) o.addToSpecialPriceDiff(-off);
+                }
+                n++;
+                break;
+            }
+        }
+        return n;
+    }
+
     /** Cleanup tous les marchands actifs (fin de horde). */
     public static void despawnAll(MinecraftServer server) {
         if (server == null || ACTIVE_MERCHANTS.isEmpty()) return;

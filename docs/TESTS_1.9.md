@@ -392,3 +392,16 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Chaque Calme réussi (dès l'Assaut 1 survécu) : une clé de Caravane par joueur + message ; l'Oracle en vend aussi
 - [ ] Une arène sans marché (Val de la Couronne) garde l'ancienne disposition en cercle autour de l'autel
 - [ ] Reporté à l'étape 4 : Gourde d'eau fraîche, Tablette de reconnaissance, Fiole de mirage (ils dépendent des événements du désert)
+
+## Kingdom des Sables — étape 4 (événements du désert)
+- [ ] Éditeur du chaos : nouveaux types Sables mouvants, Soleil de plomb, Nuée de scarabées, Mirage, Crue de l'oasis (nombre, rayon, durée, intensité, « Quand » = Défaut / Assaut / Calme), enregistrés et rechargés
+- [ ] Tempête de sable (Assaut) : brouillard de sable, monstres plus rapides (+20 %), abris selon les réglages ; le Voile du désert protège
+- [ ] Sables mouvants (Assaut) : 4 disques de sable entre les Portes et le royaume ; joueurs ET monstres ralentis, sans saut ; le Voile protège les joueurs ; les disques disparaissent
+- [ ] Soleil de plomb (Calme, de jour) : hors de l'ombre, la faim baisse plus vite, message « cherche l'ombre » ; à l'ombre / sous un toit : rien ; fin à l'Assaut suivant
+- [ ] Nuée de scarabées (Calme) : surgit près d'un coffre du royaume (hors coffres roulette), sinon près du Monolithe ; attaque le joueur le plus proche
+- [ ] Mirage (Assaut) : ~9 husks lumineux immobiles au loin, inoffensifs, qui disparaissent (fumée) à l'approche ou après 45 s ; aucun ne compte dans la vague ; rien ne reste après une sauvegarde / un redémarrage
+- [ ] Crue de l'oasis (Calme) : 2 arbres en plus, Régénération, marchands présents −10 % (offres à partir de 10 émeraudes)
+- [ ] Gourde d'eau fraîche (Oracle, 3 émeraudes) : se boit, immunité au Soleil de plomb 3 min
+- [ ] Fiole de mirage (Oracle) : annule le prochain événement défavorable du désert (message dans le fil d'événements) ; un seul à la fois
+- [ ] Tablette de reconnaissance (Oracle) : liste, Porte par Porte, les troupes de l'Assaut suivant + le seigneur éventuel ; hors Kingdom : message
+- [ ] Icônes et noms FR / EN des 3 objets ; présents dans l'onglet créatif

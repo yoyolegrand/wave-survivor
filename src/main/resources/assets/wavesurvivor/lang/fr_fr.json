@@ -202,5 +202,8 @@
   "key.categories.wavesurvivor": "Wave Survivor",
   "item.wavesurvivor.key_pouch": "Bourse à clés",
   "block.wavesurvivor.reliquary_seal": "Sceau du reliquaire",
-  "item.wavesurvivor.vestige_compass": "Boussole des Vestiges"
+  "item.wavesurvivor.vestige_compass": "Boussole des Vestiges",
+  "item.wavesurvivor.gourde_fraiche": "Gourde d'eau fraîche",
+  "item.wavesurvivor.fiole_mirage": "Fiole de mirage",
+  "item.wavesurvivor.tablette_reconnaissance": "Tablette de reconnaissance"
 }
