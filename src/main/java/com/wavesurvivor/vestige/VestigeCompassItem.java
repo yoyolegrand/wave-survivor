@@ -43,7 +43,7 @@ public class VestigeCompassItem extends Item {
             return InteractionResultHolder.success(stack);
         }
         VestigeRegistry.Entry e = VestigeRegistry.nearest(sp, filterOf(stack));
-        if (e == null) sp.displayClientMessage(Component.literal(WSLang.t("vestige.none")), true);
+        if (e == null) sp.displayClientMessage(Component.literal(WSLang.t(VestigeRegistry.scanning(sp) ? "vestige.scanning" : "vestige.none")), true);
         else sp.displayClientMessage(Component.literal(WSLang.t("vestige.unknown", Math.round(VestigeRegistry.distance(sp, e)))), true);
         VestigeRegistry.sync(sp, true);
         return InteractionResultHolder.success(stack);

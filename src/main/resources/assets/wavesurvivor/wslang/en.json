@@ -4545,6 +4545,7 @@
   "vestige.tip": "Points to the nearest unclaimed vestige. Right-click: distance.",
   "vestige.tip_filter": "Sneak + right-click: change the targeted type.",
   "vestige.unknown": "§6Unknown vestige {0} blocks away",
+  "vestige.scanning": "§7Searching for vestiges… try again in a moment",
   "vestige.none": "§cNo vestige nearby",
   "vestige.filter_set": "Compass set to: {0}",
   "vestige.filter.0": "All",

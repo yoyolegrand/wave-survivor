@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * REGISTRE DES VESTIGES (1.9) : toutes les structures du mod connues du monde (arènes de horde, Sanctuaires du Séraphin, ruines), enregistrées à leur
  * génération (ou à leur pose par commande), et ce que chaque joueur a déjà « réclamé » (horde terminée, statue cliquée, coffre ou sceau ouvert).
  * La Boussole des Vestiges vise la plus proche non réclamée. Suivi par joueur, ou partagé par tout le serveur (rules.json : vestigeShared).
- * Les structures ne sont connues qu'une fois leurs chunks générés : la boussole « découvre » en même temps que le joueur explore.
+ * Les structures sont connues à leur génération, ou trouvées à l'avance par {@link VestigeScanner} (calcul des emplacements possibles autour d'un joueur qui porte la boussole).
  */
 public class VestigeRegistry extends SavedData {
 
@@ -70,9 +70,22 @@ public class VestigeRegistry extends SavedData {
     private void drain() {
         Entry e;
         boolean dirty = false;
-        while ((e = PENDING.poll()) != null) dirty |= entries.putIfAbsent(e.key(), e) == null;
+        while ((e = PENDING.poll()) != null) {
+            if (entries.containsKey(e.key()) || hasNear(e)) continue; // déjà connue (génération + recherche de la boussole peuvent donner 1 bloc d'écart)
+            entries.put(e.key(), e);
+            dirty = true;
+        }
         if (dirty) setDirty();
     }
+
+    private boolean hasNear(Entry n) {
+        for (Entry e : entries.values())
+            if (e.kind == n.kind && e.dim.equals(n.dim) && Math.abs(e.x - n.x) <= 6 && Math.abs(e.z - n.z) <= 6) return true;
+        return false;
+    }
+
+    /** La recherche active de la boussole n'a pas fini d'examiner les emplacements possibles autour du joueur. */
+    public static boolean scanning(ServerPlayer p) { return VestigeScanner.busy(p); }
 
     // ─── Réclamations ───
 
@@ -197,12 +210,15 @@ public class VestigeRegistry extends SavedData {
         /** Cible rafraîchie toutes les 2 secondes pour les joueurs qui ont une boussole. */
         @SubscribeEvent
         public void onTick(TickEvent.PlayerTickEvent e) {
-            if (e.phase != TickEvent.Phase.END || !(e.player instanceof ServerPlayer p) || p.tickCount % 40 != 0) return;
+            if (e.phase != TickEvent.Phase.END || !(e.player instanceof ServerPlayer p)) return;
+            // Recherche active des structures pas encore générées (étalée, uniquement avec une boussole)
+            if (p.tickCount % 4 == 0 && !compassOf(p).isEmpty()) VestigeScanner.tick(p);
+            if (p.tickCount % 40 != 0) return;
             sync(p, false);
         }
 
         @SubscribeEvent
-        public void onLogin(PlayerEvent.PlayerLoggedInEvent e) { LAST.remove(e.getEntity().getUUID()); }
+        public void onLogin(PlayerEvent.PlayerLoggedInEvent e) { LAST.remove(e.getEntity().getUUID()); VestigeScanner.forget(e.getEntity().getUUID()); }
 
         /** Ruine : ouvrir un de ses coffres la réclame (le sceau du Reliquaire est géré à part). */
         @SubscribeEvent

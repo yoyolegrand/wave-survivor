@@ -3806,6 +3806,7 @@
   "vestige.tip": "Pointe vers le vestige non réclamé le plus proche. Clic droit : distance.",
   "vestige.tip_filter": "Accroupi + clic droit : change le type visé.",
   "vestige.unknown": "§6Vestige inconnu à {0} blocs",
+  "vestige.scanning": "§7Recherche des vestiges en cours… réessaie dans un instant",
   "vestige.none": "§cAucun vestige à proximité",
   "vestige.filter_set": "Boussole réglée sur : {0}",
   "vestige.filter.0": "Tout",
