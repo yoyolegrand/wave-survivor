@@ -103,7 +103,7 @@ final class VestigeScanner {
                 int sp = Math.max(1, rs.spacing());
                 for (int rx = Math.floorDiv(px - r, sp); rx <= Math.floorDiv(px + r, sp); rx++) {
                     for (int rz = Math.floorDiv(pz - r, sp); rz <= Math.floorDiv(pz + r, sp); rz++) {
-                        ChunkPos cp = rs.getPotentialStructureChunk(state.getLevelSeed(), rx, rz);
+                        ChunkPos cp = rs.getPotentialStructureChunk(state.getLevelSeed(), rx * sp, rz * sp);
                         long dx = cp.x - px, dz = cp.z - pz, d = dx * dx + dz * dz;
                         if (d > (long) r * r || (!ignoreDone && DONE.contains(dim + "|" + id + "|" + cp.x + "|" + cp.z))) continue;
                         out.add(new Cand(h, cp.x, cp.z, d));
