@@ -67,6 +67,8 @@ public final class ArenaBlueprint {
     private boolean aquatic = false;
     /** Emprise carrée (terrain de mode Kingdom) : dégagement, fondations et raccord suivent le rectangle du plan au lieu du cercle. */
     private boolean square = false;
+    /** Plan de désert : le raccord extérieur est en sable (au lieu d'herbe et de terre). */
+    private boolean desert = false;
     /** Mode de jeu du plan ("kingdom" : l'autel lance le mode Kingdom, portes fixes du plan). */
     private String mode = "";
     /** Identifiant d'un mod sans lequel l'arène n'existe pas (ni génération, ni pose) ; vide = aucune condition. */
@@ -199,6 +201,7 @@ public final class ArenaBlueprint {
         if (o.has("floatY")) bp.floatY = o.get("floatY").getAsInt();
         if (o.has("aquatic")) bp.aquatic = o.get("aquatic").getAsBoolean();
         if (o.has("square")) bp.square = o.get("square").getAsBoolean();
+        if (o.has("desert")) bp.desert = o.get("desert").getAsBoolean();
         if (o.has("mode")) bp.mode = o.get("mode").getAsString();
         if (o.has("requiresMod")) bp.requiresMod = o.get("requiresMod").getAsString();
         bp.markerTypes.putAll(typesByMarker);
@@ -403,9 +406,9 @@ public final class ArenaBlueprint {
             if (square) hi = Math.max(hi, surfaceTop(level, wx, wz, wg) + 1); // arbres coupés compris
             for (int y = ty + 1; y <= hi; y++) set(level, new BlockPos(wx, y, wz), air);
             if (square) { // talus : herbe sur terre, jamais de pierre à nu
-                for (int y = ty - 1; y >= ty - 3; y--) set(level, new BlockPos(wx, y, wz), Blocks.DIRT.defaultBlockState());
-                fill(level, wx, ty - 4, wz, ty - 48, false);
-                set(level, new BlockPos(wx, ty, wz), Blocks.GRASS_BLOCK.defaultBlockState());
+                for (int y = ty - 1; y >= ty - 3; y--) set(level, new BlockPos(wx, y, wz), (desert ? Blocks.SAND : Blocks.DIRT).defaultBlockState());
+                fill(level, wx, ty - 4, wz, ty - 48, desert);
+                set(level, new BlockPos(wx, ty, wz), (desert ? Blocks.SAND : Blocks.GRASS_BLOCK).defaultBlockState());
                 continue;
             }
             fill(level, wx, ty - 1, wz, ty - 48, false);
@@ -459,7 +462,7 @@ public final class ArenaBlueprint {
             }
             int top = Math.max(base + layers.length, surfaceTop(level, wx, wz, wg) + 1);
             for (int y = base + lo; y <= top; y++) set(level, new BlockPos(wx, y, wz), air);
-            fill(level, wx, base + lo - 1, wz, base - 48, false);
+            fill(level, wx, base + lo - 1, wz, base - 48, desert);
         }
     }
 
