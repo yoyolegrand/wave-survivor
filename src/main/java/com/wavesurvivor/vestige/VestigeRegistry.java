@@ -87,6 +87,16 @@ public class VestigeRegistry extends SavedData {
     /** La recherche active de la boussole n'a pas fini d'examiner les emplacements possibles autour du joueur. */
     public static boolean scanning(ServerPlayer p) { return VestigeScanner.busy(p); }
 
+    /** Diagnostic de la commande /ws vestiges [scan]. */
+    public static java.util.List<String> report(ServerPlayer p, boolean scanAll) {
+        java.util.List<String> l = VestigeScanner.report(p, scanAll);
+        VestigeRegistry r = get(p.getServer());
+        r.drain();
+        l.add("§7Registre : " + r.entries.size() + " structure(s) connue(s), " + r.claims.values().stream().mapToInt(Set::size).sum() + " réclamation(s).");
+        Events.LAST.remove(p.getUUID());
+        return l;
+    }
+
     // ─── Réclamations ───
 
     private static UUID owner(Player p) { return RulesConfig.vestigeShared() ? new UUID(0, 0) : p.getUUID(); }

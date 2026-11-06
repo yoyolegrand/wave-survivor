@@ -134,6 +134,9 @@ public class HordeCommand {
                 .then(com.wavesurvivor.horde.HordePerf.build())
                 // Arènes toutes faites : pose de test (opérateurs)
                 .then(com.wavesurvivor.arena.ArenaCommand.build())
+                .then(net.minecraft.commands.Commands.literal("vestiges").requires(s -> s.hasPermission(2))
+                        .executes(ctx -> vestigesReport(ctx.getSource(), false))
+                        .then(net.minecraft.commands.Commands.literal("scan").executes(ctx -> vestigesReport(ctx.getSource(), true))))
                 // Mode sans fin : meilleurs scores (ouvert à tous)
                 .then(Commands.literal("endless").executes(ctx -> com.wavesurvivor.horde.endless.Endless.showTop(ctx.getSource())))
                 // Statistiques et succès du joueur (ouvert à tous)
@@ -1314,5 +1317,12 @@ public class HordeCommand {
                     + " §7@ (" + e.x + ", " + e.y + ", " + e.z + ") " + e.dimension), false);
         }
         return all.size();
+    }
+
+    /** /ws vestiges [scan] : diagnostic de la Boussole des Vestiges (scan = examine tout de suite tous les emplacements possibles). */
+    private static int vestigesReport(net.minecraft.commands.CommandSourceStack src, boolean scan) {
+        if (!(src.getEntity() instanceof net.minecraft.server.level.ServerPlayer p)) return 0;
+        for (String line : com.wavesurvivor.vestige.VestigeRegistry.report(p, scan)) src.sendSuccess(() -> net.minecraft.network.chat.Component.literal(line), false);
+        return 1;
     }
 }
