@@ -405,3 +405,11 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Fiole de mirage (Oracle) : annule le prochain événement défavorable du désert (message dans le fil d'événements) ; un seul à la fois
 - [ ] Tablette de reconnaissance (Oracle) : liste, Porte par Porte, les troupes de l'Assaut suivant + le seigneur éventuel ; hors Kingdom : message
 - [ ] Icônes et noms FR / EN des 3 objets ; présents dans l'onglet créatif
+
+## Kingdom des Sables — étape 5 (Oasis / Désert)
+- [ ] Éditeur du chaos, événement Arbre : bouton « Forme » Classique / Oasis (palmier) ; événement Gisement : bouton « Style » Classique / Désert (rocher) ; réglage conservé après fermeture / réouverture
+- [ ] Palmier : tronc courbé de 6 à 9 blocs en bois de jungle avec anneaux écorcés, 8 palmes qui montent puis retombent, noix de coco (terre cuite brune) sous la couronne ; balancement au vent ; il penche et rétrécit à chaque coup de hache ; même taille / PV / butin que l'arbre classique, et les 3 tailles (petit, moyen, grand) fonctionnent
+- [ ] Un palmier avec d'autres blocs (tronc / feuillage / fruits personnalisés) prend ces blocs ; sans fruits : pas de noix
+- [ ] Gisement Désert : lit de sable (et sable rouge) sous un petit rocher, la roche en bas, le minerai en haut ; rétrécit à chaque coup ; classique inchangé
+- [ ] Style conservé après sauvegarde / rechargement du monde
+- [ ] Kingdom « Les Sables » : arbres du chaos = palmiers, gisements = style Désert, sans rien régler

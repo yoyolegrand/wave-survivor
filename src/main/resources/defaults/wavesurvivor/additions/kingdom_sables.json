@@ -1519,7 +1519,8 @@
                 "maxQty": 2,
                 "chance": 20
               }
-            ]
+            ],
+            "oreStyle": "desert"
           },
           {
             "type": "totem",
@@ -1577,14 +1578,13 @@
             ],
             "minTier": 0,
             "trunkBlocks": [
-              "minecraft:stripped_acacia_wood"
+              "minecraft:jungle_log"
             ],
             "leafBlocks": [
-              "minecraft:jungle_leaves",
-              "minecraft:azalea_leaves"
+              "minecraft:jungle_leaves"
             ],
             "fruitBlocks": [
-              "minecraft:honey_block"
+              "minecraft:brown_terracotta"
             ],
             "size": "aleatoire",
             "hitDrops": [
@@ -1594,7 +1594,8 @@
                 "maxQty": 1,
                 "chance": 20
               }
-            ]
+            ],
+            "treeShape": "oasis"
           },
           {
             "type": "tempete",

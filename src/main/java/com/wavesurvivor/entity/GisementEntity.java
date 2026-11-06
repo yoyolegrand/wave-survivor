@@ -42,6 +42,8 @@ public class GisementEntity extends Mob {
     private static final EntityDataAccessor<Integer> SIZE = SynchedEntityData.defineId(GisementEntity.class, EntityDataSerializers.INT);
     /** Type : 0 = minerai (pioche), 1 = arbre (hache). */
     private static final EntityDataAccessor<Integer> KIND = SynchedEntityData.defineId(GisementEntity.class, EntityDataSerializers.INT);
+    /** Style (1.9) : 0 = classique, 1 = « Oasis » pour un arbre (palmier) / « Désert » pour un minerai (rocher dans le sable). */
+    private static final EntityDataAccessor<Integer> STYLE = SynchedEntityData.defineId(GisementEntity.class, EntityDataSerializers.INT);
     public static final String DEFAULT_ORE = "minecraft:iron_ore,minecraft:stone";
     public static final String DEFAULT_TREE = "minecraft:oak_log|minecraft:oak_leaves";
     public static final float[] SCALES = {1.0f, 1.5f, 2.2f};
@@ -69,6 +71,7 @@ public class GisementEntity extends Mob {
         this.entityData.define(BLOCKS, DEFAULT_ORE);
         this.entityData.define(SIZE, 0);
         this.entityData.define(KIND, 0);
+        this.entityData.define(STYLE, 0);
     }
 
     public void setTree(boolean tree) {
@@ -88,6 +91,12 @@ public class GisementEntity extends Mob {
 
     public boolean isTree() {
         try { return this.entityData.get(KIND) == 1; } catch (Exception e) { return false; }
+    }
+
+    public void setStyle(int style) { this.entityData.set(STYLE, Math.max(0, Math.min(1, style))); }
+
+    public int style() {
+        try { return this.entityData.get(STYLE); } catch (Exception e) { return 0; }
     }
 
     public void setSize(int size) {
@@ -230,6 +239,7 @@ public class GisementEntity extends Mob {
         tag.putInt("GisementTier", minTier);
         tag.putInt("GisementSize", getSize());
         tag.putBoolean("GisementTree", isTree());
+        tag.putInt("GisementStyle", style());
     }
 
     @Override
@@ -238,6 +248,7 @@ public class GisementEntity extends Mob {
         if (tag.contains("GisementTree")) setTree(tag.getBoolean("GisementTree"));
         if (tag.contains("GisementBlocks")) setup(tag.getString("GisementBlocks"), tag.getInt("GisementTier"));
         if (tag.contains("GisementSize")) setSize(tag.getInt("GisementSize"));
+        if (tag.contains("GisementStyle")) setStyle(tag.getInt("GisementStyle"));
     }
 
     // ─── Immobile ───

@@ -161,6 +161,7 @@ public class ChaosApplier {
             };
             if (miner && RNG.nextDouble() < com.wavesurvivor.horde.kingdom.vocation.Voc.pct(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.MINER, "miner.abundance.size")) size = Math.min(2, size + 1);
             g.setTree(tree);
+            g.setStyle(tree ? ("oasis".equalsIgnoreCase(event.treeShape) ? 1 : 0) : ("desert".equalsIgnoreCase(event.oreStyle) ? 1 : 0));
             g.setSize(size);
             g.moveTo(x + 0.5, y, z + 0.5, RNG.nextFloat() * 360f, 0);
             g.setup(csv, event.minTier);

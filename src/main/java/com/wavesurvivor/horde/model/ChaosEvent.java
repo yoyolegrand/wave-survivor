@@ -157,6 +157,14 @@ public class ChaosEvent {
     @SerializedName("stormShelterRadius")
     public double stormShelterRadius = 4;
 
+    /** Forme des arbres (événement « arbre ») : « classique » ou « oasis » (palmier). */
+    @SerializedName("treeShape")
+    public String treeShape = "classique";
+
+    /** Style des minerais (événement « gisement ») : « classique » ou « desert » (le minerai sort du sable dans un petit rocher). */
+    @SerializedName("oreStyle")
+    public String oreStyle = "classique";
+
     // ─── Événements du désert (1.9) : sables mouvants, soleil de plomb, nuée, mirage, crue ───
 
     /** Durée de l'événement du désert (secondes) et intensité (1 = nominal). */

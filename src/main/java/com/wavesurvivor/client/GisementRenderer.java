@@ -90,12 +90,36 @@ public class GisementRenderer extends EntityRenderer<GisementEntity> {
         pose.mulPose(Axis.YP.rotationDegrees(-e.getYRot()));
         pose.translate(shake, 0, -shake);
         if (e.isTree()) {
-            MajesticTree.render(e, pt, pose, buffers, light, blocks, hp, death);
+            if (e.style() == 1) PalmTree.render(e, pt, pose, buffers, light, blocks, hp, death);
+            else MajesticTree.render(e, pt, pose, buffers, light, blocks, hp, death);
             pose.popPose();
             super.render(e, yaw, pt, pose, buffers, light); // nom
             return;
         }
         pose.scale(scale, scale, scale);
+        boolean desert = e.style() == 1;
+        List<BlockState> ores = list, rocks = list;
+        if (desert) {
+            // Style « Désert » : le minerai sort d'un petit rocher posé sur un lit de sable
+            ores = new ArrayList<>();
+            rocks = new ArrayList<>();
+            for (BlockState b : list) (BuiltInRegistries.BLOCK.getKey(b.getBlock()).getPath().contains("ore") ? ores : rocks).add(b);
+            if (ores.isEmpty()) ores = list;
+            if (rocks.isEmpty()) rocks = List.of(Blocks.SANDSTONE.defaultBlockState(), Blocks.STONE.defaultBlockState(), Blocks.ANDESITE.defaultBlockState());
+            BlockState sand = Blocks.SAND.defaultBlockState(), red = Blocks.RED_SAND.defaultBlockState();
+            for (int k = 0; k < 7; k++) {
+                double a = Math.toRadians(k * 51 + 10);
+                float d = k == 0 ? 0f : 0.78f;
+                pose.pushPose();
+                pose.translate((float) Math.cos(a) * d, -0.02f, (float) Math.sin(a) * d);
+                pose.mulPose(Axis.YP.rotationDegrees(k * 37f));
+                float sz = k == 0 ? 1.7f : 0.7f;
+                pose.scale(sz, 0.14f, sz);
+                pose.translate(-0.5, 0, -0.5);
+                blocks.renderSingleBlock(k % 3 == 2 ? red : sand, pose, buffers, light, OverlayTexture.NO_OVERLAY);
+                pose.popPose();
+            }
+        }
         int extra = e.getSize() == 0 ? 0 : e.getSize() == 1 ? 4 : EXTRA.length;
         for (int i = 0; i < PARTS.length + extra; i++) {
             float[] p = i < PARTS.length ? PARTS[i] : EXTRA[i - PARTS.length];
@@ -105,7 +129,9 @@ public class GisementRenderer extends EntityRenderer<GisementEntity> {
             pose.mulPose(Axis.XP.rotationDegrees(p[5]));
             pose.scale(p[3], p[3], p[3]);
             pose.translate(-0.5, 0, -0.5);
-            blocks.renderSingleBlock(list.get(i % list.size()), pose, buffers, light, OverlayTexture.NO_OVERLAY);
+            BlockState st = !desert ? list.get(i % list.size())
+                    : p[1] >= 0.3f ? ores.get(i % ores.size()) : rocks.get(i % rocks.size()); // en haut : le minerai ; en bas : la roche
+            blocks.renderSingleBlock(st, pose, buffers, light, OverlayTexture.NO_OVERLAY);
             pose.popPose();
         }
         pose.popPose();

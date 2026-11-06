@@ -3696,6 +3696,24 @@ public class HordeEditorScreen extends Screen {
                 fInt(20, HordeJson.num(ev, "guaranteed", 0), v -> ev.addProperty("guaranteed", Math.max(0, Math.min(5, v))));
                 fl(com.wavesurvivor.i18n.WSLang.t("ui.chaos.guaranteed_hint"));
                 fy += 18;
+                // 1.9 — Forme des arbres (Classique / Oasis) ou style des minerais (Classique / Désert)
+                flow(x, fy);
+                if (treeEv) {
+                    fl(com.wavesurvivor.i18n.WSLang.t("ui.tree_shape"));
+                    fBtn(110, com.wavesurvivor.i18n.WSLang.t("oasis".equals(HordeJson.str(ev, "treeShape", "classique")) ? "ui.tree_shape.oasis" : "ui.tree_shape.classic"), () -> {
+                        ev.addProperty("treeShape", "oasis".equals(HordeJson.str(ev, "treeShape", "classique")) ? "classique" : "oasis");
+                        changed();
+                        init();
+                    });
+                } else {
+                    fl(com.wavesurvivor.i18n.WSLang.t("ui.ore_style"));
+                    fBtn(110, com.wavesurvivor.i18n.WSLang.t("desert".equals(HordeJson.str(ev, "oreStyle", "classique")) ? "ui.ore_style.desert" : "ui.ore_style.classic"), () -> {
+                        ev.addProperty("oreStyle", "desert".equals(HordeJson.str(ev, "oreStyle", "classique")) ? "classique" : "desert");
+                        changed();
+                        init();
+                    });
+                }
+                fy += 18;
                 // ── Butin : à la destruction OU par coup (liste défilante) ──
                 // Migration : ancien fragment unique → liste « par coup »
                 String oldFrag = HordeJson.str(ev, "hitDropItem", "");

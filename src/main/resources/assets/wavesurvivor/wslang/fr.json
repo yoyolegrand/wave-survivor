@@ -3849,5 +3849,11 @@
   "ui.desert.hint.soleil": "Pendant la durée, de jour et hors de l'ombre, la faim baisse plus vite (intensité). La Gourde protège.",
   "ui.desert.hint.nuee": "Nombre de scarabées lâchés près d'un coffre du royaume ; l'entité (champ Entité) est une entité custom de la horde.",
   "ui.desert.hint.mirage": "Nombre de fausses troupes au loin ; elles se dissipent à l'approche, sans aucun dégât.",
-  "ui.desert.hint.crue": "Bonus de Calme : arbres en plus (nombre), régénération, marchands moins chers (intensité × 10 %)."
+  "ui.desert.hint.crue": "Bonus de Calme : arbres en plus (nombre), régénération, marchands moins chers (intensité × 10 %).",
+  "ui.tree_shape": "Forme",
+  "ui.tree_shape.classic": "§fClassique",
+  "ui.tree_shape.oasis": "§a🌴 Oasis (palmier)",
+  "ui.ore_style": "Style",
+  "ui.ore_style.classic": "§fClassique",
+  "ui.ore_style.desert": "§6🏜 Désert (rocher)"
 }

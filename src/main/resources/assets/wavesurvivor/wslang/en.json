@@ -4607,5 +4607,11 @@
   "§e§l☀ LE SOLEIL DE PLOMB ÉCRASE L'OASIS ! ☀": "§e§l☀ THE SCORCHING SUN BEATS DOWN ON THE OASIS! ☀",
   "§6§l🪲 UNE NUÉE DE SCARABÉES JAILLIT DU SABLE ! 🪲": "§6§l🪲 A SWARM OF SCARABS BURSTS FROM THE SAND! 🪲",
   "§d§l✦ DES TROUPES SE DESSINENT À L'HORIZON… ✦": "§d§l✦ TROOPS TAKE SHAPE ON THE HORIZON… ✦",
-  "§b§l🌴 L'OASIS DÉBORDE : LA CRUE EST BIENFAISANTE ! 🌴": "§b§l🌴 THE OASIS OVERFLOWS: THE FLOOD IS A BLESSING! 🌴"
+  "§b§l🌴 L'OASIS DÉBORDE : LA CRUE EST BIENFAISANTE ! 🌴": "§b§l🌴 THE OASIS OVERFLOWS: THE FLOOD IS A BLESSING! 🌴",
+  "ui.tree_shape": "Shape",
+  "ui.tree_shape.classic": "§fClassic",
+  "ui.tree_shape.oasis": "§a🌴 Oasis (palm)",
+  "ui.ore_style": "Style",
+  "ui.ore_style.classic": "§fClassic",
+  "ui.ore_style.desert": "§6🏜 Desert (rock)"
 }
