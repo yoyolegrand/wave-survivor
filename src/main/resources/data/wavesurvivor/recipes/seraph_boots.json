@@ -3,7 +3,7 @@
   "category": "equipment",
   "ingredients": [
     {
-      "item": "minecraft:diamond_boots"
+      "item": "minecraft:netherite_boots"
     },
     {
       "item": "wavesurvivor:grace_fragment"

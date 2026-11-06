@@ -3,7 +3,7 @@
   "category": "equipment",
   "ingredients": [
     {
-      "item": "minecraft:diamond_helmet"
+      "item": "minecraft:netherite_helmet"
     },
     {
       "item": "wavesurvivor:grace_fragment"

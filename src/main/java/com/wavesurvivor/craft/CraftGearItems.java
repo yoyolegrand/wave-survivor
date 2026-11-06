@@ -34,7 +34,7 @@ public final class CraftGearItems {
         for (String line : WSLang.t("craft.item." + id).split("\n")) tip.add(Component.literal(line));
     }
 
-    /** Lame de l'aube (Consacrée) : épée en diamant, +50 % contre morts-vivants et Corrompus, brille la nuit. */
+    /** Lame de l'aube (Consacrée) : épée en netherite, +50 % contre morts-vivants et Corrompus, brille la nuit. */
     public static class DawnBlade extends SwordItem implements FixedAlign {
         /** Niveau Netherite : 8 de dégâts (3 de l'épée + 4 du matériau + 1 de base). */
         public DawnBlade(Properties props) { super(Tiers.NETHERITE, 3, -2.4f, props); }

@@ -3,7 +3,7 @@
   "category": "equipment",
   "ingredients": [
     {
-      "item": "minecraft:diamond_leggings"
+      "item": "minecraft:netherite_leggings"
     },
     {
       "item": "wavesurvivor:grace_fragment"

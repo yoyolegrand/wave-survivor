@@ -3,7 +3,7 @@
   "category": "equipment",
   "ingredients": [
     {
-      "item": "minecraft:diamond_hoe"
+      "item": "minecraft:netherite_hoe"
     },
     {
       "item": "wavesurvivor:taint_heart"

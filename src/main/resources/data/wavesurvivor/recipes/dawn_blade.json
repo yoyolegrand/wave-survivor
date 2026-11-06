@@ -3,7 +3,7 @@
   "category": "equipment",
   "ingredients": [
     {
-      "item": "minecraft:diamond_sword"
+      "item": "minecraft:netherite_sword"
     },
     {
       "item": "wavesurvivor:grace_heart"
