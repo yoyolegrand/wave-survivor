@@ -119,6 +119,9 @@ public final class BuiltinBuilder {
             }
         }
 
+        // Nouveaux coffres roulette (par nom, sans casse) : ajoutés s'ils n'existent pas encore
+        addIfAbsent(r.chests, arr(add, "chests", false), "name");
+
         // Lots ajoutés aux coffres existants (par nom de coffre) : seulement les objets absents du coffre
         if (add.has("chestRewards") && add.get("chestRewards").isJsonObject()) {
             JsonObject byChest = add.getAsJsonObject("chestRewards");

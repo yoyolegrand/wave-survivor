@@ -69,6 +69,9 @@ public final class ArenaBlueprint {
     private boolean square = false;
     /** Plan de désert : le raccord extérieur est en sable (au lieu d'herbe et de terre). */
     private boolean desert = false;
+    /** Marché (Kingdom) : nom du coffre roulette de chaque repère « roulette_chest_spawns » (même ordre), et coffre dont la clé récompense chaque Calme. */
+    private final List<String> marketChests = new ArrayList<>();
+    private String calmKey = "";
     /** Mode de jeu du plan ("kingdom" : l'autel lance le mode Kingdom, portes fixes du plan). */
     private String mode = "";
     /** Identifiant d'un mod sans lequel l'arène n'existe pas (ni génération, ni pose) ; vide = aucune condition. */
@@ -81,6 +84,8 @@ public final class ArenaBlueprint {
     public int floatY() { return floatY; }
     public boolean aquatic() { return aquatic; }
     public boolean square() { return square; }
+    public List<String> marketChests() { return marketChests; }
+    public String calmKey() { return calmKey; }
     public boolean kingdom() { return "kingdom".equalsIgnoreCase(mode); }
 
     /** Distance au bord de l'emprise (≤ 0 = dedans) : cercle de rayon {@link #radius()}, ou rectangle du plan si « square ». */
@@ -202,6 +207,8 @@ public final class ArenaBlueprint {
         if (o.has("aquatic")) bp.aquatic = o.get("aquatic").getAsBoolean();
         if (o.has("square")) bp.square = o.get("square").getAsBoolean();
         if (o.has("desert")) bp.desert = o.get("desert").getAsBoolean();
+        if (o.has("market_chests") && o.get("market_chests").isJsonArray()) for (JsonElement c : o.getAsJsonArray("market_chests")) bp.marketChests.add(c.getAsString());
+        if (o.has("calm_key")) bp.calmKey = o.get("calm_key").getAsString();
         if (o.has("mode")) bp.mode = o.get("mode").getAsString();
         if (o.has("requiresMod")) bp.requiresMod = o.get("requiresMod").getAsString();
         bp.markerTypes.putAll(typesByMarker);

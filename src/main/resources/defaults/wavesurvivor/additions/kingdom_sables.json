@@ -35,9 +35,339 @@
         },
         "useWavePauses": false,
         "wavePauses": [],
-        "useMerchants": false,
+        "useMerchants": true,
         "merchantDebug": false,
-        "merchants": [],
+        "merchants": [
+          {
+            "name": "Épicière de l'oasis",
+            "entityType": "minecraft:villager",
+            "profession": "farmer",
+            "spawnChance": 1.0,
+            "trades": [
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 1,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:bread",
+                "outputCount": 8,
+                "maxUses": 16
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 2,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:cooked_cod",
+                "outputCount": 6,
+                "maxUses": 12
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 1,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:melon_slice",
+                "outputCount": 12,
+                "maxUses": 16
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 3,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:rabbit_stew",
+                "outputCount": 2,
+                "maxUses": 10
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 4,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:honey_bottle",
+                "outputCount": 3,
+                "maxUses": 8
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 1,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:apple",
+                "outputCount": 6,
+                "maxUses": 16
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 14,
+                "input2": "",
+                "input2Count": 0,
+                "output": "wavesurvivor:blessed_bread",
+                "outputCount": 2,
+                "maxUses": 3
+              }
+            ]
+          },
+          {
+            "name": "Armurier des dunes",
+            "entityType": "minecraft:villager",
+            "profession": "weaponsmith",
+            "spawnChance": 1.0,
+            "trades": [
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 9,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:iron_sword",
+                "outputCount": 1,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 12,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:iron_helmet",
+                "outputCount": 1,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 20,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:iron_chestplate",
+                "outputCount": 1,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 16,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:iron_leggings",
+                "outputCount": 1,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 10,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:iron_boots",
+                "outputCount": 1,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 6,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:shield",
+                "outputCount": 1,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 10,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:bow",
+                "outputCount": 1,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 2,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:arrow",
+                "outputCount": 16,
+                "maxUses": 16
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 3,
+                "input2": "",
+                "input2Count": 0,
+                "output": "wavesurvivor:blessed_arrow",
+                "outputCount": 6,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 3,
+                "input2": "",
+                "input2Count": 0,
+                "output": "wavesurvivor:tainted_arrow",
+                "outputCount": 6,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 28,
+                "input2": "",
+                "input2Count": 0,
+                "output": "wavesurvivor:voile_desert",
+                "outputCount": 1,
+                "maxUses": 1
+              }
+            ]
+          },
+          {
+            "name": "Négociant",
+            "entityType": "minecraft:villager",
+            "profession": "mason",
+            "spawnChance": 1.0,
+            "trades": [
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 2,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:jungle_log",
+                "outputCount": 16,
+                "maxUses": 16
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 1,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:cobblestone",
+                "outputCount": 32,
+                "maxUses": 16
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 3,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:iron_ingot",
+                "outputCount": 8,
+                "maxUses": 12
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 2,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:coal",
+                "outputCount": 16,
+                "maxUses": 12
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 1,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:sandstone",
+                "outputCount": 24,
+                "maxUses": 16
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 1,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:glass",
+                "outputCount": 12,
+                "maxUses": 12
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 2,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:water_bucket",
+                "outputCount": 1,
+                "maxUses": 6
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 1,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:dirt",
+                "outputCount": 24,
+                "maxUses": 12
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 1,
+                "input2": "",
+                "input2Count": 0,
+                "output": "minecraft:wheat_seeds",
+                "outputCount": 12,
+                "maxUses": 12
+              }
+            ]
+          },
+          {
+            "name": "Oracle des sables",
+            "entityType": "minecraft:villager",
+            "profession": "librarian",
+            "spawnChance": 1.0,
+            "trades": [
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 10,
+                "input2": "",
+                "input2Count": 0,
+                "output": "roulettechest:key_custom_coffre_de_la_caravane",
+                "outputCount": 1,
+                "maxUses": 4
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 24,
+                "input2": "",
+                "input2Count": 0,
+                "output": "roulettechest:key_custom_reliquaire_d_anubis",
+                "outputCount": 1,
+                "maxUses": 2
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 24,
+                "input2": "",
+                "input2Count": 0,
+                "output": "roulettechest:key_custom_reliquaire_de_sekhmet",
+                "outputCount": 1,
+                "maxUses": 2
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 32,
+                "input2": "",
+                "input2Count": 0,
+                "output": "roulettechest:key_custom_reliquaire_de_re",
+                "outputCount": 1,
+                "maxUses": 2
+              },
+              {
+                "input1": "wavesurvivor:grace_fragment",
+                "input1Count": 4,
+                "input2": "",
+                "input2Count": 0,
+                "output": "wavesurvivor:taint_fragment",
+                "outputCount": 4,
+                "maxUses": 8
+              },
+              {
+                "input1": "wavesurvivor:taint_fragment",
+                "input1Count": 4,
+                "input2": "",
+                "input2Count": 0,
+                "output": "wavesurvivor:grace_fragment",
+                "outputCount": 4,
+                "maxUses": 8
+              }
+            ]
+          }
+        ],
         "hordeEntities": [
           {
             "entity_type": "momie",
@@ -64,10 +394,10 @@
                 "chance": 30
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_d_anubis",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 5
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -77,7 +407,47 @@
             },
             "min_wave": 0,
             "max_wave": 0,
-            "gates": "1,3"
+            "gates": "1"
+          },
+          {
+            "entity_type": "momie",
+            "custom_name": "§6Momie",
+            "base_count": 4,
+            "count_increment": 1,
+            "max_health": 42,
+            "attack_damage": 6,
+            "movement_speed": 0.23,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:rotten_flesh",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 60
+              },
+              {
+                "item": "minecraft:bone",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 30
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_de_re",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 6
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 0,
+            "max_wave": 0,
+            "gates": "3"
           },
           {
             "entity_type": "pilleur_tombes",
@@ -104,10 +474,10 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_d_anubis",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 5
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -138,10 +508,10 @@
                 "chance": 25
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_d_anubis",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 2
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -151,7 +521,41 @@
             },
             "min_wave": 0,
             "max_wave": 0,
-            "gates": "1,2"
+            "gates": "1"
+          },
+          {
+            "entity_type": "scarabee",
+            "custom_name": "§6Scarabée",
+            "base_count": 4,
+            "count_increment": 1,
+            "max_health": 8,
+            "attack_damage": 3,
+            "movement_speed": 0.36,
+            "follow_range": 48,
+            "knockback_resistance": 0,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:string",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 25
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 6
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.2,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 0,
+            "max_wave": 0,
+            "gates": "2"
           },
           {
             "entity_type": "archer_dunes",
@@ -178,7 +582,7 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_d_anubis",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -212,10 +616,10 @@
                 "chance": 60
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_d_anubis",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 12
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -253,7 +657,7 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -287,10 +691,10 @@
                 "chance": 50
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 4
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -321,10 +725,10 @@
                 "chance": 50
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 4
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -361,7 +765,7 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -403,7 +807,7 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_de_re",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -443,10 +847,10 @@
                 "chance": 8
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_de_re",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 10
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -483,10 +887,10 @@
                 "chance": 50
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_de_re",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 14
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -523,10 +927,10 @@
                 "chance": 50
               },
               {
-                "item": "roulettechest:key_coffre_mysterieux",
+                "item": "roulettechest:key_custom_reliquaire_de_re",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 14
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -555,12 +959,6 @@
                 "minQty": 1,
                 "maxQty": 3,
                 "chance": 40
-              },
-              {
-                "item": "roulettechest:key_coffre_mysterieux",
-                "minQty": 1,
-                "maxQty": 1,
-                "chance": 8
               }
             ],
             "playerScaling": {
@@ -871,15 +1269,9 @@
             "minionConfig": {},
             "lootTable": [
               {
-                "item": "roulettechest:key_custom_reliquaire_du_boss",
+                "item": "roulettechest:key_custom_reliquaire_d_anubis",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 100
-              },
-              {
-                "item": "roulettechest:key_coffre_mysterieux",
-                "minQty": 2,
-                "maxQty": 3,
                 "chance": 100
               },
               {
@@ -928,15 +1320,9 @@
             "minionConfig": {},
             "lootTable": [
               {
-                "item": "roulettechest:key_custom_reliquaire_du_boss",
+                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 100
-              },
-              {
-                "item": "roulettechest:key_coffre_mysterieux",
-                "minQty": 2,
-                "maxQty": 3,
                 "chance": 100
               },
               {
@@ -991,15 +1377,9 @@
             "minionConfig": {},
             "lootTable": [
               {
-                "item": "roulettechest:key_custom_reliquaire_du_boss",
+                "item": "roulettechest:key_custom_reliquaire_de_re",
                 "minQty": 1,
                 "maxQty": 1,
-                "chance": 100
-              },
-              {
-                "item": "roulettechest:key_coffre_mysterieux",
-                "minQty": 2,
-                "maxQty": 3,
                 "chance": 100
               },
               {
@@ -1434,5 +1814,425 @@
         }
       ]
     }
-  }
+  },
+  "chests": [
+    {
+      "name": "Reliquaire d'Anubis",
+      "particles": {
+        "idle": {
+          "a": "soul",
+          "pattern": "circle",
+          "density": 3,
+          "speed": 2
+        },
+        "spin": {
+          "a": "soul",
+          "b": "soul_fire_flame",
+          "pattern": "vortex_down",
+          "density": 7,
+          "speed": 6
+        }
+      },
+      "pattern": "circle",
+      "color": "blue",
+      "accentColor": "#2F6FD8",
+      "woodColor": "ebony",
+      "ironColor": "gold",
+      "gemColor": "accent",
+      "medallions": {
+        "front": [
+          {
+            "symbol": "ankh",
+            "size": "large",
+            "color": "#F2C14E"
+          },
+          {
+            "symbol": "eye",
+            "size": "small",
+            "color": "#2F6FD8"
+          }
+        ]
+      },
+      "keyHead": "skull",
+      "keyBit": "double",
+      "keyMaterial": "or",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:gold_ingot",
+          "minQty": 6,
+          "maxQty": 12,
+          "chance": 22,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:lapis_lazuli",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 20,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:string",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 12,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:experience_bottle",
+          "minQty": 6,
+          "maxQty": 12,
+          "chance": 14,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "wavesurvivor:taint_fragment",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 12,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "wavesurvivor:taint_shard",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 9,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:diamond",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 7,
+          "tier": "RARE"
+        },
+        {
+          "item": "wavesurvivor:voile_desert",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 4,
+          "tier": "EPIC"
+        }
+      ]
+    },
+    {
+      "name": "Reliquaire de Sekhmet",
+      "particles": {
+        "idle": {
+          "a": "crimson_spore",
+          "pattern": "fireflies",
+          "density": 4,
+          "speed": 2
+        },
+        "spin": {
+          "a": "crimson_spore",
+          "b": "flame",
+          "pattern": "double_helix",
+          "density": 7,
+          "speed": 6
+        }
+      },
+      "pattern": "circle",
+      "color": "red",
+      "accentColor": "#E04A32",
+      "woodColor": "acacia",
+      "ironColor": "copper",
+      "gemColor": "accent",
+      "medallions": {
+        "front": [
+          {
+            "symbol": "scorpion",
+            "size": "large",
+            "color": "#E04A32"
+          }
+        ]
+      },
+      "keyHead": "star",
+      "keyBit": "hook",
+      "keyMaterial": "cuivre",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:spider_eye",
+          "minQty": 6,
+          "maxQty": 12,
+          "chance": 20,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:string",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 18,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:emerald",
+          "minQty": 6,
+          "maxQty": 14,
+          "chance": 18,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:poison",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 10,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:strong_strength",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 12,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:fermented_spider_eye",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 10,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:diamond",
+          "minQty": 1,
+          "maxQty": 3,
+          "chance": 8,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:netherite_scrap",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 4,
+          "tier": "EPIC"
+        }
+      ]
+    },
+    {
+      "name": "Reliquaire de Rê",
+      "particles": {
+        "idle": {
+          "a": "dust",
+          "color": "#FFB52E",
+          "pattern": "aura_pulse",
+          "density": 3,
+          "speed": 2
+        },
+        "spin": {
+          "a": "dust",
+          "color": "#FFB52E",
+          "b": "end_rod",
+          "pattern": "beam",
+          "density": 8,
+          "speed": 5
+        }
+      },
+      "pattern": "circle",
+      "color": "orange",
+      "accentColor": "#FFB52E",
+      "woodColor": "birch",
+      "ironColor": "gold",
+      "gemColor": "#FF7A1E",
+      "medallions": {
+        "front": [
+          {
+            "symbol": "sun",
+            "size": "large",
+            "color": "#F2C14E"
+          },
+          {
+            "symbol": "scarab",
+            "size": "small",
+            "color": "#2F6FD8"
+          }
+        ]
+      },
+      "keyHead": "winged",
+      "keyBit": "double",
+      "keyMaterial": "or",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:gold_ingot",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 22,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:golden_carrot",
+          "minQty": 6,
+          "maxQty": 12,
+          "chance": 14,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:gold_block",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 10,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "wavesurvivor:grace_fragment",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 14,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "wavesurvivor:grace_shard",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 10,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:enchanted_golden_apple",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 3,
+          "tier": "EPIC"
+        },
+        {
+          "item": "wavesurvivor:voile_desert",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 6,
+          "tier": "EPIC"
+        },
+        {
+          "item": "minecraft:diamond",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 9,
+          "tier": "RARE"
+        }
+      ]
+    },
+    {
+      "name": "Coffre de la Caravane",
+      "particles": {
+        "idle": {
+          "a": "dust",
+          "color": "#2BB3A8",
+          "pattern": "circle",
+          "density": 3,
+          "speed": 2
+        },
+        "spin": {
+          "a": "dust",
+          "color": "#2BB3A8",
+          "b": "firework",
+          "pattern": "firework",
+          "density": 6,
+          "speed": 5
+        }
+      },
+      "pattern": "circle",
+      "color": "cyan",
+      "accentColor": "#2BB3A8",
+      "woodColor": "spruce",
+      "ironColor": "iron",
+      "gemColor": "accent",
+      "medallions": {
+        "front": [
+          {
+            "symbol": "gem",
+            "size": "large",
+            "color": "#2BB3A8"
+          }
+        ]
+      },
+      "keyHead": "ring",
+      "keyBit": "simple",
+      "keyMaterial": "fer",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:bread",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 18,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:cooked_mutton",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 14,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:iron_ingot",
+          "minQty": 4,
+          "maxQty": 10,
+          "chance": 18,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:coal",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 12,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:emerald",
+          "minQty": 3,
+          "maxQty": 8,
+          "chance": 16,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:arrow",
+          "minQty": 12,
+          "maxQty": 24,
+          "chance": 10,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:gold_ingot",
+          "minQty": 2,
+          "maxQty": 5,
+          "chance": 8,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:diamond",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 4,
+          "tier": "RARE"
+        }
+      ]
+    }
+  ]
 }

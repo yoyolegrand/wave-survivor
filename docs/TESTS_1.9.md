@@ -382,3 +382,13 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Profanateurs des Sables (dès l'Assaut 2) : depuis n'importe quelle porte, droit vers le Monolithe
 - [ ] Boss : Anubis à l'Assaut 4 (porte nord), Sekhmet à l'Assaut 7 (porte est), Rê-Atoum à l'Assaut 10 (Porte du Roi)
 - [ ] Assauts spéciaux du désert (Ruée de scarabées, Légion de momies…) et événements de chaos (gisement, totem, arbre)
+
+## Kingdom des Sables — étape 3 (marché : marchands et coffres)
+- [ ] Début de chaque Calme : 4 marchands apparaissent devant les étals du marché (ouest), tournés vers le Monolithe, et repartent à la fin du Calme
+- [ ] Épicière (nourriture, Pain béni), Armurier (fer, boucliers, arcs, flèches bénies / souillées, Voile du désert à 1 exemplaire), Négociant (bûches de palmier, pierre, fer, charbon, grès, verre, seau d'eau, terre, graines), Oracle (clés des coffres, échange Éclats ↔ Fragments)
+- [ ] 6 coffres sur les dalles autour du puits : Reliquaires d'Anubis, de Sekhmet, de Rê, puis 3 Coffres de la Caravane ; chacun avec son hologramme
+- [ ] Apparence : bois / ferrures / médaillons / particules au repos et pendant la roulette conformes à `docs/coffres_roulette/coffres_desert.png` ; symboles ankh, scarabée, scorpion visibles dans l'éditeur de coffres
+- [ ] Clés : les troupes de chaque porte lâchent la clé de leur seigneur (≈ 6 %), le seigneur la lâche à coup sûr ; elles ouvrent bien le bon coffre (Bourse à clés comprise)
+- [ ] Chaque Calme réussi (dès l'Assaut 1 survécu) : une clé de Caravane par joueur + message ; l'Oracle en vend aussi
+- [ ] Une arène sans marché (Val de la Couronne) garde l'ancienne disposition en cercle autour de l'autel
+- [ ] Reporté à l'étape 4 : Gourde d'eau fraîche, Tablette de reconnaissance, Fiole de mirage (ils dépendent des événements du désert)

@@ -396,13 +396,41 @@ public class HordeManager {
         if (merchLvl != null && altarEntry != null) {
             // Kingdom : la disposition couvre tout le claim (au moins le rayon de la zone de l'autel)
             int radius = Math.max(altarEntry.zoneRadius, Math.max(4, cfg.kingdom().claimRadius));
+            // Arène à marché (Oasis des Pharaons) : marchands et coffres aux repères du plan, pas en cercle autour de l'autel
+            var market = com.wavesurvivor.arena.ArenaAltar.market(merchLvl, overrideSpawnPos);
+            if (market != null) {
+                java.util.List<BlockPos> mpos = new java.util.ArrayList<>();
+                for (int i = 0; i < merchantNames(cfg).size(); i++) mpos.add(i < market.merchants().size() ? market.merchants().get(i) : null);
+                MerchantSpawner.spawnAll(activeHorde, merchLvl, mpos, overrideSpawnPos);
+                java.util.List<com.wavesurvivor.altar.AltarLayout.ChestSpot> spots = new java.util.ArrayList<>();
+                for (int i = 0; i < market.chestSpots().size() && i < market.chestNames().size(); i++) {
+                    var rc = com.wavesurvivor.horde.roulette.RouletteChestRegistry.getByChestName(market.chestNames().get(i));
+                    if (rc != null) spots.add(new com.wavesurvivor.altar.AltarLayout.ChestSpot(market.chestSpots().get(i), rc));
+                }
+                RouletteChestSpawner.spawnAtSpots(merchLvl, spots);
+                giveCalmKey(srv, market.calmKey(), cycle);
+            } else {
             var zone = com.wavesurvivor.altar.AltarRecipes.peekZone(activeHorde.hordeName);
             var layout = com.wavesurvivor.altar.AltarLayout.compute(merchLvl, overrideSpawnPos, radius, zone, merchantNames(cfg));
             MerchantSpawner.spawnAll(activeHorde, merchLvl, layout.merchants(), overrideSpawnPos);
             RouletteChestSpawner.spawnAtSpots(merchLvl, layout.chests());
+            }
         } else {
             if (merchLvl != null) MerchantSpawner.spawnAll(activeHorde, merchLvl);
             RouletteChestSpawner.spawnAll(activeHorde.hordeName, srv);
+        }
+    }
+
+    /** Récompense d'un Calme réussi (arène à marché) : chaque joueur reçoit la clé du coffre indiqué par le plan (pas avant le premier Assaut survécu). */
+    private static void giveCalmKey(MinecraftServer srv, String chestName, int cycle) {
+        if (chestName == null || chestName.isBlank() || cycle < 1) return;
+        var rc = com.wavesurvivor.horde.roulette.RouletteChestRegistry.getByChestName(chestName);
+        if (rc == null) return;
+        for (var p : srv.getPlayerList().getPlayers()) {
+            net.minecraft.world.item.ItemStack key = com.wavesurvivor.horde.loot.LootItems.resolve("roulettechest:key_" + rc.configKey(), 1);
+            if (key.isEmpty()) continue;
+            net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, key);
+            p.sendSystemMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.calm_key", chestName));
         }
     }
 

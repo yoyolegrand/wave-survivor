@@ -429,6 +429,7 @@
   "kingdom.start": "§6§l♛ KINGDOM — {0} §e: {1} grands portails se sont ouverts autour du Monolithe ! Détruisez-les tous pour gagner.",
   "kingdom.assault": "§4§l⚔ ASSAUT {0} §c— la horde déferle des portails !",
   "kingdom.calm": "§a§l🕊 CALME §2— cycle {0} survécu. Traquez le Catalyseur pour débrécher une Porte ! §7(prochain assaut dans {1}s)",
+  "kingdom.calm_key": "§6🗝 Récompense du Calme : une clé « {0} » !",
   "kingdom.portal_destroyed": "§6§l♛ Le portail {0} est détruit !",
   "kingdom.victory": "§6§l♛ VICTOIRE ! Tous les portails sont détruits — le royaume est sauvé !",
   "kingdom.safety_end": "§c§l♛ Le royaume a tenu {0} cycles… mais les portails sont toujours là. La bataille s'arrête ici.",

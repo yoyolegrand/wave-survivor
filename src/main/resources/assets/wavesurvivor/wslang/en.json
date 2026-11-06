@@ -464,6 +464,7 @@
   "kingdom.start": "§6§l♛ KINGDOM — {0} §e: {1} great portals have opened around the Monolith! Destroy them all to win.",
   "kingdom.assault": "§4§l⚔ ASSAULT {0} §c— the horde pours out of the portals!",
   "kingdom.calm": "§a§l🕊 CALM §2— cycle {0} survived. Hunt the Catalyst to breach a gate! §7(next assault in {1}s)",
+  "kingdom.calm_key": "§6🗝 Calm reward: a “{0}” key!",
   "kingdom.portal_destroyed": "§6§l♛ The {0} portal has been destroyed!",
   "kingdom.victory": "§6§l♛ VICTORY! All the portals are destroyed — the kingdom is safe!",
   "kingdom.safety_end": "§c§l♛ The kingdom held for {0} cycles… the portals remain. The battle ends here.",
@@ -4561,5 +4562,13 @@
   "Mode Kingdom — L'Oasis des Pharaons. Trois portes (Anubis au nord, Sekhmet à l'est, Rê au sud), un marché à l'ouest : momies, scorpions, chacals et golems de grès assiègent votre royaume. Trois seigneurs des sables, dont Rê-Atoum derrière la Porte du Roi.": "Kingdom mode — The Oasis of the Pharaohs. Three gates (Anubis to the north, Sekhmet to the east, Ra to the south), a market to the west: mummies, scorpions, jackals and sandstone golems besiege your kingdom. Three lords of the sands, Ra-Atum waiting behind the King's Gate.",
   "§6§l[SABLES] §eMarche {wave}/{total} §6- §7Le sable se soulève aux portes...": "§6§l[SANDS] §eMarch {wave}/{total} §6- §7The sand stirs at the gates...",
   "§6§l🏜 [SABLES] 🏜 §6Marche {wave}/{total} §4- {name} !": "§6§l🏜 [SANDS] 🏜 §6March {wave}/{total} §4- {name} !",
-  "§6§lScorpion géant": "§6§lGiant Scorpion"
+  "§6§lScorpion géant": "§6§lGiant Scorpion",
+  "Épicière de l'oasis": "Oasis Grocer",
+  "Armurier des dunes": "Dune Armorer",
+  "Négociant": "Trader",
+  "Oracle des sables": "Oracle of the Sands",
+  "Reliquaire d'Anubis": "Reliquary of Anubis",
+  "Reliquaire de Sekhmet": "Reliquary of Sekhmet",
+  "Reliquaire de Rê": "Reliquary of Ra",
+  "Coffre de la Caravane": "Caravan Chest"
 }

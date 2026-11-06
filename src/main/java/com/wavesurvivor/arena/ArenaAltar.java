@@ -60,6 +60,21 @@ public final class ArenaAltar {
         return out;
     }
 
+    /** Marché d'une arène Kingdom : positions des marchands, des coffres (avec leur coffre roulette) et coffre dont la clé récompense chaque Calme. */
+    public record Market(List<BlockPos> merchants, List<BlockPos> chestSpots, List<String> chestNames, String calmKey) {}
+
+    /** Repères du marché (« merchant_spawns », « roulette_chest_spawns ») en coordonnées du monde ; null si ce n'est pas une arène Kingdom à marché. */
+    public static Market market(ServerLevel level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof AltarBlockEntity ab) || ab.arenaId() == null) return null;
+        ArenaBlueprint bp = ArenaBlueprint.load(ab.arenaId());
+        if (bp == null || !bp.kingdom()) return null;
+        var m = bp.worldMarkers(ab.arenaOx(), ab.arenaOz(), ab.arenaY0(), Rotation.values()[Math.max(0, Math.min(3, ab.arenaRot()))]);
+        List<BlockPos> merchants = m.getOrDefault("merchant_spawns", List.of());
+        List<BlockPos> chests = m.getOrDefault("roulette_chest_spawns", List.of());
+        if (merchants.isEmpty() && chests.isEmpty()) return null;
+        return new Market(merchants, chests, bp.marketChests(), bp.calmKey());
+    }
+
     /** Lie et verrouille l'autel d'une arène sur la horde de son plan (une seule fois). Sans effet sur un autel ordinaire. */
     public static void adopt(ServerLevel level, BlockPos pos) {
         if (!(level.getBlockEntity(pos) instanceof AltarBlockEntity ab) || ab.arenaId() == null) return;

@@ -53,7 +53,7 @@ public class ChestBuilderScreen extends Screen {
     private static final String[] TAB_IDS = {"look", "symbols", "key", "particles", "loot", "messages"};
     private static final String[] FACES = {"front", "back", "left", "right", "top"};
     private static final String[] MOMENTS = {"idle", "spin", "reveal"};
-    private static final String[] SYMBOLS = {"dot", "star", "skull", "cross", "crown", "flame", "drop", "eye", "sun", "moon", "lightning", "heart", "swords", "rune", "gem", "leaf", "hourglass", "key"};
+    private static final String[] SYMBOLS = {"dot", "star", "skull", "cross", "crown", "flame", "drop", "eye", "sun", "moon", "lightning", "heart", "swords", "rune", "gem", "leaf", "hourglass", "key", "ankh", "scarab", "scorpion"};
     /** Couleurs proposées (accent, symboles, poussières). */
     private static final int[] PALETTE = {0xC85AF0, 0xFAC846, 0x50DC82, 0x5AD2F0, 0xF05050, 0xFA9628, 0xEBEBF0, 0x22222A, 0xE650C8, 0x5A96F0};
     private static final Gson GSON = new Gson();
