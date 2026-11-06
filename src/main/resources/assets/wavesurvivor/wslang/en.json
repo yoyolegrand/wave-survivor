@@ -4556,5 +4556,10 @@
   "codex.vestige.body": "§7The §fVestige Compass§7 guides you to mod structures you have not explored yet, without ever saying what they are.\n\n§6§lUsing it\n§7• The needle (golden tip) points to the §fnearest unclaimed vestige§7: a horde arena, a Seraph Sanctuary or a ruin. With no target it spins randomly.\n§7• §fRight-click§7: \"Unknown vestige N blocks away\" (never the name or type).\n§7• §fSneak + right-click§7: filter All → Hordes → Sanctuaries → Ruins.\n\n§6§lClaiming a vestige\n§7• Arena: finish its horde. Sanctuary: touch the statue. Ruin: open its chest (Reliquary: open the seal).\n§7• The compass then points to the next one. Tracking is per player (can be shared server-wide).\n§7• It only knows structures that are §falready generated§7: explore to discover more.\n\n§6§lCrafting\n§7• 1 compass, 4 gold ingots, 2 Grace Shards and 2 Taint Shards (crafting table). Settings in §frules.json§7: §evestigeRadius§7, §evestigeShared§7, §evestigeFilter§7.",
   "carnet.res.vestige": "Vestige Compass",
   "carnet.res.vestige.where": "Crafted at a crafting table: 1 compass, 4 gold ingots, 2 Grace Shards, 2 Taint Shards.",
-  "carnet.res.vestige.use": "Points to the nearest unclaimed mod structure (hordes, Sanctuaries, ruins). Right-click: distance."
+  "carnet.res.vestige.use": "Points to the nearest unclaimed mod structure (hordes, Sanctuaries, ruins). Right-click: distance.",
+  "Les Sables": "The Sands",
+  "Mode Kingdom — L'Oasis des Pharaons. Trois portes (Anubis au nord, Sekhmet à l'est, Rê au sud), un marché à l'ouest : momies, scorpions, chacals et golems de grès assiègent votre royaume. Trois seigneurs des sables, dont Rê-Atoum derrière la Porte du Roi.": "Kingdom mode — The Oasis of the Pharaohs. Three gates (Anubis to the north, Sekhmet to the east, Ra to the south), a market to the west: mummies, scorpions, jackals and sandstone golems besiege your kingdom. Three lords of the sands, Ra-Atum waiting behind the King's Gate.",
+  "§6§l[SABLES] §eMarche {wave}/{total} §6- §7Le sable se soulève aux portes...": "§6§l[SANDS] §eMarch {wave}/{total} §6- §7The sand stirs at the gates...",
+  "§6§l🏜 [SABLES] 🏜 §6Marche {wave}/{total} §4- {name} !": "§6§l🏜 [SANDS] 🏜 §6March {wave}/{total} §4- {name} !",
+  "§6§lScorpion géant": "§6§lGiant Scorpion"
 }

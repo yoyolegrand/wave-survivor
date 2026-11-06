@@ -373,3 +373,12 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] `/ws arena place <arène>` : l'arène posée devient une cible ; sauvegarde puis rechargement du monde : cibles et réclamations conservées
 - [ ] rules.json : `vestigeRadius`, `vestigeShared` (réclamations communes à tout le serveur), `vestigeFilter`
 - [ ] Limite connue : seules les structures déjà générées (chunks explorés) sont connues
+
+## Kingdom des Sables — étapes 1 et 2 (arène + horde)
+- [ ] `/ws arena place oasis_des_pharaons` : arène 181 × 181 posée, sol aplani, raccord extérieur en **sable** (pas d'herbe), aucune plaque de pierre à nu
+- [ ] 3 portes (nord Anubis, est Sekhmet, sud Rê) sur sol plat, marché à l'ouest sans porte, palmiers présents
+- [ ] L'autel posé au centre est lié à la horde « Les Sables » et verrouillé ; lancer le mode Kingdom : 3 Portes apparaissent aux bons endroits
+- [ ] Nord : momies, pilleurs, scarabées (puis gardes du Pharaon, archers) ; Est : scorpions, chacals (puis alphas, scorpions géants) ; Sud : archers, cavaliers (puis golems, djinns)
+- [ ] Profanateurs des Sables (dès l'Assaut 2) : depuis n'importe quelle porte, droit vers le Monolithe
+- [ ] Boss : Anubis à l'Assaut 4 (porte nord), Sekhmet à l'Assaut 7 (porte est), Rê-Atoum à l'Assaut 10 (Porte du Roi)
+- [ ] Assauts spéciaux du désert (Ruée de scarabées, Légion de momies…) et événements de chaos (gisement, totem, arbre)
