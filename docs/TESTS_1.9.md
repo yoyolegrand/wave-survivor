@@ -375,6 +375,7 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Limite connue : seules les structures déjà générées (chunks explorés) sont connues
 
 ## Kingdom des Sables — étapes 1 et 2 (arène + horde)
+- [ ] Génération naturelle : `/locate structure wavesurvivor:arena_oasis` (biome désert) trouve une Oasis des Pharaons ; elle apparaît dans un monde neuf, ou dans de nouveaux chunks d'un monde existant
 - [ ] `/ws arena place oasis_des_pharaons` : arène 181 × 181 posée, sol aplani, raccord extérieur en **sable** (pas d'herbe), aucune plaque de pierre à nu
 - [ ] 3 portes (nord Anubis, est Sekhmet, sud Rê) sur sol plat, marché à l'ouest sans porte, palmiers présents
 - [ ] L'autel posé au centre est lié à la horde « Les Sables » et verrouillé ; lancer le mode Kingdom : 3 Portes apparaissent aux bons endroits

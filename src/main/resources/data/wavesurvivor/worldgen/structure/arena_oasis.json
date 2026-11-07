@@ -1,0 +1,8 @@
+{
+  "type": "wavesurvivor:arena",
+  "arena": "oasis_des_pharaons",
+  "biomes": "#wavesurvivor:has_structure/arena_oasis",
+  "step": "top_layer_modification",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}

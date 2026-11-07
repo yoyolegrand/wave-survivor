@@ -104,7 +104,7 @@ public class ArenaStructure extends Structure {
         for (var e : reg.entrySet()) {
             net.minecraft.resources.ResourceLocation id = e.getKey().location();
             String ns = id.getNamespace(), path = id.getPath();
-            if (ns.equals("wavesurvivor") && path.equals("arena_val") || IGNORED.contains(path)) continue;
+            if (ns.equals("wavesurvivor") && (path.equals("arena_val") || path.equals("arena_oasis")) || IGNORED.contains(path)) continue;
             if (!(e.getValue().placement() instanceof net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement rs)) continue;
             java.util.List<Structure> surface = new java.util.ArrayList<>();
             for (var sel : e.getValue().structures()) if (enSurface(sel.structure().value())) surface.add(sel.structure().value());
