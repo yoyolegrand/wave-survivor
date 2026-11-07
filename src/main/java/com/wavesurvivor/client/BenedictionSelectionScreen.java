@@ -315,9 +315,9 @@ public class BenedictionSelectionScreen extends Screen {
         return 45 + nameLines * (font.lineHeight + 1) + 8 + 10;
     }
 
-    /** Hauteur des lignes d'aperçu (« total actuel → total après ce choix »), une par stat, seulement si on a déjà des bénédictions. */
+    /** Hauteur des lignes d'aperçu (« total actuel → total après ce choix »), une par stat. */
     private int previewHeight(RogueUpgrade upg) {
-        return owned.isEmpty() ? 0 : upg.modifiers().size() * (font.lineHeight + 1);
+        return upg.modifiers().size() * (font.lineHeight + 1); // toujours comptées : drawCard les dessine même sans bénédiction (0 → +4), sinon le contenu déborde sur le bouton
     }
 
     /** Hauteur du contenu obligatoire (description, stats, soin, effets, niveau max), comme dans drawCard. */
