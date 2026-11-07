@@ -4613,5 +4613,8 @@
   "ui.tree_shape.oasis": "§a🌴 Oasis (palm)",
   "ui.ore_style": "Style",
   "ui.ore_style.classic": "§fClassic",
-  "ui.ore_style.desert": "§6🏜 Desert (rock)"
+  "ui.ore_style.desert": "§6🏜 Desert (rock)",
+  "Caravane des Vivres": "Caravan Provisions",
+  "Caravane des Armes": "Caravan Arms",
+  "Caravane des Remèdes": "Caravan Remedies"
 }

@@ -47,6 +47,14 @@ public final class PalmTree {
         return l;
     }
 
+    /** Feuilles posées « persistantes » (comme dans le plan de l'arène) : des feuilles naturelles tomberaient, les palmes étant loin du tronc. */
+    private static List<BlockState> persistent(List<BlockState> l) {
+        List<BlockState> out = new ArrayList<>();
+        for (BlockState st : l) out.add(st.hasProperty(net.minecraft.world.level.block.LeavesBlock.PERSISTENT)
+                ? st.setValue(net.minecraft.world.level.block.LeavesBlock.PERSISTENT, true) : st);
+        return out;
+    }
+
     /** Version « écorcée » d'un tronc (jungle_log → stripped_jungle_log) ; le bloc lui-même s'il n'en a pas. */
     private static BlockState stripped(BlockState st) {
         ResourceLocation id = BuiltInRegistries.BLOCK.getKey(st.getBlock());
@@ -61,7 +69,7 @@ public final class PalmTree {
                               BlockRenderDispatcher blocks, float hp, float death) {
         String[] parts = e.getBlocksCsv().split("\\|", -1);
         List<BlockState> trunk = states(parts[0], Blocks.JUNGLE_LOG.defaultBlockState());
-        List<BlockState> leaves = states(parts.length > 1 ? parts[1] : "", Blocks.JUNGLE_LEAVES.defaultBlockState());
+        List<BlockState> leaves = persistent(states(parts.length > 1 ? parts[1] : "", Blocks.JUNGLE_LEAVES.defaultBlockState()));
         List<BlockState> fruits = parts.length > 2 ? states(parts[2], null) : List.of(Blocks.BROWN_TERRACOTTA.defaultBlockState());
 
         float s = (0.82f + 0.18f * hp) * death * e.scale();

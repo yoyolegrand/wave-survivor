@@ -414,3 +414,11 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Gisement Désert : lit de sable (et sable rouge) sous un petit rocher, la roche en bas, le minerai en haut ; rétrécit à chaque coup ; classique inchangé
 - [ ] Style conservé après sauvegarde / rechargement du monde
 - [ ] Kingdom « Les Sables » : arbres du chaos = palmiers, gisements = style Désert, sans rien régler
+
+## Correctifs Oasis (plan v2, coffres, affichages)
+- [ ] `/ws arena place oasis_des_pharaons` : plan v2 (27 de haut), Temple de Rê enrichi (pylône, colonnade, sphinx), palmiers intacts après quelques minutes (feuilles persistantes)
+- [ ] Marché : 6 coffres espacés d'au moins 5 blocs, 3 Reliquaires puis 3 Caravanes **différentes** (Vivres / Armes / Remèdes) ; une clé de Caravane au hasard par Calme ; l'Oracle vend les 3 clés
+- [ ] Reliquaires plus basiques (plus de netherite ni de pomme enchantée) ; Voile du désert 1-2 % seulement
+- [ ] Palmier d'oasis (chaos « arbre » forme Oasis) : feuilles posées persistantes
+- [ ] Carte de bénédiction (écran petit / grande échelle d'interface) : rien ne passe sur le bouton Choisir, lignes de stats longues à la ligne
+- [ ] HUD du Chasseur de primes (contrat) : texte à la ligne dans le panneau, jamais coupé

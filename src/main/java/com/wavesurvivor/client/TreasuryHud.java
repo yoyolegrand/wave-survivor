@@ -145,8 +145,11 @@ public class TreasuryHud {
                     : WSLang.t("kingdom.bounty.hud." + ct, pr, tg));
         }
         if (lines.isEmpty()) return;
-        g.fill(x, y, x + w, y + 3 + lines.size() * 11, 0x90000000);
-        for (int i = 0; i < lines.size(); i++) g.drawString(font, lines.get(i), x + 4, y + 3 + i * 11, 0xFFFFFFFF, false);
+        // Retour à la ligne : le panneau est étroit (contrat du Chasseur, présage, réactifs…) ; rien ne doit dépasser
+        java.util.List<net.minecraft.util.FormattedCharSequence> wrapped = new java.util.ArrayList<>();
+        for (String l : lines) wrapped.addAll(font.split(net.minecraft.network.chat.Component.literal(l), w - 8));
+        g.fill(x, y, x + w, y + 3 + wrapped.size() * 10 + 1, 0x90000000);
+        for (int i = 0; i < wrapped.size(); i++) g.drawString(font, wrapped.get(i), x + 4, y + 3 + i * 10, 0xFFFFFFFF, false);
     }
 
     private static final String[] ARROWS = {"↑", "↗", "→", "↘", "↓", "↙", "←", "↖"};

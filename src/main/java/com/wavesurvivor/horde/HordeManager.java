@@ -424,13 +424,15 @@ public class HordeManager {
     /** Récompense d'un Calme réussi (arène à marché) : chaque joueur reçoit la clé du coffre indiqué par le plan (pas avant le premier Assaut survécu). */
     private static void giveCalmKey(MinecraftServer srv, String chestName, int cycle) {
         if (chestName == null || chestName.isBlank() || cycle < 1) return;
-        var rc = com.wavesurvivor.horde.roulette.RouletteChestRegistry.getByChestName(chestName);
-        if (rc == null) return;
+        String[] names = chestName.split("\\|"); // plusieurs coffres possibles (« A|B|C ») : chaque joueur reçoit la clé de l'un d'eux, au hasard
         for (var p : srv.getPlayerList().getPlayers()) {
+            String pick = names[srv.overworld().random.nextInt(names.length)].trim();
+            var rc = com.wavesurvivor.horde.roulette.RouletteChestRegistry.getByChestName(pick);
+            if (rc == null) continue;
             net.minecraft.world.item.ItemStack key = com.wavesurvivor.horde.loot.LootItems.resolve("roulettechest:key_" + rc.configKey(), 1);
             if (key.isEmpty()) continue;
             net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, key);
-            p.sendSystemMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.calm_key", chestName));
+            p.sendSystemMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.calm_key", pick));
         }
     }
 

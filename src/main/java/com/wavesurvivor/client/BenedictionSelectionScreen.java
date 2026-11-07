@@ -85,7 +85,7 @@ public class BenedictionSelectionScreen extends Screen {
         // sans dépasser l'écran (titre au-dessus, boutons Bannir / Garder en dessous)
         int need = 240;
         for (RogueUpgrade u : choices) need = Math.max(need, bodyStart(u) + measureBody(u) + previewHeight(u) + 38);
-        CARD_HEIGHT = Math.max(200, Math.min(need, height - 96));
+        CARD_HEIGHT = Math.max(200, Math.min(need, height - 84));
         int totalWidth = n * CARD_WIDTH + (n - 1) * CARD_SPACING;
         int startX = (width - totalWidth) / 2;
         int cardY = (height - CARD_HEIGHT) / 2;
@@ -240,7 +240,7 @@ public class BenedictionSelectionScreen extends Screen {
         boolean showPreview = measureBody(upg) + previewHeight(upg) <= availH;
         int bodyH = measureBody(upg) + (showPreview ? previewHeight(upg) : 0);
         boolean squeeze = bodyH > availH;
-        float s = squeeze ? Math.max(0.55f, availH / (float) bodyH) : 1f;
+        float s = squeeze ? Math.max(0.4f, availH / (float) bodyH) : 1f;
         if (squeeze) {
             g.pose().pushPose();
             g.pose().translate(x + CARD_WIDTH / 2f, descY, 0);
@@ -259,9 +259,10 @@ public class BenedictionSelectionScreen extends Screen {
         descY += 6;
         for (RogueUpgrade.AttributeMod mod : upg.modifiers()) {
             String statLine = formatModifier(mod);
-            g.drawCenteredString(font, Component.literal(statLine).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD),
-                    x + CARD_WIDTH / 2, descY, 0xFF55FF55);
-            descY += font.lineHeight + 1;
+            for (FormattedCharSequence line : font.split(Component.literal(statLine).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), CARD_WIDTH - 12)) {
+                g.drawCenteredString(font, line, x + CARD_WIDTH / 2, descY, 0xFF55FF55);
+                descY += font.lineHeight + 1;
+            }
             // Aperçu : total actuel → total après ce choix (si la carte a la place)
             if (showPreview) {
                 double cur = totals.getOrDefault(modKey(mod), 0.0);
@@ -323,7 +324,9 @@ public class BenedictionSelectionScreen extends Screen {
     private int measureBody(RogueUpgrade upg) {
         int lh = font.lineHeight + 1;
         int h = font.split(Component.literal(upg.description()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), CARD_WIDTH - 20).size() * lh;
-        h += 6 + upg.modifiers().size() * lh;
+        h += 6;
+        for (RogueUpgrade.AttributeMod mod : upg.modifiers())
+            h += font.split(Component.literal(formatModifier(mod)).withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD), CARD_WIDTH - 12).size() * lh;
         if (upg.healOnApply() > 0) h += lh;
         for (RogueUpgrade.Effect fx : upg.effects()) {
             h += font.split(Component.literal(com.wavesurvivor.horde.benediction.BlessingEffects.describe(fx)).withStyle(ChatFormatting.AQUA), CARD_WIDTH - 16).size() * lh;

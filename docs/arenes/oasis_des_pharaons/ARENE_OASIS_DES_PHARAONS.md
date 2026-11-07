@@ -3,7 +3,7 @@
 > Rédigée par Claude chat avec Yoann (visuel validé). Deuxième arène Kingdom, sur le modèle du Val de la Couronne (`docs/arenes/val_de_la_couronne/ARENE_VAL_DE_LA_COURONNE.md`, à relire pour la méthode de pose). Le mode lui-même : `docs/DESIGN_KINGDOM_SABLES.md`.
 
 Fichiers (dans ce dossier) :
-- `blueprint_oasis_des_pharaons.json` — plan bloc par bloc, **181 × 21 × 181**, 33 blocs différents, JSON compact (~684 Ko).
+- `blueprint_oasis_des_pharaons.json` — plan bloc par bloc, **version 2**, **181 × 27 × 181**, 36 blocs différents, JSON compact (~880 Ko). v2 : feuilles des palmiers **persistantes** (elles tombaient), Temple de Rê enrichi (pylône à hiéroglyphes et disque solaire, colonnade, obélisques, braseros, allée de sphinx, colonnes tombées) ; repères inchangés. Ancienne version : `blueprint_oasis_des_pharaons_v1.json`.
 - `kingdom_desert_vue.png` (vue 3D), `kingdom_desert_plan.png` (plan annoté), `palmiers_oasis.png` (forme d'arbre « Oasis »), `palm.py` (algorithme du palmier).
 
 ## 1. Mesures (identiques au Val de la Couronne)

@@ -316,9 +316,27 @@
                 "input1Count": 10,
                 "input2": "",
                 "input2Count": 0,
-                "output": "roulettechest:key_custom_coffre_de_la_caravane",
+                "output": "roulettechest:key_custom_caravane_des_vivres",
                 "outputCount": 1,
-                "maxUses": 4
+                "maxUses": 3
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 12,
+                "input2": "",
+                "input2Count": 0,
+                "output": "roulettechest:key_custom_caravane_des_armes",
+                "outputCount": 1,
+                "maxUses": 3
+              },
+              {
+                "input1": "minecraft:emerald",
+                "input1Count": 12,
+                "input2": "",
+                "input2Count": 0,
+                "output": "roulettechest:key_custom_caravane_des_remedes",
+                "outputCount": 1,
+                "maxUses": 3
               },
               {
                 "input1": "minecraft:emerald",
@@ -1977,58 +1995,58 @@
       "rewards": [
         {
           "item": "minecraft:gold_ingot",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 24,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:lapis_lazuli",
           "minQty": 6,
           "maxQty": 12,
           "chance": 22,
           "tier": "COMMON"
         },
         {
-          "item": "minecraft:lapis_lazuli",
-          "minQty": 8,
-          "maxQty": 16,
-          "chance": 20,
-          "tier": "COMMON"
-        },
-        {
           "item": "minecraft:string",
           "minQty": 4,
           "maxQty": 8,
-          "chance": 12,
+          "chance": 14,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:bone",
+          "minQty": 6,
+          "maxQty": 12,
+          "chance": 14,
           "tier": "COMMON"
         },
         {
           "item": "minecraft:experience_bottle",
-          "minQty": 6,
-          "maxQty": 12,
+          "minQty": 4,
+          "maxQty": 8,
           "chance": 14,
           "tier": "UNCOMMON"
         },
         {
           "item": "wavesurvivor:taint_fragment",
-          "minQty": 2,
-          "maxQty": 4,
-          "chance": 12,
-          "tier": "UNCOMMON"
-        },
-        {
-          "item": "wavesurvivor:taint_shard",
           "minQty": 1,
           "maxQty": 2,
-          "chance": 9,
-          "tier": "RARE"
+          "chance": 8,
+          "tier": "UNCOMMON"
         },
         {
           "item": "minecraft:diamond",
           "minQty": 1,
-          "maxQty": 3,
-          "chance": 7,
+          "maxQty": 1,
+          "chance": 3,
           "tier": "RARE"
         },
         {
           "item": "wavesurvivor:voile_desert",
           "minQty": 1,
           "maxQty": 1,
-          "chance": 4,
+          "chance": 1,
           "tier": "EPIC"
         }
       ]
@@ -2078,59 +2096,59 @@
       "rewards": [
         {
           "item": "minecraft:spider_eye",
-          "minQty": 6,
-          "maxQty": 12,
-          "chance": 20,
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 22,
           "tier": "COMMON"
         },
         {
           "item": "minecraft:string",
-          "minQty": 8,
-          "maxQty": 16,
-          "chance": 18,
+          "minQty": 6,
+          "maxQty": 10,
+          "chance": 20,
           "tier": "COMMON"
         },
         {
           "item": "minecraft:emerald",
-          "minQty": 6,
-          "maxQty": 14,
+          "minQty": 3,
+          "maxQty": 6,
           "chance": 18,
           "tier": "COMMON"
         },
         {
-          "item": "minecraft:potion#minecraft:poison",
-          "minQty": 1,
-          "maxQty": 2,
-          "chance": 10,
-          "tier": "UNCOMMON"
-        },
-        {
-          "item": "minecraft:potion#minecraft:strong_strength",
-          "minQty": 1,
-          "maxQty": 2,
+          "item": "minecraft:arrow",
+          "minQty": 10,
+          "maxQty": 20,
           "chance": 12,
-          "tier": "UNCOMMON"
+          "tier": "COMMON"
         },
         {
           "item": "minecraft:fermented_spider_eye",
-          "minQty": 2,
-          "maxQty": 4,
+          "minQty": 1,
+          "maxQty": 2,
           "chance": 10,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:swiftness",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 10,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:poison",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 6,
           "tier": "UNCOMMON"
         },
         {
           "item": "minecraft:diamond",
           "minQty": 1,
-          "maxQty": 3,
-          "chance": 8,
-          "tier": "RARE"
-        },
-        {
-          "item": "minecraft:netherite_scrap",
-          "minQty": 1,
           "maxQty": 1,
-          "chance": 4,
-          "tier": "EPIC"
+          "chance": 3,
+          "tier": "RARE"
         }
       ]
     },
@@ -2186,93 +2204,86 @@
       "rewards": [
         {
           "item": "minecraft:gold_ingot",
-          "minQty": 8,
-          "maxQty": 16,
-          "chance": 22,
+          "minQty": 6,
+          "maxQty": 10,
+          "chance": 24,
           "tier": "COMMON"
         },
         {
           "item": "minecraft:golden_carrot",
-          "minQty": 6,
-          "maxQty": 12,
-          "chance": 14,
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 18,
           "tier": "COMMON"
         },
         {
           "item": "minecraft:gold_block",
           "minQty": 1,
-          "maxQty": 2,
-          "chance": 10,
+          "maxQty": 1,
+          "chance": 6,
           "tier": "UNCOMMON"
         },
         {
           "item": "wavesurvivor:grace_fragment",
-          "minQty": 2,
-          "maxQty": 4,
-          "chance": 14,
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 12,
           "tier": "UNCOMMON"
         },
         {
-          "item": "wavesurvivor:grace_shard",
+          "item": "minecraft:golden_apple",
           "minQty": 1,
-          "maxQty": 2,
-          "chance": 10,
+          "maxQty": 1,
+          "chance": 5,
           "tier": "RARE"
         },
         {
-          "item": "minecraft:enchanted_golden_apple",
+          "item": "minecraft:diamond",
           "minQty": 1,
           "maxQty": 1,
-          "chance": 3,
-          "tier": "EPIC"
+          "chance": 4,
+          "tier": "RARE"
         },
         {
           "item": "wavesurvivor:voile_desert",
           "minQty": 1,
           "maxQty": 1,
-          "chance": 6,
+          "chance": 2,
           "tier": "EPIC"
-        },
-        {
-          "item": "minecraft:diamond",
-          "minQty": 2,
-          "maxQty": 4,
-          "chance": 9,
-          "tier": "RARE"
         }
       ]
     },
     {
-      "name": "Coffre de la Caravane",
+      "name": "Caravane des Vivres",
       "particles": {
         "idle": {
           "a": "dust",
-          "color": "#2BB3A8",
+          "color": "#6DBE45",
           "pattern": "circle",
           "density": 3,
           "speed": 2
         },
         "spin": {
           "a": "dust",
-          "color": "#2BB3A8",
-          "b": "firework",
+          "color": "#6DBE45",
+          "b": "happy_villager",
           "pattern": "firework",
           "density": 6,
           "speed": 5
         }
       },
       "pattern": "circle",
-      "color": "cyan",
-      "accentColor": "#2BB3A8",
-      "woodColor": "spruce",
+      "color": "green",
+      "accentColor": "#6DBE45",
+      "woodColor": "jungle",
       "ironColor": "iron",
       "gemColor": "accent",
       "medallions": {
         "front": [
           {
-            "symbol": "gem",
+            "symbol": "leaf",
             "size": "large",
-            "color": "#2BB3A8"
+            "color": "#6DBE45"
           }
         ]
       },
@@ -2290,21 +2301,110 @@
         {
           "item": "minecraft:bread",
           "minQty": 8,
-          "maxQty": 16,
-          "chance": 18,
+          "maxQty": 12,
+          "chance": 24,
           "tier": "COMMON"
         },
         {
           "item": "minecraft:cooked_mutton",
           "minQty": 4,
           "maxQty": 8,
+          "chance": 20,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:golden_carrot",
+          "minQty": 3,
+          "maxQty": 6,
           "chance": 14,
           "tier": "COMMON"
         },
         {
+          "item": "minecraft:melon_slice",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 14,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:dried_kelp",
+          "minQty": 8,
+          "maxQty": 16,
+          "chance": 10,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:cooked_cod",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 12,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:honey_bottle",
+          "minQty": 2,
+          "maxQty": 3,
+          "chance": 6,
+          "tier": "UNCOMMON"
+        }
+      ]
+    },
+    {
+      "name": "Caravane des Armes",
+      "particles": {
+        "idle": {
+          "a": "dust",
+          "color": "#B8BCC4",
+          "pattern": "fireflies",
+          "density": 3,
+          "speed": 2
+        },
+        "spin": {
+          "a": "dust",
+          "color": "#B8BCC4",
+          "b": "crit",
+          "pattern": "firework",
+          "density": 6,
+          "speed": 5
+        }
+      },
+      "pattern": "circle",
+      "color": "gray",
+      "accentColor": "#B8BCC4",
+      "woodColor": "spruce",
+      "ironColor": "iron",
+      "gemColor": "accent",
+      "medallions": {
+        "front": [
+          {
+            "symbol": "swords",
+            "size": "large",
+            "color": "#B8BCC4"
+          }
+        ]
+      },
+      "keyHead": "ring",
+      "keyBit": "simple",
+      "keyMaterial": "fer",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
           "item": "minecraft:iron_ingot",
           "minQty": 4,
-          "maxQty": 10,
+          "maxQty": 8,
+          "chance": 22,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:arrow",
+          "minQty": 12,
+          "maxQty": 24,
           "chance": 18,
           "tier": "COMMON"
         },
@@ -2312,35 +2412,131 @@
           "item": "minecraft:coal",
           "minQty": 8,
           "maxQty": 16,
-          "chance": 12,
+          "chance": 14,
           "tier": "COMMON"
         },
         {
-          "item": "minecraft:emerald",
-          "minQty": 3,
-          "maxQty": 8,
-          "chance": 16,
+          "item": "minecraft:iron_sword",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 5,
           "tier": "UNCOMMON"
         },
         {
-          "item": "minecraft:arrow",
-          "minQty": 12,
-          "maxQty": 24,
+          "item": "minecraft:shield",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 4,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:chainmail_chestplate",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 3,
+          "tier": "RARE"
+        },
+        {
+          "item": "minecraft:bow",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 6,
+          "tier": "UNCOMMON"
+        }
+      ]
+    },
+    {
+      "name": "Caravane des Remèdes",
+      "particles": {
+        "idle": {
+          "a": "dust",
+          "color": "#2BB3A8",
+          "pattern": "aura_pulse",
+          "density": 3,
+          "speed": 2
+        },
+        "spin": {
+          "a": "dust",
+          "color": "#2BB3A8",
+          "b": "heart",
+          "pattern": "firework",
+          "density": 6,
+          "speed": 5
+        }
+      },
+      "pattern": "circle",
+      "color": "cyan",
+      "accentColor": "#2BB3A8",
+      "woodColor": "birch",
+      "ironColor": "iron",
+      "gemColor": "accent",
+      "medallions": {
+        "front": [
+          {
+            "symbol": "heart",
+            "size": "large",
+            "color": "#2BB3A8"
+          }
+        ]
+      },
+      "keyHead": "ring",
+      "keyBit": "simple",
+      "keyMaterial": "fer",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:emerald",
+          "minQty": 3,
+          "maxQty": 6,
+          "chance": 20,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:healing",
+          "minQty": 1,
+          "maxQty": 1,
           "chance": 10,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:potion#minecraft:regeneration",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 8,
+          "tier": "UNCOMMON"
+        },
+        {
+          "item": "minecraft:experience_bottle",
+          "minQty": 3,
+          "maxQty": 6,
+          "chance": 14,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:glistering_melon_slice",
+          "minQty": 2,
+          "maxQty": 4,
+          "chance": 8,
           "tier": "UNCOMMON"
         },
         {
           "item": "minecraft:gold_ingot",
           "minQty": 2,
-          "maxQty": 5,
-          "chance": 8,
-          "tier": "UNCOMMON"
+          "maxQty": 4,
+          "chance": 12,
+          "tier": "COMMON"
         },
         {
           "item": "minecraft:diamond",
           "minQty": 1,
-          "maxQty": 2,
-          "chance": 4,
+          "maxQty": 1,
+          "chance": 3,
           "tier": "RARE"
         }
       ]
