@@ -18,14 +18,12 @@ Les clés sont assemblées à partir de pièces (`textures/item/roulette_key/hea
 
 | Coffre (clé) | Tête / panneton / matériau | Couleur | Médaillon du coffre | Contenu (basique) |
 |---|---|---|---|---|
-| Reliquaire d'Anubis | crâne / double / or | bleu `#2F6FD8` | ankh (grand) + œil | or, lapis, ficelle, os, fioles d'XP |
-| Reliquaire de Sekhmet | étoile / crochet / cuivre | rouge `#E04A32` | scorpion (grand) | yeux d'araignée, flèches, émeraudes, potions |
-| Reliquaire de Rê | ailée / double / or | orange `#FFB52E` | soleil (grand) + scarabée | or, carottes dorées, fragments de Grâce |
+| Reliquaire des Trésors / des Abysses / Arcanique | *existants (déjà dessinés pour l'autre Kingdom)* | | | contenu d'origine inchangé |
 | Caravane des Vivres | anneau / simple / fer | vert `#6DBE45` | feuille | pain, mouton, melon, miel |
 | Caravane des Armes | anneau / simple / fer | gris `#B8BCC4` | épées | fer, flèches, charbon, arc, bouclier |
 | Caravane des Remèdes | anneau / simple / fer | turquoise `#2BB3A8` | cœur | émeraudes, potions de soin, fioles d'XP |
 
-Les Reliquaires (Anubis, Sekhmet, Rê) sont les plus beaux (clé donnée en récompense des seigneurs des portes) ; les trois Caravanes sont plus simples (une clé au hasard à chaque Calme).
+Au marché : les Reliquaires existants (Trésors, Abysses, Arcanique ; clés lâchées par les seigneurs Anubis, Sekhmet et Rê) et trois Caravanes simples (une clé au hasard à chaque Calme).
 
 ## 3. Symboles de coffre ajoutés (déjà installés)
 

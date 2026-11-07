@@ -370,7 +370,7 @@
                 "input1Count": 24,
                 "input2": "",
                 "input2Count": 0,
-                "output": "roulettechest:key_custom_reliquaire_d_anubis",
+                "output": "roulettechest:key_custom_reliquaire_des_tresors",
                 "outputCount": 1,
                 "maxUses": 2
               },
@@ -379,7 +379,7 @@
                 "input1Count": 24,
                 "input2": "",
                 "input2Count": 0,
-                "output": "roulettechest:key_custom_reliquaire_de_sekhmet",
+                "output": "roulettechest:key_custom_reliquaire_des_abysses",
                 "outputCount": 1,
                 "maxUses": 2
               },
@@ -388,7 +388,7 @@
                 "input1Count": 32,
                 "input2": "",
                 "input2Count": 0,
-                "output": "roulettechest:key_custom_reliquaire_de_re",
+                "output": "roulettechest:key_custom_reliquaire_arcanique",
                 "outputCount": 1,
                 "maxUses": 2
               },
@@ -439,7 +439,7 @@
                 "chance": 30
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_d_anubis",
+                "item": "roulettechest:key_custom_reliquaire_des_tresors",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -479,7 +479,7 @@
                 "chance": 30
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_re",
+                "item": "roulettechest:key_custom_reliquaire_arcanique",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -519,7 +519,7 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_d_anubis",
+                "item": "roulettechest:key_custom_reliquaire_des_tresors",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -553,7 +553,7 @@
                 "chance": 25
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_d_anubis",
+                "item": "roulettechest:key_custom_reliquaire_des_tresors",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -587,7 +587,7 @@
                 "chance": 25
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
+                "item": "roulettechest:key_custom_reliquaire_des_abysses",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -627,7 +627,7 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_d_anubis",
+                "item": "roulettechest:key_custom_reliquaire_des_tresors",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -661,7 +661,7 @@
                 "chance": 60
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_d_anubis",
+                "item": "roulettechest:key_custom_reliquaire_des_tresors",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -702,7 +702,7 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
+                "item": "roulettechest:key_custom_reliquaire_des_abysses",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -736,7 +736,7 @@
                 "chance": 50
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
+                "item": "roulettechest:key_custom_reliquaire_des_abysses",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -770,7 +770,7 @@
                 "chance": 50
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
+                "item": "roulettechest:key_custom_reliquaire_des_abysses",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -810,7 +810,7 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
+                "item": "roulettechest:key_custom_reliquaire_des_abysses",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -852,7 +852,7 @@
                 "chance": 40
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_re",
+                "item": "roulettechest:key_custom_reliquaire_arcanique",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -892,7 +892,7 @@
                 "chance": 8
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_re",
+                "item": "roulettechest:key_custom_reliquaire_arcanique",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -932,7 +932,7 @@
                 "chance": 50
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_re",
+                "item": "roulettechest:key_custom_reliquaire_arcanique",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -972,7 +972,7 @@
                 "chance": 50
               },
               {
-                "item": "roulettechest:key_custom_reliquaire_de_re",
+                "item": "roulettechest:key_custom_reliquaire_arcanique",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 6
@@ -1314,7 +1314,7 @@
             "minionConfig": {},
             "lootTable": [
               {
-                "item": "roulettechest:key_custom_reliquaire_d_anubis",
+                "item": "roulettechest:key_custom_reliquaire_des_tresors",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 100
@@ -1365,7 +1365,7 @@
             "minionConfig": {},
             "lootTable": [
               {
-                "item": "roulettechest:key_custom_reliquaire_de_sekhmet",
+                "item": "roulettechest:key_custom_reliquaire_des_abysses",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 100
@@ -1422,7 +1422,7 @@
             "minionConfig": {},
             "lootTable": [
               {
-                "item": "roulettechest:key_custom_reliquaire_de_re",
+                "item": "roulettechest:key_custom_reliquaire_arcanique",
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 100
@@ -1945,314 +1945,6 @@
     }
   },
   "chests": [
-    {
-      "name": "Reliquaire d'Anubis",
-      "particles": {
-        "idle": {
-          "a": "soul",
-          "pattern": "circle",
-          "density": 3,
-          "speed": 2
-        },
-        "spin": {
-          "a": "soul",
-          "b": "soul_fire_flame",
-          "pattern": "vortex_down",
-          "density": 7,
-          "speed": 6
-        }
-      },
-      "pattern": "circle",
-      "color": "blue",
-      "accentColor": "#2F6FD8",
-      "woodColor": "ebony",
-      "ironColor": "gold",
-      "gemColor": "accent",
-      "medallions": {
-        "front": [
-          {
-            "symbol": "ankh",
-            "size": "large",
-            "color": "#F2C14E"
-          },
-          {
-            "symbol": "eye",
-            "size": "small",
-            "color": "#2F6FD8"
-          }
-        ]
-      },
-      "keyHead": "skull",
-      "keyBit": "double",
-      "keyMaterial": "or",
-      "tierMessages": {
-        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
-        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
-        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
-        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
-        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
-      },
-      "rewards": [
-        {
-          "item": "minecraft:gold_ingot",
-          "minQty": 4,
-          "maxQty": 8,
-          "chance": 24,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:lapis_lazuli",
-          "minQty": 6,
-          "maxQty": 12,
-          "chance": 22,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:string",
-          "minQty": 4,
-          "maxQty": 8,
-          "chance": 14,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:bone",
-          "minQty": 6,
-          "maxQty": 12,
-          "chance": 14,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:experience_bottle",
-          "minQty": 4,
-          "maxQty": 8,
-          "chance": 14,
-          "tier": "UNCOMMON"
-        },
-        {
-          "item": "wavesurvivor:taint_fragment",
-          "minQty": 1,
-          "maxQty": 2,
-          "chance": 8,
-          "tier": "UNCOMMON"
-        },
-        {
-          "item": "minecraft:diamond",
-          "minQty": 1,
-          "maxQty": 1,
-          "chance": 3,
-          "tier": "RARE"
-        },
-        {
-          "item": "wavesurvivor:voile_desert",
-          "minQty": 1,
-          "maxQty": 1,
-          "chance": 1,
-          "tier": "EPIC"
-        }
-      ]
-    },
-    {
-      "name": "Reliquaire de Sekhmet",
-      "particles": {
-        "idle": {
-          "a": "crimson_spore",
-          "pattern": "fireflies",
-          "density": 4,
-          "speed": 2
-        },
-        "spin": {
-          "a": "crimson_spore",
-          "b": "flame",
-          "pattern": "double_helix",
-          "density": 7,
-          "speed": 6
-        }
-      },
-      "pattern": "circle",
-      "color": "red",
-      "accentColor": "#E04A32",
-      "woodColor": "acacia",
-      "ironColor": "copper",
-      "gemColor": "accent",
-      "medallions": {
-        "front": [
-          {
-            "symbol": "scorpion",
-            "size": "large",
-            "color": "#E04A32"
-          }
-        ]
-      },
-      "keyHead": "star",
-      "keyBit": "hook",
-      "keyMaterial": "cuivre",
-      "tierMessages": {
-        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
-        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
-        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
-        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
-        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
-      },
-      "rewards": [
-        {
-          "item": "minecraft:spider_eye",
-          "minQty": 4,
-          "maxQty": 8,
-          "chance": 22,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:string",
-          "minQty": 6,
-          "maxQty": 10,
-          "chance": 20,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:emerald",
-          "minQty": 3,
-          "maxQty": 6,
-          "chance": 18,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:arrow",
-          "minQty": 10,
-          "maxQty": 20,
-          "chance": 12,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:fermented_spider_eye",
-          "minQty": 1,
-          "maxQty": 2,
-          "chance": 10,
-          "tier": "UNCOMMON"
-        },
-        {
-          "item": "minecraft:potion#minecraft:swiftness",
-          "minQty": 1,
-          "maxQty": 1,
-          "chance": 10,
-          "tier": "UNCOMMON"
-        },
-        {
-          "item": "minecraft:potion#minecraft:poison",
-          "minQty": 1,
-          "maxQty": 1,
-          "chance": 6,
-          "tier": "UNCOMMON"
-        },
-        {
-          "item": "minecraft:diamond",
-          "minQty": 1,
-          "maxQty": 1,
-          "chance": 3,
-          "tier": "RARE"
-        }
-      ]
-    },
-    {
-      "name": "Reliquaire de Rê",
-      "particles": {
-        "idle": {
-          "a": "dust",
-          "color": "#FFB52E",
-          "pattern": "aura_pulse",
-          "density": 3,
-          "speed": 2
-        },
-        "spin": {
-          "a": "dust",
-          "color": "#FFB52E",
-          "b": "end_rod",
-          "pattern": "beam",
-          "density": 8,
-          "speed": 5
-        }
-      },
-      "pattern": "circle",
-      "color": "orange",
-      "accentColor": "#FFB52E",
-      "woodColor": "birch",
-      "ironColor": "gold",
-      "gemColor": "#FF7A1E",
-      "medallions": {
-        "front": [
-          {
-            "symbol": "sun",
-            "size": "large",
-            "color": "#F2C14E"
-          },
-          {
-            "symbol": "scarab",
-            "size": "small",
-            "color": "#2F6FD8"
-          }
-        ]
-      },
-      "keyHead": "winged",
-      "keyBit": "double",
-      "keyMaterial": "or",
-      "tierMessages": {
-        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
-        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
-        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
-        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
-        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
-      },
-      "rewards": [
-        {
-          "item": "minecraft:gold_ingot",
-          "minQty": 6,
-          "maxQty": 10,
-          "chance": 24,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:golden_carrot",
-          "minQty": 4,
-          "maxQty": 8,
-          "chance": 18,
-          "tier": "COMMON"
-        },
-        {
-          "item": "minecraft:gold_block",
-          "minQty": 1,
-          "maxQty": 1,
-          "chance": 6,
-          "tier": "UNCOMMON"
-        },
-        {
-          "item": "wavesurvivor:grace_fragment",
-          "minQty": 1,
-          "maxQty": 2,
-          "chance": 12,
-          "tier": "UNCOMMON"
-        },
-        {
-          "item": "minecraft:golden_apple",
-          "minQty": 1,
-          "maxQty": 1,
-          "chance": 5,
-          "tier": "RARE"
-        },
-        {
-          "item": "minecraft:diamond",
-          "minQty": 1,
-          "maxQty": 1,
-          "chance": 4,
-          "tier": "RARE"
-        },
-        {
-          "item": "wavesurvivor:voile_desert",
-          "minQty": 1,
-          "maxQty": 1,
-          "chance": 2,
-          "tier": "EPIC"
-        }
-      ]
-    },
     {
       "name": "Caravane des Vivres",
       "particles": {

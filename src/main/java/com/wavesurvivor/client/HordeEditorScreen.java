@@ -846,8 +846,17 @@ public class HordeEditorScreen extends Screen {
         flow(x, y);
         fl(t("ui.consolation"));
         fInt(30, HordeJson.num(cd, "consolationPercent", -1), v -> cd.addProperty("consolationPercent", Math.max(-1, Math.min(100, v))));
-        fl(t("ui.consolation_hint"));
         y += 20;
+        // L'explication passe sous le champ (elle est longue : en deux lignes, scindée à la première phrase)
+        String ch = t("ui.consolation_hint");
+        int cut = ch.indexOf(". ");
+        String[] chLines = cut > 0 ? new String[]{ch.substring(0, cut + 1), ch.substring(cut + 2)} : new String[]{ch};
+        for (String cl : chLines) {
+            flow(x, y);
+            fl("§7" + cl);
+            y += 12;
+        }
+        y += 8;
         // Bouton « Prêt » pendant les pauses (pas en Kingdom : le Calme a sa propre logique)
         if (!kingdom()) {
             JsonObject rd = HordeJson.obj(cd, "ready");
