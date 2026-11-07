@@ -425,4 +425,5 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Clés du désert : 5 nouvelles têtes (ankh, scorpion, soleil, feuille, épée) dans l'onglet Clé de l'éditeur de coffres ; les 3 Caravanes ont chacune une clé reconnaissable (feuille / épée-escalier / cœur-crochet)
 - [ ] Icônes 32 × 32 de la Gourde, de la Fiole de mirage et de la Tablette
 - [ ] Gourde fraîche : boire donne l'effet « Fraîcheur du désert » (icône de goutte, 3 min) : immunité au Soleil de plomb ET durée de brûlure réduite de moitié (feu de camp / lave / flèche enflammée : le feu s'éteint 2× plus vite ; les dégâts par tic ne changent pas) ; boire en étant déjà en feu réduit aussitôt le feu restant de moitié
+- [ ] Soleil de plomb : le joueur exposé (jour, à découvert, sans Fraîcheur) reçoit l'effet « Soleil de plomb » (icône de soleil dans la liste des effets) ET un voile orangé pulsant avec bords chauffés, en fondu ; à l'ombre ou après la gourde, le voile s'estompe en quelques secondes
 

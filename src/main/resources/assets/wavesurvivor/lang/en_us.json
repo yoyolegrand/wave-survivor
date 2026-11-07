@@ -206,5 +206,6 @@
   "item.wavesurvivor.gourde_fraiche": "Cool Waterskin",
   "item.wavesurvivor.fiole_mirage": "Mirage Vial",
   "item.wavesurvivor.tablette_reconnaissance": "Reconnaissance Tablet",
-  "effect.wavesurvivor.desert_freshness": "Desert Freshness"
+  "effect.wavesurvivor.desert_freshness": "Desert Freshness",
+  "effect.wavesurvivor.scorching_sun": "Scorching Sun"
 }

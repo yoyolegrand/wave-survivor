@@ -16,6 +16,10 @@ public final class ModEffects {
     public static final RegistryObject<MobEffect> DESERT_FRESHNESS = EFFECTS.register("desert_freshness",
             () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x4FC3E8) {});
 
+    /** « Soleil de plomb » (1.9) : posé en continu sur les joueurs exposés pendant l'événement du même nom ; donne l'icône du HUD et le voile orangé. */
+    public static final RegistryObject<MobEffect> SCORCHING_SUN = EFFECTS.register("scorching_sun",
+            () -> new MobEffect(MobEffectCategory.HARMFUL, 0xF2A33A) {});
+
     private ModEffects() {}
 
     public static void register(IEventBus bus) { EFFECTS.register(bus); }

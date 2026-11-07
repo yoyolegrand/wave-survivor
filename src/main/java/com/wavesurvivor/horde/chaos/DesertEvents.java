@@ -318,6 +318,8 @@ public final class DesertEvents {
                     if (p.isSpectator() || p.isCreative() || !p.level().isDay() || protectedFromSun(p, now)) continue;
                     if (!p.level().canSeeSky(p.blockPosition().above())) continue; // à l'ombre
                     p.causeFoodExhaustion((float) (0.08 * sunIntensity));
+                    // Icône du HUD + voile orangé côté client : l'effet est rafraîchi tant que le joueur est exposé, il s'éteint tout seul à l'ombre
+                    p.addEffect(new net.minecraft.world.effect.MobEffectInstance(com.wavesurvivor.registry.ModEffects.SCORCHING_SUN.get(), 40, 0, false, false, true));
                     if (now % 200 == 0) p.displayClientMessage(WSLang.c("desert.sun_burns"), true);
                 }
             }
