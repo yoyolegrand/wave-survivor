@@ -1969,7 +1969,7 @@
       "accentColor": "#6DBE45",
       "woodColor": "jungle",
       "ironColor": "iron",
-      "gemColor": "accent",
+      "gemColor": "#6DBE45",
       "medallions": {
         "front": [
           {
@@ -1979,7 +1979,7 @@
           }
         ]
       },
-      "keyHead": "ring",
+      "keyHead": "leaf",
       "keyBit": "simple",
       "keyMaterial": "fer",
       "tierMessages": {
@@ -2065,7 +2065,7 @@
       "accentColor": "#B8BCC4",
       "woodColor": "spruce",
       "ironColor": "iron",
-      "gemColor": "accent",
+      "gemColor": "#E04A32",
       "medallions": {
         "front": [
           {
@@ -2075,8 +2075,8 @@
           }
         ]
       },
-      "keyHead": "ring",
-      "keyBit": "simple",
+      "keyHead": "sword",
+      "keyBit": "stairs",
       "keyMaterial": "fer",
       "tierMessages": {
         "COMMON": "§7{player} a trouvé §f{qty}× {item}",
@@ -2161,7 +2161,7 @@
       "accentColor": "#2BB3A8",
       "woodColor": "birch",
       "ironColor": "iron",
-      "gemColor": "accent",
+      "gemColor": "#2BB3A8",
       "medallions": {
         "front": [
           {
@@ -2171,8 +2171,8 @@
           }
         ]
       },
-      "keyHead": "ring",
-      "keyBit": "simple",
+      "keyHead": "heart",
+      "keyBit": "hook",
       "keyMaterial": "fer",
       "tierMessages": {
         "COMMON": "§7{player} a trouvé §f{qty}× {item}",

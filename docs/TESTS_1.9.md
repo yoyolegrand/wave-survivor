@@ -422,3 +422,5 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Palmier d'oasis (chaos « arbre » forme Oasis) : feuilles posées persistantes
 - [ ] Carte de bénédiction (écran petit / grande échelle d'interface) : rien ne passe sur le bouton Choisir, lignes de stats longues à la ligne
 - [ ] HUD du Chasseur de primes (contrat) : texte à la ligne dans le panneau, jamais coupé
+- [ ] Clés du désert : 5 nouvelles têtes (ankh, scorpion, soleil, feuille, épée) dans l'onglet Clé de l'éditeur de coffres ; les 3 Caravanes ont chacune une clé reconnaissable (feuille / épée-escalier / cœur-crochet)
+- [ ] Icônes 32 × 32 de la Gourde, de la Fiole de mirage et de la Tablette

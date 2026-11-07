@@ -3855,5 +3855,10 @@
   "ui.tree_shape.oasis": "§a🌴 Oasis (palmier)",
   "ui.ore_style": "Style",
   "ui.ore_style.classic": "§fClassique",
-  "ui.ore_style.desert": "§6🏜 Désert (rocher)"
+  "ui.ore_style.desert": "§6🏜 Désert (rocher)",
+  "chest.ed.key.head_ankh": "Ankh",
+  "chest.ed.key.head_scorpion": "Scorpion",
+  "chest.ed.key.head_sun": "Soleil",
+  "chest.ed.key.head_leaf": "Feuille",
+  "chest.ed.key.head_sword": "Épée"
 }

@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wavesurvivor:item/roulette_key/outline_scorpion_double",
+    "layer1": "wavesurvivor:item/roulette_key/shaft",
+    "layer2": "wavesurvivor:item/roulette_key/bit_double",
+    "layer3": "wavesurvivor:item/roulette_key/head_scorpion",
+    "layer4": "wavesurvivor:item/roulette_key/head_scorpion_gem"
+  }
+}

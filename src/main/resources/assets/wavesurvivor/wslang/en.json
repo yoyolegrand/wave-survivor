@@ -4616,5 +4616,10 @@
   "ui.ore_style.desert": "§6🏜 Desert (rock)",
   "Caravane des Vivres": "Caravan Provisions",
   "Caravane des Armes": "Caravan Arms",
-  "Caravane des Remèdes": "Caravan Remedies"
+  "Caravane des Remèdes": "Caravan Remedies",
+  "chest.ed.key.head_ankh": "Ankh",
+  "chest.ed.key.head_scorpion": "Scorpion",
+  "chest.ed.key.head_sun": "Sun",
+  "chest.ed.key.head_leaf": "Leaf",
+  "chest.ed.key.head_sword": "Sword"
 }

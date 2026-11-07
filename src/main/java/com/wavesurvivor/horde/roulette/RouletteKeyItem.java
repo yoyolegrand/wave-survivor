@@ -95,10 +95,10 @@ public class RouletteKeyItem extends Item {
             new Material("amethyste", "Améthyste", "Clé en améthyste", 0xA060CC)};
 
     /** Têtes et pannetons de clé (ordre = numéro de forme : tête × 4 + panneton). Le premier de chaque liste est la valeur par défaut. */
-    public static final java.util.List<String> HEADS = java.util.List.of("ring", "clover", "crown", "skull", "heart", "star", "diamond", "winged");
+    public static final java.util.List<String> HEADS = java.util.List.of("ring", "clover", "crown", "skull", "heart", "star", "diamond", "winged", "ankh", "scorpion", "sun", "leaf", "sword");
     public static final java.util.List<String> BITS = java.util.List.of("simple", "double", "stairs", "hook");
 
-    /** Numéro de forme de la clé (0 à 31) pour le modèle d'objet ; une ancienne clé (sans étiquette) est « anneau + simple ». */
+    /** Numéro de forme de la clé (0 à 51) pour le modèle d'objet ; une ancienne clé (sans étiquette) est « anneau + simple ». */
     public static int shapeIndex(ItemStack stack) {
         CompoundTag tag = stack.getTag();
         if (tag == null) return 0;
