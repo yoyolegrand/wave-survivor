@@ -205,5 +205,6 @@
   "item.wavesurvivor.vestige_compass": "Boussole des Vestiges",
   "item.wavesurvivor.gourde_fraiche": "Gourde d'eau fraîche",
   "item.wavesurvivor.fiole_mirage": "Fiole de mirage",
-  "item.wavesurvivor.tablette_reconnaissance": "Tablette de reconnaissance"
+  "item.wavesurvivor.tablette_reconnaissance": "Tablette de reconnaissance",
+  "effect.wavesurvivor.desert_freshness": "Fraîcheur du désert"
 }

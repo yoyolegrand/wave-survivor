@@ -424,3 +424,5 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] HUD du Chasseur de primes (contrat) : texte à la ligne dans le panneau, jamais coupé
 - [ ] Clés du désert : 5 nouvelles têtes (ankh, scorpion, soleil, feuille, épée) dans l'onglet Clé de l'éditeur de coffres ; les 3 Caravanes ont chacune une clé reconnaissable (feuille / épée-escalier / cœur-crochet)
 - [ ] Icônes 32 × 32 de la Gourde, de la Fiole de mirage et de la Tablette
+- [ ] Gourde fraîche : boire donne l'effet « Fraîcheur du désert » (icône de goutte, 3 min) : immunité au Soleil de plomb ET durée de brûlure réduite de moitié (feu de camp / lave / flèche enflammée : le feu s'éteint 2× plus vite ; les dégâts par tic ne changent pas) ; boire en étant déjà en feu réduit aussitôt le feu restant de moitié
+

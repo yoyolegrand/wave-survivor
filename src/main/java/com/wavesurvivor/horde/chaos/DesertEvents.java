@@ -179,11 +179,12 @@ public final class DesertEvents {
     /** Gourde d'eau fraîche : immunité au soleil de plomb pour {@code seconds} secondes. */
     public static void drink(ServerPlayer p, int seconds) {
         p.getPersistentData().putLong(GOURDE_KEY, p.server.getTickCount() + seconds * 20L);
+        p.addEffect(new net.minecraft.world.effect.MobEffectInstance(com.wavesurvivor.registry.ModEffects.DESERT_FRESHNESS.get(), seconds * 20, 0, false, true, true));
     }
 
     private static boolean protectedFromSun(ServerPlayer p, long now) {
         CompoundTag d = p.getPersistentData();
-        return d.contains(GOURDE_KEY) && d.getLong(GOURDE_KEY) > now;
+        return p.hasEffect(com.wavesurvivor.registry.ModEffects.DESERT_FRESHNESS.get()) || d.contains(GOURDE_KEY) && d.getLong(GOURDE_KEY) > now;
     }
 
     // ── Nuée de scarabées : surgit du sable près d'un coffre du royaume (sinon du Monolithe) ──
