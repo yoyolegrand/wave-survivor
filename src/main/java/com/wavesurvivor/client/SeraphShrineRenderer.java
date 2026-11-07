@@ -48,7 +48,7 @@ public class SeraphShrineRenderer implements BlockEntityRenderer<SeraphShrineBlo
         pose.mulPose(Axis.YP.rotationDegrees(180.0f - yaw));   // même formule que le rendu des entités : la statue regarde vers FACING
         pose.scale(-1.0f, -1.0f, 1.0f);   // repère des modèles d'entité (y vers le bas)
 
-        model.renderToBuffer(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(TEX[stage])), light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+        model.renderToBuffer(pose, buffers.getBuffer(RenderType.entityCutout(TEX[stage])), light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
         model.renderToBuffer(pose, buffers.getBuffer(RenderType.eyes(GLOW[stage])), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
         pose.popPose();
     }

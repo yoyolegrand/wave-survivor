@@ -1,0 +1,2252 @@
+{
+ "midLt_f2": {
+  "texOffs": [
+   0,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   46,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRt_f2": {
+  "texOffs": [
+   15,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   46,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLt_f3": {
+  "texOffs": [
+   30,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   44,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRt_f3": {
+  "texOffs": [
+   45,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   44,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLt_f1": {
+  "texOffs": [
+   60,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   42,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRt_f1": {
+  "texOffs": [
+   75,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   42,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLt_f2": {
+  "texOffs": [
+   90,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   39,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLt_f2": {
+  "texOffs": [
+   103,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   39,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRt_f2": {
+  "texOffs": [
+   116,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   39,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRt_f2": {
+  "texOffs": [
+   129,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   39,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLt_f4": {
+  "texOffs": [
+   142,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   38,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRt_f4": {
+  "texOffs": [
+   157,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   38,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLt_f3": {
+  "texOffs": [
+   172,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   37,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLt_f3": {
+  "texOffs": [
+   185,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   37,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRt_f3": {
+  "texOffs": [
+   198,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   37,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRt_f3": {
+  "texOffs": [
+   211,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   37,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLt_f1": {
+  "texOffs": [
+   224,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   36,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLt_f0": {
+  "texOffs": [
+   237,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   36,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLt_f1": {
+  "texOffs": [
+   252,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   36,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRt_f1": {
+  "texOffs": [
+   265,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   36,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRt_f0": {
+  "texOffs": [
+   278,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   36,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRt_f1": {
+  "texOffs": [
+   293,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   36,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLt_f4": {
+  "texOffs": [
+   306,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   32,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLm_f3": {
+  "texOffs": [
+   319,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   32,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLt_f4": {
+  "texOffs": [
+   334,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   32,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRt_f4": {
+  "texOffs": [
+   347,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   32,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRm_f3": {
+  "texOffs": [
+   360,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   32,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRt_f4": {
+  "texOffs": [
+   375,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   32,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLt_f0": {
+  "texOffs": [
+   388,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   31,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLt_f0": {
+  "texOffs": [
+   401,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   31,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRt_f0": {
+  "texOffs": [
+   414,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   31,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRt_f0": {
+  "texOffs": [
+   427,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   31,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLm_f2": {
+  "texOffs": [
+   440,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   30,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRm_f2": {
+  "texOffs": [
+   455,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   30,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLm_f1": {
+  "texOffs": [
+   470,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   28,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRm_f1": {
+  "texOffs": [
+   485,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   28,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLm_f3": {
+  "texOffs": [
+   500,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   27,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLm_f3": {
+  "texOffs": [
+   513,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   27,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRm_f3": {
+  "texOffs": [
+   526,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   27,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRm_f3": {
+  "texOffs": [
+   539,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   27,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLm_f2": {
+  "texOffs": [
+   552,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   26,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLm_f0": {
+  "texOffs": [
+   565,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   26,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLm_f2": {
+  "texOffs": [
+   580,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   26,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRm_f2": {
+  "texOffs": [
+   593,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   26,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRm_f0": {
+  "texOffs": [
+   606,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   26,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRm_f2": {
+  "texOffs": [
+   621,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   26,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLm_f1": {
+  "texOffs": [
+   634,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   24,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLm_f1": {
+  "texOffs": [
+   647,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   24,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRm_f1": {
+  "texOffs": [
+   660,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   24,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRm_f1": {
+  "texOffs": [
+   673,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   24,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLm_f0": {
+  "texOffs": [
+   686,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   22,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLt_f6": {
+  "texOffs": [
+   699,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   22,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLm_f0": {
+  "texOffs": [
+   714,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   22,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRm_f0": {
+  "texOffs": [
+   727,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   22,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRt_f6": {
+  "texOffs": [
+   740,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   22,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRm_f0": {
+  "texOffs": [
+   755,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   22,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLr_f2": {
+  "texOffs": [
+   768,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   20,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLt_f5": {
+  "texOffs": [
+   783,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   20,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLt_f7": {
+  "texOffs": [
+   798,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   20,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRr_f2": {
+  "texOffs": [
+   813,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   20,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRt_f5": {
+  "texOffs": [
+   828,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   20,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRt_f7": {
+  "texOffs": [
+   843,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   20,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLt_f6": {
+  "texOffs": [
+   858,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   19,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLt_f6": {
+  "texOffs": [
+   871,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   19,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRt_f6": {
+  "texOffs": [
+   884,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   19,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRt_f6": {
+  "texOffs": [
+   897,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   19,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLr_f1": {
+  "texOffs": [
+   910,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   18,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLm_f6": {
+  "texOffs": [
+   925,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   18,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRr_f1": {
+  "texOffs": [
+   940,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   18,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRm_f6": {
+  "texOffs": [
+   955,
+   320
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   18,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLr_f2": {
+  "texOffs": [
+   970,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLt_f5": {
+  "texOffs": [
+   983,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLt_f7": {
+  "texOffs": [
+   996,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLr_f2": {
+  "texOffs": [
+   1009,
+   320
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLt_f5": {
+  "texOffs": [
+   0,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLt_f7": {
+  "texOffs": [
+   13,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRr_f2": {
+  "texOffs": [
+   26,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRt_f5": {
+  "texOffs": [
+   39,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRt_f7": {
+  "texOffs": [
+   52,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRr_f2": {
+  "texOffs": [
+   65,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRt_f5": {
+  "texOffs": [
+   78,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRt_f7": {
+  "texOffs": [
+   91,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   17,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLr_f0": {
+  "texOffs": [
+   104,
+   367
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   16,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLm_f4": {
+  "texOffs": [
+   119,
+   367
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   16,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLm_f5": {
+  "texOffs": [
+   134,
+   367
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   16,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRr_f0": {
+  "texOffs": [
+   149,
+   367
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   16,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRm_f4": {
+  "texOffs": [
+   164,
+   367
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   16,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRm_f5": {
+  "texOffs": [
+   179,
+   367
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   16,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLr_f1": {
+  "texOffs": [
+   194,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   15,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLm_f6": {
+  "texOffs": [
+   207,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   15,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLr_f1": {
+  "texOffs": [
+   220,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   15,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLm_f6": {
+  "texOffs": [
+   233,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   15,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRr_f1": {
+  "texOffs": [
+   246,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   15,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRm_f6": {
+  "texOffs": [
+   259,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   15,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRr_f1": {
+  "texOffs": [
+   272,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   15,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRm_f6": {
+  "texOffs": [
+   285,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   15,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLr_f0": {
+  "texOffs": [
+   298,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLm_f4": {
+  "texOffs": [
+   311,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLm_f5": {
+  "texOffs": [
+   324,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLr_f0": {
+  "texOffs": [
+   337,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLm_f4": {
+  "texOffs": [
+   350,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLm_f5": {
+  "texOffs": [
+   363,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRr_f0": {
+  "texOffs": [
+   376,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRm_f4": {
+  "texOffs": [
+   389,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRm_f5": {
+  "texOffs": [
+   402,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRr_f0": {
+  "texOffs": [
+   415,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRm_f4": {
+  "texOffs": [
+   428,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRm_f5": {
+  "texOffs": [
+   441,
+   367
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   14,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLr": {
+  "texOffs": [
+   454,
+   367
+  ],
+  "addBox": [
+   -17,
+   -2.6,
+   0,
+   17,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "upLm": {
+  "texOffs": [
+   489,
+   367
+  ],
+  "addBox": [
+   -24,
+   -2.6,
+   0,
+   24,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "upLt": {
+  "texOffs": [
+   538,
+   367
+  ],
+  "addBox": [
+   -22,
+   -2.6,
+   0,
+   22,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "midLr": {
+  "texOffs": [
+   583,
+   367
+  ],
+  "addBox": [
+   -20,
+   -2.6,
+   0,
+   20,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "midLm": {
+  "texOffs": [
+   624,
+   367
+  ],
+  "addBox": [
+   -28,
+   -2.6,
+   0,
+   28,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "midLt": {
+  "texOffs": [
+   681,
+   367
+  ],
+  "addBox": [
+   -26,
+   -2.6,
+   0,
+   26,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "lowLr": {
+  "texOffs": [
+   734,
+   367
+  ],
+  "addBox": [
+   -17,
+   -2.6,
+   0,
+   17,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "lowLm": {
+  "texOffs": [
+   769,
+   367
+  ],
+  "addBox": [
+   -24,
+   -2.6,
+   0,
+   24,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "lowLt": {
+  "texOffs": [
+   818,
+   367
+  ],
+  "addBox": [
+   -22,
+   -2.6,
+   0,
+   22,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "upRr": {
+  "texOffs": [
+   863,
+   367
+  ],
+  "addBox": [
+   0,
+   -2.6,
+   0,
+   17,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "upRm": {
+  "texOffs": [
+   898,
+   367
+  ],
+  "addBox": [
+   0,
+   -2.6,
+   0,
+   24,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "upRt": {
+  "texOffs": [
+   947,
+   367
+  ],
+  "addBox": [
+   0,
+   -2.6,
+   0,
+   22,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "midRr": {
+  "texOffs": [
+   0,
+   385
+  ],
+  "addBox": [
+   0,
+   -2.6,
+   0,
+   20,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "midRm": {
+  "texOffs": [
+   41,
+   385
+  ],
+  "addBox": [
+   0,
+   -2.6,
+   0,
+   28,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "midRt": {
+  "texOffs": [
+   98,
+   385
+  ],
+  "addBox": [
+   0,
+   -2.6,
+   0,
+   26,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "lowRr": {
+  "texOffs": [
+   151,
+   385
+  ],
+  "addBox": [
+   0,
+   -2.6,
+   0,
+   17,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "lowRm": {
+  "texOffs": [
+   186,
+   385
+  ],
+  "addBox": [
+   0,
+   -2.6,
+   0,
+   24,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "lowRt": {
+  "texOffs": [
+   235,
+   385
+  ],
+  "addBox": [
+   0,
+   -2.6,
+   0,
+   22,
+   10,
+   0
+  ],
+  "kind": "covert"
+ },
+ "midLr_f3": {
+  "texOffs": [
+   280,
+   385
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   8,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLr_f4": {
+  "texOffs": [
+   295,
+   385
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   8,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLm_f7": {
+  "texOffs": [
+   310,
+   385
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   8,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midLm_f8": {
+  "texOffs": [
+   325,
+   385
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   8,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRr_f3": {
+  "texOffs": [
+   340,
+   385
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   8,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRr_f4": {
+  "texOffs": [
+   355,
+   385
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   8,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRm_f7": {
+  "texOffs": [
+   370,
+   385
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   8,
+   0
+  ],
+  "kind": "feather"
+ },
+ "midRm_f8": {
+  "texOffs": [
+   385,
+   385
+  ],
+  "addBox": [
+   -3.5,
+   0,
+   0,
+   7,
+   8,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLr_f3": {
+  "texOffs": [
+   400,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLr_f4": {
+  "texOffs": [
+   413,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLm_f7": {
+  "texOffs": [
+   426,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upLm_f8": {
+  "texOffs": [
+   439,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLr_f3": {
+  "texOffs": [
+   452,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLr_f4": {
+  "texOffs": [
+   465,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLm_f7": {
+  "texOffs": [
+   478,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowLm_f8": {
+  "texOffs": [
+   491,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRr_f3": {
+  "texOffs": [
+   504,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRr_f4": {
+  "texOffs": [
+   517,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRm_f7": {
+  "texOffs": [
+   530,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "upRm_f8": {
+  "texOffs": [
+   543,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRr_f3": {
+  "texOffs": [
+   556,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRr_f4": {
+  "texOffs": [
+   569,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRm_f7": {
+  "texOffs": [
+   582,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ },
+ "lowRm_f8": {
+  "texOffs": [
+   595,
+   385
+  ],
+  "addBox": [
+   -3.0,
+   0,
+   0,
+   6,
+   7,
+   0
+  ],
+  "kind": "feather"
+ }
+}
