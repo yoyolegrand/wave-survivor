@@ -1,0 +1,99 @@
+{
+  "_comment": "Wave Survivor 2.0 : horde « La Faille » (mode Rift), prête à lier à l'autel. Fusionné une seule fois.",
+  "hordes": [
+    {
+      "hordeName": "La Faille",
+      "hordeDescription": "Un portail s'ouvre vers une dimension de nuit éternelle. (2.0 en construction : pour l'instant, ouverture de la Faille et île de départ.)",
+      "configData": {
+        "totalWaves": 5,
+        "delayBetweenWaves": 20,
+        "spawnType": "fixed",
+        "spawnRadius": 30,
+        "gameOverRadius": 2000,
+        "playerScaling": {
+          "enabled": true,
+          "countMultiplier": 0.5,
+          "statsMultiplier": 0.1
+        },
+        "multiSpawns": [],
+        "dynamicSpawns": [],
+        "spawnConditions": {
+          "useTickInterval": false,
+          "tickInterval": 60000,
+          "useKillCount": false,
+          "requiredKills": [
+            {
+              "entity": "minecraft:zombie",
+              "count": 10
+            }
+          ],
+          "killCountdownDelay": 10
+        },
+        "spawnMessages": {
+          "normalWave": "§6§l[INVASION] §eVague {wave}/{total}",
+          "specialWave": "§6§l[INVASION] §eVague {wave}/{total} §6- {name} !",
+          "useSound": false
+        },
+        "useWavePauses": false,
+        "wavePauses": [],
+        "useMerchants": false,
+        "merchantDebug": false,
+        "merchants": [],
+        "hordeEntities": [],
+        "useSpecialWaves": false,
+        "specialWaveChance": 40,
+        "specialWaves": [],
+        "useBossWaves": false,
+        "bossWaves": [],
+        "chaosEnabled": false,
+        "chaosMinInterval": 20,
+        "chaosMaxInterval": 40,
+        "chaosEvents": [],
+        "stars": 0,
+        "unlockRequires": [],
+        "forceEndBonus": {},
+        "mode": "rift",
+        "rift": {
+          "openingSpeed": 1.0,
+          "shakeIntensity": 1.0,
+          "showTitle": true,
+          "islandRadius": 16,
+          "hordeWaves": 5
+        }
+      },
+      "rewards": {
+        "enabled": false,
+        "top1": [],
+        "top2": [],
+        "top3": [],
+        "bossKiller": []
+      },
+      "id": "5a111f4c0de2b0a1f1e70001"
+    }
+  ],
+  "altarRecipes": {
+    "La Faille": {
+      "ingredients": [
+        {
+          "item": "minecraft:crying_obsidian",
+          "count": 1
+        },
+        {
+          "item": "minecraft:amethyst_shard",
+          "count": 4
+        }
+      ],
+      "zone": {
+        "radius": 10,
+        "floor": [
+          {
+            "block": "minecraft:deepslate",
+            "weight": 100
+          }
+        ],
+        "autoLayout": true,
+        "maxChests": 0
+      }
+    }
+  }
+}

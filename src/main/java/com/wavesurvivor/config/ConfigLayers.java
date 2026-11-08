@@ -36,7 +36,8 @@ public final class ConfigLayers {
             "additions/frozen_peaks.json",       // 1.6.0 : « Les Pics Gelés »
             "additions/sables_ardents.json",     // 1.7.0 : « Les Sables Ardents »
             "additions/invasions.json",          // 1.7.0 : invasions de village prêtes à jouer
-            "additions/kingdom_sables.json"      // 1.9.0 : horde Kingdom « Les Sables » (arène L'Oasis des Pharaons)
+            "additions/kingdom_sables.json",     // 1.9.0 : horde Kingdom « Les Sables » (arène L'Oasis des Pharaons)
+            "additions/rift.json"                // 2.0 : horde « La Faille » (mode Rift)
     );
 
     private static BuiltinBuilder.Result builtin;
