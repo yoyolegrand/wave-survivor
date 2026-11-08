@@ -116,6 +116,13 @@ public class ModBlocks {
             () -> new com.wavesurvivor.horde.kingdom.RampartBlock(BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.DEEPSLATE_BRICKS)
                     .noOcclusion().noLootTable()));
 
+    /** 2.0 — Surface du portail de la Faille (ovale tourbillonnant, sans collision, posé par RiftGate). */
+    public static final RegistryObject<Block> RIFT_PORTAL = BLOCKS.register("rift_portal",
+            () -> new com.wavesurvivor.horde.rift.RiftPortalBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE).strength(-1.0f, 3600000.0f).noCollission().noOcclusion().noLootTable()
+                    .lightLevel(st -> 12).isViewBlocking((st, g, pos) -> false).isSuffocating((st, g, pos) -> false)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
+
     /** Mode Kingdom : partie de porte de rempart (cadre 3×3, PV partagés). */
     public static final RegistryObject<Block> KINGDOM_GATE_PART = BLOCKS.register("kingdom_gate_part",
             () -> new com.wavesurvivor.horde.kingdom.GatePartBlock(BlockBehaviour.Properties.of()

@@ -3891,5 +3891,7 @@
   "ui.rift.sec_island": "Île de départ",
   "ui.rift.radius": "Rayon",
   "ui.rift.waves": "Vagues de la Horde",
-  "ui.rift.hint_phases": "§8Les phases suivantes (Siège, Contre-offensive, Titan, engins de siège) s'ajouteront ici au fil de la 2.0."
+  "ui.rift.hint_phases": "§8Les phases suivantes (Siège, Contre-offensive, Titan, engins de siège) s'ajouteront ici au fil de la 2.0.",
+  "rift.opened_title": "§5§lLa Faille est ouverte",
+  "rift.opened_sub": "§7Franchis le portail…"
 }

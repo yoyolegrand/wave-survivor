@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 
@@ -52,6 +53,8 @@ public final class RiftManager {
     private static HordeConfigMultiData horde;
     private static ServerLevel world;
     private static BlockPos home;
+    /** Portail de la Faille (blocs réels + animation d'ouverture), jalon 1b. */
+    private static RiftGate gate;
     private static int radius = 16;
     private static final Set<Long> FORCED = new HashSet<>();
 
@@ -68,6 +71,12 @@ public final class RiftManager {
     public static HordeConfigMultiData horde() { return horde; }
 
     public static int radius() { return radius; }
+
+    /** Autel (ou point de lancement) de la Faille en cours. */
+    static BlockPos altarOf() { return home; }
+
+    /** Le portail est-il ouvert (animation terminée) ? */
+    public static boolean portalOpen() { return gate != null && gate.isOpen(); }
 
     // ─── Ouverture ───
 
@@ -101,10 +110,10 @@ public final class RiftManager {
         forceChunks(rd);
         buildIsland(rd);
         active = true;
-        for (ServerPlayer p : new ArrayList<>(w.players())) {
-            if (p.isSpectator() || !p.isAlive()) continue;
-            if (p == starter || p.blockPosition().distSqr(altar) <= 48.0 * 48.0) enter(p);
-        }
+        // Jalon 1b : le portail s'ouvre (animation complète la 1re fois), les joueurs le franchissent à pied
+        boolean[] fresh = new boolean[1];
+        gate = RiftGate.plan(w, altar, fresh);
+        gate.begin(fresh[0], rs);
         WaveSurvivorMod.LOGGER.info("[Faille] Ouverte depuis l'autel {} (île de rayon {}).", altar, radius);
         return true;
     }
@@ -133,6 +142,10 @@ public final class RiftManager {
         if (rd != null) {
             for (ServerPlayer p : new ArrayList<>(rd.players())) sendHome(p);
             clearIsland(rd);
+        }
+        if (gate != null) {
+            gate.seal();
+            gate = null;
         }
         releaseChunks(rd);
         active = false;
@@ -220,6 +233,7 @@ public final class RiftManager {
     @SubscribeEvent
     public void onTick(TickEvent.ServerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !active) return;
+        if (gate != null && gate.isRunning()) gate.tick();
         MinecraftServer server = e.getServer();
         long now = server.getTickCount();
         if (now % 10 != 0) return;
@@ -233,6 +247,16 @@ public final class RiftManager {
                 p.fallDistance = 0;
                 p.setDeltaMovement(0, 0, 0);
                 p.hurt(p.damageSources().fall(), 2f);
+            }
+        }
+    }
+
+    /** Au démarrage du serveur : aucune Faille n'est ouverte, on referme les portails restés ouverts (redémarrage, arrêt brutal). */
+    @SubscribeEvent
+    public void onServerStarted(ServerStartedEvent e) {
+        for (RiftPortals.Rec r : RiftPortals.all(e.getServer())) {
+            for (ServerLevel l : e.getServer().getAllLevels()) {
+                if (l.dimension().location().toString().equals(r.dim())) RiftGate.of(l, r).seal();
             }
         }
     }

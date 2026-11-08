@@ -207,5 +207,6 @@
   "item.wavesurvivor.fiole_mirage": "Mirage Vial",
   "item.wavesurvivor.tablette_reconnaissance": "Reconnaissance Tablet",
   "effect.wavesurvivor.desert_freshness": "Desert Freshness",
-  "effect.wavesurvivor.scorching_sun": "Scorching Sun"
+  "effect.wavesurvivor.scorching_sun": "Scorching Sun",
+  "block.wavesurvivor.rift_portal": "Rift Portal"
 }
