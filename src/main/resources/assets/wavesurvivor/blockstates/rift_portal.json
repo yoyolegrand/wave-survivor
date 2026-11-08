@@ -1,1 +1,9 @@
-{"variants":{"":{"model":"wavesurvivor:block/rift_portal"}}}
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "wavesurvivor:block/rift_portal"
+      }
+    }
+  ]
+}

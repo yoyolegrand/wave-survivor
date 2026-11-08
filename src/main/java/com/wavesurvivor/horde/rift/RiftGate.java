@@ -6,6 +6,11 @@ import com.wavesurvivor.i18n.WSLang;
 import com.wavesurvivor.network.ShakePacket;
 import com.wavesurvivor.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.MultifaceBlock;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
@@ -186,12 +191,12 @@ final class RiftGate {
         // 12 vrilles : elles partent du bord de l'ovale et s'éloignent en rampant sur la surface
         List<double[]> starts = new ArrayList<>();
         for (double[] r : rim) if (r[3] < 1.3 && surface.contains(key((int) r[0], (int) r[1], (int) r[2]))) starts.add(r);
-        for (int t = 0; t < 12 && !starts.isEmpty(); t++) {
+        for (int t = 0; t < 14 && !starts.isEmpty(); t++) {
             double[] s = starts.get(rnd.nextInt(starts.size()));
             int[] cur = rockMap.get(key((int) s[0], (int) s[1], (int) s[2]));
             List<int[]> path = new ArrayList<>();
             Set<Long> seen = new HashSet<>();
-            for (int step = 0; step < 18 && cur != null; step++) {
+            for (int step = 0; step < 26 && cur != null; step++) {
                 path.add(cur);
                 seen.add(key(cur[0], cur[1], cur[2]));
                 int[] next = null;
@@ -320,8 +325,7 @@ final class RiftGate {
         if (s > 110 && s < END_FRESH && fresh) { // les vrilles jaillissent une à une
             int due = (int) Math.ceil((s - 110) / 19.0 * tendrils.size());
             while (tendrilsDone < Math.min(due, tendrils.size())) {
-                BlockState st = tendrilsDone % 2 == 0 ? Blocks.WARPED_WART_BLOCK.defaultBlockState() : Blocks.CRYING_OBSIDIAN.defaultBlockState();
-                for (int[] c : tendrils.get(tendrilsDone)) set(c[0], c[1], c[2], st);
+                placeTendril(tendrils.get(tendrilsDone), tendrilsDone % 2 == 0);
                 tendrilsDone++;
                 level.sendParticles(ParticleTypes.REVERSE_PORTAL, center.getX() + 0.5, center.getY() + 3.0, center.getZ() + 0.5, 20, 3, 3, 3, 0.1);
             }
@@ -331,6 +335,96 @@ final class RiftGate {
             open = true;
             running = false;
             WaveSurvivorMod.LOGGER.info("[Faille] Portail ouvert en {} ({}).", origin, fresh ? "première ouverture" : "réouverture");
+        }
+    }
+
+    private static final int[][] LOCAL_DIRS = {{0, 0, -1}, {0, 1, 0}, {1, 0, 0}, {-1, 0, 0}, {0, -1, 0}, {0, 0, 1}};
+
+    private Direction worldDir(int[] d) {
+        return Direction.getNearest(-fz * d[0] - fx * d[2], d[1], fx * d[0] - fz * d[2]);
+    }
+
+    /** Une face de la cellule {@code c} est-elle libre (air) du côté {@code d} ? */
+    private boolean exposed(int[] c, int[] d) {
+        return level.getBlockState(w(c[0] + d[0], c[1] + d[1], c[2] + d[2])).isAir();
+    }
+
+    /** Pose une veine plaquée contre la roche (face tournée vers la cellule {@code c}), dans la cellule d'air voisine du côté {@code d}. */
+    private void placeVein(int[] c, int[] d, boolean teal) {
+        BlockPos pos = w(c[0] + d[0], c[1] + d[1], c[2] + d[2]);
+        Block vb = (teal ? ModBlocks.RIFT_VEIN_TEAL : ModBlocks.RIFT_VEIN_VIOLET).get();
+        BooleanProperty prop = MultifaceBlock.getFaceProperty(worldDir(new int[]{-d[0], -d[1], -d[2]}));
+        BlockState cur = level.getBlockState(pos);
+        if (cur.is(vb)) level.setBlock(pos, cur.setValue(prop, true), 2);
+        else if (cur.isAir()) level.setBlock(pos, vb.defaultBlockState().setValue(prop, true), 2);
+    }
+
+    /** Une vrille = un chemin continu de veines qui rampe sur la roche ; la face reste la même d'une cellule à l'autre, et contourne les arêtes. */
+    private void placeTendril(List<int[]> path, boolean teal) {
+        int[] prev = null;
+        for (int[] c : path) {
+            int[] face = null;
+            if (prev != null && exposed(c, prev)) face = prev;
+            if (face == null) for (int[] d : LOCAL_DIRS) if (exposed(c, d)) { face = d; break; }
+            if (face == null) continue;
+            placeVein(c, face, teal);
+            if (prev != null && prev != face && exposed(c, prev)) placeVein(c, prev, teal);   // l'arête : le filament s'enroule
+            prev = face;
+        }
+    }
+
+    // ─── Faille vivante (portail ouvert) : contour, aspiration, étincelles, lueur qui respire ───
+
+    private static final DustParticleOptions TEAL = new DustParticleOptions(new org.joml.Vector3f(0.10f, 0.95f, 0.85f), 1.1f);
+    private int glow = 4;
+
+    /** Position monde d'un point du repère local (fractions autorisées), au centre des cellules. */
+    private double[] wd(double lx, double y, double lz) {
+        return new double[]{origin.getX() + 0.5 - fz * lx - fx * lz, origin.getY() + y + 0.5, origin.getZ() + 0.5 + fx * lx - fz * lz};
+    }
+
+    /** À appeler à chaque tick serveur tant que le portail est ouvert. */
+    void tickOpen(long time) {
+        if (!open) return;
+        boolean near = false;
+        for (ServerPlayer p : level.players()) {
+            if (p.distanceToSqr(center.getX() + 0.5, center.getY(), center.getZ() + 0.5) <= 80.0 * 80.0) { near = true; break; }
+        }
+        if (!near) return;
+        Random r = new Random();
+        // Liseré turquoise continu le long du bord de l'ovale (un peu en avant de la surface)
+        for (int i = 0; i < 10; i++) {
+            double a = r.nextDouble() * Math.PI * 2;
+            double[] q = wd(RX * Math.cos(a), CY - 0.5 + RY * Math.sin(a), PLANE - 0.35);
+            level.sendParticles(TEAL, q[0], q[1], q[2], 1, 0.04, 0.04, 0.04, 0);
+        }
+        // Particules aspirées vers le centre de l'ovale (comme le portail du Nether, mais vers l'intérieur)
+        if (time % 2 == 0) {
+            for (int i = 0; i < 5; i++) {
+                double a = r.nextDouble() * Math.PI * 2, rad = 0.4 + r.nextDouble() * 0.6;
+                double[] start = wd(RX * rad * Math.cos(a), CY - 0.5 + RY * rad * Math.sin(a), PLANE - 0.2);
+                double[] off = wd(r.nextGaussian() * 1.2, CY - 0.5 + r.nextGaussian() * 1.8, PLANE - 2.5 - r.nextDouble() * 2.5);
+                level.sendParticles(ParticleTypes.PORTAL, start[0], start[1], start[2], 0, off[0] - start[0], off[1] - start[1], off[2] - start[2], 1.0);
+            }
+        }
+        // Quelques étincelles qui s'échappent vers l'extérieur
+        if (time % 5 == 0) {
+            for (int i = 0; i < 2; i++) {
+                double[] from = wd((r.nextDouble() - 0.5) * 2 * RX * 0.8, CY - 0.5 + (r.nextDouble() - 0.5) * 2 * RY * 0.8, PLANE - 0.3);
+                level.sendParticles(ParticleTypes.END_ROD, from[0], from[1], from[2], 0, -fx * 0.06 + (r.nextDouble() - 0.5) * 0.04, 0.03 + r.nextDouble() * 0.04, -fz * 0.06 + (r.nextDouble() - 0.5) * 0.04, 1.0);
+            }
+        }
+        // La lueur « respire » : lumière lentement variable (une marche par demi-seconde)
+        if (time % 10 == 0) {
+            int g = (int) Math.round(3.5 + 3.5 * Math.sin(time * 0.045));
+            if (g != glow) {
+                glow = g;
+                for (int[] c : plane) {
+                    BlockPos pos = w(c[0], c[1], c[2]);
+                    BlockState st = level.getBlockState(pos);
+                    if (st.is(ModBlocks.RIFT_PORTAL.get())) level.setBlock(pos, st.setValue(RiftPortalBlock.GLOW, g), 2);
+                }
+            }
         }
     }
 
@@ -368,8 +462,8 @@ final class RiftGate {
         while (rimDone < rim.size() && rim.get(rimDone)[3] <= limit) {
             double[] r = rim.get(rimDone++);
             int lx = (int) r[0], y = (int) r[1], lz = (int) r[2];
-            if (r[3] < 1.2) set(lx, y, lz, Blocks.WARPED_WART_BLOCK.defaultBlockState());          // contour turquoise
-            else if (r[3] < 1.4 || ((lx + y * 3 + lz) & 1) == 0) set(lx, y, lz, Blocks.CRYING_OBSIDIAN.defaultBlockState()); // veines violettes qui s'estompent
+            // Veines d'obsidienne pleureuse qui s'estompent en s'éloignant (le contour turquoise est fait de particules)
+            if (r[3] < 1.4 || ((lx + y * 3 + lz) & 1) == 0) set(lx, y, lz, Blocks.CRYING_OBSIDIAN.defaultBlockState());
         }
     }
 

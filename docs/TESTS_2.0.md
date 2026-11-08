@@ -39,3 +39,10 @@ Conception : `docs/DESIGN_FAILLE_2_0.md`. Mod Pehkui requis pour la Faille (sans
 - [ ] Joueur qui entre en cours de Horde : spectateur, il joue à la vague suivante
 - [ ] `/ws rift stop` pendant la Horde : arrêt propre, tout le monde rentre, le rayon d'apparition de la horde est restauré
 - [ ] Éditeur : onglet La Faille → vagues, début après, retour après mort, pause de fin
+
+## Portail : veines, contour, Faille vivante
+- [ ] Les vrilles sont de fins filaments (veines multiface turquoise / violet en alternance) qui rampent depuis le bord de l'ovale sur la roche, sans bloc turquoise plein
+- [ ] Les veines sont lumineuses (lumière 7) et animées, sans collision, cassables à la main
+- [ ] Liseré de particules turquoise continu le long du bord de l'ovale
+- [ ] Particules aspirées vers le centre + étincelles qui s'échappent
+- [ ] La lueur du portail varie lentement (respiration), de jour comme de nuit

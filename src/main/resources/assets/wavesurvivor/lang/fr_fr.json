@@ -208,5 +208,7 @@
   "item.wavesurvivor.tablette_reconnaissance": "Tablette de reconnaissance",
   "effect.wavesurvivor.desert_freshness": "Fraîcheur du désert",
   "effect.wavesurvivor.scorching_sun": "Soleil de plomb",
-  "block.wavesurvivor.rift_portal": "Portail de la Faille"
+  "block.wavesurvivor.rift_portal": "Portail de la Faille",
+  "block.wavesurvivor.rift_vein_teal": "Veine de faille (turquoise)",
+  "block.wavesurvivor.rift_vein_violet": "Veine de faille (violette)"
 }

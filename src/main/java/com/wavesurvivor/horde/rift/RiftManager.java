@@ -457,6 +457,7 @@ public final class RiftManager {
     public void onTick(TickEvent.ServerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !active) return;
         if (gate != null && gate.isRunning()) gate.tick();
+        else if (gate != null) gate.tickOpen(e.getServer().getTickCount());
         MinecraftServer server = e.getServer();
         long now = server.getTickCount();
         flow(server, now);

@@ -120,8 +120,18 @@ public class ModBlocks {
     public static final RegistryObject<Block> RIFT_PORTAL = BLOCKS.register("rift_portal",
             () -> new com.wavesurvivor.horde.rift.RiftPortalBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_PURPLE).strength(-1.0f, 3600000.0f).noCollission().noOcclusion().noLootTable()
-                    .lightLevel(st -> 12).isViewBlocking((st, g, pos) -> false).isSuffocating((st, g, pos) -> false)
+                    .lightLevel(st -> 8 + st.getValue(com.wavesurvivor.horde.rift.RiftPortalBlock.GLOW)).isViewBlocking((st, g, pos) -> false).isSuffocating((st, g, pos) -> false)
                     .pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK)));
+
+    /** 2.0 — Veines de faille (filaments plaqués contre la roche, comme le lichen luminescent) : vrilles du portail de la Faille. */
+    public static final RegistryObject<Block> RIFT_VEIN_TEAL = BLOCKS.register("rift_vein_teal", ModBlocks::riftVein);
+    public static final RegistryObject<Block> RIFT_VEIN_VIOLET = BLOCKS.register("rift_vein_violet", ModBlocks::riftVein);
+
+    private static Block riftVein() {
+        return new net.minecraft.world.level.block.GlowLichenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
+                .replaceable().noCollission().strength(0.2f).sound(SoundType.GLOW_LICHEN).lightLevel(st -> 7).noLootTable()
+                .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY));
+    }
 
     /** Mode Kingdom : partie de porte de rempart (cadre 3×3, PV partagés). */
     public static final RegistryObject<Block> KINGDOM_GATE_PART = BLOCKS.register("kingdom_gate_part",
