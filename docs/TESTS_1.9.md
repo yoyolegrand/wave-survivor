@@ -429,4 +429,5 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Palmier d'oasis v2 (chaos « arbre », forme Oasis, lancé plusieurs fois) : tronc courbé de 7 à 10 blocs, couronne 3 × 3 + sommet, 8 palmes continues (aucun bloc séparé), pointes qui pendent, 0 à 4 cabosses de cacao collées au tronc sous la couronne, aucune feuille isolée loin du palmier
 - [ ] Nourriture : Hydromel céleste 3 gigots, Pomme sanctifiée et Fruit du vide 2,5 gigots (saturation inchangée) ; Festin de grâce : par part 6 gigots, saturation 120 %, 4 cœurs soignés, Régénération II 15 s + Absorption II 3 min, et le tooltip de l'objet détaille tout cela (plus de clé de langue brute)
 - [ ] Soleil de plomb renforcé : la faim descend nettement plus vite à découvert (≈ 1 point toutes les 9 s) ; après 15 s d'exposition continue, Nausée (message « insolation ») qui dure tant qu'on reste dehors ; l'ombre, la gourde ou la nuit remettent le compteur à zéro
+- [ ] Arène à terrain complet (Oasis, Val) : bande de 10 blocs sans arbre ni plante autour du raccord (plus de demi-arbres ni de feuillage en l'air), y compris dans une forêt ; le relief ne change pas
 

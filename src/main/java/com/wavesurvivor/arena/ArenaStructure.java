@@ -213,7 +213,7 @@ public class ArenaStructure extends Structure {
             }
         }
         BlockPos center = new BlockPos(cx, y0, cz);
-        return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1], bp.clearHeight(), bp.floating() ? bp.planGroundY() + 3 : bp.planGroundY() + 48, bp.blendWidth()))));
+        return Optional.of(new GenerationStub(center, b -> b.addPiece(new ArenaPiece(arena, rot, ox, oz, y0, d[0], d[1], bp.clearHeight(), bp.floating() ? bp.planGroundY() + 3 : bp.planGroundY() + 48, bp.blendWidth() + (bp.square() ? ArenaBlueprint.VEGETATION_MARGIN : 0)))));
     }
 
     @Override

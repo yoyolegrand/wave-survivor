@@ -394,6 +394,8 @@ public final class ArenaBlueprint {
             }
         }
         if (kingdom()) ominousBanners(level, ox, oz, y0, rot, clip);
+        // 3 bis. Terrain complet : bande dégagée de toute végétation (arbres, feuilles, plantes) au-delà du raccord, pour ne laisser ni demi-arbres ni feuillage en l'air
+        if (square && !floating && !aquatic) clearVegetationMargin(level, ox, oz, w, dep, cx, cz, blendWidth(), clip, wg);
         // 4. Raccord : anneau autour du cercle, qui rejoint peu à peu le terrain naturel
         int bw = blendWidth();
         int[][] edgeTop = square ? topMap(rot, w, dep) : null;
@@ -420,6 +422,37 @@ public final class ArenaBlueprint {
             }
             fill(level, wx, ty - 1, wz, ty - 48, false);
             set(level, new BlockPos(wx, ty, wz), cover[rnd.nextInt(cover.length)]);
+        }
+    }
+
+    /** Largeur de la bande dégagée de végétation autour du raccord (terrain complet). */
+    public static final int VEGETATION_MARGIN = 10;
+
+    private static boolean isVegetation(BlockState st) {
+        return st.is(BlockTags.LEAVES) || st.is(BlockTags.LOGS) || st.is(BlockTags.FLOWERS) || st.is(BlockTags.REPLACEABLE_BY_TREES)
+                || st.is(Blocks.CACTUS) || st.is(Blocks.SUGAR_CANE) || st.is(Blocks.BAMBOO) || st.is(Blocks.BAMBOO_SAPLING) || st.is(Blocks.VINE)
+                || st.is(Blocks.BROWN_MUSHROOM) || st.is(Blocks.RED_MUSHROOM) || st.is(Blocks.DEAD_BUSH) || st.is(Blocks.MELON) || st.is(Blocks.PUMPKIN);
+    }
+
+    /**
+     * Bande de {@link #VEGETATION_MARGIN} blocs juste au-delà du raccord : toute la végétation au-dessus du sol y est retirée (le relief ne change pas).
+     * Sans cela, les arbres coupés par le raccord laissaient des troncs entamés et du feuillage suspendu tout autour de l'arène.
+     */
+    private void clearVegetationMargin(WorldGenLevel level, int ox, int oz, int w, int dep, double cx, double cz, int bw, BoundingBox clip, boolean wg) {
+        BlockState air = Blocks.AIR.defaultBlockState();
+        int ext = bw + 1 + VEGETATION_MARGIN;
+        BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+        for (int x = -ext; x <= w - 1 + ext; x++) for (int z = -ext; z <= dep - 1 + ext; z++) {
+            double dist = edge(x, z, cx, cz, 0);
+            if (dist <= bw || dist > bw + VEGETATION_MARGIN) continue;
+            int wx = ox + x, wz = oz + z;
+            if (!in(clip, wx, wz)) continue;
+            int top = surfaceTop(level, wx, wz, wg) + 1;
+            for (int y = groundY(level, wx, wz, wg) + 1; y <= top; y++) {
+                m.set(wx, y, wz);
+                BlockState st = level.getBlockState(m);
+                if (!st.isAir() && isVegetation(st)) level.setBlock(m, air, 2);
+            }
         }
     }
 
