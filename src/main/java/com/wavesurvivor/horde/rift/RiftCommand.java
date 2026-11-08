@@ -21,6 +21,7 @@ public final class RiftCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> build() {
         return Commands.literal("rift").requires(src -> src.hasPermission(2))
+                .executes(ctx -> status(ctx.getSource()))
                 .then(Commands.literal("open").executes(ctx -> open(ctx.getSource())))
                 .then(Commands.literal("status").executes(ctx -> status(ctx.getSource())))
                 .then(Commands.literal("enter").executes(ctx -> enter(ctx.getSource())))
