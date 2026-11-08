@@ -129,6 +129,8 @@ public class HordeCommand {
                 .then(Commands.literal("bossrush").executes(ctx -> com.wavesurvivor.horde.bossrush.BossRush.showTop(ctx.getSource())))
                 // Invasions de village (opérateurs)
                 .then(com.wavesurvivor.horde.invasion.InvasionCommand.build())
+                // La Faille (2.0, opérateurs)
+                .then(com.wavesurvivor.horde.rift.RiftCommand.build())
                 .then(com.wavesurvivor.horde.skill.SkillTestCommand.build())
                 // Mesure de la performance pendant les vagues (opérateurs)
                 .then(com.wavesurvivor.horde.HordePerf.build())

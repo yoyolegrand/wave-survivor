@@ -318,7 +318,7 @@ public class HordeEditorScreen extends Screen {
             case T_MOBS -> buildMobs();
             case T_SPECIAL -> buildSpecials();
             case T_BOSS -> buildBosses();
-            case T_MERCH -> { if (invasion()) buildInvasionSettings(); else buildMerchants(); }
+            case T_MERCH -> { if (invasion()) buildInvasionSettings(); else if (rift()) buildRiftSettings(); else buildMerchants(); }
             case T_CHAOS -> { if (invasion()) label(left + 10, top + 52, t("ui.inv.no_events")); else buildChaos(); }
             case T_ALTAR -> { if (invasion()) label(left + 10, top + 52, t("ui.inv.no_altar")); else buildAltar(); }
             case T_PREVIEW -> buildTestTools();
@@ -445,8 +445,21 @@ public class HordeEditorScreen extends Screen {
         }
     }
 
+    /** 2.0 — Mode « La Faille » (4e état du bouton de mode de l'onglet Général). */
+    private boolean rift() {
+        try {
+            return "rift".equalsIgnoreCase(HordeJson.str(cd(), "mode", "waves"));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** 2.0 — Onglets du mode Faille : l'onglet des Pauses devient « La Faille » (réglages). */
+    private static final String[] TAB_NAMES_RIFT = {null, null, null, null, "ui.rift.tab", null, null, null};
+
     /** Clé de texte de l'onglet {@code i} selon le mode (vagues, Kingdom ou invasion). */
     private String tabKey(int i) {
+        if (rift() && TAB_NAMES_RIFT[i] != null) return TAB_NAMES_RIFT[i];
         if (invasion() && TAB_NAMES_INVASION[i] != null) return TAB_NAMES_INVASION[i];
         if (kingdom() && TAB_NAMES_KINGDOM[i] != null) return TAB_NAMES_KINGDOM[i];
         return TAB_NAMES[i];
@@ -950,15 +963,17 @@ public class HordeEditorScreen extends Screen {
         y += 18;
         boolean kingdom = "kingdom".equalsIgnoreCase(HordeJson.str(cd, "mode", "waves"));
         boolean invasionMode = "invasion".equalsIgnoreCase(HordeJson.str(cd, "mode", "waves"));
-        button(x, y - 1, 150, invasionMode ? t("ui.inv.mode_invasion") : kingdom ? t("ui.kingdom.mode_kingdom") : t("ui.kingdom.mode_waves"), () -> {
-            // Trois états : Vagues → Kingdom → Invasion de village → Vagues
+        boolean riftMode = "rift".equalsIgnoreCase(HordeJson.str(cd, "mode", "waves"));
+        button(x, y - 1, 150, riftMode ? t("ui.rift.mode_rift") : invasionMode ? t("ui.inv.mode_invasion") : kingdom ? t("ui.kingdom.mode_kingdom") : t("ui.kingdom.mode_waves"), () -> {
+            // Quatre états : Vagues → Kingdom → Invasion de village → La Faille → Vagues
             String cur = HordeJson.str(cd, "mode", "waves");
-            cd.addProperty("mode", "kingdom".equalsIgnoreCase(cur) ? "invasion" : "invasion".equalsIgnoreCase(cur) ? "waves" : "kingdom");
+            cd.addProperty("mode", "kingdom".equalsIgnoreCase(cur) ? "invasion" : "invasion".equalsIgnoreCase(cur) ? "rift" : "rift".equalsIgnoreCase(cur) ? "waves" : "kingdom");
             generalSub = 0;
             changed();
             init();
         });
-        if (invasionMode) labelWrap(x + 158, y + 3, t("ui.inv.hint"), W - 190);
+        if (riftMode) labelWrap(x + 158, y + 3, t("ui.rift.hint"), W - 190);
+        else if (invasionMode) labelWrap(x + 158, y + 3, t("ui.inv.hint"), W - 190);
         else label(x + 158, y + 3, kingdom ? t("ui.kgd.see_sub") : t("ui.kingdom.hint"));
     }
 
@@ -1801,6 +1816,34 @@ public class HordeEditorScreen extends Screen {
     }
 
     // ─── Onglet « 🏘 Invasion » (1.7) : déroulement et récompenses d'une invasion de village ───
+
+    /** 2.0 — Onglet « La Faille » : réglages de la Faille (jalon 1 : ouverture et île de départ ; les phases s'ajouteront ici). */
+    private void buildRiftSettings() {
+        int x = left + 10, y = top + 48;
+        if (!net.minecraftforge.fml.ModList.get().isLoaded("pehkui")) {
+            labelWrap(x, y, t("ui.rift.need_pehkui"), W - 24);
+            return;
+        }
+        JsonObject r = HordeJson.obj(cd(), "rift");
+        label(x, y, "§6§l" + t("ui.rift.sec_opening"));
+        y += 14;
+        flow(x, y);
+        fl(t("ui.rift.speed"));
+        fDbl(40, HordeJson.dbl(r, "openingSpeed", 1.0), v -> r.addProperty("openingSpeed", Math.max(0.2, Math.min(3.0, v))));
+        fl(t("ui.rift.shake"));
+        fDbl(40, HordeJson.dbl(r, "shakeIntensity", 1.0), v -> r.addProperty("shakeIntensity", Math.max(0.0, Math.min(3.0, v))));
+        toggle(x + 290, y, 120, t("ui.rift.title"), r, "showTitle", true);
+        y += 30;
+        label(x, y, "§6§l" + t("ui.rift.sec_island"));
+        y += 14;
+        flow(x, y);
+        fl(t("ui.rift.radius"));
+        fInt(36, HordeJson.num(r, "islandRadius", 16), v -> r.addProperty("islandRadius", Math.max(8, Math.min(48, v))));
+        fl(t("ui.rift.waves"));
+        fInt(36, HordeJson.num(r, "hordeWaves", 5), v -> r.addProperty("hordeWaves", Math.max(1, Math.min(60, v))));
+        y += 30;
+        labelWrap(x, y, t("ui.rift.hint_phases"), W - 24);
+    }
 
     private void buildInvasionSettings() {
         JsonObject inv = HordeJson.obj(cd(), "invasion");

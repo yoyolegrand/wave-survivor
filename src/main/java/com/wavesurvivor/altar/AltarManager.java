@@ -36,6 +36,12 @@ public class AltarManager {
             return;
         }
 
+        // 2.0 — Une Faille est ouverte : le clic droit sur l'autel y envoie le joueur (provisoire : le portail et son animation viennent au jalon 1b)
+        if (com.wavesurvivor.horde.rift.RiftManager.isActive()) {
+            com.wavesurvivor.horde.rift.RiftManager.enter(player);
+            return;
+        }
+
         // Vérifie qu'une horde n'est pas déjà en cours
         if (HordeManager.get().isRunning()) {
             // Pause entre deux vagues avec « Prêt » actif : le clic droit ouvre une demande de confirmation (jamais d'effet direct, pour éviter le clic par erreur)
@@ -141,6 +147,16 @@ public class AltarManager {
             for (HordeModRequirements.Requirement r : reqs) if (!r.installed()) miss.append(miss.length() > 0 ? ", " : "").append(r.modId());
             player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.autel") + com.wavesurvivor.i18n.WSLang.t(horde.hordeName) + com.wavesurvivor.i18n.WSLang.t("srv.necessite_des_mods_absents") + miss));
             level.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0f, 0.5f);
+            return;
+        }
+
+        // 2.0 — La Faille : pas de horde ici, le portail s'ouvre (nécessite Pehkui) ; le terrain n'a pas à être validé
+        if (horde.configData != null && horde.configData.isRift()) {
+            if (!com.wavesurvivor.horde.difficulty.HordeProgress.unlocked(player, horde) && !player.isCreative()) {
+                com.wavesurvivor.horde.difficulty.HordeProgress.explain(player, horde);
+                return;
+            }
+            if (!com.wavesurvivor.horde.rift.RiftManager.open(player, level, pos, horde)) level.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0f, 0.5f);
             return;
         }
 

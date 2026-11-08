@@ -105,6 +105,8 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.mutator.MutatorEffects());
         // Arène du Roi : joueurs restés dans l'arène renvoyés chez eux à la connexion
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.RaidManager());
+        // La Faille (2.0) : île de la dimension dédiée, retour des joueurs, filet anti-chute
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.rift.RiftManager());
         // Sauvegarde de partie : message « Reprendre / Abandonner » à la connexion
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.HordeSession());
         // Explosions des unités de la horde : dégâts au Monolithe, aux murs et aux défenses

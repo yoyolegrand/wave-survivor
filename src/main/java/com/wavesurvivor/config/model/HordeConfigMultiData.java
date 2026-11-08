@@ -92,6 +92,15 @@ public class HordeConfigMultiData {
         @SerializedName("invasion")
         public InvasionSettings invasion = new InvasionSettings();
 
+        /** 2.0 — La Faille : cette « horde » ouvre un portail vers une dimension dédiée (nécessite le mod Pehkui). */
+        public boolean isRift() { return "rift".equalsIgnoreCase(mode); }
+
+        /** Réglages de la Faille (jamais null). */
+        public RiftSettings rift() { return rift != null ? rift : new RiftSettings(); }
+
+        @SerializedName("rift")
+        public RiftSettings rift = new RiftSettings();
+
         public KingdomSettings kingdom() { return kingdom != null ? kingdom : new KingdomSettings(); }
 
         @SerializedName("playerScaling")
@@ -325,6 +334,23 @@ public class HordeConfigMultiData {
         @SerializedName("maxMinutes") public int maxMinutes = 0;
         /** Boss retenus : numéros de vague séparés par des virgules (vide = tous les boss de la horde). */
         @SerializedName("waves") public String waves = "";
+    }
+
+    /**
+     * La Faille (2.0) : réglages d'une horde de mode « rift ». Le portail s'ouvre près de l'autel (animation d'ouverture la première fois),
+     * les joueurs qui le franchissent arrivent sur une île flottante dans une dimension dédiée.
+     */
+    public static class RiftSettings {
+        /** Multiplicateur de durée de l'animation d'ouverture (1 = 6,5 s ; 0,5 = deux fois plus rapide). */
+        @SerializedName("openingSpeed") public double openingSpeed = 1.0;
+        /** Intensité des secousses d'écran de l'animation (0 = aucune). */
+        @SerializedName("shakeIntensity") public double shakeIntensity = 1.0;
+        /** Titre « La Faille est ouverte » à la fin de l'animation. */
+        @SerializedName("showTitle") public boolean showTitle = true;
+        /** Rayon de l'île de départ (phase Horde). */
+        @SerializedName("islandRadius") public int islandRadius = 16;
+        /** Nombre de vagues de la phase Horde. */
+        @SerializedName("hordeWaves") public int hordeWaves = 5;
     }
 
     /**
