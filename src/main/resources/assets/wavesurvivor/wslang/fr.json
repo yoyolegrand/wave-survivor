@@ -3894,5 +3894,19 @@
   "ui.rift.hint_phases": "§8Les phases suivantes (Siège, Contre-offensive, Titan, engins de siège) s'ajouteront ici au fil de la 2.0.",
   "rift.opened_title": "§5§lLa Faille est ouverte",
   "rift.opened_sub": "§7Franchis le portail…",
-  "ui.bind.tab_rift": "🌌 La Faille ({0})"
+  "ui.bind.tab_rift": "🌌 La Faille ({0})",
+  "ui.rift.sec_flow": "Déroulement",
+  "ui.rift.start_delay": "Début après (s)",
+  "ui.rift.revive": "Retour après mort (s)",
+  "ui.rift.end_pause": "Pause de fin (s)",
+  "rift.start_in": "§5La Horde de la Faille commence dans §d{0} s§5 : franchissez le portail !",
+  "rift.horde_go": "§5§lLa Horde de la Faille commence !",
+  "rift.waiting": "§7Une horde est en cours : tu joueras à la vague suivante.",
+  "rift.joined": "§aTu rejoins la bataille !",
+  "rift.down": "§cTu es à terre… retour dans {0} s.",
+  "rift.revived": "§aTu reprends le combat.",
+  "rift.defeat": "§c§lLa Faille vous a engloutis…",
+  "rift.victory": "§a§lLa Horde de la Faille est vaincue !",
+  "rift.closing": "§7La Faille se referme dans §f{0}",
+  "rift.start_fail": "§cImpossible de lancer la Horde de la Faille (voir le journal)."
 }

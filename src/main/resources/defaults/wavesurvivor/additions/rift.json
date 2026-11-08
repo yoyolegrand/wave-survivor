@@ -3,12 +3,12 @@
   "hordes": [
     {
       "hordeName": "La Faille",
-      "hordeDescription": "Un portail s'ouvre vers une dimension de nuit éternelle. (2.0 en construction : pour l'instant, ouverture de la Faille et île de départ.)",
+      "hordeDescription": "Un portail s'ouvre vers une dimension de nuit éternelle : une horde vous attend sur une île flottante. (2.0 en construction : phase Horde jouable, Siège et Titan à venir.)",
       "configData": {
         "totalWaves": 5,
-        "delayBetweenWaves": 20,
+        "delayBetweenWaves": 25,
         "spawnType": "fixed",
-        "spawnRadius": 30,
+        "spawnRadius": 14,
         "gameOverRadius": 2000,
         "playerScaling": {
           "enabled": true,
@@ -30,21 +30,161 @@
           "killCountdownDelay": 10
         },
         "spawnMessages": {
-          "normalWave": "§6§l[INVASION] §eVague {wave}/{total}",
-          "specialWave": "§6§l[INVASION] §eVague {wave}/{total} §6- {name} !",
-          "useSound": false
+          "normalWave": "§5§l[LA FAILLE] §dVague {wave}/{total}",
+          "specialWave": "§5§l[LA FAILLE] §dVague {wave}/{total} §5- {name} !",
+          "useSound": true,
+          "normalSound": "minecraft:block.portal.ambient",
+          "specialSound": "minecraft:entity.wither.ambient"
         },
         "useWavePauses": false,
         "wavePauses": [],
         "useMerchants": false,
         "merchantDebug": false,
         "merchants": [],
-        "hordeEntities": [],
+        "hordeEntities": [
+          {
+            "entity_type": "minecraft:zombie",
+            "custom_name": "§5Zombie de la Faille",
+            "base_count": 5,
+            "count_increment": 3,
+            "max_health": 26,
+            "attack_damage": 3,
+            "movement_speed": 0.26,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:amethyst_shard",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 30
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            }
+          },
+          {
+            "entity_type": "minecraft:skeleton",
+            "custom_name": "§5Archer de la Faille",
+            "base_count": 3,
+            "count_increment": 2,
+            "max_health": 22,
+            "attack_damage": 3,
+            "movement_speed": 0.25,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:arrow",
+                "minQty": 2,
+                "maxQty": 6,
+                "chance": 40
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            }
+          },
+          {
+            "entity_type": "minecraft:spider",
+            "custom_name": "§5Araignée de la Faille",
+            "base_count": 2,
+            "count_increment": 2,
+            "max_health": 20,
+            "attack_damage": 3,
+            "movement_speed": 0.32,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:string",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 40
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            }
+          },
+          {
+            "entity_type": "minecraft:wither_skeleton",
+            "custom_name": "§5Gardien de la Faille",
+            "base_count": 0,
+            "count_increment": 1,
+            "max_health": 40,
+            "attack_damage": 6,
+            "movement_speed": 0.27,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:coal",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 40
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            }
+          }
+        ],
         "useSpecialWaves": false,
         "specialWaveChance": 40,
         "specialWaves": [],
-        "useBossWaves": false,
-        "bossWaves": [],
+        "useBossWaves": true,
+        "bossWaves": [
+          {
+            "waveNumber": 5,
+            "bossName": "§5§lLe Seigneur de la Faille",
+            "entityType": "minecraft:wither_skeleton",
+            "maxHealth": 450,
+            "attackDamage": 10,
+            "movementSpeed": 0.27,
+            "knockbackResistance": 0.8,
+            "equipment": {},
+            "useMinionSummon": true,
+            "minionConfig": {
+              "triggerType": "interval",
+              "triggerValue": 25,
+              "minionType": "minecraft:zombie",
+              "minionCount": 3,
+              "minionStats": {
+                "maxHealth": 24,
+                "attackDamage": 4,
+                "movementSpeed": 0.26
+              },
+              "minionEquipment": {}
+            },
+            "lootTable": [
+              {
+                "item": "minecraft:emerald",
+                "minQty": 6,
+                "maxQty": 12,
+                "chance": 100
+              },
+              {
+                "item": "minecraft:amethyst_shard",
+                "minQty": 4,
+                "maxQty": 8,
+                "chance": 100
+              }
+            ],
+            "spawnMessage": "§5§l⚠ [BOSS] ⚠ §d{name} §5sort de la Faille !",
+            "deathMessage": "§6§l[VICTOIRE] §e{name} §6a été vaincu !",
+            "spawnSound": "minecraft:entity.wither.spawn"
+          }
+        ],
         "chaosEnabled": false,
         "chaosMinInterval": 20,
         "chaosMaxInterval": 40,

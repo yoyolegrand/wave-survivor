@@ -349,8 +349,14 @@ public class HordeConfigMultiData {
         @SerializedName("showTitle") public boolean showTitle = true;
         /** Rayon de l'île de départ (phase Horde). */
         @SerializedName("islandRadius") public int islandRadius = 16;
-        /** Nombre de vagues de la phase Horde. */
+        /** (Inutilisé depuis le jalon 2 : le nombre de vagues de la Horde est celui de la horde, onglet Général.) */
         @SerializedName("hordeWaves") public int hordeWaves = 5;
+        /** Délai (s) entre l'entrée du premier joueur dans la Faille et le début de la Horde. */
+        @SerializedName("startDelaySeconds") public int startDelaySeconds = 20;
+        /** Temps (s) passé en spectateur après une mort avant de réapparaître sur l'île. */
+        @SerializedName("reviveSeconds") public int reviveSeconds = 15;
+        /** Pause de fin (s) après la victoire ou la défaite, avant la fermeture de la Faille (4 min par défaut). */
+        @SerializedName("endPauseSeconds") public int endPauseSeconds = 240;
     }
 
     /**

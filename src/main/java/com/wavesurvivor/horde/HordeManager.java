@@ -278,6 +278,7 @@ public class HordeManager {
         RogueUpgradeManager.clearAllPlayers(server);
         MerchantSpawner.despawnAll(server);
         RouletteChestSpawner.despawnAll(server);
+        com.wavesurvivor.horde.rift.RiftManager.onHordeEnd(false); // 2.0
         reset();
         return true;
     }
@@ -528,6 +529,7 @@ public class HordeManager {
         RogueUpgradeManager.clearAllPlayers(srv);
         MerchantSpawner.despawnAll(srv);
         RouletteChestSpawner.despawnAll(srv);
+        com.wavesurvivor.horde.rift.RiftManager.onHordeEnd(true); // 2.0 : la Faille prend le relais (pause de fin)
         state = State.FINISHED;
         reset();
     }

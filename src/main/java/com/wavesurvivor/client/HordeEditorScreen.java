@@ -1840,7 +1840,18 @@ public class HordeEditorScreen extends Screen {
         fl(t("ui.rift.radius"));
         fInt(36, HordeJson.num(r, "islandRadius", 16), v -> r.addProperty("islandRadius", Math.max(8, Math.min(48, v))));
         fl(t("ui.rift.waves"));
-        fInt(36, HordeJson.num(r, "hordeWaves", 5), v -> r.addProperty("hordeWaves", Math.max(1, Math.min(60, v))));
+        JsonObject cdo = cd();
+        fInt(36, HordeJson.num(cdo, "totalWaves", 5), v -> cdo.addProperty("totalWaves", Math.max(1, Math.min(60, v))));
+        y += 30;
+        label(x, y, "§6§l" + t("ui.rift.sec_flow"));
+        y += 14;
+        flow(x, y);
+        fl(t("ui.rift.start_delay"));
+        fInt(36, HordeJson.num(r, "startDelaySeconds", 20), v -> r.addProperty("startDelaySeconds", Math.max(0, Math.min(300, v))));
+        fl(t("ui.rift.revive"));
+        fInt(36, HordeJson.num(r, "reviveSeconds", 15), v -> r.addProperty("reviveSeconds", Math.max(3, Math.min(300, v))));
+        fl(t("ui.rift.end_pause"));
+        fInt(40, HordeJson.num(r, "endPauseSeconds", 240), v -> r.addProperty("endPauseSeconds", Math.max(10, Math.min(1800, v))));
         y += 30;
         labelWrap(x, y, t("ui.rift.hint_phases"), W - 24);
     }

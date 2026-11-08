@@ -26,3 +26,16 @@ Conception : `docs/DESIGN_FAILLE_2_0.md`. Mod Pehkui requis pour la Faille (sans
 - [ ] Réglages de l'éditeur : durée × (0,5 = rapide, 2 = lent), secousses × (0 = aucune), titre on/off
 - [ ] Terrain en pente / dans l'eau : le rocher se pose correctement (fondations), pas de joueur coincé
 - [ ] Texture animée du portail visible des deux côtés, translucide
+
+## Onglet de l'autel
+- [ ] L'écran « Lier l'autel » a un onglet « 🌌 La Faille » (visible seulement s'il existe une horde Faille), la horde n'est plus dans « Hordes »
+
+## Jalon 2 — Phase Horde sur l'île
+- [ ] Portail ouvert + un joueur entre : message/actionbar « La Horde commence dans X s », la horde démarre au bout du délai (réglable)
+- [ ] 5 vagues sur l'île (zombies, archers, araignées, gardiens), boss à la vague 5, apparitions sur l'île (pas dans le vide)
+- [ ] Mort : on garde son inventaire, spectateur au-dessus de l'île, retour après X s (réglable) ; pas de mort réelle ni retour au monde normal
+- [ ] Tous les joueurs à terre = défaite, message, pause de fin puis retour devant le portail
+- [ ] Victoire : récompenses de la horde, pause de fin (4 min par défaut, compte à rebours en actionbar), puis fermeture et retour
+- [ ] Joueur qui entre en cours de Horde : spectateur, il joue à la vague suivante
+- [ ] `/ws rift stop` pendant la Horde : arrêt propre, tout le monde rentre, le rayon d'apparition de la horde est restauré
+- [ ] Éditeur : onglet La Faille → vagues, début après, retour après mort, pause de fin

@@ -63,6 +63,7 @@ public class HordeSession extends SavedData {
     public static void capture(MinecraftServer server) {
         HordeManager hm = HordeManager.get();
         if (server == null || !hm.isRunning() || hm.getActiveHorde() == null || hm.getActiveHorde().configData == null) return;
+        if (com.wavesurvivor.horde.rift.RiftManager.isActive()) return; // La Faille (2.0) : reprise prévue plus tard
         if (com.wavesurvivor.horde.bossrush.BossRush.active()) return; // Boss Rush : pas de sauvegarde / reprise
         if (com.wavesurvivor.horde.endless.Endless.active()) return; // Sans fin (1.7) : pas de sauvegarde / reprise
         HordeConfigMultiData h = hm.getActiveHorde();

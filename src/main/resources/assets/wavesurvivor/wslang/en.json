@@ -4655,5 +4655,19 @@
   "ui.rift.hint_phases": "§8The next phases (Siege, Counter-offensive, Titan, siege engines) will be added here during 2.0.",
   "rift.opened_title": "§5§lThe Rift is open",
   "rift.opened_sub": "§7Step through the portal…",
-  "ui.bind.tab_rift": "🌌 The Rift ({0})"
+  "ui.bind.tab_rift": "🌌 The Rift ({0})",
+  "ui.rift.sec_flow": "Flow",
+  "ui.rift.start_delay": "Start after (s)",
+  "ui.rift.revive": "Back after death (s)",
+  "ui.rift.end_pause": "End pause (s)",
+  "rift.start_in": "§5The Rift Horde starts in §d{0} s§5: step through the portal!",
+  "rift.horde_go": "§5§lThe Rift Horde begins!",
+  "rift.waiting": "§7A horde is running: you will play next wave.",
+  "rift.joined": "§aYou join the battle!",
+  "rift.down": "§cYou are down… back in {0} s.",
+  "rift.revived": "§aYou are back in the fight.",
+  "rift.defeat": "§c§lThe Rift has swallowed you…",
+  "rift.victory": "§a§lThe Rift Horde is defeated!",
+  "rift.closing": "§7The Rift closes in §f{0}",
+  "rift.start_fail": "§cThe Rift Horde could not start (see the log)."
 }
