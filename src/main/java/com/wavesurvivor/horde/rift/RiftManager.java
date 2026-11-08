@@ -36,6 +36,7 @@ import net.minecraftforge.fml.ModList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -64,7 +65,7 @@ public final class RiftManager {
     private static RiftGate gate;
 
     // ─── Déroulement (jalon 2 : phase Horde) ───
-    private enum Phase { NONE, PORTAL, LOBBY, HORDE, ENDING }
+    private enum Phase { NONE, PORTAL, LOBBY, HORDE, INTERLUDE, SIEGE, COUNTER, TITAN, ENDING }
     private static Phase phase = Phase.NONE;
     private static long startAt = -1, endAt = -1;
     private static int lastWave;
@@ -74,7 +75,16 @@ public final class RiftManager {
     private static final Map<UUID, Long> reviveAt = new HashMap<>();
     private static final Map<UUID, GameType> prevMode = new HashMap<>();
     private static HordeConfigMultiData.ConfigDataInner spawnCfg;
-    private static int spawnRadiusBackup;
+    private static int spawnRadiusBackup, waveBackup;
+    // Jalons 3-6
+    private static Phase nextPhase = Phase.NONE;
+    private static long interludeAt;
+    private static int siegeFinal, growCur, growTarget;
+    private static long growNextAt, siegeStartAt, nextReinforce;
+    private static boolean siegeHordeOn, coreSpawned;
+    private static HordeManager.State lastState;
+    private static final List<long[]> DUE_KEYS = new ArrayList<>();
+    private static final List<Runnable> DUE_TASKS = new ArrayList<>();
     private static int radius = 16;
     private static final Set<Long> FORCED = new HashSet<>();
 
@@ -127,7 +137,8 @@ public final class RiftManager {
         home = altar;
         HordeConfigMultiData.RiftSettings rs = h != null && h.configData != null ? h.configData.rift() : new HordeConfigMultiData.RiftSettings();
         radius = Math.max(8, Math.min(48, rs.islandRadius));
-        forceChunks(rd);
+        siegeFinal = Math.max(radius, Math.min(48, rs.siegeRadius));
+        forceChunks(rd, rs);
         buildIsland(rd);
         active = true;
         // Jalon 1b : le portail s'ouvre (animation complète la 1re fois), les joueurs le franchissent à pied
@@ -155,7 +166,7 @@ public final class RiftManager {
         p.teleportTo(rd, CENTER.getX() + 0.5 + (RNG.nextDouble() - 0.5) * 3, CENTER.getY() + 1, CENTER.getZ() + 0.5 + (RNG.nextDouble() - 0.5) * 3, 0f, 0f);
         p.fallDistance = 0;
         long now = p.getServer().getTickCount();
-        if (phase == Phase.HORDE && !registered.contains(p.getUUID())) {
+        if (inCombat() && !registered.contains(p.getUUID())) {
             // Arrivé en cours de partie : spectateur jusqu'à la vague suivante
             if (waiting.add(p.getUUID())) {
                 prevMode.put(p.getUUID(), p.gameMode.getGameModeForPlayer());
@@ -176,15 +187,23 @@ public final class RiftManager {
 
     /** Ferme la Faille : renvoie tout le monde chez soi, vide l'île et libère les chunks. */
     public static void stop(MinecraftServer server) {
-        boolean wasHorde = phase == Phase.HORDE;
+        boolean wasHorde = phase == Phase.HORDE || phase == Phase.SIEGE;
         phase = Phase.NONE;
         if (wasHorde) HordeManager.get().stopSilently();
         restoreSpawnRadius();
         ServerLevel rd = server.getLevel(RIFT_DIM);
         if (rd != null) {
             for (ServerPlayer p : new ArrayList<>(rd.players())) sendHome(p);
+            RiftTitan.clear(rd);
+            RiftFortress.clearTargets(rd);
+            RiftEngines.clear();
             clearIsland(rd);
         }
+        DUE_KEYS.clear();
+        DUE_TASKS.clear();
+        nextPhase = Phase.NONE;
+        siegeHordeOn = false;
+        coreSpawned = false;
         if (gate != null) {
             gate.seal();
             gate = null;
@@ -244,26 +263,34 @@ public final class RiftManager {
         }
     }
 
+    /** Efface tout ce qui a été construit dans la dimension (parcours des sections non vides des chunks forcés) et toutes les entités hors joueurs. */
     private static void clearIsland(ServerLevel l) {
-        int r = Math.max(radius, 48) + 2;
+        BlockState air = Blocks.AIR.defaultBlockState();
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
-        int y0 = Math.max(l.getMinBuildHeight(), CENTER.getY() - 24), y1 = Math.min(l.getMaxBuildHeight() - 1, CENTER.getY() + 40);
-        for (int dx = -r; dx <= r; dx++) {
-            for (int dz = -r; dz <= r; dz++) {
-                if (dx * dx + dz * dz > r * r) continue;
-                for (int yy = y0; yy <= y1; yy++) {
-                    m.set(CENTER.getX() + dx, yy, CENTER.getZ() + dz);
-                    if (!l.getBlockState(m).isAir()) l.setBlock(m, Blocks.AIR.defaultBlockState(), 2);
+        for (long c : new ArrayList<>(FORCED)) {
+            net.minecraft.world.level.chunk.LevelChunk ch = l.getChunk(net.minecraft.world.level.ChunkPos.getX(c), net.minecraft.world.level.ChunkPos.getZ(c));
+            for (int i = 0; i < ch.getSectionsCount(); i++) {
+                net.minecraft.world.level.chunk.LevelChunkSection sec = ch.getSection(i);
+                if (sec.hasOnlyAir()) continue;
+                int y0 = (ch.getMinSection() + i) << 4, x0 = ch.getPos().getMinBlockX(), z0 = ch.getPos().getMinBlockZ();
+                for (int dx = 0; dx < 16; dx++) for (int dz = 0; dz < 16; dz++) for (int dy = 0; dy < 16; dy++) {
+                    m.set(x0 + dx, y0 + dy, z0 + dz);
+                    if (!l.getBlockState(m).isAir()) l.setBlock(m, air, 2 | 16);
                 }
             }
         }
-        for (Entity e : l.getEntitiesOfClass(Entity.class, new AABB(CENTER).inflate(r + 16, 128, r + 16), e -> !(e instanceof ServerPlayer))) e.discard();
+        List<Entity> gone = new ArrayList<>();
+        for (Entity e : l.getAllEntities()) if (!(e instanceof ServerPlayer)) gone.add(e);
+        for (Entity e : gone) e.discard();
     }
 
-    private static void forceChunks(ServerLevel l) {
-        int r = (Math.max(radius, 48) + 16) >> 4;
-        for (int cx = -r; cx <= r; cx++) {
-            for (int cz = -r; cz <= r; cz++) {
+    /** Chunks gardés chargés : l'île, et si besoin la forteresse et le Titan (jusqu'à 100 blocs au-delà de l'île vers +X). */
+    private static void forceChunks(ServerLevel l, HordeConfigMultiData.RiftSettings rs) {
+        int reach = Math.max(radius, 48) + 16;
+        int east = (rs.siegeEnabled || rs.titanEnabled) ? siegeFinal + 24 + 58 + 24 : reach;
+        int cxMin = -(reach >> 4) - 1, cxMax = (east >> 4) + 1, czMin = -(reach >> 4), czMax = (reach >> 4);
+        for (int cx = cxMin; cx <= cxMax; cx++) {
+            for (int cz = czMin; cz <= czMax; cz++) {
                 l.setChunkForced(cx, cz, true);
                 FORCED.add(net.minecraft.world.level.ChunkPos.asLong(cx, cz));
             }
@@ -286,8 +313,12 @@ public final class RiftManager {
     }
 
     private static void restoreSpawnRadius() {
-        if (spawnCfg != null) spawnCfg.spawnRadius = spawnRadiusBackup;
+        if (spawnCfg != null) {
+            spawnCfg.spawnRadius = spawnRadiusBackup;
+            if (waveBackup > 0) spawnCfg.totalWaves = waveBackup;
+        }
         spawnCfg = null;
+        waveBackup = 0;
     }
 
     private static void restoreMode(ServerPlayer p) {
@@ -312,6 +343,15 @@ public final class RiftManager {
                 p.sendSystemMessage(Component.literal(WSLang.t("rift.revived")));
             }
         }
+        if (inCombat() && now % 20 == 0 && !registered.isEmpty()) {
+            boolean anyAlive = false;
+            for (UUID id : registered) {
+                ServerPlayer p = server.getPlayerList().getPlayer(id);
+                if (p != null && p.level().dimension() == RIFT_DIM && p.isAlive() && !p.isSpectator()) { anyAlive = true; break; }
+            }
+            if (!anyAlive) { defeat(server, rd); return; }
+        }
+        RiftEngines.tick(rd);
         switch (phase) {
             case PORTAL -> {
                 if (gate != null && gate.isOpen()) phase = Phase.LOBBY;
@@ -327,28 +367,39 @@ public final class RiftManager {
                 if (now >= startAt) startHorde(server, rd);
             }
             case HORDE -> {
-                if (now % 20 != 0) return;
-                HordeManager hm = HordeManager.get();
-                int wv = hm.getCurrentWave();
-                if (wv != lastWave) {   // nouvelle vague : les joueurs arrivés en cours de route entrent dans la partie
-                    lastWave = wv;
-                    for (UUID id : new ArrayList<>(waiting)) {
-                        ServerPlayer p = server.getPlayerList().getPlayer(id);
-                        waiting.remove(id);
-                        if (p == null || p.level().dimension() != RIFT_DIM) continue;
-                        restoreMode(p);
-                        registered.add(id);
-                        respawnOnIsland(p, rd);
-                        p.sendSystemMessage(Component.literal(WSLang.t("rift.joined")));
+                if (now % 20 == 0) waveWatch(server, rd, false);
+            }
+            case INTERLUDE -> {
+                if (now < interludeAt) return;
+                switch (nextPhase) {
+                    case SIEGE -> startSiege(server, rd, now);
+                    case COUNTER -> startCounter(server, rd, now);
+                    case TITAN -> startTitan(server, rd, now);
+                    default -> finalVictory(server, rd);
+                }
+            }
+            case SIEGE -> {
+                RiftFortress.shield(rd, siegeFinal, now);
+                if (growCur < growTarget) {
+                    if (now >= growNextAt) {
+                        int to = Math.min(growTarget, growCur + 2);
+                        RiftFortress.islandRing(rd, growCur, to);
+                        growCur = to;
+                        radius = to;
+                        growNextAt = now + 8;
+                        for (ServerPlayer p : rd.players()) com.wavesurvivor.network.ShakePacket.send(p, 10, 0.5f);
+                        rd.playSound(null, CENTER, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 3f, 0.5f);
                     }
+                } else if (!siegeHordeOn) {
+                    if (now >= siegeStartAt) startSiegeHorde(server, rd);
+                } else if (now % 20 == 0) {
+                    waveWatch(server, rd, true);
                 }
-                // Défaite : plus aucun inscrit debout dans la Faille
-                boolean anyAlive = false;
-                for (UUID id : registered) {
-                    ServerPlayer p = server.getPlayerList().getPlayer(id);
-                    if (p != null && p.level().dimension() == RIFT_DIM && p.isAlive() && !p.isSpectator()) { anyAlive = true; break; }
-                }
-                if (!anyAlive && !registered.isEmpty()) defeat(server, rd);
+            }
+            case COUNTER -> counterTick(server, rd, now);
+            case TITAN -> {
+                RiftTitan.tick(rd, now);
+                if (RiftTitan.isDead()) finalVictory(server, rd);
             }
             case ENDING -> {
                 if (now % 20 != 0) return;
@@ -392,18 +443,223 @@ public final class RiftManager {
 
     /** Fin de la Horde, appelée par le HordeManager : victoire (dernière vague nettoyée) ou arrêt (commande ; la défaite est déjà traitée). */
     public static void onHordeEnd(boolean victory) {
-        if (!active || phase != Phase.HORDE) return;
+        if (!active || (phase != Phase.HORDE && phase != Phase.SIEGE)) return;
         MinecraftServer server = world != null ? world.getServer() : null;
         if (server == null) return;
         ServerLevel rd = server.getLevel(RIFT_DIM);
         if (rd == null) return;
-        if (victory) {
-            tellAll(rd, WSLang.t("rift.victory"));
-            toEnding(server, rd);
-        } else {
+        HordeConfigMultiData.RiftSettings rs = settings();
+        if (!victory) {
             endAt = server.getTickCount() + 20; // arrêt manuel : fermeture immédiate
             phase = Phase.ENDING;
             restoreSpawnRadius();
+            return;
+        }
+        restoreSpawnRadius();
+        if (phase == Phase.HORDE) {
+            nextPhase = rs.siegeEnabled ? Phase.SIEGE : rs.titanEnabled ? Phase.TITAN : Phase.NONE;
+            if (nextPhase == Phase.NONE) {   // fin de la Faille : les récompenses ont déjà été données par le HordeManager
+                tellAll(rd, WSLang.t("rift.victory"));
+                toEnding(server, rd);
+                return;
+            }
+            tellAll(rd, WSLang.t(rs.siegeEnabled ? "rift.next_siege" : "rift.next_titan"));
+        } else {
+            nextPhase = Phase.COUNTER;
+            siegeHordeOn = false;
+            tellAll(rd, WSLang.t("rift.next_counter"));
+        }
+        phase = Phase.INTERLUDE;
+        interludeAt = server.getTickCount() + Math.max(3, rs.interludeSeconds) * 20L;
+    }
+
+    /** Vrai tant qu'une phase suivante de la Faille est à venir : le HordeManager ne verse alors ni récompenses ni victoire. */
+    public static boolean midCampaign() {
+        if (!active) return false;
+        HordeConfigMultiData.RiftSettings s = settings();
+        return (phase == Phase.HORDE && (s.siegeEnabled || s.titanEnabled)) || phase == Phase.SIEGE;
+    }
+
+    private static boolean inCombat() {
+        return phase == Phase.HORDE || phase == Phase.SIEGE || phase == Phase.COUNTER || phase == Phase.TITAN;
+    }
+
+    /** Lance une tâche dans {@code ticks} ticks (utilisé pour les attaques étalées du Titan). */
+    static void later(MinecraftServer server, int ticks, Runnable r) {
+        DUE_KEYS.add(new long[]{server.getTickCount() + ticks});
+        DUE_TASKS.add(r);
+    }
+
+    /** Nouvelle vague / nouveau calme : retardataires admis, ressources du Siège. */
+    private static void waveWatch(MinecraftServer server, ServerLevel rd, boolean siege) {
+        HordeManager hm = HordeManager.get();
+        int wv = hm.getCurrentWave();
+        if (wv != lastWave) {   // nouvelle vague : les joueurs arrivés en cours de route entrent dans la partie
+            lastWave = wv;
+            promoteWaiting(server, rd);
+        }
+        HordeManager.State st = hm.getState();
+        if (st != lastState) {
+            lastState = st;
+            if (siege && (st == HordeManager.State.WAITING_NEXT_WAVE || st == HordeManager.State.PAUSED)) { // un calme commence
+                HordeConfigMultiData.RiftSettings rs = settings();
+                RiftFortress.resources(rd, radius, rs.resourceTrees, rs.resourceOres);
+                tellAll(rd, WSLang.t("rift.calm"));
+            }
+        }
+    }
+
+    private static void promoteWaiting(MinecraftServer server, ServerLevel rd) {
+        for (UUID id : new ArrayList<>(waiting)) {
+            ServerPlayer p = server.getPlayerList().getPlayer(id);
+            waiting.remove(id);
+            if (p == null || p.level().dimension() != RIFT_DIM) continue;
+            restoreMode(p);
+            registered.add(id);
+            respawnOnIsland(p, rd);
+            p.sendSystemMessage(Component.literal(WSLang.t("rift.joined")));
+        }
+    }
+
+    private static int playerCount(ServerLevel rd) {
+        return Math.max(1, registered.size());
+    }
+
+    // ─── Phase 2 : le Siège ───
+
+    private static void startSiege(MinecraftServer server, ServerLevel rd, long now) {
+        HordeConfigMultiData.RiftSettings rs = settings();
+        phase = Phase.SIEGE;
+        growCur = radius;
+        growTarget = siegeFinal;
+        growNextAt = now + 40;
+        siegeStartAt = now + 40 + ((growTarget - growCur + 1) / 2) * 8L + 80;
+        siegeHordeOn = false;
+        RiftFortress.build(rd, siegeFinal);
+        if (rs.engines) RiftEngines.build(rd);
+        for (ServerPlayer p : rd.players()) {
+            com.wavesurvivor.network.ShakePacket.send(p, 80, 1.2f);
+            p.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 20));
+            p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(WSLang.t("rift.siege_sub"))));
+            p.connection.send(new ClientboundSetTitleTextPacket(Component.literal(WSLang.t("rift.siege_title"))));
+        }
+        rd.playSound(null, CENTER, SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 8f, 0.6f);
+        WaveSurvivorMod.LOGGER.info("[Faille] Siège : île {} → {}, forteresse en {}.", growCur, growTarget, RiftFortress.center(siegeFinal));
+    }
+
+    private static void startSiegeHorde(MinecraftServer server, ServerLevel rd) {
+        HordeConfigMultiData.RiftSettings rs = settings();
+        spawnCfg = horde.configData;
+        spawnRadiusBackup = spawnCfg.spawnRadius;
+        waveBackup = spawnCfg.totalWaves;
+        spawnCfg.spawnRadius = 5;
+        spawnCfg.totalWaves = Math.max(1, rs.siegeAssaults);
+        boolean ok = HordeManager.get().startAtQuiet(horde, server, RiftFortress.spawnPoint(siegeFinal), RIFT_DIM.location().toString());
+        if (!ok) {
+            restoreSpawnRadius();
+            tellAll(rd, WSLang.t("rift.start_fail"));
+            siegeStartAt = server.getTickCount() + 200; // nouvel essai
+            return;
+        }
+        siegeHordeOn = true;
+        lastWave = HordeManager.get().getCurrentWave();
+        lastState = null;
+        tellAll(rd, WSLang.t("rift.siege_go"));
+    }
+
+    // ─── Phase 3 : la Contre-offensive ───
+
+    private static void startCounter(MinecraftServer server, ServerLevel rd, long now) {
+        HordeConfigMultiData.RiftSettings rs = settings();
+        phase = Phase.COUNTER;
+        coreSpawned = false;
+        BlockPos c = RiftFortress.center(siegeFinal);
+        double f = 1.0 + 0.4 * Math.max(0, playerCount(rd) - 1);
+        int n = Math.max(1, Math.min(8, rs.catalysts));
+        for (int i = 0; i < n; i++) {
+            double a = i * Math.PI * 2 / n + 0.4;
+            RiftFortress.spawnTarget(rd, c.getX() + 0.5 + Math.cos(a) * 7.5, c.getY() + 2.0, c.getZ() + 0.5 + Math.sin(a) * 7.5,
+                    (float) (rs.catalystHp * f), WSLang.t("rift.catalyst"));
+        }
+        // Le bouclier tombe
+        rd.playSound(null, c, SoundEvents.BEACON_DEACTIVATE, SoundSource.HOSTILE, 8f, 0.5f);
+        rd.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION_EMITTER, c.getX() + 0.5, c.getY() + 6, c.getZ() + 0.5, 4, 8, 4, 8, 0);
+        for (ServerPlayer p : rd.players()) {
+            com.wavesurvivor.network.ShakePacket.send(p, 60, 1.0f);
+            p.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 20));
+            p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(WSLang.t("rift.counter_sub", n))));
+            p.connection.send(new ClientboundSetTitleTextPacket(Component.literal(WSLang.t("rift.counter_title"))));
+        }
+        nextReinforce = now + 100;
+    }
+
+    private static void counterTick(MinecraftServer server, ServerLevel rd, long now) {
+        if (now % 20 != 0) return;
+        HordeConfigMultiData.RiftSettings rs = settings();
+        int alive = RiftFortress.aliveTargets(rd);
+        BlockPos c = RiftFortress.center(siegeFinal);
+        if (!coreSpawned && alive == 0) {
+            coreSpawned = true;
+            double f = 1.0 + 0.4 * Math.max(0, playerCount(rd) - 1);
+            RiftFortress.spawnTarget(rd, c.getX() + 0.5, c.getY() + 3.0, c.getZ() + 0.5, (float) (rs.coreHp * f), WSLang.t("rift.core"));
+            tellAll(rd, WSLang.t("rift.core_appears"));
+            for (ServerPlayer p : rd.players()) com.wavesurvivor.network.ShakePacket.send(p, 40, 1.0f);
+        } else if (coreSpawned && alive == 0) {
+            tellAll(rd, WSLang.t("rift.core_down"));
+            nextPhase = rs.titanEnabled ? Phase.TITAN : Phase.NONE;
+            phase = Phase.INTERLUDE;
+            interludeAt = now + 100;
+            return;
+        }
+        // Renforts : les ennemis continuent d'arriver de la forteresse
+        if (now >= nextReinforce && horde != null && horde.configData != null && horde.configData.hordeEntities != null && !horde.configData.hordeEntities.isEmpty()) {
+            nextReinforce = now + Math.max(5, rs.reinforceSeconds) * 20L;
+            int near = rd.getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, new net.minecraft.world.phys.AABB(c).inflate(160, 60, 160)).size();
+            if (near < 35) {
+                var tpl = horde.configData.hordeEntities.get(RNG.nextInt(horde.configData.hordeEntities.size()));
+                int count = Math.max(2, tpl.baseCount + tpl.countIncrement) + playerCount(rd);
+                com.wavesurvivor.horde.spawn.HordeSpawner.spawnMobs(rd, tpl, RiftFortress.spawnPoint(siegeFinal), 5, count, playerCount(rd));
+            }
+        }
+    }
+
+    // ─── Phase 4 : le Titan, puis la fin ───
+
+    private static void startTitan(MinecraftServer server, ServerLevel rd, long now) {
+        promoteWaiting(server, rd);
+        // Les derniers ennemis disparaissent : place au Titan
+        List<Entity> gone = new ArrayList<>();
+        for (Entity e : rd.getAllEntities()) if (e instanceof net.minecraft.world.entity.monster.Enemy && !(e instanceof ServerPlayer)) gone.add(e);
+        for (Entity e : gone) e.discard();
+        phase = Phase.TITAN;
+        RiftTitan.spawn(rd, settings(), playerCount(rd), siegeFinal);
+    }
+
+    private static void finalVictory(MinecraftServer server, ServerLevel rd) {
+        tellAll(rd, WSLang.t("rift.victory"));
+        finalRewards(server, rd);
+        toEnding(server, rd);
+    }
+
+    /** Récompenses de fin de Faille : celles de la horde (classement, coffres…) et le butin du Titan. */
+    private static void finalRewards(MinecraftServer server, ServerLevel rd) {
+        if (horde == null) return;
+        try {
+            com.wavesurvivor.horde.rewards.RewardsDistributor.distribute(horde, server);
+            com.wavesurvivor.horde.renaissance.RenaissanceRewards.payout(server, horde, true);
+            com.wavesurvivor.horde.stats.PlayerStats.addForAll(server, "hordes_won", 1);
+            com.wavesurvivor.horde.difficulty.HordeProgress.recordWin(server, horde.hordeName);
+        } catch (Exception ex) {
+            WaveSurvivorMod.LOGGER.warn("[Faille] Récompenses de fin : {}", ex.getMessage());
+        }
+        if (RiftTitan.isDead() || settings().titanEnabled) {
+            for (ServerPlayer p : rd.players()) {
+                if (p.isSpectator()) continue;
+                net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.EMERALD, 16));
+                net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.AMETHYST_SHARD, 12));
+                net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CRYING_OBSIDIAN, 4));
+                p.sendSystemMessage(Component.literal(WSLang.t("rift.loot")));
+            }
         }
     }
 
@@ -440,7 +696,7 @@ public final class RiftManager {
         p.setHealth(p.getMaxHealth());
         p.clearFire();
         p.fallDistance = 0;
-        if (phase == Phase.HORDE && registered.contains(p.getUUID())) {
+        if (inCombat() && registered.contains(p.getUUID())) {
             int secs = Math.max(3, settings().reviveSeconds);
             prevMode.put(p.getUUID(), p.gameMode.getGameModeForPlayer());
             p.setGameMode(GameType.SPECTATOR);
@@ -461,6 +717,13 @@ public final class RiftManager {
         MinecraftServer server = e.getServer();
         long now = server.getTickCount();
         flow(server, now);
+        for (int i = DUE_KEYS.size() - 1; i >= 0; i--) {
+            if (now >= DUE_KEYS.get(i)[0]) {
+                Runnable r = DUE_TASKS.remove(i);
+                DUE_KEYS.remove(i);
+                try { r.run(); } catch (Exception ex) { WaveSurvivorMod.LOGGER.warn("[Faille] Tâche différée : {}", ex.getMessage()); }
+            }
+        }
         if (now % 10 != 0) return;
         ServerLevel rd = server.getLevel(RIFT_DIM);
         if (rd == null) return;
@@ -473,6 +736,49 @@ public final class RiftManager {
                 p.setDeltaMovement(0, 0, 0);
                 p.hurt(p.damageSources().fall(), 2f);
             }
+        }
+    }
+
+    /** Mort d'un avatar du Titan : le Titan perd des PV. */
+    @SubscribeEvent
+    public void onAvatarDeath(LivingDeathEvent e) {
+        if (!active || e.getEntity() instanceof ServerPlayer || !(e.getEntity().level() instanceof ServerLevel l)) return;
+        if (e.getEntity().getPersistentData().getBoolean("ws_rift_avatar")) RiftTitan.onAvatarDeath(l, e.getEntity());
+    }
+
+    /** Plafond de dégâts par coup sur le Titan. */
+    @SubscribeEvent
+    public void onTitanHurt(net.minecraftforge.event.entity.living.LivingHurtEvent e) {
+        if (active && RiftTitan.active() && RiftTitan.isTitan(e.getEntity())) e.setAmount(RiftTitan.capDamage(e.getAmount()));
+    }
+
+    /** Frappe au corps à corps sur un catalyseur / le cœur de la forteresse. */
+    @SubscribeEvent
+    public void onAttackTarget(net.minecraftforge.event.entity.player.AttackEntityEvent e) {
+        if (!active || !RiftFortress.isTarget(e.getTarget())) return;
+        e.setCanceled(true);
+        if (e.getEntity().level().isClientSide) return;
+        RiftFortress.damageTarget(e.getTarget(), (float) Math.max(2.0, e.getEntity().getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)));
+    }
+
+    /** Flèche (baliste, arc) sur un catalyseur / le cœur. */
+    @SubscribeEvent
+    public void onProjectileTarget(net.minecraftforge.event.entity.ProjectileImpactEvent e) {
+        if (!active || !(e.getRayTraceResult() instanceof net.minecraft.world.phys.EntityHitResult hit) || !RiftFortress.isTarget(hit.getEntity())) return;
+        e.setCanceled(true);
+        if (e.getProjectile().level().isClientSide) return;
+        RiftFortress.damageTarget(hit.getEntity(), 6f);
+        e.getProjectile().discard();
+    }
+
+    /** Clic droit sur le pupitre d'une catapulte / d'une baliste. */
+    @SubscribeEvent
+    public void onUseEngine(net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock e) {
+        if (!active || e.getLevel().isClientSide || e.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND) return;
+        if (!(e.getEntity() instanceof ServerPlayer p) || p.level().dimension() != RIFT_DIM) return;
+        if (RiftEngines.onUse(p, e.getPos(), p.getServer().getTickCount())) {
+            e.setCanceled(true);
+            e.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
         }
     }
 

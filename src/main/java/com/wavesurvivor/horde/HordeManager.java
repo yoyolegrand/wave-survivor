@@ -123,6 +123,21 @@ public class HordeManager {
         return ok;
     }
 
+    /**
+     * Lance une horde à une position précise SANS les effets de « début de partie » (bonus d'Héritage, statistiques, défi du jour…) :
+     * utilisé par la Faille pour enchaîner ses phases (le Siège est une seconde horde dans la même partie).
+     */
+    public boolean startAtQuiet(HordeConfigMultiData horde, MinecraftServer srv, BlockPos overridePos, String overrideDim) {
+        this.overrideSpawnPos = overridePos;
+        this.overrideSpawnDim = overrideDim;
+        boolean ok = start(horde, srv);
+        if (!ok) {
+            this.overrideSpawnPos = null;
+            this.overrideSpawnDim = null;
+        }
+        return ok;
+    }
+
     /** Renvoie le centre de spawn effectif (override si présent, sinon cfg.spawnCoords, sinon position du premier joueur, sinon 0,64,0). */
     private BlockPos getSpawnCenter(HordeConfigMultiData.ConfigDataInner cfg) {
         if (overrideSpawnPos != null) return overrideSpawnPos;
@@ -492,15 +507,16 @@ public class HordeManager {
     private void finishHorde(MinecraftServer srv) {
         String name = activeHorde != null ? activeHorde.hordeName : "?";
         WaveSurvivorMod.LOGGER.info("[HordeManager] Horde '{}' TERMINÉE.", name);
-        broadcastImportant(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.horde_59a3") + com.wavesurvivor.i18n.WSLang.t(name) + com.wavesurvivor.i18n.WSLang.t("srv.terminee")).withStyle(ChatFormatting.GREEN));
-        if (activeHorde != null && (!com.wavesurvivor.horde.bossrush.BossRush.active() || com.wavesurvivor.horde.bossrush.BossRush.leaderboardRewards())) RewardsDistributor.distribute(activeHorde, srv);
+        boolean riftMid = com.wavesurvivor.horde.rift.RiftManager.midCampaign(); // 2.0 : phase intermédiaire de la Faille (récompenses à la toute fin)
+        if (!riftMid) broadcastImportant(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.horde_59a3") + com.wavesurvivor.i18n.WSLang.t(name) + com.wavesurvivor.i18n.WSLang.t("srv.terminee")).withStyle(ChatFormatting.GREEN));
+        if (!riftMid && activeHorde != null && (!com.wavesurvivor.horde.bossrush.BossRush.active() || com.wavesurvivor.horde.bossrush.BossRush.leaderboardRewards())) RewardsDistributor.distribute(activeHorde, srv);
         com.wavesurvivor.horde.bossrush.BossRush.onVictory(srv); // Boss Rush : chrono et classement
         if (activeHorde != null && !com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.roulette.SealedKey.onHordeWon(srv); // horde sans aucune mort : Clé scellée
         com.wavesurvivor.arena.ArenaSession.onVictory(srv);      // arène : coffre de récompense (une fois par arène)
         // PR gagnés en jouant (avant l'enregistrement de la victoire : on sait si c'est la première)
-        if (activeHorde != null) com.wavesurvivor.horde.renaissance.RenaissanceRewards.payout(srv, activeHorde, true);
+        if (!riftMid && activeHorde != null) com.wavesurvivor.horde.renaissance.RenaissanceRewards.payout(srv, activeHorde, true);
         // 1.7 — Statistiques : horde gagnée (ou Boss Rush) pour chaque joueur présent
-        if (activeHorde != null) {
+        if (!riftMid && activeHorde != null) {
             if (com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.stats.PlayerStats.addForAll(srv, "bossrush_wins", 1);
             else {
                 com.wavesurvivor.horde.stats.PlayerStats.addForAll(srv, "hordes_won", 1);
@@ -509,7 +525,7 @@ public class HordeManager {
         }
         // Progression : horde terminée (au niveau de difficulté en cours) pour les joueurs connectés
         // Le Boss Rush ne compte pas comme avoir terminé la horde (déblocages, première victoire)
-        if (activeHorde != null && !com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.difficulty.HordeProgress.recordWin(srv, activeHorde.hordeName);
+        if (!riftMid && activeHorde != null && !com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.difficulty.HordeProgress.recordWin(srv, activeHorde.hordeName);
         com.wavesurvivor.altar.AltarDefense.onHordeEnd(srv, true);
         com.wavesurvivor.horde.skill.NecroTracker.clearAll();
         com.wavesurvivor.horde.boss.LicheController.clearAll(srv);

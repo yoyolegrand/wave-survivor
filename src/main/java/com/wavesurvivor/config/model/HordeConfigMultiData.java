@@ -357,6 +357,32 @@ public class HordeConfigMultiData {
         @SerializedName("reviveSeconds") public int reviveSeconds = 15;
         /** Pause de fin (s) après la victoire ou la défaite, avant la fermeture de la Faille (4 min par défaut). */
         @SerializedName("endPauseSeconds") public int endPauseSeconds = 240;
+        /** Phase 2 — Le Siège (île agrandie, forteresse, assauts). Désactivée : la Horde mène directement à la suite. */
+        @SerializedName("siegeEnabled") public boolean siegeEnabled = true;
+        /** Nombre d'assauts du Siège avant la Contre-offensive. */
+        @SerializedName("siegeAssaults") public int siegeAssaults = 4;
+        /** Rayon final de l'île (agrandie par anneaux au début du Siège). */
+        @SerializedName("siegeRadius") public int siegeRadius = 32;
+        /** Pause (s) entre deux phases. */
+        @SerializedName("interludeSeconds") public int interludeSeconds = 10;
+        /** Ressources minimales qui apparaissent à chaque calme du Siège. */
+        @SerializedName("resourceTrees") public int resourceTrees = 4;
+        @SerializedName("resourceOres") public int resourceOres = 3;
+        /** Phase 3 — Contre-offensive : nombre de catalyseurs, PV de chacun, PV du cœur de la forteresse, renforts toutes les X s. */
+        @SerializedName("catalysts") public int catalysts = 3;
+        @SerializedName("catalystHp") public int catalystHp = 150;
+        @SerializedName("coreHp") public int coreHp = 500;
+        @SerializedName("reinforceSeconds") public int reinforceSeconds = 20;
+        /** Phase 4 — Titan : entité, taille (Pehkui), PV, avatars (PV, % de PV max retirés à leur mort), plafond de dégâts par coup (% des PV max). */
+        @SerializedName("titanEnabled") public boolean titanEnabled = true;
+        @SerializedName("titanEntity") public String titanEntity = "minecraft:iron_golem";
+        @SerializedName("titanScale") public double titanScale = 22.0;
+        @SerializedName("titanHp") public int titanHp = 3000;
+        @SerializedName("titanAvatarPercent") public int titanAvatarPercent = 8;
+        @SerializedName("titanAvatarHp") public int titanAvatarHp = 250;
+        @SerializedName("titanDamageCapPercent") public int titanDamageCapPercent = 6;
+        /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */
+        @SerializedName("engines") public boolean engines = true;
     }
 
     /**

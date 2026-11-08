@@ -1825,6 +1825,12 @@ public class HordeEditorScreen extends Screen {
             return;
         }
         JsonObject r = HordeJson.obj(cd(), "rift");
+        button(x, y - 2, 130, (riftSub == 0 ? "§e§l" : "§7") + t("ui.rift.sub_start"), () -> { riftSub = 0; init(); });
+        button(x + 134, y - 2, 130, (riftSub == 1 ? "§e§l" : "§7") + t("ui.rift.sub_siege"), () -> { riftSub = 1; init(); });
+        button(x + 268, y - 2, 130, (riftSub == 2 ? "§e§l" : "§7") + t("ui.rift.sub_titan"), () -> { riftSub = 2; init(); });
+        y += 26;
+        if (riftSub == 1) { buildRiftSiege(r, x, y); return; }
+        if (riftSub == 2) { buildRiftTitan(r, x, y); return; }
         label(x, y, "§6§l" + t("ui.rift.sec_opening"));
         y += 14;
         flow(x, y);
@@ -1854,6 +1860,81 @@ public class HordeEditorScreen extends Screen {
         fInt(40, HordeJson.num(r, "endPauseSeconds", 240), v -> r.addProperty("endPauseSeconds", Math.max(10, Math.min(1800, v))));
         y += 30;
         labelWrap(x, y, t("ui.rift.hint_phases"), W - 24);
+    }
+
+    private static int riftSub = 0;
+    private static final String[] TITAN_TYPES = {"minecraft:iron_golem", "minecraft:zombie", "minecraft:wither_skeleton", "minecraft:ravager",
+            "minecraft:evoker", "minecraft:warden", "minecraft:enderman", "minecraft:piglin_brute"};
+
+    /** Faille — page « Siège et Contre-offensive ». */
+    private void buildRiftSiege(JsonObject r, int x, int y) {
+        label(x, y, "§6§l" + t("ui.rift.sec_siege"));
+        y += 14;
+        toggle(x, y, 120, t("ui.rift.siege_on"), r, "siegeEnabled", true);
+        flow(x + 130, y);
+        fl(t("ui.rift.assaults"));
+        fInt(30, HordeJson.num(r, "siegeAssaults", 4), v -> r.addProperty("siegeAssaults", Math.max(1, Math.min(30, v))));
+        fl(t("ui.rift.final_radius"));
+        fInt(30, HordeJson.num(r, "siegeRadius", 32), v -> r.addProperty("siegeRadius", Math.max(16, Math.min(48, v))));
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.trees"));
+        fInt(30, HordeJson.num(r, "resourceTrees", 4), v -> r.addProperty("resourceTrees", Math.max(0, Math.min(20, v))));
+        fl(t("ui.rift.ores"));
+        fInt(30, HordeJson.num(r, "resourceOres", 3), v -> r.addProperty("resourceOres", Math.max(0, Math.min(20, v))));
+        fl(t("ui.rift.interlude"));
+        fInt(30, HordeJson.num(r, "interludeSeconds", 10), v -> r.addProperty("interludeSeconds", Math.max(3, Math.min(120, v))));
+        y += 32;
+        label(x, y, "§6§l" + t("ui.rift.sec_counter"));
+        y += 14;
+        flow(x, y);
+        fl(t("ui.rift.catalysts"));
+        fInt(26, HordeJson.num(r, "catalysts", 3), v -> r.addProperty("catalysts", Math.max(1, Math.min(8, v))));
+        fl(t("ui.rift.catalyst_hp"));
+        fInt(36, HordeJson.num(r, "catalystHp", 150), v -> r.addProperty("catalystHp", Math.max(10, Math.min(5000, v))));
+        fl(t("ui.rift.core_hp"));
+        fInt(40, HordeJson.num(r, "coreHp", 500), v -> r.addProperty("coreHp", Math.max(10, Math.min(20000, v))));
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.reinforce"));
+        fInt(30, HordeJson.num(r, "reinforceSeconds", 20), v -> r.addProperty("reinforceSeconds", Math.max(5, Math.min(300, v))));
+        y += 30;
+        labelWrap(x, y, t("ui.rift.hint_siege"), W - 24);
+    }
+
+    /** Faille — page « Titan et engins de siège ». */
+    private void buildRiftTitan(JsonObject r, int x, int y) {
+        label(x, y, "§6§l" + t("ui.rift.sec_titan"));
+        y += 14;
+        toggle(x, y, 120, t("ui.rift.titan_on"), r, "titanEnabled", true);
+        String cur = HordeJson.str(r, "titanEntity", "minecraft:iron_golem");
+        button(x + 130, y - 1, 220, t("ui.rift.titan_entity") + cur.replace("minecraft:", ""), () -> {
+            int i = 0;
+            for (int k = 0; k < TITAN_TYPES.length; k++) if (TITAN_TYPES[k].equals(cur)) i = k;
+            r.addProperty("titanEntity", TITAN_TYPES[(i + 1) % TITAN_TYPES.length]);
+            changed();
+            init();
+        });
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.titan_scale"));
+        fDbl(36, HordeJson.dbl(r, "titanScale", 22.0), v -> r.addProperty("titanScale", Math.max(2.0, Math.min(60.0, v))));
+        fl(t("ui.rift.titan_hp"));
+        fInt(40, HordeJson.num(r, "titanHp", 3000), v -> r.addProperty("titanHp", Math.max(100, Math.min(200000, v))));
+        fl(t("ui.rift.titan_cap"));
+        fInt(26, HordeJson.num(r, "titanDamageCapPercent", 6), v -> r.addProperty("titanDamageCapPercent", Math.max(1, Math.min(100, v))));
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.avatar_pct"));
+        fInt(26, HordeJson.num(r, "titanAvatarPercent", 8), v -> r.addProperty("titanAvatarPercent", Math.max(1, Math.min(50, v))));
+        fl(t("ui.rift.avatar_hp"));
+        fInt(36, HordeJson.num(r, "titanAvatarHp", 250), v -> r.addProperty("titanAvatarHp", Math.max(10, Math.min(20000, v))));
+        y += 32;
+        label(x, y, "§6§l" + t("ui.rift.sec_engines"));
+        y += 14;
+        toggle(x, y, 220, t("ui.rift.engines_on"), r, "engines", true);
+        y += 28;
+        labelWrap(x, y, t("ui.rift.hint_titan"), W - 24);
     }
 
     private void buildInvasionSettings() {

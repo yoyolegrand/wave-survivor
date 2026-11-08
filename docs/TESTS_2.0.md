@@ -46,3 +46,20 @@ Conception : `docs/DESIGN_FAILLE_2_0.md`. Mod Pehkui requis pour la Faille (sans
 - [ ] Liseré de particules turquoise continu le long du bord de l'ovale
 - [ ] Particules aspirées vers le centre + étincelles qui s'échappent
 - [ ] La lueur du portail varie lentement (respiration), de jour comme de nuit
+
+## Jalons 3 à 7 — Siège, Contre-offensive, Titan, engins, éditeur (à tester d'un bloc)
+Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5 vagues + boss) → Siège → Contre-offensive → Titan → pause de fin. Pour aller vite : réduire vagues / PV dans l'éditeur (onglet La Faille, 3 pages).
+- [ ] Après la Horde : message « le Siège approche », pause, puis l'île s'agrandit par anneaux (secousses), un pont et une forteresse (plateforme, muraille à porte, 4 tours, donjon) apparaissent
+- [ ] Siège : bouclier (particules turquoise/violet), impossible d'entrer dans la forteresse (refoulé vers le pont) ; assauts sortent de la porte de la forteresse et viennent vers les joueurs
+- [ ] À chaque calme : arbres et minerais apparaissent sur l'île, message « Un calme s'installe »
+- [ ] Engins : 2 catapultes et 2 balistes sur l'île côté -X. Catapulte : clic droit sur le pupitre avec de la cobblestone → boulet en cloche, explosion de zone, recharge 30 s. Baliste : clic droit avec des flèches → charge 16 (10 s), tirs toutes les 0,5 s (clics répétés)
+- [ ] Les récompenses de la horde ne sont PAS versées entre les phases, seulement à la toute fin
+- [ ] Fin du Siège : le bouclier tombe, 3 catalyseurs (cristaux avec PV affichés) apparaissent dans la forteresse ; on les détruit au corps à corps, à l'arc, à la baliste ou à la catapulte ; renforts régulièrement
+- [ ] Catalyseurs détruits → le cœur de la forteresse apparaît (plus de PV) ; cœur détruit → Titan
+- [ ] Titan : éveil (secousses, titre), il monte de l'abîme derrière la forteresse, très grand (Pehkui), barre de vie violette ; reste affiché de loin
+- [ ] Attaques annoncées (zone rouge au sol qui se remplit + texte « ⚠ … » + lueur) : météores sous les joueurs, onde de choc sur un quart d'arène (fuir ou sauter), rayon (s'abriter derrière un mur), rugissement (faiblesse), invocation d'avatars
+- [ ] Tuer un avatar retire 8 % des PV max du Titan ; plafond de dégâts par coup (6 % des PV max) ; phases à 75 / 50 / 25 % (message, nouveaux avatars, attaques plus rapides)
+- [ ] Mort / spectateur / retour fonctionnent dans toutes les phases ; tous à terre = défaite ; joueur arrivé en cours : spectateur jusqu'au prochain point d'entrée
+- [ ] Titan vaincu : butin (émeraudes, éclats d'améthyste, obsidienne pleureuse) + récompenses de la horde, pause de fin, fermeture et retour
+- [ ] `/ws rift stop` à n'importe quel moment : tout est nettoyé (forteresse, île, Titan, avatars, engins, cristaux), les joueurs rentrent
+- [ ] Éditeur : 3 pages dans l'onglet La Faille (Départ et Horde / Siège et Contre-offensive / Titan et engins), réglages pris en compte
