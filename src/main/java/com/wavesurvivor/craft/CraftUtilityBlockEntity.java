@@ -129,7 +129,9 @@ public class CraftUtilityBlockEntity extends BlockEntity {
                 float dmg = (float) CraftConfig.blockNum("profane_obelisk", "damagePerSecond", 1);
                 int hunger = (int) CraftConfig.blockNum("profane_obelisk", "hungerSeconds", 4) * 20;
                 AABB box = new AABB(pos).inflate(r);
-                for (Mob m : sl.getEntitiesOfClass(Mob.class, box, e -> e instanceof Enemy && e.isAlive())) {
+                // les Corrompus (Rootling, Brute de pierre) sont les alliés de l'obélisque : ils ne subissent rien (sinon il tue la vague de l'Autel souillé)
+                for (Mob m : sl.getEntitiesOfClass(Mob.class, box, e -> e instanceof Enemy && e.isAlive()
+                        && !(e instanceof com.wavesurvivor.entity.Rootling) && !(e instanceof com.wavesurvivor.entity.StoneBrute))) {
                     if (m.distanceToSqr(cx, cy, cz) <= r * r) m.hurt(sl.damageSources().magic(), dmg);
                 }
                 for (ServerPlayer p : sl.getEntitiesOfClass(ServerPlayer.class, box)) {

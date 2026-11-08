@@ -63,6 +63,8 @@ public final class RulesConfig {
     public static int altarWaveSize() { return cfg().has("altarWaveSize") ? Math.max(1, Math.min(60, cfg().get("altarWaveSize").getAsInt())) : 8; }
     /** Autel souillé : l'estrade s'ouvre (révèle le coffre) une fois la mini-vague vaincue. */
     public static boolean altarOpenOnVictory() { return !cfg().has("altarOpenOnVictory") || cfg().get("altarOpenOnVictory").getAsBoolean(); }
+    /** Autel souillé : chance (en %) qu'un Corrompu du rituel lâche un Éclat de souillure (le Brute de pierre : deux fois plus). */
+    public static int altarShardChance() { return cfg().has("altarShardChance") ? Math.max(0, Math.min(100, cfg().get("altarShardChance").getAsInt())) : 30; }
     /** Clé scellée : chance (en %) qu'un boss de horde en lâche une. */
     public static double sealedKeyBossChance() { return cfg().has("sealedKeyBossChance") ? Math.max(0, Math.min(100, cfg().get("sealedKeyBossChance").getAsDouble())) : 7.0; }
     /** Clé scellée : nombre de clés offertes pour une horde terminée sans aucune mort (0 = désactivé). */

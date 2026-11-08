@@ -77,6 +77,16 @@ public class TaintedAltarWave {
         if (!alive && data.claim(key ^ KEY_OPEN)) victory(level, p, markers);
     }
 
+    /** Les Corrompus du rituel lâchent parfois un Éclat de souillure (le Brute de pierre : deux fois plus souvent). */
+    @SubscribeEvent
+    public void onDrops(net.minecraftforge.event.entity.living.LivingDropsEvent e) {
+        if (!(e.getEntity() instanceof Mob m) || !m.getTags().contains(TAG) || m.level().isClientSide) return;
+        int chance = RulesConfig.altarShardChance() * (m instanceof com.wavesurvivor.entity.StoneBrute ? 2 : 1);
+        if (m.getRandom().nextInt(100) >= chance) return;
+        e.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(m.level(), m.getX(), m.getY() + 0.3, m.getZ(),
+                new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.TAINT_SHARD.get())));
+    }
+
     private static void awaken(ServerLevel level, ServerPlayer p, Map<String, List<BlockPos>> markers, ChapelGuardians.Found f, ArenaPiece piece, Rotation rot) {
         List<BlockPos> spawns = new ArrayList<>(markers.getOrDefault("corrupted_spawns", List.of()));
         if (spawns.isEmpty()) return;

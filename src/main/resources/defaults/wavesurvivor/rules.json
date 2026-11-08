@@ -8,6 +8,7 @@
   "vestigeFilter": true,
   "altarWaveSize": 8,
   "altarOpenOnVictory": true,
+  "altarShardChance": 30,
   "sealedKeyBossChance": 7,
   "sealedKeyFlawlessCount": 1
 }

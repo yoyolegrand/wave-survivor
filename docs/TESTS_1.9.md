@@ -433,3 +433,9 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Arbres par-dessus l'arène (Oasis près d'une jungle) : dans une arène NEUVE, plus aucun arbre ni plante hors plan dans l'emprise (étals du marché, rempart), les palmiers et poutres du plan restent ; sur une arène déjà générée : `/ws arena sweep` (chunks chargés dans 10 chunks autour de toi)
 - [ ] Prêt par clic droit sur l'autel : horde classique, entre deux vagues, le clic droit ouvre « Passer la pause ? » (Oui / Non) sans rien déclencher tout seul ; Oui = « Prêts n/N » (la vague part quand tous sont prêts) ; re-clic droit = proposition de retirer son « prêt » ; hors pause, le refus « horde déjà en cours » reste
 
+
+## Retours du test de l'Autel souillé (8 nov.)
+- [ ] `/ws arena place reliquaire_scelle 0` marche enfin (le plan était rejeté : `minecraft:short_grass` n'existe pas en 1.20.1, remplacé par `minecraft:grass`) ; `/ws arena list` l'affiche
+- [ ] Reliquaire scellé plus fréquent : une tous les 48 chunks en moyenne (au lieu de 96), plus de biomes (montagnes, collines venteuses, taïgas, plaines enneigées, rivage rocheux, plateau de savane), pente tolérée 7 ; `/locate structure wavesurvivor:reliquaire_scelle` en trouve un dans un monde neuf
+- [ ] Obélisque profane : ne blesse plus les Corrompus (Rootling, Brute de pierre) mais continue de blesser tous les autres monstres ; la vague de l'Autel souillé n'est plus tuée par les obélisques de la ruine
+- [ ] Corrompus du rituel de l'Autel souillé : 30 % de lâcher un Éclat de souillure (60 % pour le Brute de pierre), réglable par `altarShardChance` dans `rules.json`
