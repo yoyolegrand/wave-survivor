@@ -56,6 +56,21 @@ public class ClientPacketHandler {
         }
     }
 
+    /** Clic droit sur l'autel pendant une pause « Prêt » : demande de confirmation (on ne passe jamais la pause par accident). */
+    public static void openReadyPrompt(com.wavesurvivor.network.ReadyPromptPacket pkt) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return;
+        String key = pkt.ready ? "ready.confirm.cancel" : "ready.confirm.ask";
+        net.minecraft.network.chat.Component msg = net.minecraft.network.chat.Component.literal(
+                com.wavesurvivor.i18n.WSLang.t(key, pkt.n, pkt.total, pkt.bonus));
+        mc.setScreen(new net.minecraft.client.gui.screens.ConfirmScreen(yes -> {
+            mc.setScreen(null);
+            if (yes) com.wavesurvivor.network.NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.ReadyPacket());
+        }, net.minecraft.network.chat.Component.literal(com.wavesurvivor.i18n.WSLang.t("ready.confirm.title")), msg,
+                net.minecraft.network.chat.Component.literal(com.wavesurvivor.i18n.WSLang.t(pkt.ready ? "ready.confirm.btn_cancel" : "ready.confirm.btn_yes")),
+                net.minecraft.network.chat.Component.literal(com.wavesurvivor.i18n.WSLang.t("ready.confirm.btn_no"))));
+    }
+
     /** Statistiques et succès (1.7). */
     public static void openStats(com.wavesurvivor.network.StatsPackets.Data pkt) {
         Minecraft mc = Minecraft.getInstance();

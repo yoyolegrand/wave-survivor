@@ -2738,12 +2738,8 @@
   "shrine.grace_box": "Grace",
   "shrine.taint_box": "Taint",
   "shrine.stock": "Stock: {0} / {1}",
-
-
-
   "shrine.fuse_in": "{0} needed",
   "shrine.fuse_summary": "{0} × {1} → {2} × {3}",
-
   "shrine.fuse_nothing": "Nothing to fuse: you need {0}.",
   "shrine.fuse_heart": "Hearts are the highest level.",
   "shrine.title": "Seraph Shrine",
@@ -2765,7 +2761,6 @@
   "shrine.down": "▼ {0}: −{1}",
   "shrine.max_pure": "Maximum purity",
   "shrine.max_corrupt": "Maximum corruption",
-
   "shrine.last": "Last change: {0}",
   "shrine.inventory": "Inventory",
   "shrine.full_pure": "The Shrine is already at maximum purity.",
@@ -4626,5 +4621,11 @@
   "craft.food.grace_feast.food": "§6🍗 {0} drumsticks §7· saturation {1}%",
   "craft.food.grace_feast.heal": "§c❤ {0} hearts healed",
   "craft.food.grace_feast.team": "§8The whole team can eat it.",
-  "desert.sun_nausea": "§6☀ Sunstroke makes you nauseous! Get into the shade or drink a waterskin."
+  "desert.sun_nausea": "§6☀ Sunstroke makes you nauseous! Get into the shade or drink a waterskin.",
+  "ready.confirm.title": "Skip the break?",
+  "ready.confirm.ask": "Do you want to skip the break and start the next wave?\n\nReady: {0}/{1} · Bonus: {2}\n(The wave starts once everyone is ready.)",
+  "ready.confirm.cancel": "You are already ready (Ready: {0}/{1}).\n\nDo you want to withdraw your \"ready\"?",
+  "ready.confirm.btn_yes": "Yes, skip the break",
+  "ready.confirm.btn_cancel": "Withdraw my \"ready\"",
+  "ready.confirm.btn_no": "No, keep waiting"
 }

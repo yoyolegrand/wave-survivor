@@ -232,6 +232,10 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, VestigeTargetPacket.class,
                 VestigeTargetPacket::encode, VestigeTargetPacket::decode, VestigeTargetPacket::handle);
 
+        // Demande « Passer la pause ? » ouverte par le clic droit sur l'autel (1.9) : serveur → client
+        CHANNEL.registerMessage(id++, ReadyPromptPacket.class,
+                ReadyPromptPacket::encode, ReadyPromptPacket::decode, ReadyPromptPacket::handle);
+
         WaveSurvivorMod.LOGGER.info("[Network] Channel 'main' enregistré (protocol v{}, {} packets)",
                 PROTOCOL_VERSION, id);
     }

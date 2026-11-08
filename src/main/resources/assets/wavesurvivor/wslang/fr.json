@@ -2187,12 +2187,8 @@
   "shrine.grace_box": "Grâce",
   "shrine.taint_box": "Souillure",
   "shrine.stock": "Stock : {0} / {1}",
-
-
-
   "shrine.fuse_in": "{0} requis",
   "shrine.fuse_summary": "{0} × {1} → {2} × {3}",
-
   "shrine.fuse_nothing": "Rien à fusionner : il en faut {0}.",
   "shrine.fuse_heart": "Les Cœurs sont du niveau maximal.",
   "shrine.title": "Sanctuaire du Séraphin",
@@ -2214,7 +2210,6 @@
   "shrine.down": "▼ {0} : −{1}",
   "shrine.max_pure": "Pureté maximale",
   "shrine.max_corrupt": "Corruption maximale",
-
   "shrine.last": "Dernière variation : {0}",
   "shrine.inventory": "Inventaire",
   "shrine.full_pure": "Le Sanctuaire est déjà au maximum de pureté.",
@@ -3865,5 +3860,11 @@
   "craft.food.grace_feast.food": "§6🍗 {0} gigots §7· saturation {1} %",
   "craft.food.grace_feast.heal": "§c❤ {0} cœurs soignés",
   "craft.food.grace_feast.team": "§8Toute l'équipe peut en manger.",
-  "desert.sun_nausea": "§6☀ Une insolation te donne la nausée ! Mets-toi à l'ombre ou bois une gourde."
+  "desert.sun_nausea": "§6☀ Une insolation te donne la nausée ! Mets-toi à l'ombre ou bois une gourde.",
+  "ready.confirm.title": "Passer la pause ?",
+  "ready.confirm.ask": "Voulez-vous passer la pause et lancer la vague suivante ?\n\nPrêts : {0}/{1} · Bonus : {2}\n(La vague part quand tout le monde est prêt.)",
+  "ready.confirm.cancel": "Tu es déjà prêt (Prêts : {0}/{1}).\n\nVeux-tu retirer ton « prêt » ?",
+  "ready.confirm.btn_yes": "Oui, passer la pause",
+  "ready.confirm.btn_cancel": "Retirer mon « prêt »",
+  "ready.confirm.btn_no": "Non, continuer la pause"
 }

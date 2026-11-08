@@ -83,6 +83,21 @@ public final class ReadyManager {
         return "";
     }
 
+    /** État d'une pause « Prêt » pour un joueur : déjà prêt ?, nombre de prêts, nombre de joueurs, texte du bonus. */
+    public record Status(boolean ready, int n, int total, String bonus) {}
+
+    /** Null si le joueur n'est pas dans une pause « Prêt » en cours (sert à ouvrir la demande de confirmation sur l'autel). */
+    public static synchronized Status status(ServerPlayer p, long now) {
+        for (Entry e : ENTRIES) {
+            List<ServerPlayer> ps = e.pause.players();
+            if (!ps.contains(p) || now >= e.end) continue;
+            int n = 0;
+            for (ServerPlayer q : ps) if (e.ready.contains(q.getUUID())) n++;
+            return new Status(e.ready.contains(p.getUUID()), n, ps.size(), bonusText(e.s));
+        }
+        return null;
+    }
+
     /** Le joueur appuie sur la touche « Prêt » : il passe de « pas prêt » à « prêt » (et inversement). */
     public static synchronized boolean toggle(ServerPlayer p, long now) {
         for (Entry e : ENTRIES) {
