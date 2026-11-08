@@ -38,6 +38,11 @@ public class AltarManager {
 
         // Vérifie qu'une horde n'est pas déjà en cours
         if (HordeManager.get().isRunning()) {
+            // Pause entre deux vagues avec « Prêt » actif : le clic droit sur l'autel vaut la touche Prêt (au lieu du refus « horde déjà en cours »)
+            if (com.wavesurvivor.horde.ready.ReadyManager.toggle(player, player.getServer().getTickCount())) {
+                level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.8f, 1.3f);
+                return;
+            }
             player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.autel_une_horde_est_deja_en_cours_imposs")));
             level.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0f, 0.5f);
             return;

@@ -4327,7 +4327,7 @@
   "pr.consolation": " §7Defeat — consolation prize: §d+{0} RP",
   "ui.consolation": "Consolation (defeat, %)",
   "ui.consolation_hint": "-1 = general setting, 0 = none. Share of the victory bonuses paid on defeat, based on waves survived.",
-  "ready.prompt": "§aPress your §fReady§a key (G by default) to chain waves · bonus: §f{0}",
+  "ready.prompt": "§aPress your §fReady§a key (G by default) or right-click the altar to skip ahead · bonus: §f{0}",
   "ready.count": "§aReady: §f{0}/{1}",
   "ready.hud": " §a· Ready {0}/{1}",
   "ready.go": "§a✔ Everyone is ready, the wave starts! §7Bonus: §f{0}",

@@ -84,19 +84,20 @@ public final class ReadyManager {
     }
 
     /** Le joueur appuie sur la touche « Prêt » : il passe de « pas prêt » à « prêt » (et inversement). */
-    public static synchronized void toggle(ServerPlayer p, long now) {
+    public static synchronized boolean toggle(ServerPlayer p, long now) {
         for (Entry e : ENTRIES) {
             List<ServerPlayer> ps = e.pause.players();
             if (!ps.contains(p)) continue;
-            if (now >= e.end) return;
+            if (now >= e.end) return false;
             if (!e.ready.remove(p.getUUID())) e.ready.add(p.getUUID());
             int n = 0;
             for (ServerPlayer q : ps) if (e.ready.contains(q.getUUID())) n++;
             Component msg = Component.literal(WSLang.t("ready.count", n, ps.size()));
             for (ServerPlayer q : ps) q.displayClientMessage(msg, true);
             if (n >= ps.size()) complete(e, ps, now);
-            return;
+            return true;
         }
+        return false;
     }
 
     private static void complete(Entry e, List<ServerPlayer> ps, long now) {

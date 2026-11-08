@@ -3593,7 +3593,7 @@
   "pr.consolation": " §7Défaite — prix de consolation : §d+{0} PR",
   "ui.consolation": "Consolation (défaite, %)",
   "ui.consolation_hint": "-1 = réglage général, 0 = aucun. Part des bonus de victoire versée en cas de défaite, selon les vagues survécues.",
-  "ready.prompt": "§aAppuie sur ta touche §fPrêt§a (G par défaut) pour enchaîner · bonus : §f{0}",
+  "ready.prompt": "§aAppuie sur ta touche §fPrêt§a (G par défaut) ou fais un clic droit sur l'autel pour enchaîner · bonus : §f{0}",
   "ready.count": "§aPrêts : §f{0}/{1}",
   "ready.hud": " §a· Prêts {0}/{1}",
   "ready.go": "§a✔ Tout le monde est prêt, la vague démarre ! §7Bonus : §f{0}",

@@ -431,4 +431,5 @@ Les présages passent par `boon()` / `curse()` : plusieurs présages actifs, val
 - [ ] Soleil de plomb renforcé : la faim descend nettement plus vite à découvert (≈ 1 point toutes les 9 s) ; après 15 s d'exposition continue, Nausée (message « insolation ») qui dure tant qu'on reste dehors ; l'ombre, la gourde ou la nuit remettent le compteur à zéro
 - [ ] Arène à terrain complet (Oasis, Val) : bande de 10 blocs sans arbre ni plante autour du raccord (plus de demi-arbres ni de feuillage en l'air), y compris dans une forêt ; le relief ne change pas
 - [ ] Arbres par-dessus l'arène (Oasis près d'une jungle) : dans une arène NEUVE, plus aucun arbre ni plante hors plan dans l'emprise (étals du marché, rempart), les palmiers et poutres du plan restent ; sur une arène déjà générée : `/ws arena sweep` (chunks chargés dans 10 chunks autour de toi)
+- [ ] Prêt par clic droit sur l'autel : horde classique, entre deux vagues, clic droit sur l'autel = touche Prêt (son, « Prêts n/N ») au lieu de « une horde est déjà en cours » ; hors pause, le refus reste
 
