@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.9.0 — Vocations, Sacred Crafting & the Desert Kingdom
+## 1.9.0 — Vocations, Crafting & the Desert Kingdom
 
 > 🎓 **Your Kingdom role now grows with you**: Mastery, talent points and a talent tree for each of the 9 roles. ✨ **Grace and taint fragments now craft food, blocks and gear**, 🏚 **three ruins** hide in the world, 🏜 a whole new **Desert Kingdom** (the Oasis of the Pharaohs) opens, and 🎰 **roulette chests are completely reborn**. As always, almost everything is data you can edit.
 
@@ -100,7 +100,7 @@ A guide book every player receives on their first login (also craftable with a b
 - 👼 **Seraph statue** redone with flat, organic feathers and new textures for its five stages.
 - ✨ **Animated icons**: grace shard, fragment and heart, taint totem, blessed bread, apple, feast and arrows, Dawn Blade, Grace Totem, and the Reliquary Seal.
 - 🪔 **New 3D models** for the Holy Fountain, Blood Altar, Bait Totem, Profane Obelisk (now two blocks tall, with a spinning crystal) and Feast of Grace; the Grace Lantern has a hollow chain; Votive Candles come in 1 to 4, with golden flames.
-- 🖼 New 32 × 32 icons for the Survivor's Notebook and the desert items.
+- 🖼 New 32 × 32 icons for the Survivor's Notebook, the Seraph Armor and the desert items.
 
 ### 🐛 Fixes
 - 👻 **Kingdom, ghost units**: units removed without a death event stayed counted in the Assault bar and kept the wave from ending. They are now purged.

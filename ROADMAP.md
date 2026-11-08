@@ -16,19 +16,20 @@
 - 🌨 **Storm chaos event** — a blizzard where a lit campfire gives shelter, reusable in any horde (1.6)
 - 👑 **Boss Rush mode** — the bosses of a horde or a Kingdom back to back, shared lives, leaderboard (1.6)
 - 📅 **Daily Challenge** — a daily difficulty and 3 mutators for the whole server, bonus Renaissance Points (1.6)
+- ♾ **Endless mode** — infinite waves, a best-score leaderboard, then tier chests with a *Continue / Cash out* choice (1.7, 1.9)
+- 📊 **Statistics and advancements** — a statistics screen and achievements (1.7)
+- 🏜 **Burning Sands horde** — a desert campaign with a sandstorm and earthquakes (1.7)
+- 🏘 **Village invasions** — Pillager-style raids on real villages, outside of altars (1.7)
+- 🙏 **Blessings reborn** — a full in-game blessing editor, rarity and Luck, rerolls and bans, Seraph Shrine, ready-made arenas (1.8)
+- 🎓 **Role Vocations** — Mastery, talent points and a talent tree for each of the 9 Kingdom roles (1.9)
+- ✨ **Sacred & Profane Crafting** — food, blocks and gear from grace and taint fragments, Seraph Armor (1.9)
+- 🏚 **Ruins and the Vestige Compass** — the Chapel, the Tainted Altar and the Sealed Reliquary, with a compass to find them (1.9)
+- 🏜 **The Desert Kingdom** — the Oasis of the Pharaohs: a new arena, horde, market and desert events (1.9)
+- 🎰 **Roulette chests reborn** — a new 3D chest, composed keys, animations, an in-game editor and the Key Pouch (1.9)
+- ⏩ **Ready button, consolation prize and Heritage rework** (1.9)
 
-## 🔜 Next: 1.7 *(in progress)*
-- ♾ **Endless mode** — infinite waves with growing difficulty and a best-score leaderboard
-- 🏅 **Advancements** — "First horde survived", "Krag defeated", "All relics found"…
-- 📊 **Player statistics screen** — hordes won, monsters killed, bosses defeated, best rank
-- 🏜 **Desert horde** *(coded, in testing)* — "The Burning Sands": a new themed campaign with its own monsters and three bosses, built around a **Sandstorm** (shelter under cover, or the Desert Veil relic) and **earthquakes**
-- 🏘 **Village invasions** *(coded, in testing)* — Pillager-style raids on real villages, outside of altars: Bad Omen roulette (vanilla raid or the mod's invasions), villager bar, broken doors, Hero of the Village, editor mode
-
-## 🔜 Next: 1.8
-- 🙏 **Blessings editor rework** — a full in-game editor for the blessings (the choice screen, values and rarity), in the same style as the horde editor
-- 🌐 **Multiplayer reliability** — test and harden statistics, shared lives, the blessing-choice protection and save & resume with several players
-- ⚡ **Performance under load** — measure what a big wave (Endless, advanced hordes) costs and cap or smooth spawns and visual effects if needed
-- 🏛 **Ready-made arenas** — ruins, graveyards, castles generated in the world with a locked altar already bound to one of the existing hordes (built in-game with WorldEdit, converted from `.schem` to structures)
+## 🔜 Next: 2.0 — The Rift
+- 🌌 **The Rift** — a fourth kind of event started from the altar: a huge portal opens onto a dedicated floating-island dimension, for a Horde → Siege → Counter-offensive sequence with a giant Titan (needs the optional **Pehkui** mod). Design in progress.
 
 ## 🔭 Later
 - 🧩 **Creator API** (KubeJS / datapacks) — add skills, hordes and relics without touching the code
