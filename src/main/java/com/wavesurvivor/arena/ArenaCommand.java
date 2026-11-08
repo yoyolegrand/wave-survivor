@@ -34,6 +34,13 @@ public final class ArenaCommand {
                     ctx.getSource().sendSuccess(() -> Component.literal("§6[Arènes] §f" + String.join(", ", ok)), false);
                     return 1;
                 }))
+                .then(Commands.literal("sweep").executes(ctx -> {
+                    ServerPlayer sp;
+                    try { sp = ctx.getSource().getPlayerOrException(); } catch (Exception e) { return 0; }
+                    int n = ArenaVegetationSweep.sweepAround(sp.serverLevel(), sp.chunkPosition(), 10);
+                    ctx.getSource().sendSuccess(() -> Component.literal("§a[Arènes] Végétation balayée sur " + n + " chunks autour de toi (arbres et plantes hors plan retirés)."), true);
+                    return 1;
+                }))
                 .then(Commands.literal("place")
                         .then(Commands.argument("name", StringArgumentType.word())
                                 .suggests((c, b) -> SharedSuggestionProvider.suggest(BUILTIN, b))

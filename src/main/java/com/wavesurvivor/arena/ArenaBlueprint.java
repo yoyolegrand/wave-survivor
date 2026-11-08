@@ -395,7 +395,7 @@ public final class ArenaBlueprint {
         }
         if (kingdom()) ominousBanners(level, ox, oz, y0, rot, clip);
         // 3 bis. Terrain complet : bande dégagée de toute végétation (arbres, feuilles, plantes) au-delà du raccord, pour ne laisser ni demi-arbres ni feuillage en l'air
-        if (square && !floating && !aquatic) clearVegetationMargin(level, ox, oz, w, dep, cx, cz, blendWidth(), clip, wg);
+        if (square && !floating && !aquatic) clearVegetationMargin(level, ox, oz, w, dep, cx, cz, blendWidth(), blendWidth(), clip, wg);
         // 4. Raccord : anneau autour du cercle, qui rejoint peu à peu le terrain naturel
         int bw = blendWidth();
         int[][] edgeTop = square ? topMap(rot, w, dep) : null;
@@ -438,13 +438,13 @@ public final class ArenaBlueprint {
      * Bande de {@link #VEGETATION_MARGIN} blocs juste au-delà du raccord : toute la végétation au-dessus du sol y est retirée (le relief ne change pas).
      * Sans cela, les arbres coupés par le raccord laissaient des troncs entamés et du feuillage suspendu tout autour de l'arène.
      */
-    private void clearVegetationMargin(WorldGenLevel level, int ox, int oz, int w, int dep, double cx, double cz, int bw, BoundingBox clip, boolean wg) {
+    private void clearVegetationMargin(WorldGenLevel level, int ox, int oz, int w, int dep, double cx, double cz, int bw, int from, BoundingBox clip, boolean wg) {
         BlockState air = Blocks.AIR.defaultBlockState();
         int ext = bw + 1 + VEGETATION_MARGIN;
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
         for (int x = -ext; x <= w - 1 + ext; x++) for (int z = -ext; z <= dep - 1 + ext; z++) {
             double dist = edge(x, z, cx, cz, 0);
-            if (dist <= bw || dist > bw + VEGETATION_MARGIN) continue;
+            if (dist <= from || dist > bw + VEGETATION_MARGIN) continue;
             int wx = ox + x, wz = oz + z;
             if (!in(clip, wx, wz)) continue;
             int top = surfaceTop(level, wx, wz, wg) + 1;
@@ -454,6 +454,37 @@ public final class ArenaBlueprint {
                 if (!st.isAir() && isVegetation(st)) level.setBlock(m, air, 2);
             }
         }
+    }
+
+    /**
+     * BALAYAGE FINAL de la végétation (terrain complet), à rejouer quand le chunk est entièrement généré : à la génération, les arbres des chunks voisins
+     * (décorés après l'arène) pouvaient pousser par-dessus le plan et les étals. Retire, dans l'emprise, tout arbre / plante qui n'est PAS dans le plan
+     * (les palmiers et poutres du plan sont conservés), puis toute la végétation du raccord et de la bande autour.
+     */
+    public void sweepVegetation(WorldGenLevel level, int ox, int oz, int y0, Rotation rot, BoundingBox clip) {
+        if (!square || floating || aquatic) return;
+        int[] d = dims(rot);
+        int w = d[0], dep = d[1];
+        double cx = (w - 1) / 2.0, cz = (dep - 1) / 2.0;
+        int base = y0 - planGroundY;
+        BlockState air = Blocks.AIR.defaultBlockState();
+        BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+        for (int px = 0; px < sx; px++) for (int pz = 0; pz < sz; pz++) {
+            int[] r = rot(px, pz, rot);
+            int wx = ox + r[0], wz = oz + r[1];
+            if (!in(clip, wx, wz)) continue;
+            int top = Math.max(base + layers.length, surfaceTop(level, wx, wz, false) + 1);
+            for (int y = base; y <= top; y++) {
+                int li = y - base;
+                BlockState expected = null;
+                if (li >= 0 && li < layers.length && pz < layers[li].length && px < layers[li][pz].length()) expected = palette.get(layers[li][pz].charAt(px));
+                if (expected != null && !expected.isAir()) continue; // bloc du plan : on n'y touche pas
+                m.set(wx, y, wz);
+                BlockState cur = level.getBlockState(m);
+                if (!cur.isAir() && isVegetation(cur)) level.setBlock(m, air, 2);
+            }
+        }
+        clearVegetationMargin(level, ox, oz, w, dep, cx, cz, blendWidth(), 0, clip, false);
     }
 
     /** Hauteur (couche) du dernier bloc solide de chaque colonne du plan, dans le repère tourné. */
