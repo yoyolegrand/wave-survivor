@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.9.0 — Role Vocations
+## 1.9.0 — Vocations, Sacred Crafting & the Desert Kingdom
 
-> 🎓 **Your Kingdom role now grows with you.** Every role earns **Mastery** as you play it, gives you **talent points**, and opens a **talent tree** — while base role effects are toned down so progression really matters. Everything is data you can edit (`vocations.json`).
+> 🎓 **Your Kingdom role now grows with you** — Mastery, talent points and a talent tree for each of the 9 roles. ✨ **Grace and taint fragments now craft food, blocks and gear**, 🏚 **three ruins** hide in the world, 🏜 a whole new **Desert Kingdom** (the Oasis of the Pharaohs) opens, and 🎰 **roulette chests are completely reborn**. Almost everything is data you can edit.
 
 ---
 
@@ -54,6 +54,7 @@ A lost game now pays a **consolation prize** on top of the wave and boss Rebirth
 
 ### ⏩ Ready button
 During a break between two waves, every player can press the new **Ready** key (G by default, rebindable under Controls › Wave Survivor). When **everyone** is ready the next wave starts right away and each player gets a **chaining bonus**; the horde bar shows `Ready 2/3`.
+- You can also **right-click the altar** during a break: a window asks **“Skip the break?”** (Yes / No), so you can never skip by accident.
 - Works in classic hordes, Endless, Boss Rush and Invasions (not Kingdom: the Calm has its own logic).
 - Per horde in the editor (Waves tab): **Allow Ready** (turn it off before a boss, for example), bonus type (**emeralds**, **Rebirth Points**, or a timed effect: Strength, Speed, Resistance, Regeneration, Haste), quantity (or seconds and level for an effect) and **proportional to time left** (chain at once = full bonus, just before the break ends = almost nothing). Default: Ready allowed, 3 emeralds scaled by the time left.
 
@@ -79,13 +80,66 @@ Every **10 waves** (from the last normal wave; adjustable), the team gets a **ti
 A brand-new, fully customizable roulette chest.
 - 🧰 **New 3D chest** (wood box, domed lid, four iron corner pieces with feet, glowing trim, gem lock) drawn in game with grayscale textures **tinted** by your settings: accent, wood (9 presets), fittings (8 presets) and gem colors — or any `#RRGGBB`.
 - 🔆 **Layered medallions** on each face (front, back, left, right, top): 18 symbols in two sizes, stacked in layers with their own colors, plus **symbols you draw yourself** on a 10 × 10 grid.
-- 🗝 **Composed keys**: 8 heads × 4 bits, tinted to the material (or a free color), with a gem matching the chest.
+- 🗝 **Composed keys**: 13 heads × 4 bits, tinted to the material (or a free color), with a gem matching the chest.
 - ✨ **Opening animation**: the dial spins up, slows and stops upright, the lid opens on its hinge, a **beam in the rarity color** rises and the prize floats up inside it before it is given; **reveal bonuses** by rarity (green burst, blue burst and sparks, purple shockwave, golden fireworks with a pillar of light and a harmless lightning flash).
 - 🌌 **Particles** for three moments (at rest, during the roulette, on reveal): type A + optional type B, 19 shapes with density, radius, height and speed, colored dust.
 - 🛠 **New in-game editor** with live preview (rotate, test the opening), tabs Look, Symbols, Key, Particles, Loot and Messages, and presets for the six built-in Reliquaries.
 - Old chests and configs keep working: every new field is optional.
 
+### 🌳 Heritage reworked
+- **9 nodes per branch** (Survivor, Merchant, Lord), all visible at once. The branches no longer give flat stats: they give **abilities**.
+- New nodes tied to the new modes: **Boss Rush**, **Endless**, **Daily Challenge**, **ruins**, the **Forge** and **Kingdom** (Mastery XP +25 %, bigger Calm resources, repairs −25 %, Monolith regeneration…), plus **blessing power** +5 / +10 / +15 %.
+- **Rank III** now offers **one more blessing choice**, and each rank has its own **aura colour** (gold, orange, red, pink, cyan).
+- New **4th column “Body”**: the 8 permanent stats, bought in place (the Robustness cap rises to level 10). Wider Renaissance window.
+- ♻ Players who had Survivor nodes get that branch reset and their **Rebirth Points refunded**, once, with a message at login.
+
+### 🏚 Ruins to explore
+Rare structures, not tied to any horde, that you find, loot and sometimes defend. Find them with `/locate structure wavesurvivor:<name>` or the **Vestige Compass**.
+- ⛪ **The Chapel** (`chapelle`): plains, meadows and forests. Hanging lanterns of grace, pews, votive candles, **3 chests** and a graveyard. Walk in and the **bell rings**: undead rise from the graves, then two armoured skeletons guard the big chest — once per chapel.
+- 🕯 **The Tainted Altar** (`autel_souille`): swamps, mangroves and dark forests. Step within 16 blocks and the **ritual begins**: the six obelisks light up, a wave of **Corrupted** rushes in (8 at Normal, ×0.75 at Easy, ×1.5 at Hard, sometimes with a Stone Brute) and the **Bait Totems** on the dais lure them to the altar. Win and the dais **opens on the chest** (taint shards, fragments, sometimes a Heart). The Corrupted of the ritual have a **chance to drop Taint Shards** and are **spared by Profane Obelisks**. Size, shard chance and “open on victory” are in `rules.json`.
+- 🔒 **The Sealed Reliquary** (`reliquaire_scelle`): very rare, on mountains and cold highlands. A quartz mausoleum whose door is closed by **12 Seal blocks** — unbreakable, they only open **from the centre outwards** with a **Sealed Key** (in hand or from the Key Pouch). Inside: a Sealed Reliquary or a Heart and shards.
+- 🗝 **Sealed Key**: a **boss of a horde may drop one** (7 %), and a horde cleared **without a single death** rewards every player with one. It fits in the Key Pouch and opens no ordinary chest. Not given in Boss Rush.
+- Ruins placed with `/ws arena place <name>` stay calm (no ritual, no guardians): only generated ones come alive.
+- 📖 New **Ruins** page in the Codex.
+
+### 🧭 Vestige Compass
+Craft it (compass, 4 gold ingots, 2 grace shards, 2 taint shards) to find **the nearest unclaimed structure** of the mod: arenas, Seraph Shrines and ruins. The needle turns towards it.
+- Right-click for the **distance**; **sneak + right-click** to filter *All → Hordes → Shrines → Ruins*.
+- A structure is **claimed** (the needle moves on) when its horde is finished, its statue touched, its chest opened or its seal broken — per player, or shared by the whole server (`vestigeShared`).
+- It also **searches structures that are not generated yet**, from the world seed, like `/locate`, within a radius you set (`vestigeRadius`). `/ws vestiges [scan]` is the diagnostic command.
+
+### 👑 Kingdom: territory shape
+- Choose the **shape of your territory**: **square** or **circle** of the same area. The borders, markers and map follow. In the editor, per Kingdom horde; the base siege is a circle by default.
+
+### 🏜 The Desert Kingdom — *Oasis of the Pharaohs*
+A complete new Kingdom: new arena, new horde, new chaos, new market.
+- 🗺 **The Oasis of the Pharaohs**: a 181 × 181 arena in the **desert**, with natural generation (`/locate structure wavesurvivor:arena_oasis`), three fixed Gates (Anubis, Sekhmet, Ra-Atum), a market quarter, a Temple of Ra with pylon, colonnade and sphinx, and **palm trees** that never lose their leaves. The ground blends into sand, and a **vegetation-free band** keeps trees from growing over the plan.
+- ⚔ **Horde “Les Sables”**: mummies, raiders and scarabs, scorpions and jackals, archers, riders, golems and **djinns**; **Sand Profaners**; three lords — **Anubis** (Assault 4), **Sekhmet** (7) and **Ra-Atum** (10, at the King's Gate); desert special assaults.
+- 🛒 **A market that comes alive each Calm**: 4 merchants (Grocer, Armourer, Trader, **Oracle**) and **6 roulette chests** — the three existing Reliquaires (Treasures, Abysses, Arcane) and three different **Caravans** (Provisions, Weapons, Remedies). Each lord drops the key of its Reliquary; every Calm gives a random **Caravan key**.
+- 🌪 **Desert events** (a new *Calm / Assault* filter in the chaos editor): **Quicksand**, **Scorching Sun**, **Scarab Swarm**, **Mirage** and **Oasis Flood**, plus a **sand storm** in Kingdom.
+- ☀ **Scorching Sun**: an exposed player gets the *Scorching Sun* effect (sun icon) and a soft pulsing **orange screen veil**; hunger drains much faster and **nausea** sets in after 15 s of continuous exposure. Shade, a roof, the night or the **Desert Freshness** effect cancel it.
+- 🎒 **New items**: **Cool Waterskin** (grants the **Desert Freshness** effect for 3 min: immune to the sun and burning for half as long), **Mirage Vial** (cancels the next harmful desert event), **Reconnaissance Tablet** (shows the next Assault, gate by gate) and the **Desert Veil** (protects from storms and quicksand).
+- 🌴 **Editor**: the chaos *Tree* event now has a **Classic / Oasis** shape (palm tree) and the *Deposit* event a **Classic / Desert** style; the Desert Kingdom uses both by default.
+- 🗝 **5 new key heads** (ankh, scorpion, sun, leaf, sword), **3 new chest symbols** (ankh, scarab, scorpion) and new 32 × 32 icons.
+
+### 🎨 Visual polish
+- 👼 **Seraph statue** redone with flat, organic feathers and new textures for its five stages.
+- ✨ **Animated icons** for the grace shard, grace heart, taint totem, blessed items (shard, bread, apple, feast, arrow) and the Reliquary Seal.
+- 🪔 **New 3D models** for the Holy Fountain, Blood Altar, Profane Obelisk (now a two-block-tall spinning crystal) and Feast of Grace; the Lantern of Grace has a hollow chain; Votive Candles come in 1 to 4 with golden flames.
+
+### 🐛 Fixes (bugs from earlier versions)
+- 👻 **Kingdom — ghost units**: units removed without a death event stayed counted in the Assault bar and kept the wave from ending. They are now purged.
+- 🚪 **Kingdom — King's Gate**: it is now announced in the chat with direction and distance (the event feed was easy to miss), and you can **no longer skip the Calm** while it is open — it used to relaunch an Assault while the final boss was waiting.
+- 🚩 **War Banner (boss skill)**: banners piled up. A carrier now keeps **one batch at a time**, with at least 8 blocks between banners.
+- 🃏 **Blessing card**: the text could run over the *Choose* button and long stat lines were cut. Everything wraps and measures correctly, and the Burden pact text is shorter.
+- 🎲 **Blessing reroll by family**: it fills the whole menu and warns (and logs) when a family has run out.
+- ⚒ **Shrine Forge**: weapon damage and attack speed upgrades are now carried by the item (shown in its tooltip) and no longer apply twice.
+- 🎯 **Bounty Hunter HUD**: the contract text wraps inside its panel instead of being cut.
+- 💀 **Royal Guard**: the raised right arm no longer goes through the skull.
+- 🌲 **Full-terrain arenas (Val of the Crown and the Oasis)**: a 10-block band around the blend ring is cleared of trees and plants (no more half trees or floating leaves), and a **final sweep** removes trees grown from neighbouring chunks. `/ws arena sweep` cleans arenas generated earlier.
+
 ### 🔧 Under the hood
+- 🛠 New commands: `/ws vocation`, `/ws carnet`, `/ws vestiges`, `/ws arena sweep`. New `rules.json` options: Ready, Endless tiers, consolation, Key Pouch, Vestige Compass, Tainted Altar (`altarWaveSize`, `altarShardChance`, `altarOpenOnVictory`) and Sealed Key.
 - 🗂 Everything lives in **`vocations.json`** (XP curve, XP per action, ranks, values, tiers, costs, base role effects), layered like the other configs: put only the fields you change in `config/wavesurvivor/vocations.json`; `/ws reload` applies them. The server sends the trees to clients, so servers can tune them freely.
 
 ---
