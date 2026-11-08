@@ -4654,5 +4654,6 @@
   "ui.rift.waves": "Horde waves",
   "ui.rift.hint_phases": "§8The next phases (Siege, Counter-offensive, Titan, siege engines) will be added here during 2.0.",
   "rift.opened_title": "§5§lThe Rift is open",
-  "rift.opened_sub": "§7Step through the portal…"
+  "rift.opened_sub": "§7Step through the portal…",
+  "ui.bind.tab_rift": "🌌 The Rift ({0})"
 }

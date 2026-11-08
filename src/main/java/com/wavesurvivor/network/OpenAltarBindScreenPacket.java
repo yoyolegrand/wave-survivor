@@ -21,11 +21,12 @@ public class OpenAltarBindScreenPacket {
 
     /**
      * @param kingdom  horde en mode Kingdom (onglet « ♛ Kingdoms »)
+     * @param rift     horde en mode La Faille (onglet « 🌌 La Faille »)
      * @param unlocked conditions de déblocage remplies (ou créatif)
      * @param lock     conditions encodées « 1|texte » / « 0|texte » séparées par des retours à la ligne (vide = aucune)
      */
     public record Option(String hordeName, int totalWaves, int totalBosses, boolean canBind, List<Ing> ingredients,
-                         boolean kingdom, boolean unlocked, String lock) {}
+                         boolean kingdom, boolean unlocked, String lock, boolean rift) {}
 
     public final BlockPos pos;
     public final List<Option> options;
@@ -52,6 +53,7 @@ public class OpenAltarBindScreenPacket {
             buf.writeBoolean(o.kingdom());
             buf.writeBoolean(o.unlocked());
             buf.writeUtf(o.lock() == null ? "" : o.lock(), 4096);
+            buf.writeBoolean(o.rift());
         }
     }
 
@@ -70,7 +72,8 @@ public class OpenAltarBindScreenPacket {
             boolean kingdom = buf.readBoolean();
             boolean unlocked = buf.readBoolean();
             String lock = buf.readUtf(4096);
-            opts.add(new Option(name, waves, bosses, can, ings, kingdom, unlocked, lock));
+            boolean rift = buf.readBoolean();
+            opts.add(new Option(name, waves, bosses, can, ings, kingdom, unlocked, lock, rift));
         }
         return new OpenAltarBindScreenPacket(pos, opts);
     }

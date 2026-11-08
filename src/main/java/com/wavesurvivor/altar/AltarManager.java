@@ -326,7 +326,8 @@ public class AltarManager {
                 boolean unlocked = player.isCreative() || com.wavesurvivor.horde.difficulty.HordeProgress.unlocked(player, h);
                 String lock = com.wavesurvivor.horde.difficulty.HordeProgress.encode(player, h);
                 options.add(new com.wavesurvivor.network.OpenAltarBindScreenPacket.Option(
-                        h.hordeName, waves, bosses, unlocked && AltarRecipes.hasAll(player, recipe), ings, kingdom, unlocked, lock));
+                        h.hordeName, waves, bosses, unlocked && AltarRecipes.hasAll(player, recipe), ings, kingdom, unlocked, lock,
+                        h.configData != null && h.configData.isRift()));
             }
         }
         if (options.isEmpty()) {

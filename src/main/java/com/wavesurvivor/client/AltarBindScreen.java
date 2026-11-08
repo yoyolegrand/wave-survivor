@@ -34,11 +34,13 @@ public class AltarBindScreen extends Screen {
     private static final int ROW_H = 42;
     private static final int VISIBLE = 4;
     /** Dernier onglet ouvert (gardé entre deux ouvertures). */
-    private static boolean lastKingdom = false;
+    private static int lastTab = 0;
 
     private final BlockPos pos;
     private final List<OpenAltarBindScreenPacket.Option> all;
     private final List<OpenAltarBindScreenPacket.Option> options = new ArrayList<>();
+    /** Onglet courant : 0 = Hordes, 1 = Kingdoms, 2 = La Faille. */
+    private int tab;
     private boolean kingdomTab;
     private int scroll = 0;
     private int left, top;
@@ -48,23 +50,24 @@ public class AltarBindScreen extends Screen {
         this.pos = pkt.pos;
         this.all = pkt.options;
         // Onglet par défaut : le dernier utilisé, sauf s'il est vide
-        boolean anyH = false, anyK = false;
-        for (var o : all) { if (o.kingdom()) anyK = true; else anyH = true; }
-        kingdomTab = lastKingdom ? anyK || !anyH : !anyH && anyK;
+        tab = count(lastTab) > 0 ? lastTab : count(0) > 0 ? 0 : count(1) > 0 ? 1 : count(2) > 0 ? 2 : 0;
         refresh();
     }
 
     /** Liste de l'onglet : débloquées d'abord, puis verrouillées (ordre de la config conservé). */
     private void refresh() {
         options.clear();
-        for (var o : all) if (o.kingdom() == kingdomTab && o.unlocked()) options.add(o);
-        for (var o : all) if (o.kingdom() == kingdomTab && !o.unlocked()) options.add(o);
+        kingdomTab = tab == 1;
+        for (var o : all) if (cat(o) == tab && o.unlocked()) options.add(o);
+        for (var o : all) if (cat(o) == tab && !o.unlocked()) options.add(o);
         scroll = 0;
     }
 
-    private int count(boolean kingdom) {
+    private static int cat(OpenAltarBindScreenPacket.Option o) { return o.rift() ? 2 : o.kingdom() ? 1 : 0; }
+
+    private int count(int category) {
         int n = 0;
-        for (var o : all) if (o.kingdom() == kingdom) n++;
+        for (var o : all) if (cat(o) == category) n++;
         return n;
     }
 
@@ -78,12 +81,18 @@ public class AltarBindScreen extends Screen {
                         btn -> NetworkHandler.CHANNEL.sendToServer(
                                 new com.wavesurvivor.network.AltarCustomPackets.Request(pos)))
                 .bounds(width - 90, 10, 80, 18).build());
-        // Onglets
-        int tw = (PANEL_W - 18) / 2;
-        addRenderableWidget(Button.builder(Component.literal((kingdomTab ? "§7" : "§e§l") + WSLang.t("ui.bind.tab_hordes", count(false))),
-                b -> { kingdomTab = false; lastKingdom = false; refresh(); init(); }).bounds(left + 6, top + 32, tw, 18).build());
-        addRenderableWidget(Button.builder(Component.literal((kingdomTab ? "§6§l" : "§7") + WSLang.t("ui.bind.tab_kingdoms", count(true))),
-                b -> { kingdomTab = true; lastKingdom = true; refresh(); init(); }).bounds(left + 12 + tw, top + 32, tw, 18).build());
+        // Onglets (celui de La Faille n'apparaît que s'il existe une horde Faille)
+        boolean showRift = count(2) > 0;
+        int nTabs = showRift ? 3 : 2;
+        int tw = (PANEL_W - 12 - 6 * (nTabs - 1)) / nTabs;
+        String[] names = {(tab == 0 ? "§e§l" : "§7") + WSLang.t("ui.bind.tab_hordes", count(0)),
+                (tab == 1 ? "§6§l" : "§7") + WSLang.t("ui.bind.tab_kingdoms", count(1)),
+                (tab == 2 ? "§d§l" : "§7") + WSLang.t("ui.bind.tab_rift", count(2))};
+        for (int t = 0; t < nTabs; t++) {
+            final int target = t;
+            addRenderableWidget(Button.builder(Component.literal(names[t]),
+                    b -> { tab = target; lastTab = target; refresh(); init(); }).bounds(left + 6 + t * (tw + 6), top + 32, tw, 18).build());
+        }
         int y = top + 56;
         for (int i = scroll; i < Math.min(options.size(), scroll + VISIBLE); i++) {
             OpenAltarBindScreenPacket.Option o = options.get(i);
@@ -113,7 +122,7 @@ public class AltarBindScreen extends Screen {
     @Override
     public void render(GuiGraphics g, int mx, int my, float pt) {
         this.renderBackground(g);
-        int accent = kingdomTab ? 0xFFE0B040 : 0xFFB91C1C;
+        int accent = tab == 2 ? 0xFFB06AE0 : kingdomTab ? 0xFFE0B040 : 0xFFB91C1C;
         g.fill(left, top, left + PANEL_W, top + PANEL_H, 0xF0120808);
         g.fill(left, top, left + PANEL_W, top + 2, accent);
         g.fill(left, top + PANEL_H - 2, left + PANEL_W, top + PANEL_H, accent);
@@ -127,9 +136,9 @@ public class AltarBindScreen extends Screen {
             OpenAltarBindScreenPacket.Option o = options.get(i);
             boolean locked = !o.unlocked();
             g.fill(left + 6, y, left + PANEL_W - 6, y + ROW_H - 3,
-                    locked ? 0x18FFFFFF : o.canBind() ? (kingdomTab ? 0x40E0B040 : 0x40B91C1C) : 0x25FFFFFF);
+                    locked ? 0x18FFFFFF : o.canBind() ? (tab == 2 ? 0x40B06AE0 : kingdomTab ? 0x40E0B040 : 0x40B91C1C) : 0x25FFFFFF);
 
-            String title = (locked ? "§8§l🔒 " : o.canBind() ? (kingdomTab ? "§6§l" : "§c§l") : "§7§l") + WSLang.t(o.hordeName());
+            String title = (locked ? "§8§l🔒 " : o.canBind() ? (tab == 2 ? "§d§l" : kingdomTab ? "§6§l" : "§c§l") : "§7§l") + WSLang.t(o.hordeName());
             g.drawString(font, title, left + 12, y + 4, 0xFFFFFFFF);
             String info = "§8" + o.totalWaves() + (o.kingdom() ? WSLang.t("ui.bind.assaults") : WSLang.t("ui.vagues"))
                     + (o.totalBosses() > 0 ? " · " + o.totalBosses() + WSLang.t("ui.boss_3847") : "");
@@ -180,7 +189,7 @@ public class AltarBindScreen extends Screen {
             y += ROW_H;
         }
         if (options.isEmpty()) {
-            g.drawCenteredString(font, WSLang.t(kingdomTab ? "ui.bind.empty_kingdoms" : "ui.bind.empty_hordes"), width / 2, top + 100, 0xFF888888);
+            g.drawCenteredString(font, WSLang.t(tab == 1 ? "ui.bind.empty_kingdoms" : "ui.bind.empty_hordes"), width / 2, top + 100, 0xFF888888);
         }
         if (options.size() > VISIBLE) {
             g.drawCenteredString(font, WSLang.t("ui.molette") + (scroll + 1) + "-" + Math.min(options.size(), scroll + VISIBLE)
