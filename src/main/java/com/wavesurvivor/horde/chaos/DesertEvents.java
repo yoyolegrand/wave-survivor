@@ -79,6 +79,10 @@ public final class DesertEvents {
     /** Fiole de mirage utilisée : le prochain événement défavorable du désert est annulé. */
     private static volatile boolean shield = false;
     private static long sunUntil = -1;
+    /** Soleil de plomb : faim ajoutée toutes les 10 ticks (× intensité) et secondes d'exposition continue avant la nausée. */
+    private static final double SUN_EXHAUSTION = 0.22;
+    private static final int SUN_NAUSEA_AFTER = 15;
+    private static final Map<UUID, Long> SUN_EXPOSED = new java.util.HashMap<>();
     private static double sunIntensity = 1.0;
     private static final Map<UUID, Long> MIRAGES = new ConcurrentHashMap<>();
 
@@ -97,6 +101,7 @@ public final class DesertEvents {
     public static void clearAll(MinecraftServer srv) {
         shield = false;
         sunUntil = -1;
+        SUN_EXPOSED.clear();
         if (srv != null) for (UUID id : new ArrayList<>(MIRAGES.keySet())) discard(srv, id, false);
         MIRAGES.clear();
     }
@@ -312,15 +317,25 @@ public final class DesertEvents {
 
         if (sunUntil >= 0) {
             boolean assault = KingdomManager.isActive() && KingdomManager.phase() == KingdomManager.Phase.ASSAULT;
-            if (now >= sunUntil || assault) sunUntil = -1;
+            if (now >= sunUntil || assault) { sunUntil = -1; SUN_EXPOSED.clear(); }
             else {
                 for (ServerPlayer p : srv.getPlayerList().getPlayers()) {
-                    if (p.isSpectator() || p.isCreative() || !p.level().isDay() || protectedFromSun(p, now)) continue;
-                    if (!p.level().canSeeSky(p.blockPosition().above())) continue; // à l'ombre
-                    p.causeFoodExhaustion((float) (0.08 * sunIntensity));
+                    // À l'ombre, protégé ou hors du jour : l'exposition continue repart de zéro
+                    if (p.isSpectator() || p.isCreative() || !p.level().isDay() || protectedFromSun(p, now)
+                            || !p.level().canSeeSky(p.blockPosition().above())) {
+                        SUN_EXPOSED.remove(p.getUUID());
+                        continue;
+                    }
+                    p.causeFoodExhaustion((float) (SUN_EXHAUSTION * sunIntensity)); // la faim descend vite (≈ 1 point toutes les 9 s)
+                    if (now % 200 == 0) p.displayClientMessage(WSLang.c("desert.sun_burns"), true);
                     // Icône du HUD + voile orangé côté client : l'effet est rafraîchi tant que le joueur est exposé, il s'éteint tout seul à l'ombre
                     p.addEffect(new net.minecraft.world.effect.MobEffectInstance(com.wavesurvivor.registry.ModEffects.SCORCHING_SUN.get(), 40, 0, false, false, true));
-                    if (now % 200 == 0) p.displayClientMessage(WSLang.c("desert.sun_burns"), true);
+                    // Exposition continue trop longue : nausée (rafraîchie tant qu'on reste dehors)
+                    long since = SUN_EXPOSED.computeIfAbsent(p.getUUID(), u -> now);
+                    if (now - since >= SUN_NAUSEA_AFTER * 20L) {
+                        if (!p.hasEffect(net.minecraft.world.effect.MobEffects.CONFUSION)) p.displayClientMessage(WSLang.c("desert.sun_nausea"), true);
+                        p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.CONFUSION, 160, 0, false, false, true));
+                    }
                 }
             }
         }

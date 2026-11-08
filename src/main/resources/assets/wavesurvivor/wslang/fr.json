@@ -3864,5 +3864,6 @@
   "craft.food.grace_feast.head": "§7Chaque part (sur {0}) rend :",
   "craft.food.grace_feast.food": "§6🍗 {0} gigots §7· saturation {1} %",
   "craft.food.grace_feast.heal": "§c❤ {0} cœurs soignés",
-  "craft.food.grace_feast.team": "§8Toute l'équipe peut en manger."
+  "craft.food.grace_feast.team": "§8Toute l'équipe peut en manger.",
+  "desert.sun_nausea": "§6☀ Une insolation te donne la nausée ! Mets-toi à l'ombre ou bois une gourde."
 }

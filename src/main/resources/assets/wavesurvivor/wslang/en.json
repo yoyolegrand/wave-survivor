@@ -4625,5 +4625,6 @@
   "craft.food.grace_feast.head": "§7Each portion (of {0}) restores:",
   "craft.food.grace_feast.food": "§6🍗 {0} drumsticks §7· saturation {1}%",
   "craft.food.grace_feast.heal": "§c❤ {0} hearts healed",
-  "craft.food.grace_feast.team": "§8The whole team can eat it."
+  "craft.food.grace_feast.team": "§8The whole team can eat it.",
+  "desert.sun_nausea": "§6☀ Sunstroke makes you nauseous! Get into the shade or drink a waterskin."
 }
