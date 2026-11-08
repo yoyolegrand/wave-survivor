@@ -3860,5 +3860,9 @@
   "chest.ed.key.head_scorpion": "Scorpion",
   "chest.ed.key.head_sun": "Soleil",
   "chest.ed.key.head_leaf": "Feuille",
-  "chest.ed.key.head_sword": "Épée"
+  "chest.ed.key.head_sword": "Épée",
+  "craft.food.grace_feast.head": "§7Chaque part (sur {0}) rend :",
+  "craft.food.grace_feast.food": "§6🍗 {0} gigots §7· saturation {1} %",
+  "craft.food.grace_feast.heal": "§c❤ {0} cœurs soignés",
+  "craft.food.grace_feast.team": "§8Toute l'équipe peut en manger."
 }

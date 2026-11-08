@@ -113,7 +113,23 @@ public class ModItems {
     public static final RegistryObject<Item> GRACE_FEAST_ITEM = ITEMS.register("grace_feast",
             () -> new BlockItem(ModBlocks.GRACE_FEAST.get(), new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC)) {
                 @Override public void appendHoverText(ItemStack st, net.minecraft.world.level.Level lv, List<Component> tip, net.minecraft.world.item.TooltipFlag fl) {
-                    for (String line : com.wavesurvivor.i18n.WSLang.t("craft.food.grace_feast").split("\n")) tip.add(Component.literal(line));
+                    // Description lue dans la config : ce que rend CHAQUE part (faim, saturation, soin, effets)
+                    int nut = com.wavesurvivor.craft.CraftConfig.feastNutrition();
+                    tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("craft.food.grace_feast.head", com.wavesurvivor.craft.GraceFeastBlock.PORTIONS)));
+                    tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("craft.food.grace_feast.food",
+                            nut % 2 == 0 ? String.valueOf(nut / 2) : String.valueOf(nut / 2.0), Math.round(com.wavesurvivor.craft.CraftConfig.feastSaturation() * 100))));
+                    float heal = com.wavesurvivor.craft.CraftConfig.feastHeal();
+                    if (heal > 0) tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("craft.food.grace_feast.heal", heal % 2 == 0 ? String.valueOf((int) heal / 2) : String.valueOf(heal / 2f))));
+                    String[] roman = {"I", "II", "III", "IV", "V"};
+                    for (com.wavesurvivor.craft.CraftConfig.FoodEffect fe : com.wavesurvivor.craft.CraftConfig.feastEffects()) {
+                        net.minecraft.world.effect.MobEffect eff = net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT.get(fe.effect());
+                        if (eff == null) continue;
+                        String lvl = roman[Math.min(fe.amplifier(), roman.length - 1)];
+                        int sec = fe.seconds();
+                        String dur = sec >= 120 && sec % 60 == 0 ? (sec / 60) + " min" : sec + " s";
+                        tip.add(Component.literal("§a").append(Component.translatable(eff.getDescriptionId())).append(Component.literal(" " + lvl + " §7(" + dur + ")")));
+                    }
+                    tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("craft.food.grace_feast.team")));
                 }
             });
 

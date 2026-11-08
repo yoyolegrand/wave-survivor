@@ -7,11 +7,11 @@
       "effects": [ { "effect": "minecraft:regeneration", "amplifier": 0, "seconds": 5 } ]
     },
     "sanctified_apple": {
-      "nutrition": 4, "saturation": 0.6, "cleanse": 1,
+      "nutrition": 5, "saturation": 0.6, "cleanse": 1,
       "effects": [ { "effect": "minecraft:absorption", "amplifier": 0, "seconds": 60 } ]
     },
     "celestial_mead": {
-      "nutrition": 4, "saturation": 0.6,
+      "nutrition": 6, "saturation": 0.6,
       "effects": [ { "effect": "minecraft:resistance", "amplifier": 0, "seconds": 60 } ]
     },
     "tainted_meat": {
@@ -22,7 +22,7 @@
       ]
     },
     "void_fruit": {
-      "nutrition": 4, "saturation": 0.4,
+      "nutrition": 5, "saturation": 0.4,
       "effects": [
         { "effect": "minecraft:speed", "amplifier": 1, "seconds": 20 },
         { "effect": "minecraft:nausea", "amplifier": 0, "seconds": 3 }
@@ -40,12 +40,12 @@
   "shrineCrafts_comment": "Onglet Artisanat du Sanctuaire : shrineCrafts = liste des fabrications (cost : objets ou #tags du joueur consommés ; align : consecrated ou profaned, donne la couleur). Un tableau est remplacé en entier par la config du joueur.",
   "feast": {
     "_comment": "Festin de grâce (bloc posable, 6 parts) : faim, soin (en PV : 8 = 4 cœurs) et effets de potion par portion.",
-    "nutrition": 8,
-    "saturation": 0.8,
+    "nutrition": 12,
+    "saturation": 1.2,
     "heal": 8,
     "effects": [
-      { "effect": "minecraft:regeneration", "amplifier": 1, "seconds": 10 },
-      { "effect": "minecraft:absorption", "amplifier": 1, "seconds": 60 }
+      { "effect": "minecraft:regeneration", "amplifier": 1, "seconds": 15 },
+      { "effect": "minecraft:absorption", "amplifier": 1, "seconds": 180 }
     ]
   },
   "blocks": {

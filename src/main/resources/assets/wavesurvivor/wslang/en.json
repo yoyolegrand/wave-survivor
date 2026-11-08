@@ -4621,5 +4621,9 @@
   "chest.ed.key.head_scorpion": "Scorpion",
   "chest.ed.key.head_sun": "Sun",
   "chest.ed.key.head_leaf": "Leaf",
-  "chest.ed.key.head_sword": "Sword"
+  "chest.ed.key.head_sword": "Sword",
+  "craft.food.grace_feast.head": "§7Each portion (of {0}) restores:",
+  "craft.food.grace_feast.food": "§6🍗 {0} drumsticks §7· saturation {1}%",
+  "craft.food.grace_feast.heal": "§c❤ {0} hearts healed",
+  "craft.food.grace_feast.team": "§8The whole team can eat it."
 }
