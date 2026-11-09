@@ -930,6 +930,15 @@ public final class RiftManager {
         if (e.getEntity().getPersistentData().getBoolean("ws_rift_avatar")) RiftTitan.onAvatarDeath(l, e.getEntity());
     }
 
+    /** Clic droit sur des vestiges de tour (Siège) : on les rebâtit. */
+    @SubscribeEvent
+    public void onRuinUse(net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock e) {
+        if (!active || e.getLevel().isClientSide || e.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND) return;
+        if (!com.wavesurvivor.horde.kingdom.KingdomDefenses.isRuin(e.getPos())) return;
+        if (e.getEntity() instanceof ServerPlayer sp) com.wavesurvivor.horde.kingdom.KingdomDefenses.rebuild(sp, e.getPos());
+        e.setCanceled(true);
+    }
+
     /** Plafond de dégâts par coup sur le Titan. */
     @SubscribeEvent
     public void onTitanHurt(net.minecraftforge.event.entity.living.LivingHurtEvent e) {

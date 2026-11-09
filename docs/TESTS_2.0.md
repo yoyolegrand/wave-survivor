@@ -92,3 +92,10 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Après une **Onde de choc** ou un **Rugissement** : le Titan brille, barre rouge, message « à découvert » ; dégâts ×1,5 pendant la fenêtre (8 s par défaut).
 - [ ] Le total de la fenêtre est plafonné (8 % des PV max par défaut) ; la fenêtre se referme avec un message.
 - [ ] Éditeur, page Titan : « Fenêtre (s) » (0 = désactivée) et « Plafond fenêtre % ».
+
+## Ruines réparables (Siège)
+- [ ] Une tour détruite par les monstres laisse des **vestiges** (briques de deepslate fissurées, fumée) à sa place.
+- [ ] Clic droit sur les vestiges : la tour est rebâtie (niveau 1) pour **la moitié de son prix** ; message de confirmation.
+- [ ] Démonter une tour à la pioche **ne laisse pas** de ruine.
+- [ ] Fin du Siège : les vestiges disparaissent avec le royaume.
+- [ ] Hors Faille (Kingdom normal) : aucune ruine, comportement inchangé.

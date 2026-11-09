@@ -4723,5 +4723,6 @@
   "rift.engine.too_far": "§cPlace the engine on the island, away from the edge.",
   "rift.engine.placed": "§aSiege engine placed!",
   "ui.rift.window_s": "Window (s)",
-  "ui.rift.window_cap": "Window cap %"
+  "ui.rift.window_cap": "Window cap %",
+  "rift.ruin.rebuilt": "§aTower rebuilt (level 1) for {0} ◆."
 }

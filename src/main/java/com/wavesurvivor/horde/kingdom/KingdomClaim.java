@@ -693,6 +693,7 @@ public final class KingdomClaim {
                 e.getPlayer().displayClientMessage(WSLang.c("kingdom.claim_outside"), true);
                 return;
             }
+            if (e.getState().getBlock() instanceof DefenseBlock) KingdomDefenses.markPlayerBreak(level, pos); // démontage volontaire : pas de ruine
             if (PLACED.remove(pos) != null) level.destroyBlockProgress(pos.hashCode(), pos, -1);
         }
     }

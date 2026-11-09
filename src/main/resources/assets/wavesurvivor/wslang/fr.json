@@ -3962,5 +3962,6 @@
   "rift.engine.too_far": "§cPose l'engin sur l'île, loin du bord.",
   "rift.engine.placed": "§aEngin de siège posé !",
   "ui.rift.window_s": "Fenêtre (s)",
-  "ui.rift.window_cap": "Plafond fenêtre %"
+  "ui.rift.window_cap": "Plafond fenêtre %",
+  "rift.ruin.rebuilt": "§aTour rebâtie (niveau 1) pour {0} ◆."
 }

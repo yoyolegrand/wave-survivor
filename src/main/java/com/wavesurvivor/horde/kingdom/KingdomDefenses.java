@@ -304,6 +304,10 @@ public final class KingdomDefenses {
             double ruin = Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.ruin_refund"); // talent Restaurateur : une ruine rend une part de son coût
             if (ruin > 0) refundOf(d, ruin).forEach((res, n) -> { if (n > 0) KingdomTreasury.add(res, n); });
         }
+        if (d != null && !demolishing && level != null && com.wavesurvivor.horde.rift.RiftManager.kingdomSiege()) {
+            Long t = PLAYER_BREAK.remove(pos);
+            if (t == null || level.getGameTime() - t > 60) leaveRuin(pos.immutable(), d.kind); // détruite (pas démontée par un joueur) : vestiges
+        }
         if (d != null) {
             discardSoldiers(d);
             for (BlockPos c : d.colliders) {
@@ -400,6 +404,55 @@ public final class KingdomDefenses {
         if (gates > 0 && KingdomTreasury.active()) KingdomTreasury.add(KingdomTreasury.Res.MONEY, gates * GATE_COST);
     }
 
+    // ─── Faille (2.0) : ruines réparables ───
+
+    private static final Map<BlockPos, DefenseBlock.Kind> RUINS = new HashMap<>();
+    /** Démontages volontaires par un joueur (pas des ruines) : position → tick du coup de pioche. */
+    private static final Map<BlockPos, Long> PLAYER_BREAK = new HashMap<>();
+
+    static void markPlayerBreak(ServerLevel l, BlockPos pos) { PLAYER_BREAK.put(pos.immutable(), l.getGameTime()); }
+
+    public static boolean isRuin(BlockPos pos) { return RUINS.containsKey(pos); }
+
+    /** Une tour détruite devient des vestiges (bloc de pierre fissurée) que l'on peut rebâtir à moitié prix. */
+    private static void leaveRuin(BlockPos pos, DefenseBlock.Kind kind) {
+        final ServerLevel l = level;
+        RUINS.put(pos, kind);
+        l.getServer().execute(() -> { // après la fin du retrait du bloc d'origine
+            if (RUINS.containsKey(pos) && l.getBlockState(pos).isAir()) {
+                l.setBlock(pos, net.minecraft.world.level.block.Blocks.CRACKED_DEEPSLATE_BRICKS.defaultBlockState(), 3);
+                l.sendParticles(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 20, 0.3, 0.4, 0.3, 0.02);
+            }
+        });
+    }
+
+    /** Clic droit sur des vestiges : la tour est rebâtie (niveau 1) pour la moitié de son prix. */
+    public static void rebuild(ServerPlayer p, BlockPos pos) {
+        DefenseBlock.Kind kind = RUINS.get(pos);
+        if (kind == null || level == null || !(p.level() instanceof ServerLevel l) || l != level) return;
+        int cost = Math.max(1, BUY[kind.ordinal()] / 2);
+        if (!AltarDefense.trySpend(p, cost)) return;
+        RUINS.remove(pos);
+        net.minecraft.world.level.block.Block b = switch (kind) {
+            case ARCHER -> com.wavesurvivor.registry.ModBlocks.KINGDOM_ARCHER_TOWER.get();
+            case MAGE -> com.wavesurvivor.registry.ModBlocks.KINGDOM_MAGE_TOWER.get();
+            case SHRINE -> com.wavesurvivor.registry.ModBlocks.KINGDOM_REPAIR_SHRINE.get();
+            case BARRACKS -> com.wavesurvivor.registry.ModBlocks.KINGDOM_BARRACKS.get();
+            case COLLECTOR -> com.wavesurvivor.registry.ModBlocks.KINGDOM_COLLECTOR.get();
+            case WORKSHOP -> com.wavesurvivor.registry.ModBlocks.KINGDOM_WORKSHOP.get();
+        };
+        l.setBlock(pos, b.defaultBlockState(), 3);
+        register(l, pos, kind, p);
+        l.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.8f, 1.2f);
+        p.displayClientMessage(WSLang.c("rift.ruin.rebuilt", cost), true);
+    }
+
+    private static void tickRuins(long now) {
+        if (RUINS.isEmpty() || now % 40 != 0) return;
+        for (BlockPos r : RUINS.keySet())
+            level.sendParticles(ParticleTypes.SMOKE, r.getX() + 0.5, r.getY() + 1.0, r.getZ() + 0.5, 4, 0.25, 0.3, 0.25, 0.01);
+    }
+
     static void clear() {
         // Fin de partie : soldats renvoyés et défenses retirées du monde (rien ne reste après la horde)
         // Toujours dans le monde du royaume, même si les joueurs sont ailleurs (arène du boss final…)
@@ -420,6 +473,11 @@ public final class KingdomDefenses {
                 if (level.getBlockState(t).getBlock() instanceof TrapBlock) level.removeBlock(t, false);
             }
         }
+        if (level != null) for (BlockPos r : RUINS.keySet()) {   // vestiges effacés avec le royaume
+            if (level.getBlockState(r).is(net.minecraft.world.level.block.Blocks.CRACKED_DEEPSLATE_BRICKS)) level.removeBlock(r, false);
+        }
+        RUINS.clear();
+        PLAYER_BREAK.clear();
         KingdomLeftovers.forgetAll(level);
         GATES.clear();
         TRAPS.clear();
@@ -1039,6 +1097,7 @@ public final class KingdomDefenses {
 
     static void tick(long now) {
         if (level == null) return;
+        tickRuins(now);
         if (now % 5 == 0 && !GATES.isEmpty()) tickGates();
         if (DEFS.isEmpty()) return;
         boolean second = now % 20 == 0, twoSeconds = now % 40 == 0;
