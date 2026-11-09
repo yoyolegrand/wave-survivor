@@ -161,6 +161,7 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
             return null;
         }
         CACHE.put(name, m);
+        WaveSurvivorMod.LOGGER.info("[Faille] Modèle d'engin chargé : {} ({} groupes, {} cordes, {} ancres).", name, m.groups.size(), m.strings.size(), m.anchors.size());
         return m;
     }
 
