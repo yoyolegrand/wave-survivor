@@ -450,6 +450,11 @@ public final class RiftManager {
     /** Réglages de la Faille en cours (cadences des engins). */
     static HordeConfigMultiData.RiftSettings settingsPublic() { return settings(); }
 
+    /** Action de la fiche d'un engin (amélioration, variante). */
+    public static void engineSheetAction(ServerPlayer p, int entityId, String action) {
+        if (active && p.level().dimension() == RIFT_DIM) RiftEngines.sheetAction(p, entityId, action);
+    }
+
     /** Clic droit sur un engin de siège (appelé par l'entité). */
     public static void engineUse(ServerPlayer p, com.wavesurvivor.entity.SiegeEngineEntity e) {
         if (active && p.level().dimension() == RIFT_DIM) RiftEngines.onUse(p, e);

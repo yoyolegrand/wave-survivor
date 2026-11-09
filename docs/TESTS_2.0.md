@@ -194,3 +194,8 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Le Titan ne reste plus « bloqué » : taille divisée par deux (×55), sa distance au Monolithe diminue avec elle.
 - [ ] Engins : **clic droit = tirer**, **Maj + clic droit = améliorer** (niveau 2, puis choix de la variante). Message à la pose et à l'amélioration.
 - [ ] Catapulte : la portée dépend de l'inclinaison du regard (plus de tir court à Maj).
+
+## Fiche d'amélioration des engins
+- [ ] **Maj + clic droit** sur une catapulte / baliste : un menu s'ouvre (comme pour les tours) : nom, étoiles, description, munitions (baliste), prochain niveau et son prix, bouton « Améliorer » (grisé si pas assez de ◆).
+- [ ] Niveau 2 : le modèle change ; le menu propose 3 variantes avec description et prix (survol = description complète), bouton « Choisir » : choix définitif ; niveau 3 : nom de la variante affiché.
+- [ ] Clic droit simple : tirer (inchangé). Le menu se met à jour après chaque achat.

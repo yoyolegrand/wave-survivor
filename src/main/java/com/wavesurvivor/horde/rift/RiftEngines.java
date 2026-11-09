@@ -139,7 +139,7 @@ final class RiftEngines {
     static void onUse(ServerPlayer p, SiegeEngineEntity e) {
         if (!(p.level() instanceof ServerLevel l)) return;
         long now = l.getGameTime();
-        if (p.isShiftKeyDown()) { upgrade(p, e, now); return; }   // Maj + clic droit : amélioration (clic droit seul : tir)
+        if (p.isShiftKeyDown()) { openSheet(p, e); return; }   // Maj + clic droit : fiche de l'engin, amélioration (clic droit seul : tir)
         if (e.isBallista()) useBallista(p, l, e, now); else useCatapult(p, l, e, now);
     }
 
@@ -151,7 +151,7 @@ final class RiftEngines {
             e.setEngineLevel(2);
             e.setReloadTicks(e.isBallista() ? ballistaReload(e) : catapultReload(e));
             if (p.level() instanceof ServerLevel l) l.playSound(null, e.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1f, 1.2f);
-            say(p, "§a" + nameOf(e) + " ! Maj + clic droit pour choisir sa variante.", now);
+            say(p, "§a" + nameOf(e) + " !", now);
         } else if (e.engineLevel() == 2) {
             choosing.put(p.getUUID(), e.getUUID());
             net.minecraft.network.chat.MutableComponent line = Component.literal("§6Variante (" + UP3[k] + " ◆) : ");
@@ -178,6 +178,39 @@ final class RiftEngines {
         choosing.remove(p.getUUID());
         l.playSound(null, e.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1f, 1f);
         p.displayClientMessage(Component.literal("§a" + nameOf(e) + " !"), true);
+    }
+
+    /** Monnaie disponible pour les améliorations (trésor du royaume, en ◆). */
+    private static int coins(ServerPlayer p) {
+        return com.wavesurvivor.horde.kingdom.KingdomTreasury.active()
+                ? com.wavesurvivor.horde.kingdom.KingdomTreasury.get(com.wavesurvivor.horde.kingdom.KingdomTreasury.Res.MONEY) : 0;
+    }
+
+    /** Envoie la fiche de l'engin au joueur (écran d'amélioration). */
+    private static void openSheet(ServerPlayer p, SiegeEngineEntity e) {
+        int k = e.isBallista() ? 1 : 0;
+        com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                new com.wavesurvivor.network.EngineSheetPackets.Sheet(e.getId(), e.kind(), e.engineLevel(), e.engineLevel() >= 3 ? e.variant : 0,
+                        UP2[k], UP3[k], coins(p), e.ammo()));
+    }
+
+    /** Action de la fiche : « upgrade » (niveau 2) ou « variant0 » à « variant2 » (niveau 3, définitif). */
+    static void sheetAction(ServerPlayer p, int entityId, String action) {
+        if (!(p.level() instanceof ServerLevel l) || !(l.getEntity(entityId) instanceof SiegeEngineEntity e) || p.distanceToSqr(e) > 20 * 20) return;
+        long now = l.getGameTime();
+        if ("upgrade".equals(action)) {
+            if (e.engineLevel() == 1) upgrade(p, e, now);
+        } else if (action.startsWith("variant") && action.length() == 8) {
+            int i = action.charAt(7) - '0';
+            if (i >= 0 && i <= 2 && e.engineLevel() == 2 && com.wavesurvivor.altar.AltarDefense.trySpend(p, UP3[e.isBallista() ? 1 : 0])) {
+                e.setEngineLevel(3);
+                e.variant = i + 1;
+                e.setReloadTicks(e.isBallista() ? ballistaReload(e) : catapultReload(e));
+                l.playSound(null, e.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1f, 1f);
+                p.displayClientMessage(Component.literal("§a" + nameOf(e) + " !"), true);
+            }
+        }
+        openSheet(p, e);
     }
 
     private static void say(ServerPlayer p, String msg, long now) {
