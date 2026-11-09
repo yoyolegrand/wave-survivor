@@ -210,5 +210,7 @@
   "effect.wavesurvivor.scorching_sun": "Soleil de plomb",
   "block.wavesurvivor.rift_portal": "Portail de la Faille",
   "block.wavesurvivor.rift_vein_teal": "Veine de faille (turquoise)",
-  "block.wavesurvivor.rift_vein_violet": "Veine de faille (violette)"
+  "block.wavesurvivor.rift_vein_violet": "Veine de faille (violette)",
+  "item.wavesurvivor.siege_catapult": "Catapulte de siège",
+  "item.wavesurvivor.siege_ballista": "Baliste céleste de siège"
 }

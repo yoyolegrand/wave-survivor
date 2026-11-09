@@ -147,6 +147,8 @@ public final class KingdomOmens {
         for (Omen o : Omen.values()) {
             if (o == Omen.IRON_RAIN && !KingdomManager.hasSiegeUnits()) continue;
             if (o == Omen.ROYAL_HUNT && !KingdomManager.nextAssaultHasBoss()) continue;
+            // Faille : une seule Porte, sans gardiens → pas de « Porte endormie » ni de « Gardiens assoupis »
+            if ((o == Omen.SLUMBER || o == Omen.DROWSY) && com.wavesurvivor.horde.rift.RiftManager.kingdomSiege()) continue;
             pool.add(o);
         }
         List<Omen> fresh = new ArrayList<>(pool);

@@ -76,13 +76,27 @@ final class RiftEngines {
 
     // ─── Construction (tous les engins regardent vers le SUD, là où surgit le Titan) ───
 
-    static void build(ServerLevel l) {
-        clear();
-        int y = RiftManager.CENTER.getY() + 1;
-        catapult(l, -9, y, 6);
-        catapult(l, 11, y, 6);
-        ballista(l, -3, y, 8);
-        ballista(l, 4, y, 8);
+    /**
+     * Pose un engin acheté à la boutique (tourné vers le sud). {@code at} = bloc libre au-dessus du sol visé.
+     * @return 0 posé · 1 pas de place / sol instable · 2 hors de l'île ou dimension incorrecte
+     */
+    static int place(ServerLevel l, BlockPos at, boolean ballista) {
+        if (l.dimension() != RiftManager.RIFT_DIM) return 2;
+        int x0 = at.getX() + (ballista ? 2 : 1), z0 = at.getZ(), y = at.getY();
+        int xMin = x0 - 3, xMax = ballista ? x0 - 1 : x0, zMax = z0 + (ballista ? 2 : 5);
+        int rMax = Math.max(4, RiftManager.islandRadiusNow() - 2);
+        long r2 = (long) rMax * rMax;
+        for (int x = xMin; x <= xMax; x++) for (int z = z0; z <= zMax; z++) {
+            long dx = x - RiftManager.CENTER.getX(), dz = z - RiftManager.CENTER.getZ();
+            if (dx * dx + dz * dz > r2) return 2;
+            if (l.getBlockState(new BlockPos(x, y - 1, z)).isAir()) return 1;
+            for (int h = 0; h <= 3; h++) {
+                BlockState s = l.getBlockState(new BlockPos(x, y + h, z));
+                if (!s.isAir() && !s.canBeReplaced()) return 1;
+            }
+        }
+        if (ballista) ballistaAt(l, x0, y, z0); else catapultAt(l, x0, y, z0);
+        return 0;
     }
 
     private static void put(ServerLevel l, int x, int y, int z, BlockState st) {
@@ -95,9 +109,7 @@ final class RiftEngines {
     }
 
     /** Catapulte : châssis 6 × 2 en bois sombre, roues de fer, montants, grande poutre, cuillère (chaudron), contrepoids, treuil (pupitre). */
-    private static void catapult(ServerLevel l, int bx, int y, int bz) {
-        BlockPos o = RiftManager.CENTER;
-        int x0 = o.getX() + bx, z0 = o.getZ() + bz;
+    private static void catapultAt(ServerLevel l, int x0, int y, int z0) {
         BlockState planks = Blocks.DARK_OAK_PLANKS.defaultBlockState();
         BlockState fence = Blocks.DARK_OAK_FENCE.defaultBlockState();
         for (int dx = 0; dx < 6; dx++) for (int dz = 0; dz < 2; dz++) putR(l, x0, y, z0, dx, dz, planks);
@@ -120,9 +132,7 @@ final class RiftEngines {
     }
 
     /** Baliste céleste : piédestal 3 × 3 de marbre (quartz) à coins dorés, fût, arc en « ailes » dorées, carreau lumineux. */
-    private static void ballista(ServerLevel l, int bx, int y, int bz) {
-        BlockPos o = RiftManager.CENTER;
-        int x0 = o.getX() + bx, z0 = o.getZ() + bz;
+    private static void ballistaAt(ServerLevel l, int x0, int y, int z0) {
         for (int dx = 0; dx < 3; dx++) for (int dz = 0; dz < 3; dz++) {
             boolean corner = (dx != 1) && (dz != 1);
             putR(l, x0, y, z0, dx, dz, corner ? Blocks.GOLD_BLOCK.defaultBlockState() : Blocks.QUARTZ_BLOCK.defaultBlockState());

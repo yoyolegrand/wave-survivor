@@ -366,6 +366,10 @@ public class HordeConfigMultiData {
         /** Pause (s) entre deux phases. */
         @SerializedName("interludeSeconds") public int interludeSeconds = 10;
         /** Ressources minimales qui apparaissent à chaque calme du Siège. */
+        /** Siège (moteur du Kingdom) : unités par assaut au premier assaut, hausse par assaut (en %) et durée du calme (s). */
+        @SerializedName("siegeBudget") public int siegeBudget = 40;
+        @SerializedName("siegeGrowthPercent") public int siegeGrowthPercent = 25;
+        @SerializedName("siegeCalmSeconds") public int siegeCalmSeconds = 60;
         @SerializedName("resourceTrees") public int resourceTrees = 4;
         @SerializedName("resourceOres") public int resourceOres = 3;
         /** Phase 3 — Contre-offensive : nombre de catalyseurs, PV de chacun, PV du cœur de la forteresse, renforts toutes les X s. */

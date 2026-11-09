@@ -717,7 +717,7 @@ public final class KingdomManager {
         int calmBudget = (int) Math.max(1, Math.round(budgetFor(cycle) * Math.max(0, cfg.calmPercent) / 100.0));
         for (Portal p : PORTALS) { p.budget = p.destroyed ? 0 : (com.wavesurvivor.horde.bossrush.BossRush.active() ? 0 : calmBudget); p.spawned = 0; }
         // Objectif du Calme : un Catalyseur apparaît près d'une Porte (pas en Boss Rush : les Portes ne sont plus l'objectif)
-        if (!com.wavesurvivor.horde.bossrush.BossRush.active()) spawnCatalyst();
+        if (!com.wavesurvivor.horde.bossrush.BossRush.active() && !com.wavesurvivor.horde.rift.RiftManager.kingdomSiege()) spawnCatalyst();
         // Objectif facultatif du Calme (convoi, champion, trésor, purification), tiré au hasard
         if (!com.wavesurvivor.horde.bossrush.BossRush.active()) KingdomObjectives.onCalm(level, now, cycle, cfg.calmObjectives);
         // Calme : Bénédictions, marchands et coffres roulette (comme la pause entre deux vagues)
@@ -830,6 +830,11 @@ public final class KingdomManager {
             boolean rushBossAlive = com.wavesurvivor.horde.bossrush.BossRush.active() && com.wavesurvivor.horde.boss.BossManager.activeBossCount() > 0;
             if (spent && alive == 0 && !rushBossAlive) {
                 if (com.wavesurvivor.horde.bossrush.BossRush.isLastStage(cycle)) {
+                    HordeManager.get().endKingdom(true);
+                    return;
+                }
+                // Faille : le nombre d'assauts du Siège est atteint → la Contre-offensive prend le relais
+                if (com.wavesurvivor.horde.rift.RiftManager.siegeAssaultsDone(cycle)) {
                     HordeManager.get().endKingdom(true);
                     return;
                 }
@@ -1193,6 +1198,7 @@ public final class KingdomManager {
                 vulnerable = !guarded && p.breached;
                 floor = p.floor;
             }
+            if (com.wavesurvivor.horde.rift.RiftManager.kingdomSiege()) vulnerable = false; // Faille : la Porte de la forteresse ne se détruit pas
             b.setShielded(!vulnerable);
             b.setHpFloor(vulnerable ? floor : 0f);
             if (p.breached && !p.isFinal && b.getHealth() <= p.floor + 0.5f) {

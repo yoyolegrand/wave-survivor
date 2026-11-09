@@ -179,6 +179,11 @@ public class ModItems {
     public static final RegistryObject<Item> KINGDOM_COMPASS = ITEMS.register("kingdom_compass",
             () -> new com.wavesurvivor.horde.kingdom.KingdomCompassItem(new Item.Properties().stacksTo(1)
                     .rarity(net.minecraft.world.item.Rarity.RARE)));
+    /** Faille (2.0) : engins de siège achetés à la boutique du Monolithe. */
+    public static final RegistryObject<Item> SIEGE_CATAPULT_ITEM = ITEMS.register("siege_catapult",
+            () -> new com.wavesurvivor.horde.rift.SiegeEngineItem(new Item.Properties().stacksTo(8), false));
+    public static final RegistryObject<Item> SIEGE_BALLISTA_ITEM = ITEMS.register("siege_ballista",
+            () -> new com.wavesurvivor.horde.rift.SiegeEngineItem(new Item.Properties().stacksTo(8), true));
     public static final RegistryObject<Item> KINGDOM_RAMPART_ITEM = ITEMS.register("kingdom_rampart",
             () -> new com.wavesurvivor.horde.kingdom.RampartItem(ModBlocks.KINGDOM_RAMPART.get(), new Item.Properties()));
     public static final RegistryObject<Item> KINGDOM_GATE_ITEM = ITEMS.register("kingdom_gate",
@@ -501,6 +506,8 @@ public class ModItems {
                         output.accept(SERAPH_BOOTS.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
+                        output.accept(SIEGE_CATAPULT_ITEM.get());
+                        output.accept(SIEGE_BALLISTA_ITEM.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());
                         output.accept(KINGDOM_GATE_ITEM.get());
                         output.accept(KINGDOM_TRAP_SPIKES_ITEM.get());

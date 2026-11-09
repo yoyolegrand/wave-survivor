@@ -1880,6 +1880,12 @@ public class HordeEditorScreen extends Screen {
         flow(x, y);
         fl(t("ui.rift.interlude"));
         fInt(30, HordeJson.num(r, "interludeSeconds", 10), v -> r.addProperty("interludeSeconds", Math.max(3, Math.min(120, v))));
+        fl(t("ui.rift.siege_budget"));
+        fInt(30, HordeJson.num(r, "siegeBudget", 40), v -> r.addProperty("siegeBudget", Math.max(5, Math.min(500, v))));
+        fl(t("ui.rift.siege_growth"));
+        fInt(26, HordeJson.num(r, "siegeGrowthPercent", 25), v -> r.addProperty("siegeGrowthPercent", Math.max(0, Math.min(200, v))));
+        fl(t("ui.rift.siege_calm"));
+        fInt(30, HordeJson.num(r, "siegeCalmSeconds", 60), v -> r.addProperty("siegeCalmSeconds", Math.max(15, Math.min(600, v))));
         y += 22;
         labelWrap(x, y, t("ui.rift.hint_resources"), W - 24);
         y += 34;

@@ -78,6 +78,10 @@ public final class RiftManager {
     private static final Map<UUID, GameType> prevMode = new HashMap<>();
     private static HordeConfigMultiData.ConfigDataInner spawnCfg;
     private static int spawnRadiusBackup, waveBackup;
+    /** Siège sur le moteur du Kingdom : mode et réglages d'origine de la horde, rétablis à la fin de la phase. */
+    private static String modeBackup;
+    private static HordeConfigMultiData.KingdomSettings kingdomBackup;
+    private static boolean kingdomOverride;
     // Jalons 3-6
     private static Phase nextPhase = Phase.NONE;
     private static long interludeAt;
@@ -217,6 +221,12 @@ public final class RiftManager {
     /** Point d'arrivée / de réapparition : au sud du Monolithe (côté des engins de siège et du Titan). */
     private static double[] arrival() {
         return new double[]{CENTER.getX() + 0.5 + (RNG.nextDouble() - 0.5) * 5, CENTER.getZ() + 0.5 + 3.5 + RNG.nextDouble() * 2};
+    }
+
+    /** Engin de siège acheté : posé par l'objet (catapulte / baliste). @return 0 posé · 1 pas de place · 2 hors de l'île · 3 Faille inactive */
+    public static int placeEngine(ServerLevel level, BlockPos at, boolean ballista) {
+        if (!active || !inCombat()) return 3;
+        return RiftEngines.place(level, at, ballista);
     }
 
     /** Pose le bloc d'autel au centre de l'île : il devient le Monolithe à défendre (clic droit = boutique, réparation). */
@@ -435,7 +445,14 @@ public final class RiftManager {
         if (spawnCfg != null) {
             spawnCfg.spawnRadius = spawnRadiusBackup;
             if (waveBackup > 0) spawnCfg.totalWaves = waveBackup;
+            if (kingdomOverride) {
+                spawnCfg.mode = modeBackup;
+                spawnCfg.kingdom = kingdomBackup;
+            }
         }
+        kingdomOverride = false;
+        modeBackup = null;
+        kingdomBackup = null;
         spawnCfg = null;
         waveBackup = 0;
     }
@@ -656,7 +673,7 @@ public final class RiftManager {
         siegeStartAt = now + 40 + ((growTarget - growCur + 1) / 2) * 8L + 80;
         siegeHordeOn = false;
         RiftFortress.build(rd, siegeFinal);
-        if (rs.engines) RiftEngines.build(rd);
+        RiftEngines.clear(); // les engins ne sont plus pré-posés : on les achète à la boutique du Monolithe
         for (ServerPlayer p : rd.players()) {
             com.wavesurvivor.network.ShakePacket.send(p, 80, 1.2f);
             p.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 20));
@@ -674,7 +691,14 @@ public final class RiftManager {
         waveBackup = spawnCfg.totalWaves;
         spawnCfg.spawnRadius = 5;
         spawnCfg.totalWaves = Math.max(1, rs.siegeAssaults);
-        boolean ok = HordeManager.get().startAtQuiet(horde, server, RiftFortress.spawnPoint(siegeFinal), RIFT_DIM.location().toString());
+        // Le Siège tourne sur le moteur du Kingdom : Assauts / Calmes, trésor, rôles, tours, remparts et pièges.
+        // Une seule Porte, fixe, devant la porte de la forteresse ; réglages propres à la Faille (rétablis ensuite).
+        modeBackup = spawnCfg.mode;
+        kingdomBackup = spawnCfg.kingdom;
+        kingdomOverride = true;
+        spawnCfg.mode = "kingdom";
+        spawnCfg.kingdom = siegeKingdomSettings(rs);
+        boolean ok = HordeManager.get().startAtQuiet(horde, server, MONOLITH, RIFT_DIM.location().toString());
         if (!ok) {
             restoreSpawnRadius();
             tellAll(rd, WSLang.t("rift.start_fail"));
@@ -685,6 +709,43 @@ public final class RiftManager {
         lastWave = HordeManager.get().getCurrentWave();
         lastState = null;
         tellAll(rd, WSLang.t("rift.siege_go"));
+    }
+
+    /** Réglages Kingdom du Siège : une Porte fixe à la porte de la forteresse, pas de gardiens ni de boss final, claim = île. */
+    private static HordeConfigMultiData.KingdomSettings siegeKingdomSettings(HordeConfigMultiData.RiftSettings rs) {
+        HordeConfigMultiData.KingdomSettings k = new HordeConfigMultiData.KingdomSettings();
+        BlockPos g = RiftFortress.spawnPoint(siegeFinal);
+        HordeConfigMultiData.KingdomSettings.GatePoint gp = new HordeConfigMultiData.KingdomSettings.GatePoint();
+        gp.x = g.getX(); gp.y = g.getY(); gp.z = g.getZ();
+        k.gatePlacement = "fixed";
+        k.gatePoints = new ArrayList<>(List.of(gp));
+        k.gateCount = 1;
+        k.gateFacing = "monolith";
+        k.portalScale = 2.0;
+        k.portalHealth = 100000;
+        k.assaultBudget = Math.max(5, rs.siegeBudget);
+        k.assaultGrowth = Math.max(0, rs.siegeGrowthPercent) / 100.0;
+        k.calmSeconds = Math.max(15, rs.siegeCalmSeconds);
+        k.aliveCap = 60;
+        k.maxCycles = 0;                 // la fin du Siège est décidée par la Faille (nombre d'assauts)
+        k.guardiansPerGate = 0;
+        k.finalBoss = false;
+        k.raidArena = false;
+        k.smallBreachSeconds = 0;
+        k.calmObjectives.enabled = false;
+        k.claimRadius = Math.max(16, siegeFinal);
+        k.buildOnlyInClaim = true;
+        return k;
+    }
+
+    /** Appelé par le Kingdom à la fin de chaque Assaut : le nombre d'assauts du Siège est atteint → Contre-offensive. */
+    public static boolean siegeAssaultsDone(int cycle) {
+        return active && phase == Phase.SIEGE && kingdomOverride && cycle >= Math.max(1, settings().siegeAssaults);
+    }
+
+    /** Vrai pendant le Siège sur le moteur du Kingdom (Porte invulnérable, pas de Catalyseur, présages à plusieurs Portes retirés). */
+    public static boolean kingdomSiege() {
+        return active && phase == Phase.SIEGE && kingdomOverride;
     }
 
     // ─── Phase 3 : la Contre-offensive ───

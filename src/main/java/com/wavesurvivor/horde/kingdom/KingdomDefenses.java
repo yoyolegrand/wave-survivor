@@ -494,6 +494,13 @@ public final class KingdomDefenses {
         } else if (type >= 30 && type <= 34) {                // pièges
             cost = TRAP_COST[type - 30];
             item = new ItemStack(trapItem(type - 30));
+        } else if (type == 25 || type == 26) {                // engins de siège de la Faille (catapulte / baliste céleste)
+            if (!com.wavesurvivor.horde.rift.RiftManager.isActive()) {
+                p.displayClientMessage(WSLang.c("rift.engine.only_rift"), true);
+                return;
+            }
+            cost = ENGINE_COST[type - 25];
+            item = new ItemStack(type == 25 ? ModItems.SIEGE_CATAPULT_ITEM.get() : ModItems.SIEGE_BALLISTA_ITEM.get());
         } else if (type == 22) {                              // charge de démolition (Bâtisseur, 1 par vague)
             if (!KingdomRoles.has(p, KingdomRoles.Role.BUILDER)) {
                 p.displayClientMessage(WSLang.c("kingdom.charge.builder_only"), true);
@@ -549,6 +556,8 @@ public final class KingdomDefenses {
     /** Boussole du Royaume : prix fixe. */
     public static final int COMPASS_COST = 64;
     public static final int[] TRAP_COST = {10, 12, 14, 16, 12};
+    /** Faille : prix de la catapulte et de la baliste céleste. */
+    public static final int[] ENGINE_COST = {90, 70};
     private static final float GATE_HP = 500f;
 
     private static net.minecraft.world.item.Item trapItem(int i) {

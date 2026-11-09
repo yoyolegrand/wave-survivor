@@ -210,5 +210,7 @@
   "effect.wavesurvivor.scorching_sun": "Scorching Sun",
   "block.wavesurvivor.rift_portal": "Rift Portal",
   "block.wavesurvivor.rift_vein_teal": "Rift Vein (Teal)",
-  "block.wavesurvivor.rift_vein_violet": "Rift Vein (Violet)"
+  "block.wavesurvivor.rift_vein_violet": "Rift Vein (Violet)",
+  "item.wavesurvivor.siege_catapult": "Siege Catapult",
+  "item.wavesurvivor.siege_ballista": "Celestial Siege Ballista"
 }

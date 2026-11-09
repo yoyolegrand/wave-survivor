@@ -220,6 +220,12 @@ public class MonolithShopScreen extends Screen {
         });
     }
 
+    /** Vrai dans la dimension de la Faille (2.0) : la boutique propose alors les engins de siège. */
+    private static boolean inRift() {
+        var lv = Minecraft.getInstance().level;
+        return lv != null && lv.dimension().location().equals(new net.minecraft.resources.ResourceLocation("wavesurvivor", "rift"));
+    }
+
     private void buyButton(int x, int y, int w, int cost, int code, Component tip, int have) {
         // Bâtisseur présent : remise de 20 % (sauf la charge de démolition)
         if (code != 22) cost = com.wavesurvivor.horde.kingdom.KingdomRoles.builderPrice(cost,
@@ -272,9 +278,11 @@ public class MonolithShopScreen extends Screen {
             }
         } else if (tab == 1) {
             // Sous-catégories : Tours · Murs · Pièges
-            String[] subs = {"ui.shop.def_towers", "ui.shop.def_walls", "ui.shop.def_traps"};
-            int sw = (PANEL_W - 16 - 8) / 3;
-            for (int i = 0; i < 3; i++) {
+            String[] subs = {"ui.shop.def_towers", "ui.shop.def_walls", "ui.shop.def_traps", "ui.shop.def_engines"};
+            int nSubs = inRift() ? 4 : 3;   // Faille : onglet « Engins » (catapulte, baliste céleste)
+            if (defSub >= nSubs) defSub = 0;
+            int sw = (PANEL_W - 16 - (nSubs - 1) * 4) / nSubs;
+            for (int i = 0; i < nSubs; i++) {
                 final int s = i;
                 addRenderableWidget(Button.builder(Component.literal((defSub == i ? "§b§l" : "§7") + WSLang.t(subs[i])),
                         b -> { defSub = s; init(); }).bounds(left + 8 + i * (sw + 4), y0 - 2, sw, 16).build());
@@ -295,6 +303,11 @@ public class MonolithShopScreen extends Screen {
                 if (amBuilder()) {
                     buyButton(left + PANEL_W - 92, yd + 2 * DEF_ROW + 4, 82, KingdomDefenses.CHARGE_COST, 22,
                             WSLang.c("kingdom.charge.tooltip"), have);
+                }
+            } else if (defSub == 3) {
+                for (int i = 0; i < 2; i++) {
+                    buyButton(left + PANEL_W - 92, yd + i * DEF_ROW + 4, 82, KingdomDefenses.ENGINE_COST[i], 25 + i,
+                            WSLang.c(i == 0 ? "rift.engine.desc.catapult" : "rift.engine.desc.ballista"), have);
                 }
             } else {
                 for (int i = 0; i < 5; i++) {
@@ -468,6 +481,11 @@ public class MonolithShopScreen extends Screen {
                     itemRow(g, yd + 2 * DEF_ROW, DEF_ROW, ch, "§6" + ch.getHoverName().getString() + " " + WSLang.t("kingdom.charge.per_wave"),
                             WSLang.t("kingdom.charge.tooltip"));
                 }
+            } else if (defSub == 3) {
+                ItemStack cat = new ItemStack(ModItems.SIEGE_CATAPULT_ITEM.get());
+                itemRow(g, yd, DEF_ROW, cat, "§f§l" + cat.getHoverName().getString(), WSLang.t("rift.engine.desc.catapult"));
+                ItemStack bal = new ItemStack(ModItems.SIEGE_BALLISTA_ITEM.get());
+                itemRow(g, yd + DEF_ROW, DEF_ROW, bal, "§f§l" + bal.getHoverName().getString(), WSLang.t("rift.engine.desc.ballista"));
             } else {
                 for (int i = 0; i < 5; i++) {
                     ItemStack it = trapItem(i);

@@ -73,3 +73,16 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Pont 3 fois plus long et plus large, forteresse 3 fois plus grande ; les ennemis traversent le pont
 - [ ] Contre-offensive : catalyseurs répartis sur le grand cercle, cœur dans le donjon
 - [ ] Titan x110 (x5) : visible, au SUD de l'île ; engins de siège (flanc sud) orientés vers lui ; avatars arrivent par le sud
+
+## Retours de test n°2 — Siège sur le moteur du Kingdom, engins achetables
+- [ ] Horde terminée → Siège : la forteresse apparaît, **une seule Porte** s'ouvre devant la porte de la forteresse (face à l'île).
+- [ ] Onglets **Défenses / Mairie / Rôles** visibles dans la boutique du Monolithe pendant le Siège (pas pendant la Horde).
+- [ ] Tours d'archers / mages, sanctuaire, baraquement, remparts, portes, pièges : achat avec le trésor, pose sur l'île, ils tirent sur les ennemis de la Faille.
+- [ ] Cycle **Assaut / Calme** : arbres et gisements (système du Chaos) apparaissent à chaque Calme ; le trésor se remplit.
+- [ ] **Rôles** : choix possible ; Augure OK (pas de « Porte endormie » ni « Gardiens assoupis » proposés) ; Mineur OK (gisements).
+- [ ] La Porte de la forteresse ne se détruit pas ; pas de Catalyseur, pas de gardiens, pas de boss final, pas d'objectif de Calme.
+- [ ] Après le nombre d'assauts réglé (éditeur, page Siège) → Contre-offensive ; le royaume (trésor, rôles, défenses) s'arrête proprement.
+- [ ] Éditeur, page Siège : **Unités/assaut, Hausse %, Calme (s)** pris en compte.
+- [ ] Boutique, onglet **Défenses › Engins** (Faille seulement) : Catapulte de siège et Baliste céleste de siège achetables ; clic droit sur le sol de l'île = pose (face au sud) ; pupitre = pilotage comme avant.
+- [ ] Message d'erreur si pas de place / hors île ; plus aucun engin pré-posé sur l'île.
+- [ ] **Non-régression** : une partie Kingdom normale et une horde classique (hors Faille) fonctionnent comme avant.

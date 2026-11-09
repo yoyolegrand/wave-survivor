@@ -4711,5 +4711,15 @@
   "ui.rift.sec_engines": "Siege engines",
   "ui.rift.engines_on": "Catapults and ballistae",
   "ui.rift.hint_titan": "§8The Titan (scaled by Pehkui) attacks from afar with announced skills; killing an avatar removes a % of its max HP. Catapults (cobblestone, 30 s) and ballistae (arrows): right-click the lectern.",
-  "ui.rift.hint_resources": "§8Trees and ore deposits during calms are the ones from the Chaos tab (Tree and Deposit events, Guaranteed per calm setting). Block types, sizes, loot and styles are set there exactly like in a classic horde or a Kingdom."
+  "ui.rift.hint_resources": "§8Trees and ore deposits during calms are the ones from the Chaos tab (Tree and Deposit events, Guaranteed per calm setting). Block types, sizes, loot and styles are set there exactly like in a classic horde or a Kingdom.",
+  "ui.rift.siege_budget": "Units/assault",
+  "ui.rift.siege_growth": "Growth %",
+  "ui.rift.siege_calm": "Calm (s)",
+  "ui.shop.def_engines": "Engines",
+  "rift.engine.desc.catapult": "Hurls a lobbed boulder (cobblestone, 30 s). Placed on the ground; operated at its lectern.",
+  "rift.engine.desc.ballista": "Fires a burst of arrows (16 arrows). Placed on the ground; operated at its lectern.",
+  "rift.engine.only_rift": "§cSiege engines only work in the Rift.",
+  "rift.engine.no_room": "§cNot enough room (or unstable ground) to place this engine here.",
+  "rift.engine.too_far": "§cPlace the engine on the island, away from the edge.",
+  "rift.engine.placed": "§aSiege engine placed!"
 }
