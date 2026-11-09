@@ -385,6 +385,9 @@ public class HordeConfigMultiData {
         @SerializedName("titanAvatarPercent") public int titanAvatarPercent = 8;
         @SerializedName("titanAvatarHp") public int titanAvatarHp = 250;
         @SerializedName("titanDamageCapPercent") public int titanDamageCapPercent = 6;
+        /** Fenêtre de vulnérabilité (après une grosse attaque) : durée (s) et total de dégâts maximal par fenêtre (% des PV max). */
+        @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
+        @SerializedName("titanWindowCapPercent") public int titanWindowCapPercent = 8;
         /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */
         @SerializedName("engines") public boolean engines = true;
     }

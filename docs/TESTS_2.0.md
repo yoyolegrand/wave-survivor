@@ -86,3 +86,9 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Boutique, onglet **Défenses › Engins** (Faille seulement) : Catapulte de siège et Baliste céleste de siège achetables ; clic droit sur le sol de l'île = pose (face au sud) ; pupitre = pilotage comme avant.
 - [ ] Message d'erreur si pas de place / hors île ; plus aucun engin pré-posé sur l'île.
 - [ ] **Non-régression** : une partie Kingdom normale et une horde classique (hors Faille) fonctionnent comme avant.
+
+## Titan — fenêtres de vulnérabilité
+- [ ] Hors fenêtre : les dégâts au Titan sont réduits de moitié (et plafonnés par coup).
+- [ ] Après une **Onde de choc** ou un **Rugissement** : le Titan brille, barre rouge, message « à découvert » ; dégâts ×1,5 pendant la fenêtre (8 s par défaut).
+- [ ] Le total de la fenêtre est plafonné (8 % des PV max par défaut) ; la fenêtre se referme avec un message.
+- [ ] Éditeur, page Titan : « Fenêtre (s) » (0 = désactivée) et « Plafond fenêtre % ».

@@ -933,7 +933,7 @@ public final class RiftManager {
     /** Plafond de dégâts par coup sur le Titan. */
     @SubscribeEvent
     public void onTitanHurt(net.minecraftforge.event.entity.living.LivingHurtEvent e) {
-        if (active && RiftTitan.active() && RiftTitan.isTitan(e.getEntity())) e.setAmount(RiftTitan.capDamage(e.getAmount()));
+        if (active && RiftTitan.active() && RiftTitan.isTitan(e.getEntity())) e.setAmount(RiftTitan.capDamage(e.getAmount(), e.getEntity().getServer().getTickCount()));
     }
 
     /** Frappe au corps à corps sur un catalyseur / le cœur de la forteresse. */

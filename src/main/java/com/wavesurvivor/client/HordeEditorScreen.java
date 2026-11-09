@@ -1929,6 +1929,12 @@ public class HordeEditorScreen extends Screen {
         fInt(26, HordeJson.num(r, "titanDamageCapPercent", 6), v -> r.addProperty("titanDamageCapPercent", Math.max(1, Math.min(100, v))));
         y += 26;
         flow(x, y);
+        fl(t("ui.rift.window_s"));
+        fInt(26, HordeJson.num(r, "titanWindowSeconds", 8), v -> r.addProperty("titanWindowSeconds", Math.max(0, Math.min(60, v))));
+        fl(t("ui.rift.window_cap"));
+        fInt(26, HordeJson.num(r, "titanWindowCapPercent", 8), v -> r.addProperty("titanWindowCapPercent", Math.max(1, Math.min(50, v))));
+        y += 26;
+        flow(x, y);
         fl(t("ui.rift.avatar_pct"));
         fInt(26, HordeJson.num(r, "titanAvatarPercent", 8), v -> r.addProperty("titanAvatarPercent", Math.max(1, Math.min(50, v))));
         fl(t("ui.rift.avatar_hp"));

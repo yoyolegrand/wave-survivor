@@ -3960,5 +3960,7 @@
   "rift.engine.only_rift": "§cLes engins de siège ne fonctionnent que dans la Faille.",
   "rift.engine.no_room": "§cPas assez de place (ou sol instable) pour poser cet engin ici.",
   "rift.engine.too_far": "§cPose l'engin sur l'île, loin du bord.",
-  "rift.engine.placed": "§aEngin de siège posé !"
+  "rift.engine.placed": "§aEngin de siège posé !",
+  "ui.rift.window_s": "Fenêtre (s)",
+  "ui.rift.window_cap": "Plafond fenêtre %"
 }

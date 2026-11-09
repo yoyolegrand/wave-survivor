@@ -67,7 +67,8 @@ final class RiftTitan {
     private static final List<Pending> pending = new ArrayList<>();
     private static final Set<UUID> avatars = new HashSet<>();
     private static int phase;
-    private static long nextSkillAt, emergeUntil;
+    private static long nextSkillAt, emergeUntil, windowUntil;
+    private static float windowDealt;
     private static boolean dead, emerging;
     private static double baseX, baseY, baseZ;
     private static float maxHp;
@@ -167,6 +168,12 @@ final class RiftTitan {
             }
             return;
         }
+        if (windowUntil > 0 && now >= windowUntil) {
+            windowUntil = 0;
+            titan.setGlowingTag(false);
+            if (bar != null) bar.setColor(BossEvent.BossBarColor.PURPLE);
+            announce(l, "§7La brèche dans sa garde se referme.");
+        }
         // Barre de vie
         if (now % 10 == 0 && bar != null) {
             bar.setProgress(Math.max(0f, Math.min(1f, titan.getHealth() / maxHp)));
@@ -189,6 +196,7 @@ final class RiftTitan {
                 pending.remove(p);
                 titan.setGlowingTag(false);
                 p.fire.run();
+                if (p.name.startsWith("Onde") || p.name.startsWith("Rugissement")) openWindow(l, now); // grosse attaque : le Titan est à découvert
             } else if (now % 4 == 0) {
                 p.draw.accept(now);
                 if (now % 10 == 0) for (ServerPlayer pl : alive(l)) pl.displayClientMessage(Component.literal("§c⚠ " + p.name), true);
@@ -399,9 +407,27 @@ final class RiftTitan {
     // ─── Dégâts et mort ───
 
     /** Plafond de dégâts par coup (dégâts au Titan plafonnés à un pourcentage de ses PV max). */
-    static float capDamage(float amount) {
+    static float capDamage(float amount, long now) {
+        if (windowUntil > 0 && now < windowUntil) {
+            // Fenêtre de vulnérabilité : dégâts ×1,5, mais total plafonné pour la fenêtre entière
+            float room = Math.max(0f, (float) (maxHp * rs.titanWindowCapPercent / 100.0) - windowDealt);
+            float out = Math.min(amount * 1.5f, room);
+            windowDealt += out;
+            return out;
+        }
+        // Hors fenêtre : garde du Titan, dégâts réduits de moitié et plafonnés par coup
         float cap = (float) (maxHp * rs.titanDamageCapPercent / 100.0);
-        return Math.min(amount, Math.max(1f, cap));
+        return Math.min(amount * 0.5f, Math.max(1f, cap));
+    }
+
+    /** Ouvre une fenêtre de vulnérabilité (le Titan brille, sa barre devient rouge). */
+    private static void openWindow(ServerLevel l, long now) {
+        if (titan == null || rs.titanWindowSeconds <= 0) return;
+        windowUntil = now + rs.titanWindowSeconds * 20L;
+        windowDealt = 0f;
+        titan.setGlowingTag(true);
+        if (bar != null) bar.setColor(BossEvent.BossBarColor.RED);
+        announce(l, "§c§l⚔ Le Titan est à découvert ! Frappez maintenant (" + rs.titanWindowSeconds + " s) !");
     }
 
     static void onAvatarDeath(ServerLevel l, Entity avatar) {
@@ -447,5 +473,7 @@ final class RiftTitan {
         titanId = null;
         dead = false;
         emerging = false;
+        windowUntil = 0;
+        windowDealt = 0f;
     }
 }
