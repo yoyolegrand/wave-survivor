@@ -229,3 +229,10 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Démonter une tour à la pioche ne laisse pas de ruine ; casser une ruine la supprime.
 - [ ] Reprise de partie : les ruines (type, niveau, variante, dépenses) sont conservées.
 - [ ] Fin du Siège : les ruines disparaissent avec le royaume.
+
+## Engins : tous les niveaux et variantes, pilotage de la baliste
+- [ ] **Tour-catapulte** : modèle différent au niveau 1, au niveau 2 (Renforcée, 24 s) et pour chaque variante de niveau 3 (Infernale, À fragmentation, Trébuchet 36 s : sa poutre a son propre pivot et ses angles +20° → −30°) ; elle suit le Titan et tire seule ; boulets illimités.
+- [ ] **Baliste** : modèle différent au niveau 1, 2 (Consacrée) et pour chaque variante de niveau 3 (Séraphique, Solaire, Du Jugement) ; la corde reste attachée aux ailes ; halo en anneau autour de la tourelle.
+- [ ] **Pilotage** : clic droit sur la baliste = on s'assoit derrière l'arme, caméra légèrement au-dessus (vue dégagée au-dessus du fût), la tourelle et l'arme suivent la souris ; **clic droit maintenu = tir** (16 carreaux, 0,5 s niveau 1, 0,4 s niveau 2 et 3 ; rechargement 10 s / 8 s) ; **Maj = descendre** ; réticule et chargeur à l'écran ; le halo (pilot_hidden_groups) est masqué pour le pilote.
+- [ ] Maj + clic droit (non assis) : fiche d'amélioration ; icônes de la boutique : tour-catapulte et baliste céleste.
+- [ ] Un seul pilote à la fois (message sinon).

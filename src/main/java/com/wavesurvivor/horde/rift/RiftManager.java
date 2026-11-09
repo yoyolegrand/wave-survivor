@@ -481,6 +481,11 @@ public final class RiftManager {
         return active && RiftTitan.active();
     }
 
+    /** Le pilote d'une baliste maintient le clic droit (paquet du client). */
+    public static void engineFire(ServerPlayer p) {
+        if (active && p.level().dimension() == RIFT_DIM) RiftEngines.fireFromSeat(p);
+    }
+
     /** Action de la fiche d'un engin (amélioration, variante). */
     public static void engineSheetAction(ServerPlayer p, int entityId, String action) {
         if (active && p.level().dimension() == RIFT_DIM) RiftEngines.sheetAction(p, entityId, action);

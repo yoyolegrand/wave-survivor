@@ -181,8 +181,21 @@ final class RiftEngines {
         if (!(p.level() instanceof ServerLevel l)) return;
         long now = l.getGameTime();
         if (p.isShiftKeyDown()) { openSheet(p, e); return; }   // Maj + clic droit : fiche de l'engin, amélioration (clic droit seul : tir)
-        if (e.isBallista()) useBallista(p, l, e, now);
-        else say(p, "§7" + nameOf(e) + " : elle vise et tire toute seule. Maj + clic droit : fiche.", now);
+        if (e.isBallista()) {   // clic droit : on s'assoit aux commandes (clic droit maintenu : tir ; Maj : descendre)
+            if (e.getPassengers().isEmpty()) {
+                if (p.startRiding(e)) say(p, "§bBaliste : vise à la souris, clic droit maintenu pour tirer, Maj pour descendre. Munitions : flèches.", now);
+            } else if (!e.hasPassenger(p)) {
+                say(p, "§7Quelqu'un pilote déjà cette baliste.", now);
+            }
+        } else {
+            say(p, "§7" + nameOf(e) + " : elle vise et tire toute seule. Maj + clic droit : fiche.", now);
+        }
+    }
+
+    /** Le pilote assis maintient le clic droit : un tir (cadence, chargeur et rechargement gérés ici). */
+    static void fireFromSeat(ServerPlayer p) {
+        if (!(p.getVehicle() instanceof SiegeEngineEntity e) || !e.isBallista() || !(p.level() instanceof ServerLevel l)) return;
+        useBallista(p, l, e, l.getGameTime());
     }
 
     // ─── Tour-catapulte automatique ───

@@ -77,6 +77,8 @@ public class NetworkHandler {
                 EngineSheetPackets.Sheet::encode, EngineSheetPackets.Sheet::decode, EngineSheetPackets.Sheet::handle);
         CHANNEL.registerMessage(id++, EngineSheetPackets.Action.class,
                 EngineSheetPackets.Action::encode, EngineSheetPackets.Action::decode, EngineSheetPackets.Action::handle);
+        CHANNEL.registerMessage(id++, EngineFirePacket.class,
+                EngineFirePacket::encode, EngineFirePacket::decode, EngineFirePacket::handle);
         CHANNEL.registerMessage(id++, EventFeedPacket.class,
                 EventFeedPacket::encode, EventFeedPacket::decode, EventFeedPacket::handle);
         CHANNEL.registerMessage(id++, OpenAltarBindScreenPacket.class,

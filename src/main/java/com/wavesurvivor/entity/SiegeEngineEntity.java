@@ -106,6 +106,34 @@ public class SiegeEngineEntity extends Entity {
         }
     }
 
+    // ─── Pilotage de la baliste : le joueur s'assoit derrière l'arme (caméra légèrement au-dessus) ───
+
+    @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        return isBallista() && getPassengers().isEmpty() && passenger instanceof Player;
+    }
+
+    @Override
+    public boolean shouldRiderSit() { return true; }
+
+    /** Le pilote est assis derrière l'arme, dans l'axe de sa visée, un peu au-dessus (vue dégagée au-dessus du fût). */
+    @Override
+    protected void positionRider(Entity passenger, Entity.MoveFunction cb) {
+        if (!hasPassenger(passenger)) return;
+        double yaw = Math.toRadians(passenger.getYRot());
+        double fx = -Math.sin(yaw), fz = Math.cos(yaw);
+        cb.accept(passenger, getX() - fx * 0.95, getY() + 0.95, getZ() - fz * 0.95);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        // Serveur : la tourelle et l'arme suivent la visée du pilote
+        if (!level().isClientSide && isBallista() && getFirstPassenger() instanceof ServerPlayer sp) {
+            setAim(sp.getYRot(), Math.max(-60f, Math.min(40f, sp.getXRot())));
+        }
+    }
+
     // ─── Comportement : solide, invulnérable, pilotable au clic droit ───
 
     @Override
