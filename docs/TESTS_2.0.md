@@ -162,3 +162,6 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Cratère temporaire (magma / pierre noire fumants, ~10 s) : n'abîme jamais les blocs posés par les joueurs ; le terrain revient à l'identique.
 - [ ] Vu de près et de loin (le Titan est à ~12 blocs de l'île) : le météore reste visible.
 - [ ] Éditeur, nouvelle page « Météores » : blocs et proportions, taille, rayon, dégâts, nombre (3 + 1 par joueur), annonce (50 t), chute (24 t), traînée (flammes / âme / fumée), cratère oui/non.
+
+## Correctif : /ws skip pendant le Siège
+- [ ] Pendant le Siège, `/ws skip` (Assaut → Calme → Assaut…) : après le dernier assaut prévu (réglage « Assauts »), la Contre-offensive démarre ; plus d'assaut ni de calme en trop.

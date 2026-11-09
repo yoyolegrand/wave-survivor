@@ -1790,6 +1790,13 @@ public final class KingdomManager {
             for (Portal p : PORTALS) p.spawned = p.budget;
             com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), WSLang.c("kingdom.skip_to_calm"),
                     "minecraft:feather", com.wavesurvivor.network.EventFeedPacket.KINGDOM, false);
+            // Faille : le dernier assaut du Siège est passé (même par /ws skip) → Contre-offensive, pas de calme ni d'assaut en plus
+            if (com.wavesurvivor.horde.rift.RiftManager.siegeAssaultsDone(cycle)) {
+                HordeManager.get().clearKingdomMobs();
+                enterHold();
+                com.wavesurvivor.horde.rift.RiftManager.siegeCleared();
+                return true;
+            }
             startCalm(now);
         } else {
             if (RaidManager.isOpen()) { // la Porte du Roi est ouverte : le boss final attend, on ne relance pas d'Assaut
