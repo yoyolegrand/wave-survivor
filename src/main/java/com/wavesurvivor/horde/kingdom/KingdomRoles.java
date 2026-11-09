@@ -100,7 +100,8 @@ public final class KingdomRoles {
     /** Rôles proposés par une horde (le Mineur exige des gisements dans ses événements de chaos). */
     public static Set<Role> availableFor(HordeConfigMultiData h) {
         Set<Role> out = EnumSet.allOf(Role.class);
-        if (!hasDeposits(h)) out.remove(Role.MINER);
+        // Faille : arbres et gisements garantis à chaque Calme (ajoutés par la Faille), même si le chaos de la horde est désactivé
+        if (!hasDeposits(h) && !com.wavesurvivor.horde.rift.RiftManager.isActive()) out.remove(Role.MINER);
         return out;
     }
 
