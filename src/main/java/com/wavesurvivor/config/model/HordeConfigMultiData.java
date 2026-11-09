@@ -396,6 +396,8 @@ public class HordeConfigMultiData {
         /** Fenêtre de vulnérabilité (après une grosse attaque) : durée (s) et total de dégâts maximal par fenêtre (% des PV max). */
         /** Marge (blocs) entre le bord de l'île et le bord du Titan : hors de portée du corps à corps, atteignable à distance. */
         @SerializedName("titanGap") public int titanGap = 12;
+        /** Poing du Titan contre le Monolithe : dégâts bruts infligés à l'intégrité du Monolithe par coup (0 = désactivé). */
+        @SerializedName("titanMonolithDamage") public int titanMonolithDamage = 60;
         @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
         @SerializedName("titanWindowCapPercent") public int titanWindowCapPercent = 8;
         /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */

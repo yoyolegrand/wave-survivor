@@ -226,12 +226,14 @@ final class RiftTitan {
         if (phase >= 1) { pool.add(1); pool.add(1); } // onde de choc
         if (phase >= 2) { pool.add(2); }             // rayon
         if (phase >= 3) { pool.add(3); pool.add(2); } // rugissement
+        if (rs.titanMonolithDamage > 0 && AltarDefenseHook.alive()) { if (phase >= 1) pool.add(5); if (phase >= 3) pool.add(5); } // poing contre le Monolithe
         if (RNG.nextInt(6) == 0 && avatars.size() < 4) pool.add(4);
         switch (pool.get(RNG.nextInt(pool.size()))) {
             case 0 -> meteors(l, now, alive);
             case 1 -> shockwave(l, now);
             case 2 -> beam(l, now);
             case 3 -> roar(l, now);
+            case 5 -> monolithFist(l, now);
             default -> summonAvatars(l);
         }
     }
@@ -261,6 +263,26 @@ final class RiftTitan {
     // ─── Compétences ───
 
     /** Pluie de météores : cercles rouges sous les joueurs, puis impacts. */
+    /** Petit relais : le Monolithe est-il encore défendu (session de défense active) ? */
+    private static final class AltarDefenseHook {
+        static boolean alive() { return com.wavesurvivor.altar.AltarDefense.isActive(); }
+    }
+
+    /** Le Titan abat son poing sur le Monolithe : annoncé (cercle rouge sur le Monolithe), puis coup porté à son intégrité. */
+    private static void monolithFist(ServerLevel l, long now) {
+        BlockPos m = RiftManager.MONOLITH;
+        schedule(l, now, 70, "Le Titan vise le Monolithe !", t -> ring(l, m.getX() + 0.5, m.getY() + 0.2, m.getZ() + 0.5, 3.5, RED, 24), () -> {
+            l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, m.getX() + 0.5, m.getY() + 1, m.getZ() + 0.5, 2, 0.6, 0.6, 0.6, 0);
+            l.playSound(null, m, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
+            com.wavesurvivor.altar.AltarDefense.externalHit(l, rs.titanMonolithDamage);
+            for (ServerPlayer p : alive(l)) {
+                if (Math.hypot(p.getX() - m.getX() - 0.5, p.getZ() - m.getZ() - 0.5) <= 3.5) p.hurt(l.damageSources().explosion(null, titan), 10f);
+                ShakePacket.send(p, 30, 1.0f);
+            }
+            announce(l, "§c§l⚠ Le Monolithe est frappé ! Réparez-le au clic droit.");
+        });
+    }
+
     private static void meteors(ServerLevel l, long now, List<ServerPlayer> alive) {
         int n = 3 + alive.size();
         List<double[]> spots = new ArrayList<>();

@@ -4731,5 +4731,6 @@
   "ui.rift.guard_min": "Guards min",
   "ui.rift.guard_max": "max",
   "ui.rift.guard_boost": "Strength/phase %",
-  "ui.rift.fortress": "Fortress: "
+  "ui.rift.fortress": "Fortress: ",
+  "ui.rift.monolith_hit": "Monolith strike"
 }

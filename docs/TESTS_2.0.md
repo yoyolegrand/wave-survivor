@@ -140,3 +140,8 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Personne à moins de 8 blocs : le catalyseur regagne 2 % de PV par seconde (les chaînes brisées restent brisées).
 - [ ] Le **cœur** n'apparaît dans le donjon qu'après la destruction des 6 catalyseurs.
 - [ ] Les murs et barreaux du plan sont bien raccordés (pas de poteaux isolés) ; pas de blocs flottants.
+
+## Titan — Poing contre le Monolithe
+- [ ] À partir de la phase 2 du Titan : attaque annoncée « Le Titan vise le Monolithe ! » (cercle rouge sur le Monolithe, 3,5 s), puis coup à l'intégrité du Monolithe (60 par défaut) ; joueurs au pied du Monolithe blessés.
+- [ ] Le Monolithe se répare au clic droit ; s'il tombe, défaite de la Faille.
+- [ ] Éditeur, page Titan : « Poing/Monolithe » (0 = désactivé).

@@ -3970,5 +3970,6 @@
   "ui.rift.guard_min": "Gardiens min",
   "ui.rift.guard_max": "max",
   "ui.rift.guard_boost": "Force/phase %",
-  "ui.rift.fortress": "Forteresse : "
+  "ui.rift.fortress": "Forteresse : ",
+  "ui.rift.monolith_hit": "Poing/Monolithe"
 }
