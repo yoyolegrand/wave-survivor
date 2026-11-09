@@ -543,7 +543,7 @@ public class HordeManager {
         MobRegistry.clear();
         KillTracker.stopTracking();
         com.wavesurvivor.horde.benediction.BlessingStats.recordRun(srv, true); // statistiques des bénédictions (1.8)
-        RogueUpgradeManager.clearAllPlayers(srv);
+        if (!riftMid) RogueUpgradeManager.clearAllPlayers(srv); // Faille : les bénédictions de la Horde sont gardées pour le Siège, la Contre-offensive et le Titan
         MerchantSpawner.despawnAll(srv);
         RouletteChestSpawner.despawnAll(srv);
         com.wavesurvivor.horde.rift.RiftManager.onHordeEnd(true); // 2.0 : la Faille prend le relais (pause de fin)

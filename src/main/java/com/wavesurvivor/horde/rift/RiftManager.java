@@ -308,6 +308,7 @@ public final class RiftManager {
         phase = Phase.NONE;
         if (wasHorde) HordeManager.get().stopSilently();
         com.wavesurvivor.altar.AltarDefense.onHordeEnd(server, false);
+        com.wavesurvivor.horde.benediction.RogueUpgradeManager.clearAllPlayers(server); // fin de la Faille : les bénédictions se dissipent
         restoreSpawnRadius();
         ServerLevel rd = server.getLevel(RIFT_DIM);
         if (rd != null) {

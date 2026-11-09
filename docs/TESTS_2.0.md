@@ -99,3 +99,7 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Démonter une tour à la pioche **ne laisse pas** de ruine.
 - [ ] Fin du Siège : les vestiges disparaissent avec le royaume.
 - [ ] Hors Faille (Kingdom normal) : aucune ruine, comportement inchangé.
+
+## Bénédictions conservées Horde → Siège
+- [ ] Les bénédictions obtenues pendant la Horde sont **toujours actives** au Siège, à la Contre-offensive et face au Titan.
+- [ ] Elles se dissipent à la **fin de la Faille** (victoire, défaite ou arrêt).
