@@ -34,11 +34,11 @@ import java.util.UUID;
  * Pilotage : clic droit sur l'engin.
  * <ul>
  *   <li>Catapulte : 1 pierre taillée par boulet, rechargement 30 s (24 s au niveau 2), tir en cloche dans la direction du regard
- *       (accroupi : tir court). Dégâts de zone 80 au centre → 30 % au bord (rayon 4), ×1,5 contre le Titan, les avatars et les structures.</li>
+ *       (la portée dépend de l'inclinaison). Dégâts de zone 80 au centre → 30 % au bord (rayon 4), ×1,5 contre le Titan, les avatars et les structures.</li>
  *   <li>Baliste céleste : chargeur de 16 flèches prises dans l'inventaire, un tir toutes les 0,5 s (0,4 s au niveau 2), rechargement 10 s (8 s),
  *       6 de dégâts par flèche ; elle suit le regard du dernier tireur.</li>
  * </ul>
- * Cadences réglables dans l'éditeur (page Titan). Amélioration : clic droit avec un lingot d'or (niveau 2, puis variante de niveau 3).
+ * Cadences réglables dans l'éditeur (page Titan). Amélioration : Maj + clic droit (niveau 2, puis variante de niveau 3).
  */
 final class RiftEngines {
 
@@ -139,7 +139,7 @@ final class RiftEngines {
     static void onUse(ServerPlayer p, SiegeEngineEntity e) {
         if (!(p.level() instanceof ServerLevel l)) return;
         long now = l.getGameTime();
-        if (p.getMainHandItem().is(Items.GOLD_INGOT)) { upgrade(p, e, now); return; } // lingot d'or en main : amélioration
+        if (p.isShiftKeyDown()) { upgrade(p, e, now); return; }   // Maj + clic droit : amélioration (clic droit seul : tir)
         if (e.isBallista()) useBallista(p, l, e, now); else useCatapult(p, l, e, now);
     }
 
@@ -151,7 +151,7 @@ final class RiftEngines {
             e.setEngineLevel(2);
             e.setReloadTicks(e.isBallista() ? ballistaReload(e) : catapultReload(e));
             if (p.level() instanceof ServerLevel l) l.playSound(null, e.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1f, 1.2f);
-            say(p, "§a" + nameOf(e) + " ! Clic droit avec un lingot d'or pour choisir sa variante.", now);
+            say(p, "§a" + nameOf(e) + " ! Maj + clic droit pour choisir sa variante.", now);
         } else if (e.engineLevel() == 2) {
             choosing.put(p.getUUID(), e.getUUID());
             net.minecraft.network.chat.MutableComponent line = Component.literal("§6Variante (" + UP3[k] + " ◆) : ");
@@ -219,7 +219,7 @@ final class RiftEngines {
         boolean tre = e.engineLevel() >= 3 && e.variant == 3;
         Boulder b = new Boulder();
         b.pos = catapultMuzzle(e);
-        double speed = (p.isShiftKeyDown() ? 1.6 : 2.5) * (e.engineLevel() >= 2 ? 1.1 : 1.0) * (tre ? 1.25 : 1.0);
+        double speed = 2.5 * (e.engineLevel() >= 2 ? 1.1 : 1.0) * (tre ? 1.25 : 1.0);   // la portée se règle avec l'inclinaison du regard
         b.vel = dir.scale(speed);
         b.owner = p.getUUID();
         b.mul = (e.engineLevel() >= 2 ? 1.25f : 1f) * (tre ? 1.6f : 1f);

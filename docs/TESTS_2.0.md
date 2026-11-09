@@ -188,3 +188,9 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Retour en 3 s à sa place (12 blocs du bord de l'île) ; la charge suivante dans 60 s ; les autres attaques reprennent.
 - [ ] Éditeur, page Titan : charge activée, délai, stun, mêlée, impact, empiètement, coup, plafond du stun.
 - [ ] Le Titan mort pendant une charge : tout s'arrête proprement.
+
+## Correctifs : lag du Titan, taille, amélioration des engins
+- [ ] Le Titan (×55 par défaut) apparaît sans les arrêts de ~22 s (« Can't keep up! … 22000ms ») du `latest.log` ; plus de blocage pendant son éveil ni ses attaques.
+- [ ] Le Titan ne reste plus « bloqué » : taille divisée par deux (×55), sa distance au Monolithe diminue avec elle.
+- [ ] Engins : **clic droit = tirer**, **Maj + clic droit = améliorer** (niveau 2, puis choix de la variante). Message à la pose et à l'amélioration.
+- [ ] Catapulte : la portée dépend de l'inclinaison du regard (plus de tir court à Maj).

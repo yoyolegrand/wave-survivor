@@ -127,6 +127,9 @@ final class RiftTitan {
         maxHp = (float) (settings.titanHp * (1.0 + 0.6 * Math.max(0, players - 1)));
         mob.setNoAi(true);
         mob.setNoGravity(true);
+        // Évite le gros lag : un Titan géant testait sans cesse des milliers de blocs autour de lui (« dans un mur ? »), ce qui chargeait
+        // de force des dizaines de chunks vides à chaque tick. Sans collisions, ce test est sauté.
+        mob.noPhysics = true;
         mob.setPersistenceRequired();
         mob.setInvulnerable(true);   // le temps de l'éveil
         if (mob.getAttribute(Attributes.MAX_HEALTH) != null) mob.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);

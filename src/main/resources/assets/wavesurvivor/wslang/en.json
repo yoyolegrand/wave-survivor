@@ -4721,7 +4721,7 @@
   "rift.engine.only_rift": "§cSiege engines only work in the Rift.",
   "rift.engine.no_room": "§cNot enough room (or unstable ground) to place this engine here.",
   "rift.engine.too_far": "§cPlace the engine on the island, away from the edge.",
-  "rift.engine.placed": "§aSiege engine placed!",
+  "rift.engine.placed": "§aSiege engine placed! Right-click: fire · Shift + right-click: upgrade.",
   "ui.rift.window_s": "Window (s)",
   "ui.rift.window_cap": "Window cap %",
   "rift.ruin.rebuilt": "§aTower rebuilt (level 1) for {0} ◆.",
