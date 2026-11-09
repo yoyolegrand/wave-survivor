@@ -17,6 +17,13 @@ Référence complète : `docs/DESIGN_FAILLE_2_0.md`. Le code est en place avec d
 6. **Ruines réparables** (bâtiments détruits) : visuel des vestiges.
 7. **Visuels déjà validés à ranger dans `docs/faille/`** : `portail_faille_antre.png`, `portail_faille_antre_3d*.png`, `faille_animation_storyboard.png`, `faille_vide_anime.gif`, `catapulte.png`, `baliste_celeste.png`, `catapulte_animation.png`, `baliste_animation.png`.
 
+## Ajouts depuis (mise à jour)
+- **Icônes d'objet 16×16** (boutique) : « Catapulte de siège » et « Baliste céleste de siège » (aujourd'hui des icônes vanilla provisoires : `models/item/siege_catapult.json` et `siege_ballista.json`).
+- **Vestiges de tour** (ruine réparable) : aujourd'hui des briques de deepslate fissurées ; visuel / bloc dédié à fournir.
+- **Porte de la forteresse** (la Porte unique du Siège, devant la porte de la forteresse) : forme et thème visuel à valider.
+- **Titan à découvert** (fenêtre de vulnérabilité) : effet visuel / animation à proposer (aujourd'hui : lueur et barre rouge).
+- **Textes anglais** pour CurseForge / Modrinth : description de La Faille, entrée du CHANGELOG 2.0, légendes des captures.
+
 ## Pas encore codé côté Claude Code
 - Achat de tours et bâtiments du Kingdom dans la Faille (dépend du moteur du Kingdom : plan à valider avec Yoann).
 - Sauvegarde et reprise, améliorations des engins, fenêtres de vulnérabilité du Titan au corps à corps.
