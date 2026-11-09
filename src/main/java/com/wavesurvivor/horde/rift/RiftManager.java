@@ -369,6 +369,7 @@ public final class RiftManager {
 
     private static void buildIsland(ServerLevel l) {
         clearIsland(l);
+        if (RiftIsland.place(l, radius)) return;   // plan définitif de l'île ; sinon île provisoire ci-dessous
         int y = CENTER.getY();
         BlockState tileA = Blocks.POLISHED_DEEPSLATE.defaultBlockState(), tileB = Blocks.DEEPSLATE_TILES.defaultBlockState();
         BlockState rock = Blocks.DEEPSLATE.defaultBlockState(), edge = Blocks.OBSIDIAN.defaultBlockState();
@@ -524,7 +525,7 @@ public final class RiftManager {
                 if (growCur < growTarget) {
                     if (now >= growNextAt) {
                         int to = Math.min(growTarget, growCur + 2);
-                        RiftFortress.islandRing(rd, growCur, to);
+                        if (!RiftIsland.ring(rd, growCur, to, growTarget)) RiftFortress.islandRing(rd, growCur, to);
                         growCur = to;
                         radius = to;
                         growNextAt = now + 8;

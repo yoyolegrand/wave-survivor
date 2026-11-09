@@ -122,3 +122,11 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Monolithe détruit pendant la Contre-offensive ou le Titan → défaite de la Faille.
 - [ ] Fin de Faille (victoire, défaite ou /ws rift stop) : le royaume (boutique, défenses, trésor) est retiré proprement, récompenses de fin versées une seule fois.
 - [ ] Prévu plus tard : attaques du Titan contre le Monolithe (point d'entrée existant : `AltarDefense.externalHit(level, dégâts)`).
+
+## Île définitive (plans de Claude Chat)
+- [ ] Faille ouverte : l'île de départ (rayon 16) est le plan définitif (place aux runes, anneau doré, pylônes d'améthyste, rebord d'obsidienne, cône du dessous). Le Monolithe est bien au centre, au-dessus du bloc de surface.
+- [ ] Horde : dessus plat et dégagé ; arbres, gisements, arrivée des joueurs (sud du Monolithe) corrects.
+- [ ] Siège, agrandissement 16 → 32 (et 32 → 48 si le rayon final est 48) : anneaux du centre vers le bord, briques de deepslate, **8 veines de Faille** (teal / violet) plaquées au sol, roche brute et débris flottants au-delà de 32.
+- [ ] Le pont de la forteresse se raccorde bien au bord de l'île ; les engins se posent sur le sol de l'île.
+- [ ] Rayons non standard (ex. 24) : l'île est tronquée au rayon réglé (plan du rayon supérieur).
+- [ ] Pas de gros à-coup au premier anneau (rayon 48 : ~430 Ko de plan).
