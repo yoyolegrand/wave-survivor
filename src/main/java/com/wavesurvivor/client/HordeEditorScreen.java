@@ -1986,7 +1986,7 @@ public class HordeEditorScreen extends Screen {
         y += 26;
         flow(x, y);
         fl(t("ui.rift.titan_scale"));
-        fDbl(36, HordeJson.dbl(r, "titanScale", 55.0), v -> r.addProperty("titanScale", Math.max(2.0, Math.min(250.0, v))));
+        fDbl(36, HordeJson.dbl(r, "titanScale", 27.0), v -> r.addProperty("titanScale", Math.max(2.0, Math.min(250.0, v))));
         fl(t("ui.rift.titan_hp"));
         fInt(40, HordeJson.num(r, "titanHp", 3000), v -> r.addProperty("titanHp", Math.max(100, Math.min(200000, v))));
         fl(t("ui.rift.titan_cap"));
