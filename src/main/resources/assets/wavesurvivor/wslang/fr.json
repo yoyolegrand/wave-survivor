@@ -3998,5 +3998,13 @@
   "ui.rift.hint_meteors": "§8Blocs : « id=poids, … » (ex. magma_block=3, obsidian=1). Le météore apparaît dans le ciel côté Titan environ 1,2 s avant l'impact et tombe en diagonale. Le cratère ne touche jamais les blocs posés par les joueurs.",
   "ui.rift.cata_reload": "Catapulte rech. (t) N1/N2",
   "ui.rift.bal_interval": "Baliste tir (t) N1/N2",
-  "ui.rift.bal_reload": "rech. (t) N1/N2"
+  "ui.rift.bal_reload": "rech. (t) N1/N2",
+  "ui.rift.charge_on": "Charge activée",
+  "ui.rift.charge_interval": "Toutes les (s)",
+  "ui.rift.charge_stun": "Stun (s)",
+  "ui.rift.charge_melee": "Mêlée (s)",
+  "ui.rift.charge_damage": "Impact",
+  "ui.rift.charge_reach": "Empiètement",
+  "ui.rift.melee_damage": "Coup",
+  "ui.rift.charge_cap": "Plafond stun %"
 }

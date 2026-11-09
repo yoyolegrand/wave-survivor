@@ -178,3 +178,13 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 ## Correctif : taille réelle du Titan
 - [ ] Le Titan fait bien la taille réglée (×110 par défaut : ~300 blocs de haut) et non ~15 blocs ; son bord est à ~12 blocs de l'île.
 - [ ] Dans `latest.log` : « Titan … (demandé x110, appliqué x110 …) » ; un avertissement apparaît si Pehkui limite la taille.
+
+## Titan — charge sur l'île
+- [ ] À chaque palier de PV (75 / 50 / 25 %) puis toutes les 60 s dès la phase 3 : « Le Titan prend son élan ! », la zone d'impact rouge se dessine et se remplit sur le bord sud de l'île (3 s).
+- [ ] Élan (1 s) : le Titan avance, l'écran tremble ; son bord nord arrive ~14 blocs à l'intérieur de l'île.
+- [ ] Impact : gros tremblement pour tous ; les joueurs dans la zone prennent 24 dégâts et sont repoussés vers le Monolithe ; les autres ne sont pas touchés.
+- [ ] Stun (6 s) : Titan à terre (lueur, barre rouge), attaquable au corps à corps (×1,5, plafond 15 % des PV max pour le stun) ; il ne lance aucune autre attaque.
+- [ ] Éveil puis corps à corps (10 s) : coups annoncés (cercle rouge de 5 blocs, 1,2 s) sur les joueurs, 18 dégâts et recul.
+- [ ] Retour en 3 s à sa place (12 blocs du bord de l'île) ; la charge suivante dans 60 s ; les autres attaques reprennent.
+- [ ] Éditeur, page Titan : charge activée, délai, stun, mêlée, impact, empiètement, coup, plafond du stun.
+- [ ] Le Titan mort pendant une charge : tout s'arrête proprement.

@@ -76,6 +76,13 @@ final class RiftTitan {
     private static final List<Pending> pending = new ArrayList<>();
     private static final Set<UUID> avatars = new HashSet<>();
     private static int phase;
+    /** Charge sur l'île : 0 repos, 1 annonce, 2 élan, 3 stun, 4 corps à corps, 5 retour. */
+    private static int charge;
+    private static long chargeAt, nextChargeAt, nextMeleeAt;
+    private static boolean chargeDue, stunning;
+    private static double chargeTargetZ;
+    private static double[] zone;   // {xMin, xMax, zMin, zMax} de la zone d'impact (monde)
+    private static final List<double[]> strikes = new ArrayList<>();   // coups au corps à corps annoncés : {x, z, tir à (tick)}
     private static long nextSkillAt, emergeUntil, windowUntil;
     private static float windowDealt;
     private static boolean dead, emerging;
@@ -137,6 +144,11 @@ final class RiftTitan {
         titanId = mob.getUUID();
         emerging = true;
         emergeUntil = l.getServer().getTickCount() + 220;
+        charge = 0;
+        chargeDue = false;
+        stunning = false;
+        strikes.clear();
+        nextChargeAt = l.getServer().getTickCount() + 220 + Math.max(10, settings.titanChargeInterval) * 20L;
         bar = new ServerBossEvent(Component.literal("§5§lTitan de la Faille"), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
         bar.setProgress(1f);
         for (ServerPlayer p : l.players()) bar.addPlayer(p);
@@ -203,6 +215,7 @@ final class RiftTitan {
             l.playSound(null, RiftManager.CENTER, SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 8f, 0.5f);
             summonAvatars(l);
             nextSkillAt = now + 80;
+            if (rs.titanCharge && phase >= 1) chargeDue = true;   // chaque palier de PV (75 / 50 / 25 %) déclenche une charge
         }
         // Attaques annoncées en cours
         for (Pending p : new ArrayList<>(pending)) {
@@ -217,7 +230,8 @@ final class RiftTitan {
             }
         }
         // Choix de la prochaine attaque
-        if (now >= nextSkillAt && pending.size() < 2) {
+        chargeTick(l, now);
+        if (now >= nextSkillAt && pending.size() < 2 && charge == 0) {
             nextSkillAt = now + GAP[phase] + RNG.nextInt(40);
             List<ServerPlayer> alive = alive(l);
             if (!alive.isEmpty()) chooseSkill(l, now, alive);
@@ -643,7 +657,7 @@ final class RiftTitan {
     static float capDamage(float amount, long now) {
         if (windowUntil > 0 && now < windowUntil) {
             // Fenêtre de vulnérabilité : dégâts ×1,5, mais total plafonné pour la fenêtre entière
-            float room = Math.max(0f, (float) (maxHp * rs.titanWindowCapPercent / 100.0) - windowDealt);
+            float room = Math.max(0f, (float) (maxHp * (stunning ? rs.titanChargeCapPercent : rs.titanWindowCapPercent) / 100.0) - windowDealt);
             float out = Math.min(amount * 1.5f, room);
             windowDealt += out;
             return out;
@@ -672,7 +686,163 @@ final class RiftTitan {
         announce(l, "§aUn avatar est tombé : le Titan perd " + rs.titanAvatarPercent + " % de ses PV max !");
     }
 
+    // ─── La charge : le Titan fonce sur l'île, tremblement, stun, corps à corps, puis retourne à sa place ───
+
+    private static double halfWidth() {
+        EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(rs.titanEntity));
+        return (t != null ? t.getWidth() : 1.4) * rs.titanScale * 0.5;
+    }
+
+    private static void chargeTick(ServerLevel l, long now) {
+        if (charge == 0) {
+            if (!rs.titanCharge || titan == null || !pending.isEmpty()) return;
+            if (chargeDue || (phase >= 2 && now >= nextChargeAt)) startCharge(l, now);
+            return;
+        }
+        BlockPos c = RiftManager.CENTER;
+        switch (charge) {
+            case 1 -> {   // annonce : la zone d'impact se dessine sur le bord sud de l'île, puis se remplit
+                if (now % 4 == 0) {
+                    double f = Math.min(1.0, 1.0 - (chargeAt - now) / 60.0);
+                    for (double x = zone[0]; x <= zone[1]; x += 3) {
+                        l.sendParticles(RED, x, c.getY() + 1.1, zone[2], 1, 0, 0, 0, 0);
+                        l.sendParticles(RED, x, c.getY() + 1.1, zone[3], 1, 0, 0, 0, 0);
+                    }
+                    for (double z = zone[2]; z <= zone[2] + (zone[3] - zone[2]) * f; z += 2) {
+                        for (double x = zone[0]; x <= zone[1]; x += 4) l.sendParticles(RED, x, c.getY() + 1.1, z, 1, 0.3, 0, 0.3, 0);
+                    }
+                    if (now % 20 == 0) for (ServerPlayer p : alive(l)) p.displayClientMessage(Component.literal("§c⚠ Le Titan va charger l'île ! Quittez la zone rouge !"), true);
+                }
+                if (now >= chargeAt) { charge = 2; chargeAt = now + 20; }
+            }
+            case 2 -> {   // élan : le Titan avance vers l'île
+                double f = 1.0 - (chargeAt - now) / 20.0;
+                f = Math.max(0, Math.min(1, f));
+                double s = f * f * (3 - 2 * f);
+                titan.setPos(baseX, baseY, baseZ + (chargeTargetZ - baseZ) * s);
+                if (now % 2 == 0) for (ServerPlayer p : l.players()) ShakePacket.send(p, 6, 0.8f);
+                if (now >= chargeAt) impact(l, now);
+            }
+            case 3 -> {   // stun : à terre, vulnérable au corps à corps
+                if (now >= chargeAt) {
+                    stunning = false;
+                    windowUntil = 0;
+                    titan.setGlowingTag(false);
+                    if (bar != null) bar.setColor(BossEvent.BossBarColor.PURPLE);
+                    announce(l, "§5§l⚔ Le Titan se réveille !");
+                    for (ServerPlayer p : l.players()) ShakePacket.send(p, 40, 1.2f);
+                    charge = 4;
+                    chargeAt = now + Math.max(2, rs.titanChargeMelee) * 20L;
+                    nextMeleeAt = now + 30;
+                }
+            }
+            case 4 -> {   // corps à corps : coups annoncés sur la moitié sud de l'île
+                meleeTick(l, now);
+                if (now >= chargeAt) {
+                    strikes.clear();
+                    charge = 5;
+                    chargeAt = now + 60;
+                    announce(l, "§7Le Titan recule…");
+                }
+            }
+            default -> {   // retour à sa place
+                double f = 1.0 - (chargeAt - now) / 60.0;
+                f = Math.max(0, Math.min(1, f));
+                double s = f * f * (3 - 2 * f);
+                titan.setPos(baseX, baseY, chargeTargetZ + (baseZ - chargeTargetZ) * s);
+                if (now >= chargeAt) {
+                    titan.setPos(baseX, baseY, baseZ);
+                    charge = 0;
+                    nextChargeAt = now + Math.max(10, rs.titanChargeInterval) * 20L;
+                    nextSkillAt = now + 60;
+                }
+            }
+        }
+    }
+
+    private static void startCharge(ServerLevel l, long now) {
+        chargeDue = false;
+        pending.clear();
+        strikes.clear();
+        BlockPos c = RiftManager.CENTER;
+        int sr = siegeRadius;
+        double reach = Math.max(4, rs.titanChargeReach);
+        // Le bord nord du Titan arrive à « reach » blocs à l'intérieur de l'île
+        chargeTargetZ = c.getZ() + 0.5 + sr - reach + halfWidth();
+        double hw = Math.min(halfWidth(), sr + 4);
+        zone = new double[]{c.getX() + 0.5 - hw, c.getX() + 0.5 + hw, c.getZ() + 0.5 + sr - reach - 4, c.getZ() + 0.5 + sr + 6};
+        charge = 1;
+        chargeAt = now + 60;
+        titan.setGlowingTag(true);
+        announce(l, "§c§l⚠ Le Titan prend son élan !");
+        l.playSound(null, c, SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 8f, 0.4f);
+        for (ServerPlayer p : l.players()) ShakePacket.send(p, 40, 0.8f);
+    }
+
+    /** L'impact : tremblement, dégâts et recul des joueurs trop proches de la zone, puis stun. */
+    private static void impact(ServerLevel l, long now) {
+        BlockPos c = RiftManager.CENTER;
+        double zc = (zone[2] + zone[3]) / 2, xc = c.getX() + 0.5;
+        l.playSound(null, c, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 10f, 0.4f);
+        l.playSound(null, c, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.HOSTILE, 6f, 0.5f);
+        for (double x = zone[0]; x <= zone[1]; x += 5) {
+            l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, x, c.getY() + 1, zone[2] + 3, 1, 0, 0, 0, 0);
+            l.sendParticles(ParticleTypes.CLOUD, x, c.getY() + 1.2, zone[2] + 3, 12, 2, 0.3, 2, 0.1);
+        }
+        for (ServerPlayer p : l.players()) {
+            ShakePacket.send(p, 90, 1.8f);
+            if (p.isSpectator() || !p.isAlive()) continue;
+            if (p.getX() >= zone[0] && p.getX() <= zone[1] && p.getZ() >= zone[2] && p.getZ() <= zone[3]) {
+                p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.titanChargeDamage));
+                p.setDeltaMovement(0, 0.9, -1.7);   // repoussé vers le Monolithe
+                p.hurtMarked = true;
+            }
+        }
+        charge = 3;
+        chargeAt = now + Math.max(2, rs.titanChargeStun) * 20L;
+        stunning = true;
+        windowUntil = chargeAt;
+        windowDealt = 0f;
+        titan.setGlowingTag(true);
+        if (bar != null) bar.setColor(BossEvent.BossBarColor.RED);
+        announce(l, "§c§l⚔ Le Titan est à terre ! Frappez-le maintenant (" + rs.titanChargeStun + " s) !");
+    }
+
+    private static void meleeTick(ServerLevel l, long now) {
+        BlockPos c = RiftManager.CENTER;
+        // Annonce d'un nouveau coup toutes les 2,5 s : sur un joueur de la zone sud de l'île
+        if (now >= nextMeleeAt) {
+            nextMeleeAt = now + 50;
+            List<ServerPlayer> al = alive(l);
+            if (!al.isEmpty()) {
+                ServerPlayer t = al.get(RNG.nextInt(al.size()));
+                strikes.add(new double[]{t.getX(), t.getZ(), now + 25});
+            }
+        }
+        for (double[] s : new ArrayList<>(strikes)) {
+            if (now % 3 == 0) ring(l, s[0], c.getY() + 1, s[1], 5.0, RED, 24);
+            if (now >= s[2]) {
+                strikes.remove(s);
+                l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, s[0], c.getY() + 1, s[1], 1, 0, 0, 0, 0);
+                l.playSound(null, BlockPos.containing(s[0], c.getY(), s[1]), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 5f, 0.6f);
+                for (ServerPlayer p : l.players()) {
+                    double d = Math.hypot(p.getX() - s[0], p.getZ() - s[1]);
+                    if (d < 40) ShakePacket.send(p, 20, 1.0f);
+                    if (!p.isSpectator() && p.isAlive() && d <= 5.2 && Math.abs(p.getY() - c.getY()) < 5) {
+                        p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.titanMeleeDamage));
+                        double dx = p.getX() - s[0], dz = p.getZ() - s[1], len = Math.max(0.5, Math.hypot(dx, dz));
+                        p.setDeltaMovement(dx / len * 1.0, 0.6, dz / len * 1.0);
+                        p.hurtMarked = true;
+                    }
+                }
+            }
+        }
+    }
+
     private static void onTitanDeath(ServerLevel l) {
+        charge = 0;
+        stunning = false;
+        strikes.clear();
         dead = true;
         pending.clear();
         clearMeteors(l);
@@ -693,6 +863,10 @@ final class RiftTitan {
     /** Retire le Titan, sa barre et ses avatars (fin de la Faille). */
     static void clear(ServerLevel l) {
         clearMeteors(l);
+        charge = 0;
+        chargeDue = false;
+        stunning = false;
+        strikes.clear();
         if (titan != null && !titan.isRemoved()) titan.discard();
         for (UUID id : new ArrayList<>(avatars)) {
             Entity e = l.getEntity(id);

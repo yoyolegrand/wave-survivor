@@ -416,6 +416,16 @@ public class HordeConfigMultiData {
         @SerializedName("ballistaInterval2") public int ballistaInterval2 = 8;
         @SerializedName("ballistaReload1") public int ballistaReload1 = 200;
         @SerializedName("ballistaReload2") public int ballistaReload2 = 160;
+        /** Charge du Titan sur l'île : activée, délai entre deux charges (s), stun (s), corps à corps (s), dégâts de l'impact, empiétement sur l'île (blocs),
+         *  dégâts d'un coup au corps à corps, plafond de dégâts pendant le stun (% des PV max). */
+        @SerializedName("titanCharge") public boolean titanCharge = true;
+        @SerializedName("titanChargeInterval") public int titanChargeInterval = 60;
+        @SerializedName("titanChargeStun") public int titanChargeStun = 6;
+        @SerializedName("titanChargeMelee") public int titanChargeMelee = 10;
+        @SerializedName("titanChargeDamage") public int titanChargeDamage = 24;
+        @SerializedName("titanChargeReach") public int titanChargeReach = 14;
+        @SerializedName("titanMeleeDamage") public int titanMeleeDamage = 18;
+        @SerializedName("titanChargeCapPercent") public int titanChargeCapPercent = 15;
         @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
         @SerializedName("titanWindowCapPercent") public int titanWindowCapPercent = 8;
         /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */

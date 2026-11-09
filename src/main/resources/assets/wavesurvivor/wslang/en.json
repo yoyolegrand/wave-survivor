@@ -4759,5 +4759,13 @@
   "ui.rift.hint_meteors": "§8Blocks: \"id=weight, ...\" (e.g. magma_block=3, obsidian=1). The meteor appears in the sky on the Titan side about 1.2 s before impact and falls diagonally. The crater never touches player-placed blocks.",
   "ui.rift.cata_reload": "Catapult reload (t) L1/L2",
   "ui.rift.bal_interval": "Ballista shot (t) L1/L2",
-  "ui.rift.bal_reload": "reload (t) L1/L2"
+  "ui.rift.bal_reload": "reload (t) L1/L2",
+  "ui.rift.charge_on": "Charge enabled",
+  "ui.rift.charge_interval": "Every (s)",
+  "ui.rift.charge_stun": "Stun (s)",
+  "ui.rift.charge_melee": "Melee (s)",
+  "ui.rift.charge_damage": "Impact",
+  "ui.rift.charge_reach": "Overlap",
+  "ui.rift.melee_damage": "Strike",
+  "ui.rift.charge_cap": "Stun cap %"
 }
