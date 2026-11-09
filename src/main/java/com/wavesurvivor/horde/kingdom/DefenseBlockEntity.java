@@ -20,6 +20,17 @@ public class DefenseBlockEntity extends BlockEntity {
     /** Spécialisation choisie au niveau 3 (« » sinon) — affichée par le rendu 3D. */
     private String variant = "";
 
+    /** Faille : bâtiment en ruine (vestiges), sans tir ni effet ; réparable au clic droit. Synchronisé au client pour le rendu abîmé. */
+    private boolean ruined = false;
+
+    public boolean isRuined() { return ruined; }
+
+    public void setRuined(boolean r) {
+        this.ruined = r;
+        setChanged();
+        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
     public String getVariant() { return variant; }
 
     public void setVariant(String v) {
@@ -87,6 +98,7 @@ public class DefenseBlockEntity extends BlockEntity {
         super.load(tag);
         if (tag.contains("DefLevel")) defLevel = tag.getInt("DefLevel");
         variant = tag.getString("DefVariant");
+        ruined = tag.getBoolean("DefRuined");
         hp = tag.getFloat("DefHp");
         maxHp = tag.getFloat("DefMaxHp");
         if (tag.contains("Storage")) storage.fromTag(tag.getList("Storage", net.minecraft.nbt.Tag.TAG_COMPOUND));
@@ -98,6 +110,7 @@ public class DefenseBlockEntity extends BlockEntity {
         super.saveAdditional(tag);
         tag.putInt("DefLevel", defLevel);
         tag.putString("DefVariant", variant);
+        tag.putBoolean("DefRuined", ruined);
         tag.putFloat("DefHp", hp);
         tag.putFloat("DefMaxHp", maxHp);
         tag.put("Storage", storage.createTag());
@@ -110,6 +123,7 @@ public class DefenseBlockEntity extends BlockEntity {
         CompoundTag tag = new CompoundTag();
         tag.putInt("DefLevel", defLevel);
         tag.putString("DefVariant", variant);
+        tag.putBoolean("DefRuined", ruined);
         tag.putFloat("DefHp", hp);
         tag.putFloat("DefMaxHp", maxHp);
         return tag;

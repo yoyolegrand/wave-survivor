@@ -455,6 +455,11 @@ public final class RiftManager {
         return active && RiftTitan.hurtTitan(source, amount);
     }
 
+    /** Réparation des ruines du Kingdom : pourcentage des ressources investies à payer (réglable dans l'éditeur). */
+    public static int ruinRepairPercent() {
+        return active ? settings().ruinRepairPercent : 50;
+    }
+
     /** Un point faible du Titan vient d'être détruit. */
     static void titanCrystalDown(ServerLevel l) {
         if (active) RiftTitan.crystalDown(l);

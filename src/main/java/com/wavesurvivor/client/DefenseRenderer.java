@@ -60,6 +60,17 @@ public class DefenseRenderer implements BlockEntityRenderer<DefenseBlockEntity> 
         int lt = LevelRenderer.getLightColor(lvl, be.getBlockPos().above());
         float t = (lvl.getGameTime() % 24000L) + pt;
         int level = be.getDefLevel();
+        boolean ruined = be.isRuined();
+        float height = switch (be.kind()) {
+            case ARCHER -> 9.6f;
+            case MAGE -> 4.3f;
+            case SHRINE -> 3.2f;
+            case BARRACKS -> 4.3f;
+            case COLLECTOR -> 3.9f;
+            case WORKSHOP -> 1.9f;
+        };
+        if (ruined) RuinFilter.begin(be.getBlockPos(), height);   // vestiges : le dessin normal, abîmé
+        try {
         switch (be.kind()) {
             case ARCHER -> archer(pose, buf, lt, level, t, lvl);
             case MAGE -> mage(pose, buf, lt, level, t, lvl);
@@ -75,6 +86,13 @@ public class DefenseRenderer implements BlockEntityRenderer<DefenseBlockEntity> 
             }
             case COLLECTOR -> collector(pose, buf, lt, level, t);
             case WORKSHOP -> workshop(pose, buf, lt, level, t);
+        }
+        } finally {
+            if (ruined) RuinFilter.end();
+        }
+        if (ruined) {   // éboulis et poutre calcinée ; ni barre de PV ni emblème
+            debris(pose, buf, lt, be.kind());
+            return;
         }
         // Barre de PV au-dessus de la structure
         float barY = switch (be.kind()) {
@@ -146,11 +164,43 @@ public class DefenseRenderer implements BlockEntityRenderer<DefenseBlockEntity> 
         pose.popPose();
     }
 
+    // ─── Vestiges ───
+
+    /** 8 à 12 éboulis autour de la base et une poutre calcinée couchée en travers (positions stables : RuinFilter.rnd). */
+    private void debris(PoseStack pose, MultiBufferSource buf, int light, com.wavesurvivor.horde.kingdom.DefenseBlock.Kind kind) {
+        float w = switch (kind) {
+            case ARCHER -> 2.0f;
+            case BARRACKS -> 4.0f;
+            case WORKSHOP -> 2.0f;
+            default -> 1.0f;
+        };
+        float d = kind == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.BARRACKS ? 3.0f : w;
+        float ox = kind == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.ARCHER || kind == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.BARRACKS
+                || kind == com.wavesurvivor.horde.kingdom.DefenseBlock.Kind.WORKSHOP ? 0.0f : 0.0f;
+        int n = 8 + (int) (RuinFilter.rnd(900) * 5);
+        BlockState[] mats = {Blocks.COBBLESTONE.defaultBlockState(), Blocks.CRACKED_STONE_BRICKS.defaultBlockState(), Blocks.DEEPSLATE.defaultBlockState()};
+        for (int i = 0; i < n; i++) {
+            float s = 0.2f + 0.3f * RuinFilter.rnd(910 + i);
+            float x = ox - 0.5f + (w + 1.0f) * RuinFilter.rnd(930 + i);
+            float z = -0.5f + (d + 1.0f) * RuinFilter.rnd(950 + i);
+            cube(pose, buf, light, mats[(int) (RuinFilter.rnd(970 + i) * mats.length) % mats.length], x, 1.0f, z, s, s * 0.8f, s);
+        }
+        spinBox(pose, buf, light, Blocks.STRIPPED_DARK_OAK_LOG.defaultBlockState(), ox + w / 2, 1.0f, d / 2, 2.0f, 0.25f, 0.25f, RuinFilter.rnd(990) * 120f - 20f);
+    }
+
     // ─── Outils ───
 
     /** Bloc mis à l'échelle : coin (x, y, z), tailles (sx, sy, sz), en fractions de bloc. */
     private void cube(PoseStack pose, MultiBufferSource buf, int light, BlockState st,
                       float x, float y, float z, float sx, float sy, float sz) {
+        if (RuinFilter.active) {   // vestiges : murs déchiquetés, matériaux fissurés, pièces lumineuses supprimées
+            if (light == GLOW) return;
+            float lim = RuinFilter.limit();
+            if (y >= lim) return;
+            if (y + sy > lim) sy = lim - y;
+            st = RuinFilter.ruined(st);
+            if (st == null) return;
+        }
         pose.pushPose();
         pose.translate(x, y, z);
         pose.scale(sx, sy, sz);
@@ -161,6 +211,7 @@ public class DefenseRenderer implements BlockEntityRenderer<DefenseBlockEntity> 
     /** Bloc centré en (cx, cy, cz), taille s, tourné (Y puis X puis Z). */
     private void spun(PoseStack pose, MultiBufferSource buf, int light, BlockState st,
                       float cx, float cy, float cz, float s, float ry, float rx, float rz) {
+        if (RuinFilter.active) return;
         pose.pushPose();
         pose.translate(cx, cy, cz);
         pose.mulPose(Axis.YP.rotationDegrees(ry));
@@ -175,6 +226,7 @@ public class DefenseRenderer implements BlockEntityRenderer<DefenseBlockEntity> 
     /** Bloc centré, aplati (sx, sy, sz) et tourné autour de Y — pour les disques et segments qui pivotent. */
     private void spinBox(PoseStack pose, MultiBufferSource buf, int light, BlockState st,
                          float cx, float cy, float cz, float sx, float sy, float sz, float ry) {
+        if (RuinFilter.active) return;
         pose.pushPose();
         pose.translate(cx, cy, cz);
         pose.mulPose(Axis.YP.rotationDegrees(ry));
@@ -196,6 +248,7 @@ public class DefenseRenderer implements BlockEntityRenderer<DefenseBlockEntity> 
 
     private void item(PoseStack pose, MultiBufferSource buf, int light, Level lvl, ItemStack st,
                       float x, float y, float z, float scale, float ry, float rz) {
+        if (RuinFilter.active) return;
         pose.pushPose();
         pose.translate(x, y, z);
         pose.mulPose(Axis.YP.rotationDegrees(ry));

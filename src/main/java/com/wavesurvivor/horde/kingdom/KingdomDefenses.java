@@ -286,6 +286,7 @@ public final class KingdomDefenses {
      * sont retrouvés par leur forme (toujours la même autour du socle) et retirés aussi.
      */
     static void unregister(net.minecraft.world.level.Level l, BlockPos pos, DefenseBlock.Kind kind) {
+        RUINS.remove(pos);   // un vestige démonté à la pioche n'est plus réparable (une nouvelle ruine est recréée si c'est une défense détruite)
         if (!DEFS.containsKey(pos) && l != null) {
             for (BlockPos c : colliderPositions(kind, pos)) {
                 if (COLLIDERS.containsKey(c)) continue; // appartient à une autre défense active
@@ -306,7 +307,7 @@ public final class KingdomDefenses {
         }
         if (d != null && !demolishing && level != null && com.wavesurvivor.horde.rift.RiftManager.kingdomSiege()) {
             Long t = PLAYER_BREAK.remove(pos);
-            if (t == null || level.getGameTime() - t > 60) leaveRuin(pos.immutable(), d.kind); // détruite (pas démontée par un joueur) : vestiges
+            if (t == null || level.getGameTime() - t > 60) leaveRuin(pos.immutable(), d); // détruite (pas démontée par un joueur) : vestiges
         }
         if (d != null) {
             discardSoldiers(d);
@@ -351,6 +352,21 @@ public final class KingdomDefenses {
         }
         t.put("traps", traps);
         t.putInt("gates", GATES.size());
+        net.minecraft.nbt.ListTag ruins = new net.minecraft.nbt.ListTag();
+        for (var en : RUINS.entrySet()) {
+            net.minecraft.nbt.CompoundTag e = new net.minecraft.nbt.CompoundTag();
+            Ruin r = en.getValue();
+            e.putLong("pos", en.getKey().asLong());
+            e.putString("kind", r.kind().name());
+            e.putInt("level", r.level());
+            e.putString("variant", r.variant() == null ? "" : r.variant());
+            e.putString("order", r.order() == null ? "" : r.order());
+            net.minecraft.nbt.CompoundTag sp = new net.minecraft.nbt.CompoundTag();
+            r.spent().forEach((res, n) -> sp.putInt(res.name(), n));
+            e.put("spent", sp);
+            ruins.add(e);
+        }
+        t.put("ruins", ruins);
         return t;
     }
 
@@ -400,13 +416,31 @@ public final class KingdomDefenses {
             l.setBlock(pos, block.defaultBlockState(), 3);
             registerTrap(l, pos);
         }
+        net.minecraft.nbt.ListTag ruins = t.getList("ruins", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        for (int i = 0; i < ruins.size(); i++) {
+            net.minecraft.nbt.CompoundTag e = ruins.getCompound(i);
+            BlockPos pos = BlockPos.of(e.getLong("pos"));
+            DefenseBlock.Kind kind;
+            try { kind = DefenseBlock.Kind.valueOf(e.getString("kind")); } catch (IllegalArgumentException ex) { continue; }
+            var cur = l.getBlockState(pos);
+            if (!cur.isAir() && !cur.canBeReplaced()) continue;
+            java.util.EnumMap<KingdomTreasury.Res, Integer> spent = new java.util.EnumMap<>(KingdomTreasury.Res.class);
+            net.minecraft.nbt.CompoundTag sp = e.getCompound("spent");
+            for (KingdomTreasury.Res res : KingdomTreasury.Res.values()) if (sp.contains(res.name())) spent.put(res, sp.getInt(res.name()));
+            Ruin r = new Ruin(kind, Math.max(1, Math.min(3, e.getInt("level"))), e.getString("variant"), e.getString("order"), spent);
+            RUINS.put(pos, r);
+            placeRuin(l, pos, r);
+        }
         int gates = t.getInt("gates");
         if (gates > 0 && KingdomTreasury.active()) KingdomTreasury.add(KingdomTreasury.Res.MONEY, gates * GATE_COST);
     }
 
     // ─── Faille (2.0) : ruines réparables ───
 
-    private static final Map<BlockPos, DefenseBlock.Kind> RUINS = new HashMap<>();
+    /** Une ruine garde tout du bâtiment détruit : type, niveau, spécialisation, ordre et ressources dépensées. */
+    private record Ruin(DefenseBlock.Kind kind, int level, String variant, String order, java.util.EnumMap<KingdomTreasury.Res, Integer> spent) {}
+
+    private static final Map<BlockPos, Ruin> RUINS = new HashMap<>();
     /** Démontages volontaires par un joueur (pas des ruines) : position → tick du coup de pioche. */
     private static final Map<BlockPos, Long> PLAYER_BREAK = new HashMap<>();
 
@@ -414,26 +448,8 @@ public final class KingdomDefenses {
 
     public static boolean isRuin(BlockPos pos) { return RUINS.containsKey(pos); }
 
-    /** Une tour détruite devient des vestiges (bloc de pierre fissurée) que l'on peut rebâtir à moitié prix. */
-    private static void leaveRuin(BlockPos pos, DefenseBlock.Kind kind) {
-        final ServerLevel l = level;
-        RUINS.put(pos, kind);
-        l.getServer().execute(() -> { // après la fin du retrait du bloc d'origine
-            if (RUINS.containsKey(pos) && l.getBlockState(pos).isAir()) {
-                l.setBlock(pos, net.minecraft.world.level.block.Blocks.CRACKED_DEEPSLATE_BRICKS.defaultBlockState(), 3);
-                l.sendParticles(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 20, 0.3, 0.4, 0.3, 0.02);
-            }
-        });
-    }
-
-    /** Clic droit sur des vestiges : la tour est rebâtie (niveau 1) pour la moitié de son prix. */
-    public static void rebuild(ServerPlayer p, BlockPos pos) {
-        DefenseBlock.Kind kind = RUINS.get(pos);
-        if (kind == null || level == null || !(p.level() instanceof ServerLevel l) || l != level) return;
-        int cost = Math.max(1, BUY[kind.ordinal()] / 2);
-        if (!AltarDefense.trySpend(p, cost)) return;
-        RUINS.remove(pos);
-        net.minecraft.world.level.block.Block b = switch (kind) {
+    private static net.minecraft.world.level.block.Block blockFor(DefenseBlock.Kind kind) {
+        return switch (kind) {
             case ARCHER -> com.wavesurvivor.registry.ModBlocks.KINGDOM_ARCHER_TOWER.get();
             case MAGE -> com.wavesurvivor.registry.ModBlocks.KINGDOM_MAGE_TOWER.get();
             case SHRINE -> com.wavesurvivor.registry.ModBlocks.KINGDOM_REPAIR_SHRINE.get();
@@ -441,10 +457,70 @@ public final class KingdomDefenses {
             case COLLECTOR -> com.wavesurvivor.registry.ModBlocks.KINGDOM_COLLECTOR.get();
             case WORKSHOP -> com.wavesurvivor.registry.ModBlocks.KINGDOM_WORKSHOP.get();
         };
-        l.setBlock(pos, b.defaultBlockState(), 3);
-        register(l, pos, kind, p);
+    }
+
+    /** Pose le bloc du bâtiment dans son état « ruiné » (même type, même niveau, même spécialisation) : rendu abîmé côté client, aucun tir. */
+    private static void placeRuin(ServerLevel l, BlockPos pos, Ruin r) {
+        l.setBlock(pos, blockFor(r.kind()).defaultBlockState(), 3);
+        if (l.getBlockEntity(pos) instanceof DefenseBlockEntity be) {
+            be.setDefLevel(r.level());
+            be.setVariant(r.variant());
+            be.setRuined(true);
+        }
+        l.sendParticles(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 20, 0.3, 0.4, 0.3, 0.02);
+    }
+
+    /** Un bâtiment détruit laisse SA PROPRE RUINE : son bloc reste en place, ruiné, avec son niveau et sa variante ; rebâti au clic droit. */
+    private static void leaveRuin(BlockPos pos, Def d) {
+        final ServerLevel l = level;
+        final Ruin r = new Ruin(d.kind, d.level, d.variant, d.order, refundOf(d, 1.0));
+        RUINS.put(pos, r);
+        l.getServer().execute(() -> { // après la fin du retrait du bloc d'origine
+            if (!RUINS.containsKey(pos) || !l.getBlockState(pos).isAir()) return;
+            placeRuin(l, pos, r);
+            // pas d'objet « tour » gratuit : le bloc détruit a pu lâcher son objet, on le retire
+            net.minecraft.world.item.Item it = itemFor(r.kind()).getItem();
+            for (net.minecraft.world.entity.item.ItemEntity ie : l.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+                    new AABB(pos).inflate(2.5), i -> i.getItem().is(it) && i.tickCount < 40)) ie.discard();
+        });
+    }
+
+    /**
+     * Clic droit sur des vestiges : le bâtiment est rebâti AU MÊME NIVEAU ET AVEC LA MÊME SPÉCIALISATION, pour un pourcentage
+     * (50 % par défaut, réglable) de tout ce qui y avait été investi (achat et améliorations).
+     */
+    public static void rebuild(ServerPlayer p, BlockPos pos) {
+        Ruin r = RUINS.get(pos);
+        if (r == null || level == null || !(p.level() instanceof ServerLevel l) || l != level) return;
+        int pct = Math.max(0, com.wavesurvivor.horde.rift.RiftManager.ruinRepairPercent());
+        java.util.EnumMap<KingdomTreasury.Res, Integer> cost = new java.util.EnumMap<>(KingdomTreasury.Res.class);
+        r.spent().forEach((res, n) -> { int c = (int) Math.ceil(n * pct / 100.0); if (c > 0) cost.put(res, c); });
+        if (!p.isCreative()) {
+            StringBuilder missing = new StringBuilder();
+            for (var en : cost.entrySet()) if (!KingdomTreasury.has(en.getKey(), en.getValue())) {
+                missing.append(missing.length() > 0 ? ", " : "").append(en.getValue()).append(' ').append(en.getKey().name().toLowerCase());
+            }
+            if (missing.length() > 0) {
+                p.displayClientMessage(WSLang.c("rift.ruin.need", missing.toString()), true);
+                p.level().playSound(null, p.blockPosition(), SoundEvents.VILLAGER_NO, SoundSource.PLAYERS, 1f, 1f);
+                return;
+            }
+            cost.forEach(KingdomTreasury::spend);
+            KingdomTreasury.sync(p.getServer());
+        }
+        RUINS.remove(pos);
+        if (l.getBlockEntity(pos) instanceof DefenseBlockEntity be) be.setRuined(false);
+        else l.setBlock(pos, blockFor(r.kind()).defaultBlockState(), 3);
+        register(l, pos, r.kind(), null);
+        Def d = DEFS.get(pos);
+        if (d == null) return;   // pas de place : register() a déjà rendu la défense
+        KingdomClaim.track(pos, l.getBlockState(pos));
+        if (r.level() > 1) applyLevel(d, r.level(), r.level() >= 3 ? r.variant() : "");
+        d.order = r.order() == null || r.order().isEmpty() ? "hold" : r.order();
+        l.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 30, 0.8, 1.0, 0.8, 0);
         l.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.8f, 1.2f);
-        p.displayClientMessage(WSLang.c("rift.ruin.rebuilt", cost), true);
+        int total = cost.values().stream().mapToInt(Integer::intValue).sum();
+        p.displayClientMessage(WSLang.c("rift.ruin.rebuilt", total), true);
     }
 
     private static void tickRuins(long now) {
@@ -474,7 +550,7 @@ public final class KingdomDefenses {
             }
         }
         if (level != null) for (BlockPos r : RUINS.keySet()) {   // vestiges effacés avec le royaume
-            if (level.getBlockState(r).is(net.minecraft.world.level.block.Blocks.CRACKED_DEEPSLATE_BRICKS)) level.removeBlock(r, false);
+            if (level.getBlockState(r).getBlock() instanceof DefenseBlock) level.removeBlock(r, false);
         }
         RUINS.clear();
         PLAYER_BREAK.clear();

@@ -3963,7 +3963,7 @@
   "rift.engine.placed": "§aEngin de siège posé ! Clic droit : tirer · Maj + clic droit : améliorer.",
   "ui.rift.window_s": "Fenêtre (s)",
   "ui.rift.window_cap": "Plafond fenêtre %",
-  "rift.ruin.rebuilt": "§aTour rebâtie (niveau 1) pour {0} ◆.",
+  "rift.ruin.rebuilt": "§aBâtiment réparé (même niveau, même spécialisation) pour {0} ressources.",
   "ui.rift.titan_gap": "Marge (blocs)",
   "ui.rift.regen": "Régén. %/s",
   "ui.rift.regen_radius": "Rayon (blocs)",
@@ -4044,5 +4044,7 @@
   "ui.rift.wave_interval": "toutes les (s)",
   "ui.rift.wave_cap": "plafond",
   "ui.rift.build_damage": "Dégâts bâtiments",
-  "ui.rift.build_radius": "Rayon"
+  "ui.rift.build_radius": "Rayon",
+  "rift.ruin.need": "§cRessources manquantes pour réparer : {0}",
+  "ui.rift.ruin_pct": "Ruines : % réparation"
 }

@@ -221,3 +221,11 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] **Charge** : la zone d'impact est réduite (coin sud de l'île, ~28 de large) et l'empiètement passe à 8 blocs : plus de demi-île inaccessible.
 - [ ] Tour-catapulte : munitions illimitées par défaut.
 - [ ] **Reprise** : les engins posés et les tours du Kingdom sont retrouvés après une reprise (Siège, Contre-offensive, Titan → début de la Contre-offensive), avec le trésor à jour.
+
+## Ruines : le bâtiment détruit laisse sa propre ruine (même type, niveau, variante)
+- [ ] Un bâtiment du Kingdom (tour d'archers, mage, sanctuaire, baraquement, glaneur, atelier) détruit pendant le Siège **reste en place en ruine** : son dessin normal (avec son niveau et sa variante) mais déchiqueté (murs à ~40 % de hauteur, pierre fissurée, lumières / bannières / verre supprimés), éboulis autour, poutre calcinée ; plus de tir, plus d'emblème ni de barre de PV ; fumée.
+- [ ] Clic droit sur la ruine : le bâtiment est rebâti **au même niveau et avec la même spécialisation**, pour **50 %** (réglable : éditeur, page Météores, « Ruines : % réparation ») de tout ce qui y avait été investi (achat + améliorations) ; message avec le coût ; message de ressources manquantes si le trésor ne suffit pas.
+- [ ] Pas d'objet « tour » gratuit lâché par la destruction.
+- [ ] Démonter une tour à la pioche ne laisse pas de ruine ; casser une ruine la supprime.
+- [ ] Reprise de partie : les ruines (type, niveau, variante, dépenses) sont conservées.
+- [ ] Fin du Siège : les ruines disparaissent avec le royaume.

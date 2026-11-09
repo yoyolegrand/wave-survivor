@@ -1994,6 +1994,8 @@ public class HordeEditorScreen extends Screen {
         fInt(30, HordeJson.num(r, "titanBuildDamage", 300), v -> r.addProperty("titanBuildDamage", Math.max(1, Math.min(5000, v))));
         fl(t("ui.rift.build_radius"));
         fInt(22, HordeJson.num(r, "titanBuildRadius", 6), v -> r.addProperty("titanBuildRadius", Math.max(2, Math.min(20, v))));
+        fl(t("ui.rift.ruin_pct"));
+        fInt(26, HordeJson.num(r, "ruinRepairPercent", 50), v -> r.addProperty("ruinRepairPercent", Math.max(0, Math.min(200, v))));
     }
 
     /** Faille — page « Titan et engins de siège ». */

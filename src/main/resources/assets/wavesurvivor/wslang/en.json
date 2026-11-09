@@ -4724,7 +4724,7 @@
   "rift.engine.placed": "§aSiege engine placed! Right-click: fire · Shift + right-click: upgrade.",
   "ui.rift.window_s": "Window (s)",
   "ui.rift.window_cap": "Window cap %",
-  "rift.ruin.rebuilt": "§aTower rebuilt (level 1) for {0} ◆.",
+  "rift.ruin.rebuilt": "§aBuilding repaired (same level, same specialisation) for {0} resources.",
   "ui.rift.titan_gap": "Gap (blocks)",
   "ui.rift.regen": "Regen %/s",
   "ui.rift.regen_radius": "Radius (blocks)",
@@ -4805,5 +4805,7 @@
   "ui.rift.wave_interval": "every (s)",
   "ui.rift.wave_cap": "cap",
   "ui.rift.build_damage": "Building damage",
-  "ui.rift.build_radius": "Radius"
+  "ui.rift.build_radius": "Radius",
+  "rift.ruin.need": "§cMissing resources to repair: {0}",
+  "ui.rift.ruin_pct": "Ruins: repair %"
 }

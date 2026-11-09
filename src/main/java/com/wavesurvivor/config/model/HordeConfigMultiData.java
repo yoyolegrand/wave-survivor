@@ -438,6 +438,8 @@ public class HordeConfigMultiData {
         @SerializedName("titanWaveInterval") public int titanWaveInterval = 10;
         @SerializedName("titanWaveCap") public int titanWaveCap = 60;
         /** Attaque contre les bâtiments : dégâts et rayon (aussi appliqués par la charge aux bâtiments pris dedans). */
+        /** Ruines des bâtiments du Kingdom : % des ressources investies à payer pour les réparer. */
+        @SerializedName("ruinRepairPercent") public int ruinRepairPercent = 50;
         @SerializedName("titanBuildDamage") public int titanBuildDamage = 300;
         @SerializedName("titanBuildRadius") public int titanBuildRadius = 6;
         @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
