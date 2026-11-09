@@ -114,3 +114,11 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 ## Titan plus proche
 - [ ] Le Titan apparaît à environ **12 blocs** du bord de l'île (marge réglable : éditeur, page Titan, « Marge (blocs) »), hors de portée du corps à corps mais atteignable à distance (engins, arcs).
 - [ ] Si le Titan est toujours petit à l'écran : vérifier que la taille enregistrée n'est pas restée à l'ancienne valeur (défaut 110).
+
+## Monolithe et royaume gardés jusqu'à la fin
+- [ ] Après les assauts du Siège : la Porte de la forteresse disparaît, les ennemis du royaume sont retirés, **mais le Monolithe garde son menu** (Améliorations, Défense, Mairie, Rôles) pendant la Contre-offensive, le Titan et la pause de fin. Plus de menu « Lier l'autel ».
+- [ ] Tours, remparts, pièges, trésor et rôles restent actifs ; les tours tirent sur les renforts de la Contre-offensive.
+- [ ] Pas de nouvel assaut ni de calme pendant la veille (pas de gisements qui réapparaissent).
+- [ ] Monolithe détruit pendant la Contre-offensive ou le Titan → défaite de la Faille.
+- [ ] Fin de Faille (victoire, défaite ou /ws rift stop) : le royaume (boutique, défenses, trésor) est retiré proprement, récompenses de fin versées une seule fois.
+- [ ] Prévu plus tard : attaques du Titan contre le Monolithe (point d'entrée existant : `AltarDefense.externalHit(level, dégâts)`).

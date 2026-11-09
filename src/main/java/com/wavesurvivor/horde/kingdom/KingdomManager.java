@@ -375,8 +375,37 @@ public final class KingdomManager {
 
     // ─── Lancement ───
 
+    /** Faille : le Siège est fini, le royaume reste en « veille » (boutique, trésor, rôles, tours) pendant la Contre-offensive et le Titan. */
+    private static boolean hold = false;
+
+    /** Faille : fin des assauts. Plus de Porte ni d'ennemis du royaume, mais le Monolithe garde sa boutique et ses défenses. */
+    public static void enterHold() {
+        if (!active || hold) return;
+        hold = true;
+        phase = Phase.CALM;
+        for (Portal p : PORTALS) {
+            Entity e = level.getEntity(p.id);
+            if (e != null) e.discard();
+            for (UUID gid : p.guardians) { Entity g = level.getEntity(gid); if (g != null) g.discard(); }
+            p.guardians.clear();
+            if (p.structure != null) { STRUCT.removeAll(p.structure.original.keySet()); p.structure.restore(); p.structure = null; }
+            if (p.corruption != null) { p.corruption.restore(); p.corruption = null; }
+            p.destroyed = true;
+            p.budget = 0;
+        }
+        clearCatalyst();
+        if (bar != null) bar.setVisible(false);
+    }
+
+    private static void tickHold(MinecraftServer server, long now) {
+        if (now % 20 == 0) MobRegistry.pruneDead(server);
+        KingdomClaim.tick(now);
+        KingdomDefenses.tick(now);
+    }
+
     public static void start(MinecraftServer server, HordeConfigMultiData h, ServerLevel lvl, BlockPos c) {
         stop(server);
+        hold = false;
         active = true;
         horde = h;
         level = lvl;
@@ -744,6 +773,7 @@ public final class KingdomManager {
         KingdomTownHall.tick(now);   // ambiance de la Mairie (selon son niveau)
         RaidManager.tick(now);       // Arène du Roi (Porte ouverte, entrées, boss, victoire)
         if (!active) return;
+        if (hold) { tickHold(server, now); return; }
         KingdomObjectives.tick(now); // objectif du Calme en cours
         int remaining = 0;
         for (Portal p : PORTALS) {
@@ -835,7 +865,9 @@ public final class KingdomManager {
                 }
                 // Faille : le nombre d'assauts du Siège est atteint → la Contre-offensive prend le relais
                 if (com.wavesurvivor.horde.rift.RiftManager.siegeAssaultsDone(cycle)) {
-                    HordeManager.get().endKingdom(true);
+                    HordeManager.get().clearKingdomMobs();
+                    enterHold();
+                    com.wavesurvivor.horde.rift.RiftManager.siegeCleared();
                     return;
                 }
                 startCalm(now);
@@ -1820,6 +1852,7 @@ public final class KingdomManager {
         KingdomOmens.clear();
         KingdomAlchemy.clear();
         if (bar != null) { bar.removeAllPlayers(); bar = null; }
+        hold = false;
         active = false;
         level = null;
         horde = null;

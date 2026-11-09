@@ -494,6 +494,11 @@ public class HordeManager {
      * @param victory vrai : les 4 portails sont détruits → unités restantes retirées, récompenses et fin normale.
      *                faux : limite de sécurité atteinte → arrêt sans récompense.
      */
+    /** Faille : retire les ennemis encore en vie à la fin des assauts du Siège (la partie continue en Contre-offensive). */
+    public void clearKingdomMobs() {
+        killAllActiveMobs();
+    }
+
     public void endKingdom(boolean victory) {
         if (server == null) return;
         com.wavesurvivor.horde.kingdom.vocation.VocationXp.finish(server, victory); // Vocations : XP de Maitrise versee (x victoire / x defaite)

@@ -309,9 +309,8 @@ public final class RiftManager {
 
     /** Ferme la Faille : renvoie tout le monde chez soi, vide l'île et libère les chunks. */
     public static void stop(MinecraftServer server) {
-        boolean wasHorde = phase == Phase.HORDE || phase == Phase.SIEGE;
         phase = Phase.NONE;
-        if (wasHorde) HordeManager.get().stopSilently();
+        if (HordeManager.get().isRunning()) HordeManager.get().stopSilently(); // Horde, Siège, ou royaume en veille (Contre-offensive, Titan)
         com.wavesurvivor.altar.AltarDefense.onHordeEnd(server, false);
         com.wavesurvivor.horde.benediction.RogueUpgradeManager.clearAllPlayers(server); // fin de la Faille : les bénédictions se dissipent
         restoreSpawnRadius();
@@ -749,6 +748,19 @@ public final class RiftManager {
         return active && phase == Phase.SIEGE && kingdomOverride && cycle >= Math.max(1, settings().siegeAssaults);
     }
 
+    /** Les assauts du Siège sont finis : le royaume passe en veille (le Monolithe garde sa boutique) et la Contre-offensive s'annonce. */
+    public static void siegeCleared() {
+        if (!active || phase != Phase.SIEGE) return;
+        MinecraftServer server = world != null ? world.getServer() : null;
+        ServerLevel rd = server != null ? server.getLevel(RIFT_DIM) : null;
+        if (rd == null) return;
+        nextPhase = Phase.COUNTER;
+        siegeHordeOn = false;
+        tellAll(rd, WSLang.t("rift.next_counter"));
+        phase = Phase.INTERLUDE;
+        interludeAt = server.getTickCount() + Math.max(3, settings().interludeSeconds) * 20L;
+    }
+
     /** Vrai pendant le Siège sur le moteur du Kingdom (Porte invulnérable, pas de Catalyseur, présages à plusieurs Portes retirés). */
     public static boolean kingdomSiege() {
         return active && phase == Phase.SIEGE && kingdomOverride;
@@ -760,7 +772,6 @@ public final class RiftManager {
         HordeConfigMultiData.RiftSettings rs = settings();
         phase = Phase.COUNTER;
         coreSpawned = false;
-        com.wavesurvivor.altar.AltarDefense.onHordeEnd(server, true); // plus de Monolithe à défendre : bonus d'intégrité, ennemis ne visent plus que les joueurs
         BlockPos c = RiftFortress.center(siegeFinal);
         double f = 1.0 + 0.4 * Math.max(0, playerCount(rd) - 1);
         int n = Math.max(1, Math.min(8, rs.catalysts));
@@ -853,6 +864,7 @@ public final class RiftManager {
 
     private static void toEnding(MinecraftServer server, ServerLevel rd) {
         phase = Phase.ENDING;
+        if (HordeManager.get().isRunning() && com.wavesurvivor.horde.kingdom.KingdomManager.isActive()) HordeManager.get().stopSilently(); // royaume en veille : boutique et défenses retirées avec la partie
         endAt = server.getTickCount() + Math.max(10, settings().endPauseSeconds) * 20L;
         restoreSpawnRadius();
         // Tout le monde est libéré : plus de spectateurs pendant la pause
