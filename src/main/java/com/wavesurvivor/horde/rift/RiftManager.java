@@ -55,6 +55,8 @@ public final class RiftManager {
     private static final String RETURN_TAG = "ws_rift_return";
     /** Centre de l'île de départ, dans la dimension de la Faille. */
     public static final BlockPos CENTER = new BlockPos(0, 100, 0);
+    /** Le Monolithe de l'île : un bloc d'autel posé au centre (sa défense et sa boutique fonctionnent comme dans une horde). */
+    public static final BlockPos MONOLITH = CENTER.above();
     private static final Random RNG = new Random();
 
     private static boolean active;
@@ -138,6 +140,7 @@ public final class RiftManager {
         HordeConfigMultiData.RiftSettings rs = h != null && h.configData != null ? h.configData.rift() : new HordeConfigMultiData.RiftSettings();
         radius = Math.max(8, Math.min(48, rs.islandRadius));
         siegeFinal = Math.max(radius, Math.min(48, rs.siegeRadius));
+        ensureResourceEvents(h);
         forceChunks(rd, rs);
         buildIsland(rd);
         active = true;
@@ -163,7 +166,8 @@ public final class RiftManager {
         if (p.level().dimension() != RIFT_DIM) {
             p.getPersistentData().putString(RETURN_TAG, p.level().dimension().location() + "|" + p.getBlockX() + "|" + p.getBlockY() + "|" + p.getBlockZ());
         }
-        p.teleportTo(rd, CENTER.getX() + 0.5 + (RNG.nextDouble() - 0.5) * 3, CENTER.getY() + 1, CENTER.getZ() + 0.5 + (RNG.nextDouble() - 0.5) * 3, 0f, 0f);
+        double[] at = arrival();
+        p.teleportTo(rd, at[0], CENTER.getY() + 1, at[1], 0f, 0f);
         p.fallDistance = 0;
         long now = p.getServer().getTickCount();
         if (inCombat() && !registered.contains(p.getUUID())) {
@@ -183,6 +187,109 @@ public final class RiftManager {
         rd.playSound(null, p.blockPosition(), SoundEvents.PORTAL_TRAVEL, SoundSource.PLAYERS, 0.6f, 0.8f);
     }
 
+    // ─── Monolithe, ressources, arrivée ───
+
+    /** Pendant le Siège, la seconde horde reprend la défense du Monolithe en cours au lieu d'en commencer une autre. */
+    public static boolean keepMonolith() {
+        return active && phase == Phase.SIEGE && com.wavesurvivor.altar.AltarDefense.isActive();
+    }
+
+    /** Horde et Siège : tous les ennemis viennent détruire le Monolithe (Contre-offensive et Titan : ils ne visent que les joueurs). */
+    public static boolean forceProfaners() {
+        return active && (phase == Phase.HORDE || phase == Phase.SIEGE || phase == Phase.LOBBY);
+    }
+
+    /** Rayon actuel de l'île (il grandit pendant le Siège) : sert à garder arbres et gisements dessus. */
+    public static int islandRadiusNow() {
+        return phase == Phase.SIEGE || phase == Phase.INTERLUDE ? Math.max(radius, growCur) : radius;
+    }
+
+    /** Le Monolithe est tombé : défaite de la Faille (pause de fin puis retour), sans la séquence de chute du monde normal. */
+    public static boolean monolithFell(ServerLevel level) {
+        if (!active || !inCombat() || level.dimension() != RIFT_DIM) return false;
+        MinecraftServer server = level.getServer();
+        ServerLevel rd = server.getLevel(RIFT_DIM);
+        if (rd == null) return false;
+        defeat(server, rd);
+        return true;
+    }
+
+    /** Point d'arrivée / de réapparition : au sud du Monolithe (côté des engins de siège et du Titan). */
+    private static double[] arrival() {
+        return new double[]{CENTER.getX() + 0.5 + (RNG.nextDouble() - 0.5) * 5, CENTER.getZ() + 0.5 + 3.5 + RNG.nextDouble() * 2};
+    }
+
+    /** Pose le bloc d'autel au centre de l'île : il devient le Monolithe à défendre (clic droit = boutique, réparation). */
+    private static void placeMonolith(ServerLevel rd) {
+        rd.setBlock(MONOLITH, com.wavesurvivor.registry.ModBlocks.ALTAR_RUNIC.get().defaultBlockState(), 3);
+        rd.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, MONOLITH.getX() + 0.5, MONOLITH.getY() + 1.2, MONOLITH.getZ() + 0.5, 30, 0.4, 0.6, 0.4, 0.05);
+    }
+
+    /** La Faille a besoin d'une défense du Monolithe : si la horde n'en a pas, on en active une par défaut (réglable ensuite dans l'éditeur d'autel). */
+    private static void ensureDefense(String hordeName) {
+        if (com.wavesurvivor.altar.AltarRecipes.getDefense(hordeName) != null) return;
+        com.wavesurvivor.altar.AltarRecipes.Defense d = com.wavesurvivor.altar.AltarRecipes.editDefense(hordeName);
+        d.enabled = true;
+        d.maxHealth = 800;
+    }
+
+    /**
+     * Arbres et gisements de la Faille = ceux du Chaos (réglage « Garantis par calme » de l'onglet Chaos). Si la horde n'en a aucun,
+     * on copie ceux d'une autre horde (Kingdom d'abord), à défaut un chêne et un gisement de fer.
+     */
+    private static void ensureResourceEvents(HordeConfigMultiData h) {
+        if (h == null || h.configData == null) return;
+        var cd = h.configData;
+        if (cd.chaosEvents == null) cd.chaosEvents = new ArrayList<>();
+        for (var ev : cd.chaosEvents) if (HordeManager.isResourceEvent(ev) && ev.guaranteed > 0) return;
+        int trees = 0, ores = 0;
+        var cfg = WaveSurvivorMod.getConfig();
+        if (cfg != null && cfg.hordeConfigMulti != null) {
+            com.google.gson.Gson gs = new com.google.gson.Gson();
+            for (int pass = 0; pass < 2; pass++) {
+                for (HordeConfigMultiData o : cfg.hordeConfigMulti) {
+                    if (o == null || o == h || o.configData == null || o.configData.chaosEvents == null) continue;
+                    if (pass == 0 && !o.configData.isKingdom()) continue;
+                    for (var ev : o.configData.chaosEvents) {
+                        if (!HordeManager.isResourceEvent(ev)) continue;
+                        boolean tree = "arbre".equalsIgnoreCase(ev.type);
+                        if (tree ? trees >= 1 : ores >= 2) continue;
+                        var c = gs.fromJson(gs.toJson(ev), com.wavesurvivor.horde.model.ChaosEvent.class);
+                        c.guaranteed = 2;
+                        cd.chaosEvents.add(c);
+                        if (tree) trees++; else ores++;
+                    }
+                }
+            }
+        }
+        if (trees == 0) {
+            var t = new com.wavesurvivor.horde.model.ChaosEvent();
+            t.type = "arbre";
+            t.blocks = new ArrayList<>(List.of("minecraft:oak_log", "minecraft:oak_leaves"));
+            var dr = new com.wavesurvivor.horde.model.ChaosEvent.Drop();
+            dr.item = "minecraft:oak_log";
+            dr.minQty = 2;
+            dr.maxQty = 4;
+            t.drops = new ArrayList<>(List.of(dr));
+            t.minTier = 0;
+            t.guaranteed = 2;
+            cd.chaosEvents.add(t);
+        }
+        if (ores == 0) {
+            var g = new com.wavesurvivor.horde.model.ChaosEvent();
+            g.type = "gisement";
+            g.blocks = new ArrayList<>(List.of("minecraft:iron_ore", "minecraft:stone"));
+            var dr = new com.wavesurvivor.horde.model.ChaosEvent.Drop();
+            dr.item = "minecraft:raw_iron";
+            dr.minQty = 3;
+            dr.maxQty = 6;
+            g.drops = new ArrayList<>(List.of(dr));
+            g.guaranteed = 2;
+            cd.chaosEvents.add(g);
+        }
+        WaveSurvivorMod.LOGGER.info("[Faille] Arbres et gisements du Chaos ajoutés à la horde '{}' ({} arbre(s), {} gisement(s)).", h.hordeName, Math.max(trees, 1), Math.max(ores, 1));
+    }
+
     // ─── Fin et retour ───
 
     /** Ferme la Faille : renvoie tout le monde chez soi, vide l'île et libère les chunks. */
@@ -190,6 +297,7 @@ public final class RiftManager {
         boolean wasHorde = phase == Phase.HORDE || phase == Phase.SIEGE;
         phase = Phase.NONE;
         if (wasHorde) HordeManager.get().stopSilently();
+        com.wavesurvivor.altar.AltarDefense.onHordeEnd(server, false);
         restoreSpawnRadius();
         ServerLevel rd = server.getLevel(RIFT_DIM);
         if (rd != null) {
@@ -284,13 +392,24 @@ public final class RiftManager {
         for (Entity e : gone) e.discard();
     }
 
-    /** Chunks gardés chargés : l'île, et si besoin la forteresse et le Titan (jusqu'à 100 blocs au-delà de l'île vers +X). */
+    /** Chunks gardés chargés : l'île, et si besoin la forteresse (à l'est) et le Titan (au sud). */
     private static void forceChunks(ServerLevel l, HordeConfigMultiData.RiftSettings rs) {
-        int reach = Math.max(radius, 48) + 16;
-        int east = (rs.siegeEnabled || rs.titanEnabled) ? siegeFinal + 24 + 58 + 24 : reach;
-        int cxMin = -(reach >> 4) - 1, cxMax = (east >> 4) + 1, czMin = -(reach >> 4), czMax = (reach >> 4);
-        for (int cx = cxMin; cx <= cxMax; cx++) {
-            for (int cz = czMin; cz <= czMax; cz++) {
+        boolean far = rs.siegeEnabled || rs.titanEnabled;
+        int reach = (far ? siegeFinal : radius) + 16;
+        forceRect(l, -reach, reach, -reach, reach);
+        if (rs.siegeEnabled) {
+            int fx = siegeFinal + RiftFortress.GAP + 2 * RiftFortress.R + 12;
+            forceRect(l, siegeFinal - 8, fx, -(RiftFortress.R + 16), RiftFortress.R + 16);
+        }
+        if (rs.titanEnabled) {
+            int d = (int) Math.ceil(RiftTitan.distance(rs, siegeFinal));
+            forceRect(l, -64, 64, d - 64, d + 64);
+        }
+    }
+
+    private static void forceRect(ServerLevel l, int x0, int x1, int z0, int z1) {
+        for (int cx = Math.floorDiv(x0, 16); cx <= Math.floorDiv(x1, 16); cx++) {
+            for (int cz = Math.floorDiv(z0, 16); cz <= Math.floorDiv(z1, 16); cz++) {
                 l.setChunkForced(cx, cz, true);
                 FORCED.add(net.minecraft.world.level.ChunkPos.asLong(cx, cz));
             }
@@ -420,7 +539,9 @@ public final class RiftManager {
         spawnCfg = horde.configData;
         spawnRadiusBackup = spawnCfg.spawnRadius;
         spawnCfg.spawnRadius = Math.max(4, Math.min(spawnCfg.spawnRadius, radius - 2));
-        boolean ok = HordeManager.get().startAt(horde, server, CENTER, RIFT_DIM.location().toString());
+        ensureDefense(horde.hordeName);
+        placeMonolith(rd);
+        boolean ok = HordeManager.get().startAt(horde, server, MONOLITH, RIFT_DIM.location().toString());
         if (!ok) {
             restoreSpawnRadius();
             tellAll(rd, WSLang.t("rift.start_fail"));
@@ -503,7 +624,6 @@ public final class RiftManager {
             lastState = st;
             if (siege && (st == HordeManager.State.WAITING_NEXT_WAVE || st == HordeManager.State.PAUSED)) { // un calme commence
                 HordeConfigMultiData.RiftSettings rs = settings();
-                RiftFortress.resources(rd, radius, rs.resourceTrees, rs.resourceOres);
                 tellAll(rd, WSLang.t("rift.calm"));
             }
         }
@@ -573,12 +693,13 @@ public final class RiftManager {
         HordeConfigMultiData.RiftSettings rs = settings();
         phase = Phase.COUNTER;
         coreSpawned = false;
+        com.wavesurvivor.altar.AltarDefense.onHordeEnd(server, true); // plus de Monolithe à défendre : bonus d'intégrité, ennemis ne visent plus que les joueurs
         BlockPos c = RiftFortress.center(siegeFinal);
         double f = 1.0 + 0.4 * Math.max(0, playerCount(rd) - 1);
         int n = Math.max(1, Math.min(8, rs.catalysts));
         for (int i = 0; i < n; i++) {
             double a = i * Math.PI * 2 / n + 0.4;
-            RiftFortress.spawnTarget(rd, c.getX() + 0.5 + Math.cos(a) * 7.5, c.getY() + 2.0, c.getZ() + 0.5 + Math.sin(a) * 7.5,
+            RiftFortress.spawnTarget(rd, c.getX() + 0.5 + Math.cos(a) * 22.5, c.getY() + 2.0, c.getZ() + 0.5 + Math.sin(a) * 22.5,
                     (float) (rs.catalystHp * f), WSLang.t("rift.catalyst"));
         }
         // Le bouclier tombe
@@ -676,7 +797,8 @@ public final class RiftManager {
     }
 
     private static void respawnOnIsland(ServerPlayer p, ServerLevel rd) {
-        p.teleportTo(rd, CENTER.getX() + 0.5 + (RNG.nextDouble() - 0.5) * 4, CENTER.getY() + 1, CENTER.getZ() + 0.5 + (RNG.nextDouble() - 0.5) * 4, p.getYRot(), 0f);
+        double[] at = arrival();
+        p.teleportTo(rd, at[0], CENTER.getY() + 1, at[1], p.getYRot(), 0f);
         p.fallDistance = 0;
         p.setDeltaMovement(0, 0, 0);
         p.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 4, false, false));
@@ -731,7 +853,8 @@ public final class RiftManager {
         for (ServerPlayer p : new ArrayList<>(rd.players())) {
             if (p.isSpectator() || !p.isAlive()) continue;
             if (p.getY() < CENTER.getY() - 40) {
-                p.teleportTo(rd, CENTER.getX() + 0.5, CENTER.getY() + 1, CENTER.getZ() + 0.5, p.getYRot(), 0f);
+                double[] at = arrival();
+                p.teleportTo(rd, at[0], CENTER.getY() + 1, at[1], p.getYRot(), 0f);
                 p.fallDistance = 0;
                 p.setDeltaMovement(0, 0, 0);
                 p.hurt(p.damageSources().fall(), 2f);

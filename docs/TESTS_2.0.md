@@ -63,3 +63,13 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Titan vaincu : butin (émeraudes, éclats d'améthyste, obsidienne pleureuse) + récompenses de la horde, pause de fin, fermeture et retour
 - [ ] `/ws rift stop` à n'importe quel moment : tout est nettoyé (forteresse, île, Titan, avatars, engins, cristaux), les joueurs rentrent
 - [ ] Éditeur : 3 pages dans l'onglet La Faille (Départ et Horde / Siège et Contre-offensive / Titan et engins), réglages pris en compte
+
+## Retours de test n°1 (Monolithe, échelle, Titan, ressources)
+- [ ] Un Monolithe (bloc d'autel) apparaît au centre de l'île au début de la Horde ; les ennemis viennent le frapper ; barre d'intégrité visible
+- [ ] Clic droit sur le Monolithe : boutique (Renfort / Régénération / Blindage) ; réparation à la poudre d'os
+- [ ] Le Monolithe reste le même du début de la Horde jusqu'au Siège ; il disparaît au début de la Contre-offensive (bonus si intact)
+- [ ] Monolithe détruit : défaite de la Faille (pause de fin, retour)
+- [ ] Arbres et gisements des calmes : ceux de l'onglet Chaos (garantis par calme), sur l'île, jamais dans le vide
+- [ ] Pont 3 fois plus long et plus large, forteresse 3 fois plus grande ; les ennemis traversent le pont
+- [ ] Contre-offensive : catalyseurs répartis sur le grand cercle, cœur dans le donjon
+- [ ] Titan x110 (x5) : visible, au SUD de l'île ; engins de siège (flanc sud) orientés vers lui ; avatars arrivent par le sud

@@ -1878,13 +1878,11 @@ public class HordeEditorScreen extends Screen {
         fInt(30, HordeJson.num(r, "siegeRadius", 32), v -> r.addProperty("siegeRadius", Math.max(16, Math.min(48, v))));
         y += 26;
         flow(x, y);
-        fl(t("ui.rift.trees"));
-        fInt(30, HordeJson.num(r, "resourceTrees", 4), v -> r.addProperty("resourceTrees", Math.max(0, Math.min(20, v))));
-        fl(t("ui.rift.ores"));
-        fInt(30, HordeJson.num(r, "resourceOres", 3), v -> r.addProperty("resourceOres", Math.max(0, Math.min(20, v))));
         fl(t("ui.rift.interlude"));
         fInt(30, HordeJson.num(r, "interludeSeconds", 10), v -> r.addProperty("interludeSeconds", Math.max(3, Math.min(120, v))));
-        y += 32;
+        y += 22;
+        labelWrap(x, y, t("ui.rift.hint_resources"), W - 24);
+        y += 34;
         label(x, y, "§6§l" + t("ui.rift.sec_counter"));
         y += 14;
         flow(x, y);
@@ -1918,7 +1916,7 @@ public class HordeEditorScreen extends Screen {
         y += 26;
         flow(x, y);
         fl(t("ui.rift.titan_scale"));
-        fDbl(36, HordeJson.dbl(r, "titanScale", 22.0), v -> r.addProperty("titanScale", Math.max(2.0, Math.min(60.0, v))));
+        fDbl(36, HordeJson.dbl(r, "titanScale", 110.0), v -> r.addProperty("titanScale", Math.max(2.0, Math.min(250.0, v))));
         fl(t("ui.rift.titan_hp"));
         fInt(40, HordeJson.num(r, "titanHp", 3000), v -> r.addProperty("titanHp", Math.max(100, Math.min(200000, v))));
         fl(t("ui.rift.titan_cap"));

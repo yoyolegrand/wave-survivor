@@ -25,8 +25,10 @@ import java.util.UUID;
  */
 final class RiftFortress {
 
-    /** Rayon de la plateforme de la forteresse. */
-    static final int R = 13;
+    /** Rayon de la plateforme de la forteresse (×3 par rapport à la première version). */
+    static final int R = 39;
+    /** Longueur du pont entre le bord de l'île et la plateforme. */
+    static final int GAP = 33;
     private static final Random RNG = new Random();
     private static final DustParticleOptions VIOLET = new DustParticleOptions(new org.joml.Vector3f(0.65f, 0.2f, 0.95f), 1.3f);
     private static final DustParticleOptions TEAL = new DustParticleOptions(new org.joml.Vector3f(0.1f, 0.95f, 0.85f), 1.3f);
@@ -39,13 +41,13 @@ final class RiftFortress {
 
     static BlockPos center(int siegeRadius) {
         BlockPos c = RiftManager.CENTER;
-        return new BlockPos(c.getX() + siegeRadius + 24, c.getY(), c.getZ());
+        return new BlockPos(c.getX() + siegeRadius + GAP + R, c.getY(), c.getZ());
     }
 
     /** Devant la porte de la forteresse : les ennemis y apparaissent. */
     static BlockPos spawnPoint(int siegeRadius) {
         BlockPos c = center(siegeRadius);
-        return new BlockPos(c.getX() - 8, c.getY() + 1, c.getZ());
+        return new BlockPos(c.getX() - 24, c.getY() + 1, c.getZ());
     }
 
     /** Début du pont, côté forteresse : les joueurs refoulés par le bouclier sont replacés ici. */
@@ -81,7 +83,7 @@ final class RiftFortress {
         l.setBlock(new BlockPos(x, y, z), st, 2);
     }
 
-    /** Construit le pont, la plateforme, la muraille (porte côté base), 4 tours et le donjon. */
+    /** Pont (largeur 15), plateforme de rayon 39, muraille à porte côté base (-X), 4 grosses tours et donjon 21×21 (tout ×3). */
     static void build(ServerLevel l, int sr) {
         BlockPos c = center(sr);
         int cx = c.getX(), cz = c.getZ(), y = c.getY();
@@ -89,12 +91,17 @@ final class RiftFortress {
         BlockState rock = Blocks.BLACKSTONE.defaultBlockState(), edge = Blocks.OBSIDIAN.defaultBlockState();
         BlockState wall = Blocks.BLACKSTONE_WALL.defaultBlockState();
         BlockState cry = Blocks.CRYING_OBSIDIAN.defaultBlockState(), gild = Blocks.GILDED_BLACKSTONE.defaultBlockState();
-        // Pont (5 de large) de l'île à la plateforme
+        BlockState air = Blocks.AIR.defaultBlockState();
+        // Pont (15 de large) de l'île à la plateforme, avec parapets et piliers
         for (int x = RiftManager.CENTER.getX() + sr - 1; x <= cx - R + 1; x++) {
-            for (int dz = -2; dz <= 2; dz++) {
+            for (int dz = -7; dz <= 7; dz++) {
                 set(l, x, y, cz + dz, ((x + dz) & 1) == 0 ? bricks : cracked);
                 set(l, x, y - 1, cz + dz, rock);
-                if (Math.abs(dz) == 2) set(l, x, y + 1, cz + dz, wall);
+                set(l, x, y - 2, cz + dz, rock);
+                if (Math.abs(dz) == 7) {
+                    set(l, x, y + 1, cz + dz, wall);
+                    if ((x & 7) == 0) { set(l, x, y + 2, cz + dz, wall); set(l, x, y + 3, cz + dz, cry); }
+                }
             }
         }
         // Plateforme
@@ -102,44 +109,44 @@ final class RiftFortress {
             for (int dz = -R; dz <= R; dz++) {
                 double d = Math.hypot(dx, dz);
                 if (d > R + 0.5) continue;
-                int depth = 3 + (int) Math.round((1 - d / R) * 5);
+                int depth = 3 + (int) Math.round((1 - d / R) * 12);
                 for (int k = 0; k < depth; k++) {
                     BlockState st = k == 0 ? (d > R - 1.5 ? edge : ((dx + dz) & 1) == 0 ? bricks : cracked) : (RNG.nextInt(14) == 0 ? gild : rock);
                     set(l, cx + dx, y - k, cz + dz, st);
                 }
             }
         }
-        // Muraille (rayon 10-11, hauteur 5 + créneaux) avec une porte côté base (-X)
-        for (int dx = -12; dx <= 12; dx++) {
-            for (int dz = -12; dz <= 12; dz++) {
+        // Muraille (rayon ~31, hauteur 15 + créneaux) avec une porte de 13 de large côté base (-X)
+        for (int dx = -34; dx <= 34; dx++) {
+            for (int dz = -34; dz <= 34; dz++) {
                 double d = Math.hypot(dx, dz);
-                if (d < 9.8 || d > 11.2) continue;
-                if (dx < -7 && Math.abs(dz) <= 2) continue; // la porte
-                for (int h = 1; h <= 5; h++) set(l, cx + dx, y + h, cz + dz, h == 3 && ((dx + dz) & 3) == 0 ? cry : bricks);
-                if (((dx + dz) & 1) == 0) set(l, cx + dx, y + 6, cz + dz, bricks);
+                if (d < 29.4 || d > 33.6) continue;
+                if (dx < -20 && Math.abs(dz) <= 6) continue; // la porte
+                for (int h = 1; h <= 15; h++) set(l, cx + dx, y + h, cz + dz, (h == 8 || h == 9) && ((dx + dz) & 3) == 0 ? cry : bricks);
+                if (((dx + dz) & 1) == 0) set(l, cx + dx, y + 16, cz + dz, bricks);
             }
         }
-        // 4 tours
+        // 4 grosses tours (9×9, haut de 27)
         for (int sx : new int[]{-1, 1}) for (int sz : new int[]{-1, 1}) {
-            for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
-                for (int h = 1; h <= 9; h++) set(l, cx + sx * 7 + dx, y + h, cz + sz * 7 + dz, bricks);
-                set(l, cx + sx * 7 + dx, y + 10, cz + sz * 7 + dz, cry);
+            for (int dx = -4; dx <= 4; dx++) for (int dz = -4; dz <= 4; dz++) {
+                for (int h = 1; h <= 27; h++) set(l, cx + sx * 21 + dx, y + h, cz + sz * 21 + dz, bricks);
+                set(l, cx + sx * 21 + dx, y + 28, cz + sz * 21 + dz, cry);
             }
         }
-        // Donjon 7×7 creux, ouverture ovale côté base, cadre d'obsidienne pleureuse
-        for (int dx = -3; dx <= 3; dx++) for (int dz = -3; dz <= 3; dz++) {
-            boolean shell = Math.abs(dx) == 3 || Math.abs(dz) == 3;
-            for (int h = 1; h <= 10; h++) {
-                if (h == 10) set(l, cx + dx, y + h, cz + dz, bricks);
-                else set(l, cx + dx, y + h, cz + dz, shell ? bricks : Blocks.AIR.defaultBlockState());
+        // Donjon 21×21 creux (haut de 30), ouverture côté base, cadre d'obsidienne pleureuse
+        for (int dx = -10; dx <= 10; dx++) for (int dz = -10; dz <= 10; dz++) {
+            boolean shell = Math.abs(dx) == 10 || Math.abs(dz) == 10;
+            for (int h = 1; h <= 30; h++) {
+                if (h == 30) set(l, cx + dx, y + h, cz + dz, bricks);
+                else set(l, cx + dx, y + h, cz + dz, shell ? bricks : air);
             }
         }
-        for (int dz = -1; dz <= 1; dz++) for (int h = 1; h <= 5; h++) set(l, cx - 3, y + h, cz + dz, Blocks.AIR.defaultBlockState());
-        for (int dz = -2; dz <= 2; dz++) for (int h = 1; h <= 6; h++) {
-            boolean frame = Math.abs(dz) == 2 || h == 6;
-            if (frame) set(l, cx - 3, y + h, cz + dz, cry);
+        for (int dz = -3; dz <= 3; dz++) for (int h = 1; h <= 14; h++) set(l, cx - 10, y + h, cz + dz, air);
+        for (int dz = -4; dz <= 4; dz++) for (int h = 1; h <= 15; h++) {
+            boolean frame = Math.abs(dz) == 4 || h == 15;
+            if (frame) set(l, cx - 10, y + h, cz + dz, cry);
         }
-        set(l, cx, y + 9, cz, Blocks.SOUL_LANTERN.defaultBlockState().setValue(net.minecraft.world.level.block.LanternBlock.HANGING, true));
+        set(l, cx, y + 29, cz, Blocks.SOUL_LANTERN.defaultBlockState().setValue(net.minecraft.world.level.block.LanternBlock.HANGING, true));
     }
 
     // ─── Bouclier du Siège ───
@@ -149,11 +156,11 @@ final class RiftFortress {
         BlockPos c = center(sr);
         double cx = c.getX() + 0.5, cz = c.getZ() + 0.5;
         if (time % 10 == 0) {
-            for (int ring = 0; ring < 4; ring++) {
-                double y = c.getY() + 1 + ring * 3;
-                double rr = (R + 1.8) * Math.sqrt(Math.max(0.2, 1 - sq(ring / 4.5)));
-                for (int i = 0; i < 28; i++) {
-                    double a = (i / 28.0) * Math.PI * 2 + time * 0.01;
+            for (int ring = 0; ring < 6; ring++) {
+                double y = c.getY() + 1 + ring * 6;
+                double rr = (R + 1.8) * Math.sqrt(Math.max(0.2, 1 - sq(ring / 6.5)));
+                for (int i = 0; i < 56; i++) {
+                    double a = (i / 56.0) * Math.PI * 2 + time * 0.01;
                     l.sendParticles(((i + ring) & 1) == 0 ? TEAL : VIOLET, cx + Math.cos(a) * rr, y, cz + Math.sin(a) * rr, 1, 0, 0, 0, 0);
                 }
             }

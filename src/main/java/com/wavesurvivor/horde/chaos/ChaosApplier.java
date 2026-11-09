@@ -144,6 +144,13 @@ public class ChaosApplier {
             dMin = Math.max(dMin, outside);
             dMax = Math.max(dMax, dMin + 4);
         }
+        // Faille : toujours sur l'île, autour du Monolithe (les distances de l'événement sont ramenées à la taille de l'île)
+        if (com.wavesurvivor.horde.rift.RiftManager.isActive()) {
+            center = com.wavesurvivor.horde.rift.RiftManager.CENTER;
+            int rr = com.wavesurvivor.horde.rift.RiftManager.islandRadiusNow();
+            dMax = Math.max(5, Math.min(dMax, rr - 4));
+            dMin = Math.max(4, Math.min(dMin, dMax - 2));
+        }
         String firstDir = null;
         int firstDist = 0;
         for (int i = 0; i < count; i++) {

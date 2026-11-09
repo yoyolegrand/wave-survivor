@@ -4710,5 +4710,6 @@
   "ui.rift.avatar_hp": "Avatar HP",
   "ui.rift.sec_engines": "Siege engines",
   "ui.rift.engines_on": "Catapults and ballistae",
-  "ui.rift.hint_titan": "§8The Titan (scaled by Pehkui) attacks from afar with announced skills; killing an avatar removes a % of its max HP. Catapults (cobblestone, 30 s) and ballistae (arrows): right-click the lectern."
+  "ui.rift.hint_titan": "§8The Titan (scaled by Pehkui) attacks from afar with announced skills; killing an avatar removes a % of its max HP. Catapults (cobblestone, 30 s) and ballistae (arrows): right-click the lectern.",
+  "ui.rift.hint_resources": "§8Trees and ore deposits during calms are the ones from the Chaos tab (Tree and Deposit events, Guaranteed per calm setting). Block types, sizes, loot and styles are set there exactly like in a classic horde or a Kingdom."
 }

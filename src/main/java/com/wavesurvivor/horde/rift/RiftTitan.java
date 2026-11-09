@@ -86,6 +86,13 @@ final class RiftTitan {
 
     // ─── Apparition ───
 
+    /** Distance (vers le sud) entre le centre de l'île et le Titan : l'île + une marge + la demi-largeur du Titan agrandi. */
+    static double distance(HordeConfigMultiData.RiftSettings settings, int sr) {
+        EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(settings.titanEntity));
+        double w = t != null ? t.getWidth() : 1.4;
+        return Math.max(70, sr + 35 + w * settings.titanScale * 0.5);
+    }
+
     static boolean spawn(ServerLevel l, HordeConfigMultiData.RiftSettings settings, int players, int sr) {
         rs = settings;
         siegeRadius = sr;
@@ -97,9 +104,8 @@ final class RiftTitan {
         Entity e = type.create(l);
         if (!(e instanceof Mob)) e = EntityType.IRON_GOLEM.create(l);
         Mob mob = (Mob) e;
-        BlockPos fc = RiftFortress.center(sr);
-        baseX = fc.getX() + 58.5;
-        baseZ = fc.getZ() + 0.5;
+        baseX = RiftManager.CENTER.getX() + 0.5;
+        baseZ = RiftManager.CENTER.getZ() + distance(settings, sr) + 0.5;   // au SUD de l'île : à portée des engins de siège
         baseY = RiftManager.CENTER.getY() - 8;
         maxHp = (float) (settings.titanHp * (1.0 + 0.6 * Math.max(0, players - 1)));
         mob.setNoAi(true);
@@ -113,9 +119,9 @@ final class RiftTitan {
         mob.setCustomNameVisible(false);
         mob.getPersistentData().putBoolean("ws_rift_titan", true);
         PehkuiCompat.setScale(mob, settings.titanScale);
-        mob.moveTo(baseX, baseY - 90, baseZ, 90f, 0f);
-        mob.setYHeadRot(90f);
-        mob.yBodyRot = 90f;
+        mob.moveTo(baseX, baseY - 90, baseZ, 180f, 0f);   // regarde vers le nord (l'île)
+        mob.setYHeadRot(180f);
+        mob.yBodyRot = 180f;
         l.addFreshEntity(mob);
         titan = mob;
         titanId = mob.getUUID();
@@ -373,8 +379,8 @@ final class RiftTitan {
         for (int i = 0; i < n; i++) {
             Entity e = EntityType.WITHER_SKELETON.create(l);
             if (!(e instanceof Mob m)) continue;
-            double x = RiftManager.CENTER.getX() + RiftManager.radius() - 3 + RNG.nextInt(3), z = RiftManager.CENTER.getZ() + (RNG.nextDouble() - 0.5) * 14;
-            m.moveTo(x, RiftManager.CENTER.getY() + 1, z, 90f, 0f);
+            double x = RiftManager.CENTER.getX() + (RNG.nextDouble() - 0.5) * 14, z = RiftManager.CENTER.getZ() + siegeRadius - 4 + RNG.nextInt(3);
+            m.moveTo(x, RiftManager.CENTER.getY() + 1, z, 0f, 0f);
             if (m.getAttribute(Attributes.MAX_HEALTH) != null) m.getAttribute(Attributes.MAX_HEALTH).setBaseValue(hp);
             if (m.getAttribute(Attributes.ATTACK_DAMAGE) != null) m.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(9);
             m.setHealth((float) hp);

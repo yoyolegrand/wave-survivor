@@ -307,6 +307,7 @@ public class AltarDefense {
     private static void fail(ServerLevel level, Session s) {
         SESSION = null;
         s.bar.removeAllPlayers();
+        if (com.wavesurvivor.horde.rift.RiftManager.monolithFell(level)) return; // Faille : sa propre défaite (pause de fin)
 
         AltarStore.AltarEntry entry = AltarStore.get(s.dim, s.pos);
         if (entry != null) {

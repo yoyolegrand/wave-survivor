@@ -3949,5 +3949,6 @@
   "ui.rift.avatar_hp": "PV avatar",
   "ui.rift.sec_engines": "Engins de siège",
   "ui.rift.engines_on": "Catapultes et balistes",
-  "ui.rift.hint_titan": "§8Le Titan (agrandi par Pehkui) attaque de loin avec des attaques annoncées ; tuer un avatar lui retire un % de ses PV max. Catapultes (pierre taillée, 30 s) et balistes (flèches) : clic droit sur le pupitre."
+  "ui.rift.hint_titan": "§8Le Titan (agrandi par Pehkui) attaque de loin avec des attaques annoncées ; tuer un avatar lui retire un % de ses PV max. Catapultes (pierre taillée, 30 s) et balistes (flèches) : clic droit sur le pupitre.",
+  "ui.rift.hint_resources": "§8Arbres et gisements des calmes : ce sont ceux de l'onglet Chaos (événements « Arbre » et « Gisement », réglage « Garantis par calme »). Types de blocs, tailles, butin et styles s'y règlent exactement comme pour une horde classique ou un Kingdom."
 }

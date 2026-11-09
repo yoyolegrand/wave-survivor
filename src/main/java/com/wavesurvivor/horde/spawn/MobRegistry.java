@@ -33,7 +33,7 @@ public class MobRegistry {
             // Monture / passager non demandés (jockeys vanilla ou d'autres mods) : contrôlés au tick suivant
             MOUNT_CHECK.add(entity.getUUID());
             // « Briseur de Monolithe » coché sur l'unité : ignore les joueurs, ne vise que le Monolithe (sans entité custom)
-            if (template.targetsAltar) com.wavesurvivor.altar.AltarDefense.registerProfaner(entity);
+            if (template.targetsAltar || com.wavesurvivor.horde.rift.RiftManager.forceProfaners()) com.wavesurvivor.altar.AltarDefense.registerProfaner(entity);
             // Compétences ajoutées à l'unité dans le Horde Editor (onglet Mobs), avec ses réglages propres (une seule fois)
             if (template.skills != null && !template.skills.isEmpty() && !entity.getPersistentData().getBoolean("ws_unit_skills")) {
                 entity.getPersistentData().putBoolean("ws_unit_skills", true);

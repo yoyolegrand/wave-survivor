@@ -180,7 +180,8 @@ public class HordeManager {
         int totalWaves = horde.configData != null ? horde.configData.totalWaves : 0;
         HordeHudManager.show(srv, com.wavesurvivor.i18n.WSLang.t(horde.hordeName), totalWaves);
         // Défense du Monolithe (seulement si lancée depuis un autel et activée pour cette horde)
-        com.wavesurvivor.altar.AltarDefense.onHordeStart(srv, horde.hordeName, overrideSpawnDim, overrideSpawnPos);
+        if (!com.wavesurvivor.horde.rift.RiftManager.keepMonolith()) // Faille : le Monolithe de l'île continue d'une phase à l'autre
+            com.wavesurvivor.altar.AltarDefense.onHordeStart(srv, horde.hordeName, overrideSpawnDim, overrideSpawnPos);
 
         HordeConfigMultiData.ConfigDataInner cfg = horde.configData;
         if (cfg != null) {
@@ -526,7 +527,7 @@ public class HordeManager {
         // Progression : horde terminée (au niveau de difficulté en cours) pour les joueurs connectés
         // Le Boss Rush ne compte pas comme avoir terminé la horde (déblocages, première victoire)
         if (!riftMid && activeHorde != null && !com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.difficulty.HordeProgress.recordWin(srv, activeHorde.hordeName);
-        com.wavesurvivor.altar.AltarDefense.onHordeEnd(srv, true);
+        if (!riftMid) com.wavesurvivor.altar.AltarDefense.onHordeEnd(srv, true);
         com.wavesurvivor.horde.skill.NecroTracker.clearAll();
         com.wavesurvivor.horde.boss.LicheController.clearAll(srv);
         com.wavesurvivor.horde.breach.BreachManager.clearAll(srv);

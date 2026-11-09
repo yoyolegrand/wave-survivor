@@ -74,19 +74,24 @@ final class RiftEngines {
         msgGate.clear();
     }
 
-    // ─── Construction (tous les engins regardent vers +X, la forteresse) ───
+    // ─── Construction (tous les engins regardent vers le SUD, là où surgit le Titan) ───
 
     static void build(ServerLevel l) {
         clear();
         int y = RiftManager.CENTER.getY() + 1;
-        catapult(l, -9, y, -10);
-        catapult(l, -9, y, 8);
-        ballista(l, -12, y, -4);
-        ballista(l, -12, y, 2);
+        catapult(l, -9, y, 6);
+        catapult(l, 11, y, 6);
+        ballista(l, -3, y, 8);
+        ballista(l, 4, y, 8);
     }
 
     private static void put(ServerLevel l, int x, int y, int z, BlockState st) {
         l.setBlock(new BlockPos(x, y, z), st, 2);
+    }
+
+    /** Pose un bloc du modèle (dessiné vers +X) tourné vers le sud : bloc monde = (x0 - dz - 1, z0 + dx). */
+    private static void putR(ServerLevel l, int x0, int y, int z0, int dx, int dz, BlockState st) {
+        put(l, x0 - dz - 1, y, z0 + dx, st);
     }
 
     /** Catapulte : châssis 6 × 2 en bois sombre, roues de fer, montants, grande poutre, cuillère (chaudron), contrepoids, treuil (pupitre). */
@@ -95,23 +100,23 @@ final class RiftEngines {
         int x0 = o.getX() + bx, z0 = o.getZ() + bz;
         BlockState planks = Blocks.DARK_OAK_PLANKS.defaultBlockState();
         BlockState fence = Blocks.DARK_OAK_FENCE.defaultBlockState();
-        for (int dx = 0; dx < 6; dx++) for (int dz = 0; dz < 2; dz++) put(l, x0 + dx, y, z0 + dz, planks);
+        for (int dx = 0; dx < 6; dx++) for (int dz = 0; dz < 2; dz++) putR(l, x0, y, z0, dx, dz, planks);
         for (int dx : new int[]{1, 4}) {
-            put(l, x0 + dx, y, z0 - 1, Blocks.IRON_BARS.defaultBlockState());
-            put(l, x0 + dx, y, z0 + 2, Blocks.IRON_BARS.defaultBlockState());
+            putR(l, x0, y, z0, dx, -1, Blocks.IRON_BARS.defaultBlockState());
+            putR(l, x0, y, z0, dx, 2, Blocks.IRON_BARS.defaultBlockState());
         }
         for (int dz = 0; dz < 2; dz++) {
-            put(l, x0 + 3, y + 1, z0 + dz, fence);
-            put(l, x0 + 3, y + 2, z0 + dz, fence);
+            putR(l, x0, y + 1, z0, 3, dz, fence);
+            putR(l, x0, y + 2, z0, 3, dz, fence);
         }
-        BlockState beam = Blocks.DARK_OAK_LOG.defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.X);
-        for (int dx = 0; dx <= 4; dx++) put(l, x0 + dx, y + 3, z0, beam);
-        put(l, x0 + 5, y + 2, z0, Blocks.CAULDRON.defaultBlockState());
-        put(l, x0, y + 2, z0, Blocks.COBBLESTONE.defaultBlockState());
-        put(l, x0, y + 2, z0 + 1, Blocks.COBBLESTONE.defaultBlockState());
-        BlockPos lec = new BlockPos(x0, y + 1, z0);
-        put(l, lec.getX(), lec.getY(), lec.getZ(), Blocks.LECTERN.defaultBlockState().setValue(LecternBlock.FACING, Direction.EAST));
-        ENGINES.add(new Engine(lec, false, new Vec3(x0 + 5.5, y + 3.5, z0 + 1.0)));
+        BlockState beam = Blocks.DARK_OAK_LOG.defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Z);
+        for (int dx = 0; dx <= 4; dx++) putR(l, x0, y + 3, z0, dx, 0, beam);
+        putR(l, x0, y + 2, z0, 5, 0, Blocks.CAULDRON.defaultBlockState());
+        putR(l, x0, y + 2, z0, 0, 0, Blocks.COBBLESTONE.defaultBlockState());
+        putR(l, x0, y + 2, z0, 0, 1, Blocks.COBBLESTONE.defaultBlockState());
+        BlockPos lec = new BlockPos(x0 - 1, y + 1, z0);
+        put(l, lec.getX(), lec.getY(), lec.getZ(), Blocks.LECTERN.defaultBlockState().setValue(LecternBlock.FACING, Direction.SOUTH));
+        ENGINES.add(new Engine(lec, false, new Vec3(x0 - 1.0, y + 3.5, z0 + 5.5)));
     }
 
     /** Baliste céleste : piédestal 3 × 3 de marbre (quartz) à coins dorés, fût, arc en « ailes » dorées, carreau lumineux. */
@@ -120,19 +125,19 @@ final class RiftEngines {
         int x0 = o.getX() + bx, z0 = o.getZ() + bz;
         for (int dx = 0; dx < 3; dx++) for (int dz = 0; dz < 3; dz++) {
             boolean corner = (dx != 1) && (dz != 1);
-            put(l, x0 + dx, y, z0 + dz, corner ? Blocks.GOLD_BLOCK.defaultBlockState() : Blocks.QUARTZ_BLOCK.defaultBlockState());
+            putR(l, x0, y, z0, dx, dz, corner ? Blocks.GOLD_BLOCK.defaultBlockState() : Blocks.QUARTZ_BLOCK.defaultBlockState());
         }
-        put(l, x0 + 1, y + 1, z0 + 1, Blocks.QUARTZ_PILLAR.defaultBlockState());
-        put(l, x0 + 1, y + 2, z0 + 1, Blocks.CHISELED_QUARTZ_BLOCK.defaultBlockState());
+        putR(l, x0, y + 1, z0, 1, 1, Blocks.QUARTZ_PILLAR.defaultBlockState());
+        putR(l, x0, y + 2, z0, 1, 1, Blocks.CHISELED_QUARTZ_BLOCK.defaultBlockState());
         for (int dz : new int[]{0, 2}) {
-            put(l, x0 + 2, y + 2, z0 + dz, Blocks.GOLD_BLOCK.defaultBlockState());
-            put(l, x0 + 1, y + 2, z0 + dz, Blocks.WHITE_STAINED_GLASS.defaultBlockState());
-            put(l, x0 + 2, y + 3, z0 + dz, Blocks.AMETHYST_BLOCK.defaultBlockState());
+            putR(l, x0, y + 2, z0, 2, dz, Blocks.GOLD_BLOCK.defaultBlockState());
+            putR(l, x0, y + 2, z0, 1, dz, Blocks.WHITE_STAINED_GLASS.defaultBlockState());
+            putR(l, x0, y + 3, z0, 2, dz, Blocks.AMETHYST_BLOCK.defaultBlockState());
         }
-        put(l, x0 + 2, y + 2, z0 + 1, Blocks.END_ROD.defaultBlockState().setValue(net.minecraft.world.level.block.DirectionalBlock.FACING, Direction.EAST));
-        BlockPos lec = new BlockPos(x0, y + 1, z0 + 1);
-        put(l, lec.getX(), lec.getY(), lec.getZ(), Blocks.LECTERN.defaultBlockState().setValue(LecternBlock.FACING, Direction.EAST));
-        ENGINES.add(new Engine(lec, true, new Vec3(x0 + 3.2, y + 2.6, z0 + 1.5)));
+        putR(l, x0, y + 2, z0, 2, 1, Blocks.END_ROD.defaultBlockState().setValue(net.minecraft.world.level.block.DirectionalBlock.FACING, Direction.SOUTH));
+        BlockPos lec = new BlockPos(x0 - 2, y + 1, z0);
+        put(l, lec.getX(), lec.getY(), lec.getZ(), Blocks.LECTERN.defaultBlockState().setValue(LecternBlock.FACING, Direction.SOUTH));
+        ENGINES.add(new Engine(lec, true, new Vec3(x0 - 1.5, y + 2.6, z0 + 3.2)));
     }
 
     // ─── Pilotage ───

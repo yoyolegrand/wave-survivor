@@ -135,7 +135,7 @@ public class CustomEntitySpawner {
             if (level.addFreshEntity(ent)) {
                 MobRegistry.register(ent, templateWithOverride(ce, hordeOverride));
                 // Profanateur : ignore les joueurs et attaque le monolithe (Défense du Monolithe)
-                if (ce.targetsAltar) com.wavesurvivor.altar.AltarDefense.registerProfaner(ent);
+                if (ce.targetsAltar || com.wavesurvivor.horde.rift.RiftManager.forceProfaners()) com.wavesurvivor.altar.AltarDefense.registerProfaner(ent);
                 spawned++;
 
                 // Register skills (Phase 2b) — idem que pour les boss

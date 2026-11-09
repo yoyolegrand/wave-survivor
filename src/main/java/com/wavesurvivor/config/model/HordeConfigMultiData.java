@@ -376,7 +376,7 @@ public class HordeConfigMultiData {
         /** Phase 4 — Titan : entité, taille (Pehkui), PV, avatars (PV, % de PV max retirés à leur mort), plafond de dégâts par coup (% des PV max). */
         @SerializedName("titanEnabled") public boolean titanEnabled = true;
         @SerializedName("titanEntity") public String titanEntity = "minecraft:iron_golem";
-        @SerializedName("titanScale") public double titanScale = 22.0;
+        @SerializedName("titanScale") public double titanScale = 110.0;
         @SerializedName("titanHp") public int titanHp = 3000;
         @SerializedName("titanAvatarPercent") public int titanAvatarPercent = 8;
         @SerializedName("titanAvatarHp") public int titanAvatarHp = 250;
