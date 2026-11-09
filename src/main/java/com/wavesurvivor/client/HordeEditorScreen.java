@@ -1968,6 +1968,32 @@ public class HordeEditorScreen extends Screen {
         toggle(x + 180, y - 2, 170, t("ui.rift.meteor_crater"), r, "meteorCrater", true);
         y += 30;
         labelWrap(x, y, t("ui.rift.hint_meteors"), W - 24);
+        y += 40;
+        label(x, y, "§6§l" + t("ui.rift.sec_titan_more"));
+        y += 14;
+        flow(x, y);
+        fl(t("ui.rift.crystals"));
+        fInt(22, HordeJson.num(r, "titanCrystals", 4), v -> r.addProperty("titanCrystals", Math.max(0, Math.min(8, v))));
+        fl(t("ui.rift.crystal_hp"));
+        fInt(30, HordeJson.num(r, "titanCrystalHp", 120), v -> r.addProperty("titanCrystalHp", Math.max(10, Math.min(5000, v))));
+        fl(t("ui.rift.crystal_pct"));
+        fInt(22, HordeJson.num(r, "titanCrystalPercent", 5), v -> r.addProperty("titanCrystalPercent", Math.max(0, Math.min(50, v))));
+        fl(t("ui.rift.crystal_stun"));
+        fInt(22, HordeJson.num(r, "titanCrystalStunBonus", 2), v -> r.addProperty("titanCrystalStunBonus", Math.max(0, Math.min(30, v))));
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.wave_base"));
+        fInt(22, HordeJson.num(r, "titanWaveBase", 5), v -> r.addProperty("titanWaveBase", Math.max(1, Math.min(50, v))));
+        fl(t("ui.rift.wave_interval"));
+        fInt(22, HordeJson.num(r, "titanWaveInterval", 10), v -> r.addProperty("titanWaveInterval", Math.max(3, Math.min(120, v))));
+        fl(t("ui.rift.wave_cap"));
+        fInt(26, HordeJson.num(r, "titanWaveCap", 60), v -> r.addProperty("titanWaveCap", Math.max(5, Math.min(300, v))));
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.build_damage"));
+        fInt(30, HordeJson.num(r, "titanBuildDamage", 300), v -> r.addProperty("titanBuildDamage", Math.max(1, Math.min(5000, v))));
+        fl(t("ui.rift.build_radius"));
+        fInt(22, HordeJson.num(r, "titanBuildRadius", 6), v -> r.addProperty("titanBuildRadius", Math.max(2, Math.min(20, v))));
     }
 
     /** Faille — page « Titan et engins de siège ». */

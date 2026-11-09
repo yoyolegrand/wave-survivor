@@ -455,6 +455,22 @@ public final class RiftManager {
         return active && RiftTitan.hurtTitan(source, amount);
     }
 
+    /** Un point faible du Titan vient d'être détruit. */
+    static void titanCrystalDown(ServerLevel l) {
+        if (active) RiftTitan.crystalDown(l);
+    }
+
+    /** Vague du Titan : {@code count} unités de la horde sortent d'un portail ouvert sur le pont (assez près de l'île pour ne pas partir de la forteresse). */
+    static void titanWave(ServerLevel l, int count) {
+        if (!active || horde == null || horde.configData == null || horde.configData.hordeEntities == null || horde.configData.hordeEntities.isEmpty()) return;
+        BlockPos p = RiftFortress.bridgePoint(siegeFinal, 26);
+        l.sendParticles(net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL, p.getX() + 0.5, p.getY() + 2, p.getZ() + 0.5, 80, 1.2, 2.0, 2.5, 0.2);
+        l.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL, p.getX() + 0.5, p.getY() + 1.5, p.getZ() + 0.5, 60, 1.0, 1.5, 2.0, 0.5);
+        l.playSound(null, p, SoundEvents.END_PORTAL_SPAWN, SoundSource.HOSTILE, 2.5f, 1.3f);
+        var tpl = horde.configData.hordeEntities.get(RNG.nextInt(horde.configData.hordeEntities.size()));
+        com.wavesurvivor.horde.spawn.HordeSpawner.spawnMobs(l, tpl, p, 3, count, playerCount(l));
+    }
+
     /** Le Titan existe-t-il encore ? (les boîtes de contact disparaissent sans lui) */
     public static boolean titanAlive() {
         return active && RiftTitan.active();
@@ -764,6 +780,7 @@ public final class RiftManager {
             resuming = null;
             com.wavesurvivor.horde.rewards.KillTracker.restore(s.kills);
             if (!s.kingdom.isEmpty()) com.wavesurvivor.horde.kingdom.KingdomManager.restoreState(s.kingdom, server);
+            RiftEngines.restore(rd, s.engines);   // engins de siège reposés
             if (s.phase == 3) {
                 HordeManager.get().clearKingdomMobs();
                 com.wavesurvivor.horde.kingdom.KingdomManager.enterHold();
@@ -846,10 +863,16 @@ public final class RiftManager {
             wave = hm.getCurrentWave();
             if (hm.getState() != HordeManager.State.RUNNING) wave++;
             wave = Math.max(1, Math.min(wave, Math.max(1, horde.configData.totalWaves)));
-        } else if (phase == Phase.SIEGE && siegeHordeOn && com.wavesurvivor.horde.kingdom.KingdomManager.isCalmPhase()) {
+        } else if (phase == Phase.SIEGE && siegeHordeOn && com.wavesurvivor.horde.kingdom.KingdomManager.isActive()) {
             ph = 2;
             kingdom = com.wavesurvivor.horde.kingdom.KingdomManager.saveState();
+            // Pendant un assaut, le point de reprise est l'assaut précédent (on rejouera celui-ci) ; tours, trésor et rôles sont à jour
+            if (!com.wavesurvivor.horde.kingdom.KingdomManager.isCalmPhase()) kingdom.putInt("cycle", Math.max(0, kingdom.getInt("cycle") - 1));
             wave = kingdom.getInt("cycle");
+        } else if ((phase == Phase.COUNTER || phase == Phase.TITAN || phase == Phase.INTERLUDE) && nextPhaseIsAfterSiege()
+                && com.wavesurvivor.horde.kingdom.KingdomManager.isActive()) {
+            ph = 3;   // Contre-offensive / Titan : reprise au début de la Contre-offensive, avec les tours, le trésor et les engins à jour
+            kingdom = com.wavesurvivor.horde.kingdom.KingdomManager.saveState();
         } else {
             return;
         }
@@ -861,6 +884,7 @@ public final class RiftManager {
         s.altar = home;
         s.fortress = RiftFortress.currentId();
         s.kingdom = kingdom;
+        s.engines = RiftEngines.save(server.getLevel(RIFT_DIM));
         var diff = com.wavesurvivor.horde.difficulty.HordeDifficulty.active();
         s.difficulty = diff == null ? "" : diff.id;
         s.mutators = com.wavesurvivor.horde.mutator.Mutator.join(com.wavesurvivor.horde.mutator.HordeMutators.active());
@@ -879,6 +903,11 @@ public final class RiftManager {
     /** Abandon de la Faille sauvegardée (bouton « Abandonner »). */
     public static void abandonSaved(MinecraftServer server) {
         RiftSession.discard(server);
+    }
+
+    /** Vrai une fois le Siège terminé (Contre-offensive, Titan, ou l'interlude qui y mène). */
+    private static boolean nextPhaseIsAfterSiege() {
+        return phase == Phase.COUNTER || phase == Phase.TITAN || (phase == Phase.INTERLUDE && (nextPhase == Phase.COUNTER || nextPhase == Phase.TITAN));
     }
 
     /** Fermeture du serveur : point de reprise enregistré, puis la Faille est fermée proprement (île vidée, joueurs renvoyés). */

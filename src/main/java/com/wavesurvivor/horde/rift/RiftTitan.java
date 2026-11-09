@@ -78,6 +78,12 @@ final class RiftTitan {
     private static int phase;
     /** Charge sur l'île : 0 repos, 1 annonce, 2 élan, 3 stun, 4 corps à corps, 5 retour. */
     private static int charge;
+    /** Points faibles (cristaux), leur décalage par rapport au Titan {dx, dy}, prochaine vague, dégâts subis pendant la charge, stun en plus (ticks). */
+    private static final List<UUID> crystals = new ArrayList<>();
+    private static final List<float[]> crystalOff = new ArrayList<>();
+    private static long nextWaveAt;
+    private static float chargeDealt;
+    private static int stunBonus;
     private static long chargeAt, nextChargeAt, nextMeleeAt;
     private static boolean chargeDue, stunning;
     private static double chargeTargetZ;
@@ -133,9 +139,20 @@ final class RiftTitan {
             if (cols == 1) x = titan.getX();
             h.setPos(x, titan.getY() + row * 8.0, front + 4);
         }
+        placeCrystals(l);
+    }
+
+    private static void clearCrystals(ServerLevel l) {
+        for (UUID id : new ArrayList<>(crystals)) {
+            Entity e = l.getEntity(id);
+            if (e != null) e.discard();
+        }
+        crystals.clear();
+        crystalOff.clear();
     }
 
     private static void clearHitboxes(ServerLevel l) {
+        clearCrystals(l);
         for (UUID id : new ArrayList<>(hitboxes)) {
             Entity h = l.getEntity(id);
             if (h != null) h.discard();
@@ -209,6 +226,9 @@ final class RiftTitan {
         chargeDue = false;
         stunning = false;
         strikes.clear();
+        chargeDealt = 0f;
+        stunBonus = 0;
+        nextWaveAt = Long.MAX_VALUE;
         nextChargeAt = l.getServer().getTickCount() + 220 + Math.max(10, settings.titanChargeInterval) * 20L;
         bar = new ServerBossEvent(Component.literal("§5§lTitan de la Faille"), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
         bar.setProgress(1f);
@@ -250,6 +270,7 @@ final class RiftTitan {
                 titan.setInvulnerable(false);
                 titan.setPos(baseX, baseY, baseZ);
                 spawnHitboxes(l);
+                spawnCrystals(l);
                 nextSkillAt = now + 100;
                 announce(l, "§5§l⚔ Le Titan vous a vus !");
                 summonAvatars(l);
@@ -278,6 +299,11 @@ final class RiftTitan {
             summonAvatars(l);
             nextSkillAt = now + 80;
             if (rs.titanCharge && phase >= 1) chargeDue = true;   // chaque palier de PV (75 / 50 / 25 %) déclenche une charge
+            if (phase >= 1) {
+                spawnCrystals(l);                                  // les points faibles se reforment à chaque palier
+                nextWaveAt = now + 60;                             // et l'invasion continue reprend, deux fois plus forte à chaque phase
+                phaseCinematic(l);
+            }
         }
         // Attaques annoncées en cours
         for (Pending p : new ArrayList<>(pending)) {
@@ -292,6 +318,8 @@ final class RiftTitan {
             }
         }
         // Choix de la prochaine attaque
+        waveTick(l, now);
+        phaseFx(l, now);
         chargeTick(l, now);
         if (now >= nextSkillAt && pending.size() < 2 && charge == 0) {
             nextSkillAt = now + GAP[phase] + RNG.nextInt(40);
@@ -316,6 +344,7 @@ final class RiftTitan {
         if (phase >= 1) { pool.add(1); pool.add(1); } // onde de choc
         if (phase >= 2) { pool.add(2); }             // rayon
         if (phase >= 3) { pool.add(3); pool.add(2); } // rugissement
+        if (phase >= 1 && !defensePositions().isEmpty()) { pool.add(6); if (phase >= 2) pool.add(6); } // attaque d'un bâtiment
         if (rs.titanMonolithDamage > 0 && AltarDefenseHook.alive()) { if (phase >= 1) pool.add(5); if (phase >= 3) pool.add(5); } // poing contre le Monolithe
         if (RNG.nextInt(6) == 0 && avatars.size() < 4) pool.add(4);
         switch (pool.get(RNG.nextInt(pool.size()))) {
@@ -324,6 +353,7 @@ final class RiftTitan {
             case 2 -> beam(l, now);
             case 3 -> roar(l, now);
             case 5 -> monolithFist(l, now);
+            case 6 -> buildingStrike(l, now);
             default -> summonAvatars(l);
         }
     }
@@ -717,6 +747,13 @@ final class RiftTitan {
 
     /** Plafond de dégâts par coup (dégâts au Titan plafonnés à un pourcentage de ses PV max). */
     static float capDamage(float amount, long now) {
+        if (charge != 0) {
+            // Pendant toute la charge : au plus 20 % des PV max perdus (×1,5 pendant le stun, ×0,5 sinon)
+            float room = Math.max(0f, (float) (maxHp * rs.titanChargeCapPercent / 100.0) - chargeDealt);
+            float out = Math.min(amount * (stunning ? 1.5f : 0.5f), room);
+            chargeDealt += out;
+            return out;
+        }
         if (windowUntil > 0 && now < windowUntil) {
             // Fenêtre de vulnérabilité : dégâts ×1,5, mais total plafonné pour la fenêtre entière
             float room = Math.max(0f, (float) (maxHp * (stunning ? rs.titanChargeCapPercent : rs.titanWindowCapPercent) / 100.0) - windowDealt);
@@ -834,8 +871,10 @@ final class RiftTitan {
         double reach = Math.max(4, rs.titanChargeReach);
         // Le bord nord du Titan arrive à « reach » blocs à l'intérieur de l'île
         chargeTargetZ = c.getZ() + 0.5 + sr - reach + halfWidth();
-        double hw = Math.min(halfWidth(), sr + 4);
-        zone = new double[]{c.getX() + 0.5 - hw, c.getX() + 0.5 + hw, c.getZ() + 0.5 + sr - reach - 4, c.getZ() + 0.5 + sr + 6};
+        double hw = Math.min(halfWidth(), 14);   // zone d'impact réduite : seul le coin sud de l'île est touché
+        zone = new double[]{c.getX() + 0.5 - hw, c.getX() + 0.5 + hw, c.getZ() + 0.5 + sr - reach - 2, c.getZ() + 0.5 + sr + 4};
+        chargeDealt = 0f;
+        stunBonus = 0;
         charge = 1;
         chargeAt = now + 60;
         titan.setGlowingTag(true);
@@ -863,8 +902,11 @@ final class RiftTitan {
                 p.hurtMarked = true;
             }
         }
+        // Les bâtiments pris dans la zone sont écrasés
+        com.wavesurvivor.horde.kingdom.KingdomClaim.damageRect(zone[0], zone[1], zone[2], zone[3], Math.max(1, rs.titanBuildDamage));
         charge = 3;
-        chargeAt = now + Math.max(2, rs.titanChargeStun) * 20L;
+        chargeAt = now + Math.max(2, rs.titanChargeStun) * 20L + stunBonus;
+        stunBonus = 0;
         stunning = true;
         windowUntil = chargeAt;
         windowDealt = 0f;
@@ -901,6 +943,148 @@ final class RiftTitan {
                     }
                 }
             }
+        }
+    }
+
+    // ─── Points faibles (cristaux sur le corps du Titan) ───
+
+    /** (Re)pose les cristaux manquants sur la face avant du Titan, bas du corps : atteignables aux engins, aux arcs et en mêlée. */
+    private static void spawnCrystals(ServerLevel l) {
+        if (titan == null) return;
+        int n = Math.max(0, Math.min(8, rs.titanCrystals));
+        double hw = halfWidth();
+        // retire ceux qui n'existent plus
+        for (int i = crystals.size() - 1; i >= 0; i--) {
+            Entity e = l.getEntity(crystals.get(i));
+            if (e == null || e.isRemoved()) { crystals.remove(i); crystalOff.remove(i); }
+        }
+        if (n == 0) return;
+        for (int i = 0; i < n; i++) {
+            float dx = (float) ((i + 0.5) / n * 2 * hw * 0.8 - hw * 0.8), dy = 5f + (i % 2) * 7f;
+            boolean have = false;
+            for (float[] o : crystalOff) if (Math.abs(o[0] - dx) < 0.01f) { have = true; break; }
+            if (have) continue;
+            UUID id = RiftFortress.spawnTitanCrystal(l, titan.getX() + dx, titan.getY() + dy, titan.getZ() - hw - 1.5, Math.max(10, rs.titanCrystalHp), "§dPoint faible");
+            crystals.add(id);
+            crystalOff.add(new float[]{dx, dy});
+        }
+        if (now0(l) % 1 == 0) announce(l, "§d§l✦ Des points faibles apparaissent sur le Titan ! Détruisez-les (−" + rs.titanCrystalPercent + " % de ses PV chacun).");
+    }
+
+    private static long now0(ServerLevel l) { return l.getServer().getTickCount(); }
+
+    private static void placeCrystals(ServerLevel l) {
+        if (titan == null) return;
+        double hw = halfWidth();
+        for (int i = 0; i < crystals.size(); i++) {
+            Entity e = l.getEntity(crystals.get(i));
+            if (e == null) continue;
+            float[] o = crystalOff.get(i);
+            e.setPos(titan.getX() + o[0], titan.getY() + o[1], titan.getZ() - hw - 1.5);
+        }
+    }
+
+    /** Un point faible est détruit : −5 % des PV max du Titan, et le stun est prolongé de 2 s si la charge est en cours. */
+    static void crystalDown(ServerLevel l) {
+        if (titan == null || dead || !titan.isAlive()) return;
+        float cut = (float) (maxHp * Math.max(0, rs.titanCrystalPercent) / 100.0);
+        titan.setHealth(Math.max(1f, titan.getHealth() - cut));
+        chargeDealt += charge != 0 ? cut : 0f;
+        l.playSound(null, titan.blockPosition(), SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.HOSTILE, 6f, 0.5f);
+        for (ServerPlayer p : l.players()) ShakePacket.send(p, 20, 0.6f);
+        long bonus = Math.max(0, rs.titanCrystalStunBonus) * 20L;
+        if (charge == 3) {            // stun en cours : prolongé
+            chargeAt += bonus;
+            windowUntil += bonus;
+            announce(l, "§d§l✦ Point faible détruit : −" + rs.titanCrystalPercent + " % de ses PV et stun prolongé de " + rs.titanCrystalStunBonus + " s !");
+        } else if (charge != 0 && charge < 3) {   // détruit pendant l'annonce ou l'élan : le stun suivant sera plus long
+            stunBonus += bonus;
+            announce(l, "§d§l✦ Point faible détruit : −" + rs.titanCrystalPercent + " % de ses PV (stun plus long à l'impact) !");
+        } else {
+            announce(l, "§d§l✦ Point faible détruit : −" + rs.titanCrystalPercent + " % de ses PV !");
+        }
+    }
+
+    // ─── Invasion continue entre les phases (portail sur le pont) ───
+
+    private static void waveTick(ServerLevel l, long now) {
+        if (phase < 1 || now < nextWaveAt || titan == null) return;
+        nextWaveAt = now + Math.max(3, rs.titanWaveInterval) * 20L;
+        // 5 unités par vague à la phase 2, doublées à chaque phase suivante
+        int count = Math.max(1, rs.titanWaveBase) * (1 << (Math.min(3, phase) - 1));
+        int near = l.getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class,
+                new net.minecraft.world.phys.AABB(RiftManager.CENTER).inflate(200, 80, 200)).size();
+        if (near >= Math.max(5, rs.titanWaveCap)) return;
+        RiftManager.titanWave(l, count);
+    }
+
+    // ─── Attaque d'un bâtiment ───
+
+    private static List<BlockPos> defensePositions() {
+        List<BlockPos> out = new ArrayList<>();
+        com.wavesurvivor.horde.kingdom.KingdomDefenses.forEachDefense((p, k) -> out.add(p));
+        return out;
+    }
+
+    /** Le Titan vise un bâtiment : annoncé (cercle rouge), puis tout ce qui est dans la zone est endommagé. */
+    private static void buildingStrike(ServerLevel l, long now) {
+        List<BlockPos> list = defensePositions();
+        if (list.isEmpty()) return;
+        BlockPos t = list.get(RNG.nextInt(list.size()));
+        final double r = Math.max(2, rs.titanBuildRadius);
+        schedule(l, now, 60, "Le Titan écrase un bâtiment !", x -> ring(l, t.getX() + 0.5, t.getY() + 0.2, t.getZ() + 0.5, r, RED, 28), () -> {
+            l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, t.getX() + 0.5, t.getY() + 1, t.getZ() + 0.5, 2, 0.8, 0.5, 0.8, 0);
+            l.playSound(null, t, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
+            com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(t, (int) Math.ceil(r), Math.max(1, rs.titanBuildDamage));
+            for (ServerPlayer p : alive(l)) {
+                if (Math.hypot(p.getX() - t.getX() - 0.5, p.getZ() - t.getZ() - 0.5) <= r) p.hurt(l.damageSources().explosion(null, titan), 10f);
+                ShakePacket.send(p, 25, 1.0f);
+            }
+        });
+    }
+
+    // ─── Ambiance des phases (visuel) ───
+
+    private static void phaseCinematic(ServerLevel l) {
+        String[] names = {"", "§e§lPHASE 2", "§6§lPHASE 3", "§c§lPHASE 4"};
+        String[] subs = {"", "§7L'invasion reprend…", "§7L'île commence à se fissurer…", "§7Le Titan est enragé !"};
+        for (ServerPlayer p : l.players()) {
+            p.connection.send(new ClientboundSetTitlesAnimationPacket(5, 40, 15));
+            p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(subs[Math.min(3, phase)])));
+            p.connection.send(new ClientboundSetTitleTextPacket(Component.literal(names[Math.min(3, phase)])));
+            ShakePacket.send(p, 60, 1.4f);
+        }
+        l.playSound(null, RiftManager.CENTER, SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 6f, 0.5f);
+    }
+
+    /** Ambiance continue : braises (phase 2), éclairs visuels (phase 3), fissures qui rampent sur l'île (phase 4). */
+    private static void phaseFx(ServerLevel l, long now) {
+        if (phase < 1 || titan == null) return;
+        BlockPos c = RiftManager.CENTER;
+        int sr = Math.max(16, siegeRadius);
+        if (now % 10 == 0) {
+            for (int i = 0; i < 6; i++) {
+                double a = RNG.nextDouble() * Math.PI * 2, d = RNG.nextDouble() * sr;
+                l.sendParticles(phase >= 3 ? ParticleTypes.LAVA : ParticleTypes.FLAME, c.getX() + 0.5 + Math.cos(a) * d, c.getY() + 1.5 + RNG.nextDouble() * 4, c.getZ() + 0.5 + Math.sin(a) * d, 1, 0.2, 0.5, 0.2, 0.02);
+            }
+        }
+        if (phase >= 2 && now % 90 == 0) {   // éclair visuel loin des joueurs
+            net.minecraft.world.entity.LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(l);
+            if (bolt != null) {
+                double a = RNG.nextDouble() * Math.PI * 2, d = sr + 8 + RNG.nextDouble() * 20;
+                bolt.moveTo(c.getX() + 0.5 + Math.cos(a) * d, c.getY(), c.getZ() + 0.5 + Math.sin(a) * d);
+                bolt.setVisualOnly(true);
+                l.addFreshEntity(bolt);
+            }
+        }
+        if (phase >= 3 && now % 20 == 0) {   // fissures : des lignes de particules rayonnent depuis le bord sud de l'île vers le Monolithe
+            for (int k = 0; k < 4; k++) {
+                double a = Math.PI / 2 + (RNG.nextDouble() - 0.5) * 1.2;
+                for (double d = sr; d > sr * 0.35; d -= 1.4) {
+                    l.sendParticles(ParticleTypes.CRIT, c.getX() + 0.5 + Math.cos(a) * d + (RNG.nextDouble() - 0.5), c.getY() + 1.05, c.getZ() + 0.5 + Math.sin(a) * d, 1, 0, 0, 0, 0);
+                }
+            }
+            if (now % 100 == 0) l.playSound(null, c, SoundEvents.STONE_BREAK, SoundSource.HOSTILE, 3f, 0.4f);
         }
     }
 

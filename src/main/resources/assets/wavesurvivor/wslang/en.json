@@ -4795,5 +4795,15 @@
   "rift.engine.sheet.variant.desc.ballista.0": "Piercing bolt: it goes through several enemies.",
   "rift.engine.sheet.variant.desc.ballista.1": "High-rate beam of light (a shot every 0.2 s).",
   "rift.engine.sheet.variant.desc.ballista.2": "Beam that marks the target: +25 % damage taken for 8 s, for the whole team.",
-  "ui.rift.tower_unlimited": "Tower: unlimited ammo"
+  "ui.rift.tower_unlimited": "Tower: unlimited ammo",
+  "ui.rift.sec_titan_more": "Titan: weak points, waves, buildings",
+  "ui.rift.crystals": "Crystals",
+  "ui.rift.crystal_hp": "HP",
+  "ui.rift.crystal_pct": "Titan HP %",
+  "ui.rift.crystal_stun": "Stun +(s)",
+  "ui.rift.wave_base": "Wave (units)",
+  "ui.rift.wave_interval": "every (s)",
+  "ui.rift.wave_cap": "cap",
+  "ui.rift.build_damage": "Building damage",
+  "ui.rift.build_radius": "Radius"
 }

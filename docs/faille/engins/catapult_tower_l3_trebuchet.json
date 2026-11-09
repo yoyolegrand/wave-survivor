@@ -1,0 +1,1463 @@
+{
+ "name": "catapult_tower_l3_trebuchet",
+ "size_px": [
+  96,
+  96,
+  96
+ ],
+ "atlas": "textures/entity/siege_engines.png",
+ "tile_uv": {
+  "wood": [
+   0,
+   0
+  ],
+  "log": [
+   16,
+   0
+  ],
+  "iron": [
+   32,
+   0
+  ],
+  "stone": [
+   48,
+   0
+  ],
+  "rope": [
+   0,
+   16
+  ],
+  "dark": [
+   16,
+   16
+  ],
+  "marble": [
+   32,
+   16
+  ],
+  "gold": [
+   48,
+   16
+  ],
+  "crystal": [
+   0,
+   32
+  ],
+  "birch": [
+   16,
+   32
+  ],
+  "feather": [
+   32,
+   32
+  ],
+  "cyan": [
+   48,
+   32
+  ],
+  "iron_plate": [
+   0,
+   48
+  ],
+  "gear": [
+   16,
+   48
+  ],
+  "stone_bound": [
+   32,
+   48
+  ],
+  "magma": [
+   48,
+   48
+  ]
+ },
+ "note": "Unit\u00e9s = pixels (16 = 1 bloc). Origine = coin nord-ouest au sol de l'emprise. L'engin regarde vers le SUD (+Z). Chaque face est remplie en r\u00e9p\u00e9tant la tuile 16x16 de sa texture. Rotations en degr\u00e9s, ordre X puis Y puis Z autour du pivot du groupe ; un groupe enfant h\u00e9rite de son parent. 'glow' = pleine luminosit\u00e9. TOUR AUTOMATIQUE : 'turret' pivote seule (Y) pour suivre le Titan ; elle tire d\u00e8s que le rechargement (30 s) est fini.",
+ "groups": {
+  "base": {
+   "pivot": [
+    48,
+    0,
+    48
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": null
+  },
+  "turret": {
+   "pivot": [
+    48,
+    58,
+    48
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": "base",
+   "note": "rotation Y automatique vers le Titan"
+  },
+  "arm": {
+   "pivot": [
+    48,
+    88,
+    50
+   ],
+   "rotation": [
+    20,
+    0,
+    0
+   ],
+   "parent": "turret",
+   "note": "+14\u00b0 = charg\u00e9e ; -24\u00b0 = apr\u00e8s le tir"
+  },
+  "ammo": {
+   "pivot": [
+    48,
+    88,
+    50
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": "arm"
+  }
+ },
+ "parts": [
+  {
+   "group": "base",
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    96,
+    8,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    4,
+    8,
+    4
+   ],
+   "to": [
+    92,
+    56,
+    92
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    12,
+    48,
+    12
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    2,
+    48,
+    2
+   ],
+   "to": [
+    10,
+    54,
+    10
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    84,
+    0,
+    0
+   ],
+   "to": [
+    96,
+    48,
+    12
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    86,
+    48,
+    2
+   ],
+   "to": [
+    94,
+    54,
+    10
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    0,
+    84
+   ],
+   "to": [
+    12,
+    48,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    2,
+    48,
+    86
+   ],
+   "to": [
+    10,
+    54,
+    94
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    84,
+    0,
+    84
+   ],
+   "to": [
+    96,
+    48,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    86,
+    48,
+    86
+   ],
+   "to": [
+    94,
+    54,
+    94
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    3,
+    24,
+    3
+   ],
+   "to": [
+    93,
+    27,
+    93
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    3,
+    44,
+    3
+   ],
+   "to": [
+    93,
+    47,
+    93
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    40,
+    8,
+    91.5
+   ],
+   "to": [
+    56,
+    32,
+    93
+   ],
+   "texture": "wood",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    39,
+    31,
+    91.5
+   ],
+   "to": [
+    57,
+    33,
+    93
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    41,
+    10,
+    91.6
+   ],
+   "to": [
+    42.5,
+    30,
+    93.2
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    47,
+    10,
+    91.6
+   ],
+   "to": [
+    48.5,
+    30,
+    93.2
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    53,
+    10,
+    91.6
+   ],
+   "to": [
+    54.5,
+    30,
+    93.2
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    20,
+    30,
+    91.6
+   ],
+   "to": [
+    24,
+    40,
+    92.6
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    72,
+    30,
+    91.6
+   ],
+   "to": [
+    76,
+    40,
+    92.6
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    20,
+    30,
+    3.4
+   ],
+   "to": [
+    24,
+    40,
+    4.4
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    72,
+    30,
+    3.4
+   ],
+   "to": [
+    76,
+    40,
+    4.4
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    3.4,
+    30,
+    20
+   ],
+   "to": [
+    4.4,
+    40,
+    24
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    3.4,
+    30,
+    72
+   ],
+   "to": [
+    4.4,
+    40,
+    76
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    91.6,
+    30,
+    20
+   ],
+   "to": [
+    92.6,
+    40,
+    24
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    91.6,
+    30,
+    72
+   ],
+   "to": [
+    92.6,
+    40,
+    76
+   ],
+   "texture": "dark",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    54,
+    0
+   ],
+   "to": [
+    96,
+    58,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    58,
+    0
+   ],
+   "to": [
+    8,
+    66,
+    6
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    58,
+    90
+   ],
+   "to": [
+    8,
+    66,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    58,
+    0
+   ],
+   "to": [
+    6,
+    66,
+    8
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    90,
+    58,
+    0
+   ],
+   "to": [
+    96,
+    66,
+    8
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    16,
+    58,
+    0
+   ],
+   "to": [
+    24,
+    66,
+    6
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    16,
+    58,
+    90
+   ],
+   "to": [
+    24,
+    66,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    58,
+    16
+   ],
+   "to": [
+    6,
+    66,
+    24
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    90,
+    58,
+    16
+   ],
+   "to": [
+    96,
+    66,
+    24
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    32,
+    58,
+    0
+   ],
+   "to": [
+    40,
+    66,
+    6
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    32,
+    58,
+    90
+   ],
+   "to": [
+    40,
+    66,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    58,
+    32
+   ],
+   "to": [
+    6,
+    66,
+    40
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    90,
+    58,
+    32
+   ],
+   "to": [
+    96,
+    66,
+    40
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    48,
+    58,
+    0
+   ],
+   "to": [
+    56,
+    66,
+    6
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    48,
+    58,
+    90
+   ],
+   "to": [
+    56,
+    66,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    58,
+    48
+   ],
+   "to": [
+    6,
+    66,
+    56
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    90,
+    58,
+    48
+   ],
+   "to": [
+    96,
+    66,
+    56
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    64,
+    58,
+    0
+   ],
+   "to": [
+    72,
+    66,
+    6
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    64,
+    58,
+    90
+   ],
+   "to": [
+    72,
+    66,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    58,
+    64
+   ],
+   "to": [
+    6,
+    66,
+    72
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    90,
+    58,
+    64
+   ],
+   "to": [
+    96,
+    66,
+    72
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    80,
+    58,
+    0
+   ],
+   "to": [
+    88,
+    66,
+    6
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    80,
+    58,
+    90
+   ],
+   "to": [
+    88,
+    66,
+    96
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    58,
+    80
+   ],
+   "to": [
+    6,
+    66,
+    88
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    90,
+    58,
+    80
+   ],
+   "to": [
+    96,
+    66,
+    88
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    14,
+    58,
+    14
+   ],
+   "to": [
+    82,
+    62,
+    82
+   ],
+   "texture": "wood",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    12,
+    57,
+    12
+   ],
+   "to": [
+    84,
+    58.5,
+    84
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    20,
+    62,
+    20
+   ],
+   "to": [
+    26,
+    68,
+    26
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    26,
+    62,
+    20
+   ],
+   "to": [
+    32,
+    68,
+    26
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    20,
+    62,
+    26
+   ],
+   "to": [
+    26,
+    68,
+    32
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    26,
+    62,
+    26
+   ],
+   "to": [
+    32,
+    68,
+    32
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    23,
+    68,
+    23
+   ],
+   "to": [
+    29,
+    74,
+    29
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    70,
+    62,
+    20
+   ],
+   "to": [
+    76,
+    68,
+    26
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    76,
+    62,
+    20
+   ],
+   "to": [
+    82,
+    68,
+    26
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    70,
+    62,
+    26
+   ],
+   "to": [
+    76,
+    68,
+    32
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    76,
+    62,
+    26
+   ],
+   "to": [
+    82,
+    68,
+    32
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    73,
+    68,
+    23
+   ],
+   "to": [
+    79,
+    74,
+    29
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    20,
+    62,
+    70
+   ],
+   "to": [
+    26,
+    68,
+    76
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    26,
+    62,
+    70
+   ],
+   "to": [
+    32,
+    68,
+    76
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    20,
+    62,
+    76
+   ],
+   "to": [
+    26,
+    68,
+    82
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    26,
+    62,
+    76
+   ],
+   "to": [
+    32,
+    68,
+    82
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    23,
+    68,
+    73
+   ],
+   "to": [
+    29,
+    74,
+    79
+   ],
+   "texture": "stone",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    66,
+    62,
+    66
+   ],
+   "to": [
+    80,
+    72,
+    80
+   ],
+   "texture": "wood",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    3,
+    14,
+    3
+   ],
+   "to": [
+    93,
+    17,
+    93
+   ],
+   "texture": "iron_plate",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    3,
+    34,
+    3
+   ],
+   "to": [
+    93,
+    37,
+    93
+   ],
+   "texture": "iron_plate",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    0,
+    58,
+    0
+   ],
+   "to": [
+    96,
+    59.5,
+    96
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    30,
+    62,
+    40
+   ],
+   "to": [
+    34,
+    90,
+    44
+   ],
+   "texture": "log",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    30,
+    62,
+    56
+   ],
+   "to": [
+    34,
+    90,
+    60
+   ],
+   "texture": "log",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    30,
+    62,
+    48
+   ],
+   "to": [
+    34,
+    66,
+    52
+   ],
+   "texture": "log",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    62,
+    62,
+    40
+   ],
+   "to": [
+    66,
+    90,
+    44
+   ],
+   "texture": "log",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    62,
+    62,
+    56
+   ],
+   "to": [
+    66,
+    90,
+    60
+   ],
+   "texture": "log",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    62,
+    62,
+    48
+   ],
+   "to": [
+    66,
+    66,
+    52
+   ],
+   "texture": "log",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    28,
+    88,
+    48
+   ],
+   "to": [
+    68,
+    92,
+    52
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "arm",
+   "from": [
+    46,
+    86,
+    0
+   ],
+   "to": [
+    50,
+    90,
+    96
+   ],
+   "texture": "log",
+   "glow": false
+  },
+  {
+   "group": "arm",
+   "from": [
+    38,
+    66,
+    0
+   ],
+   "to": [
+    58,
+    84,
+    16
+   ],
+   "texture": "stone_bound",
+   "glow": false
+  },
+  {
+   "group": "arm",
+   "from": [
+    46,
+    84,
+    6
+   ],
+   "to": [
+    50,
+    86,
+    8
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "arm",
+   "from": [
+    45.5,
+    85.5,
+    20
+   ],
+   "to": [
+    50.5,
+    90.5,
+    22
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "arm",
+   "from": [
+    45.5,
+    85.5,
+    40
+   ],
+   "to": [
+    50.5,
+    90.5,
+    42
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "arm",
+   "from": [
+    45.5,
+    85.5,
+    60
+   ],
+   "to": [
+    50.5,
+    90.5,
+    62
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "arm",
+   "from": [
+    45.5,
+    85.5,
+    80
+   ],
+   "to": [
+    50.5,
+    90.5,
+    82
+   ],
+   "texture": "iron",
+   "glow": false
+  },
+  {
+   "group": "arm",
+   "from": [
+    47.5,
+    74,
+    94
+   ],
+   "to": [
+    48.5,
+    88,
+    95
+   ],
+   "texture": "rope",
+   "glow": false
+  },
+  {
+   "group": "ammo",
+   "from": [
+    43,
+    68,
+    90
+   ],
+   "to": [
+    53,
+    76,
+    98
+   ],
+   "texture": "stone",
+   "glow": false
+  }
+ ],
+ "animations": {
+  "track": {
+   "turret.rotation.y": "vers le Titan, vitesse max 30\u00b0/s"
+  },
+  "fire": {
+   "arm.rotation.x": [
+    20,
+    -30
+   ],
+   "ticks": 10,
+   "ammo": "hidden"
+  },
+  "rebound": {
+   "ticks": 6
+  },
+  "reload": {
+   "arm.rotation.x": [
+    -24,
+    14
+   ],
+   "ticks": 720,
+   "ammo": "visible \u00e0 la fin"
+  }
+ }
+}

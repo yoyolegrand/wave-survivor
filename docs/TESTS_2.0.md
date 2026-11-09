@@ -211,3 +211,13 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Au corps à corps (pendant le stun de la charge), le joueur peut frapper le Titan sur la face avant, à portée normale.
 - [ ] Une explosion de boulet ne blesse le Titan qu'une fois (pas de dégâts multipliés par le nombre de boîtes).
 - [ ] Les boîtes de contact suivent le Titan pendant la charge et le retour, sont invisibles, sans collision, et disparaissent à sa mort.
+
+## Titan : points faibles, vagues, bâtiments, phases, charge, sauvegarde
+- [ ] **Cristaux** : 4 cristaux « Point faible » apparaissent sur la face avant du Titan (bas du corps), atteignables aux engins, arcs et en mêlée ; chacun détruit retire **5 %** des PV max du Titan ; détruit pendant le stun : **+2 s** de stun ; pendant l'annonce ou l'élan : stun plus long à l'impact. Ils se reforment à chaque palier (75 / 50 / 25 %) et suivent le Titan pendant la charge.
+- [ ] **Plafond pendant la charge** : le Titan ne perd pas plus de **20 %** de ses PV max entre le début de l'annonce et la fin du retour (×1,5 pendant le stun, ×0,5 sinon ; les cristaux comptent).
+- [ ] **Invasion continue** : dès 75 % de PV, un portail s'ouvre **sur le pont** et lâche une vague toutes les 10 s : 5 unités (palier 1), 10 (palier 2), 20 (palier 3) ; plafond d'ennemis vivants (60).
+- [ ] **Attaque des bâtiments** : le Titan annonce (cercle rouge) puis écrase une tour / un rempart (dégâts + ruines réparables). La **charge** endommage aussi les bâtiments pris dans la zone d'impact.
+- [ ] **Phases visuelles** : écran « PHASE 2/3/4 » + secousse à chaque palier ; braises (phase 2), éclairs visuels (phase 3), fissures sur l'île et grondements (phase 4).
+- [ ] **Charge** : la zone d'impact est réduite (coin sud de l'île, ~28 de large) et l'empiètement passe à 8 blocs : plus de demi-île inaccessible.
+- [ ] Tour-catapulte : munitions illimitées par défaut.
+- [ ] **Reprise** : les engins posés et les tours du Kingdom sont retrouvés après une reprise (Siège, Contre-offensive, Titan → début de la Contre-offensive), avec le trésor à jour.

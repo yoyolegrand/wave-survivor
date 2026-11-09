@@ -44,6 +44,8 @@ public class RiftSession extends SavedData {
     long elapsed;
     final Map<UUID, Integer> kills = new HashMap<>();
     CompoundTag kingdom = new CompoundTag();
+    /** Engins de siège posés (type, niveau, variante, position). */
+    net.minecraft.nbt.ListTag engines = new net.minecraft.nbt.ListTag();
 
     public RiftSession() {}
 
@@ -72,6 +74,7 @@ public class RiftSession extends SavedData {
         c.elapsed = elapsed;
         c.kills.putAll(kills);
         c.kingdom = kingdom.copy();
+        c.engines = engines.copy();
         return c;
     }
 
@@ -85,6 +88,7 @@ public class RiftSession extends SavedData {
         s.altar = null;
         s.kills.clear();
         s.kingdom = new CompoundTag();
+        s.engines = new net.minecraft.nbt.ListTag();
         s.setDirty();
     }
 
@@ -130,6 +134,7 @@ public class RiftSession extends SavedData {
             try { s.kills.put(UUID.fromString(id), k.getInt(id)); } catch (IllegalArgumentException ignored) {}
         }
         s.kingdom = t.getCompound("kingdom");
+        s.engines = t.getList("engines", net.minecraft.nbt.Tag.TAG_COMPOUND);
         return s;
     }
 
@@ -151,6 +156,7 @@ public class RiftSession extends SavedData {
         for (Map.Entry<UUID, Integer> e : kills.entrySet()) k.putInt(e.getKey().toString(), e.getValue());
         t.put("kills", k);
         if (kingdom != null && !kingdom.isEmpty()) t.put("kingdom", kingdom);
+        t.put("engines", engines);
         return t;
     }
 }

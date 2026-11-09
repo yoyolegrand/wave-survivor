@@ -62,6 +62,44 @@ final class RiftEngines {
 
     private RiftEngines() {}
 
+    /** Sauvegarde des engins posés (reprise de la Faille). */
+    static net.minecraft.nbt.ListTag save(ServerLevel l) {
+        net.minecraft.nbt.ListTag out = new net.minecraft.nbt.ListTag();
+        if (l == null) return out;
+        for (UUID id : TOWERS) {
+            if (!(l.getEntity(id) instanceof SiegeEngineEntity e) || e.isRemoved()) continue;
+            net.minecraft.nbt.CompoundTag t = new net.minecraft.nbt.CompoundTag();
+            t.putDouble("x", e.getX());
+            t.putDouble("y", e.getY());
+            t.putDouble("z", e.getZ());
+            t.putInt("kind", e.kind());
+            t.putInt("level", e.engineLevel());
+            t.putInt("variant", e.variant);
+            out.add(t);
+        }
+        return out;
+    }
+
+    /** Reprise : les engins sauvegardés sont reposés (niveau et variante conservés, rechargés). */
+    static void restore(ServerLevel l, net.minecraft.nbt.ListTag list) {
+        if (l == null || list == null) return;
+        for (int i = 0; i < list.size(); i++) {
+            net.minecraft.nbt.CompoundTag t = list.getCompound(i);
+            SiegeEngineEntity e = ModEntities.SIEGE_ENGINE.get().create(l);
+            if (e == null) continue;
+            boolean ballista = t.getInt("kind") == SiegeEngineEntity.BALLISTA;
+            e.moveTo(t.getDouble("x"), t.getDouble("y"), t.getDouble("z"), 0f, 0f);
+            e.setKind(ballista ? SiegeEngineEntity.BALLISTA : SiegeEngineEntity.CATAPULT);
+            e.setEngineLevel(Math.max(1, t.getInt("level")));
+            e.variant = t.getInt("variant");
+            e.setAmmo(ballista ? 0 : 1);
+            e.setReloadTicks(ballista ? ballistaReload(e) : catapultReload(e));
+            e.setAim(0f, -18f);
+            l.addFreshEntity(e);
+            TOWERS.add(e.getUUID());
+        }
+    }
+
     static void clear() {
         TOWERS.clear();
         BOULDERS.clear();
@@ -131,7 +169,7 @@ final class RiftEngines {
         e.setAim(0f, -18f);
         e.readyAt = 0;
         l.addFreshEntity(e);
-        if (!ballista) TOWERS.add(e.getUUID());
+        TOWERS.add(e.getUUID());   // suivi de tous les engins (sauvegarde) ; seules les tours-catapultes tirent seules
         l.playSound(null, e.blockPosition(), SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 1.2f, 0.7f);
         l.sendParticles(ParticleTypes.POOF, e.getX(), e.getY() + 0.5, e.getZ(), 20, w / 2.0, 0.3, d / 2.0, 0.02);
         return 0;

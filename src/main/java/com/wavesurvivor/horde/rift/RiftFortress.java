@@ -181,6 +181,12 @@ final class RiftFortress {
         return w(sr, new int[]{Math.max(f.bStart[0] + 4, x), f.bStart[1], f.bStart[2]});
     }
 
+    /** Un point du pont, à {@code fromIsland} blocs du bord de l'île (portail d'invasion du Titan). */
+    static BlockPos bridgePoint(int sr, int fromIsland) {
+        Form f = form();
+        return w(sr, new int[]{f.bStart[0] + Math.max(2, Math.min(f.bLength - 4, fromIsland)), f.bStart[1], f.bStart[2]});
+    }
+
     static List<BlockPos> catalystPositions(int sr) {
         List<BlockPos> out = new ArrayList<>();
         for (int[] c : form().catalysts) out.add(w(sr, c));
@@ -338,6 +344,14 @@ final class RiftFortress {
         return e.getUUID();
     }
 
+    /** Pose un point faible du Titan : un cristal avec ses PV, marqué pour que sa destruction touche le Titan. */
+    static UUID spawnTitanCrystal(ServerLevel l, double x, double y, double z, float hp, String label) {
+        UUID id = spawnTarget(l, x, y, z, hp, label, false);
+        Entity e = l.getEntity(id);
+        if (e != null) e.getPersistentData().putBoolean("ws_titan_crystal", true);
+        return id;
+    }
+
     private static void refreshName(Entity e) {
         float[] t = TARGETS.get(e.getUUID());
         if (t == null) return;
@@ -374,7 +388,9 @@ final class RiftFortress {
             TARGETS.remove(e.getUUID());
             LABELS.remove(e.getUUID());
             CHAINS.remove(e.getUUID());
+            boolean titanCrystal = e.getPersistentData().getBoolean("ws_titan_crystal");
             e.discard();
+            if (titanCrystal) RiftManager.titanCrystalDown(l);   // point faible du Titan détruit
         } else {
             refreshName(e);
         }

@@ -4034,5 +4034,15 @@
   "rift.engine.sheet.variant.desc.ballista.0": "Carreau perforant : il traverse plusieurs ennemis.",
   "rift.engine.sheet.variant.desc.ballista.1": "Rayon de lumière à haute cadence (un tir toutes les 0,2 s).",
   "rift.engine.sheet.variant.desc.ballista.2": "Rayon qui marque la cible : +25 % de dégâts subis pendant 8 s, pour toute l'équipe.",
-  "ui.rift.tower_unlimited": "Tour : munitions illimitées"
+  "ui.rift.tower_unlimited": "Tour : munitions illimitées",
+  "ui.rift.sec_titan_more": "Titan : points faibles, vagues, bâtiments",
+  "ui.rift.crystals": "Cristaux",
+  "ui.rift.crystal_hp": "PV",
+  "ui.rift.crystal_pct": "% PV Titan",
+  "ui.rift.crystal_stun": "Stun +(s)",
+  "ui.rift.wave_base": "Vague (unités)",
+  "ui.rift.wave_interval": "toutes les (s)",
+  "ui.rift.wave_cap": "plafond",
+  "ui.rift.build_damage": "Dégâts bâtiments",
+  "ui.rift.build_radius": "Rayon"
 }

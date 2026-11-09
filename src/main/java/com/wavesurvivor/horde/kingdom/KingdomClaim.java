@@ -287,6 +287,36 @@ public final class KingdomClaim {
         return broken;
     }
 
+    /** Faille (charge du Titan) : inflige {@code dmg} aux murs et défenses dont le bloc est dans le rectangle (chaque réserve de PV n'est frappée qu'une fois). */
+    public static int damageRect(double x0, double x1, double z0, double z1, float dmg) {
+        if (level == null) return 0;
+        int broken = 0;
+        java.util.Set<float[]> hitPools = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        for (BlockPos p : new java.util.ArrayList<>(PLACED.keySet())) {
+            if (p.getX() + 0.5 < x0 || p.getX() + 0.5 > x1 || p.getZ() + 0.5 < z0 || p.getZ() + 0.5 > z1) continue;
+            float[] hp = PLACED.get(p);
+            if (hp == null || !hitPools.add(hp)) continue;
+            hp[0] -= dmg;
+            KingdomReport.onStructureDamage(dmg);
+            if (hp[0] <= 0) {
+                KingdomReport.onStructureLost();
+                for (Map.Entry<BlockPos, float[]> en : new java.util.ArrayList<>(PLACED.entrySet())) {
+                    if (en.getValue() != hp) continue;
+                    BlockPos q = en.getKey();
+                    level.destroyBlockProgress(q.hashCode(), q, -1);
+                    level.destroyBlock(q, true);
+                    PLACED.remove(q);
+                    broken++;
+                }
+            } else {
+                int stage = (int) Math.max(0, Math.min(9, (1 - hp[0] / hp[1]) * 10));
+                level.destroyBlockProgress(p.hashCode(), p, stage);
+                syncDefense(p);
+            }
+        }
+        return broken;
+    }
+
     /** Explosion d'une unité de horde : dégâts aux murs et défenses alentour (le terrain naturel n'est jamais touché). */
     public static int explosionDamage(BlockPos at, int r, float dmg) {
         return blastDamage(at, r, dmg);

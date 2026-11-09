@@ -411,7 +411,7 @@ public class HordeConfigMultiData {
         @SerializedName("meteorCrater") public boolean meteorCrater = true;
         /** Engins de siège : rechargement de la catapulte (ticks) niveaux 1 / 2 ; baliste : intervalle entre deux tirs et rechargement (ticks) niveaux 1 / 2. */
         /** Tour-catapulte : munitions illimitées (sinon 1 Pierre du trésor du royaume par tir). */
-        @SerializedName("catapultTowerUnlimited") public boolean catapultTowerUnlimited = false;
+        @SerializedName("catapultTowerUnlimited") public boolean catapultTowerUnlimited = true;
         @SerializedName("catapultReload1") public int catapultReload1 = 600;
         @SerializedName("catapultReload2") public int catapultReload2 = 480;
         @SerializedName("ballistaInterval1") public int ballistaInterval1 = 10;
@@ -425,9 +425,21 @@ public class HordeConfigMultiData {
         @SerializedName("titanChargeStun") public int titanChargeStun = 6;
         @SerializedName("titanChargeMelee") public int titanChargeMelee = 10;
         @SerializedName("titanChargeDamage") public int titanChargeDamage = 24;
-        @SerializedName("titanChargeReach") public int titanChargeReach = 14;
+        @SerializedName("titanChargeReach") public int titanChargeReach = 8;
         @SerializedName("titanMeleeDamage") public int titanMeleeDamage = 18;
-        @SerializedName("titanChargeCapPercent") public int titanChargeCapPercent = 15;
+        @SerializedName("titanChargeCapPercent") public int titanChargeCapPercent = 20;
+        /** Points faibles : nombre de cristaux, PV de chacun, % des PV max du Titan retirés par cristal détruit, stun prolongé (s) si détruit pendant la charge. */
+        @SerializedName("titanCrystals") public int titanCrystals = 4;
+        @SerializedName("titanCrystalHp") public int titanCrystalHp = 120;
+        @SerializedName("titanCrystalPercent") public int titanCrystalPercent = 5;
+        @SerializedName("titanCrystalStunBonus") public int titanCrystalStunBonus = 2;
+        /** Vagues entre les phases : unités par vague à la phase 2 (doublées à chaque phase), intervalle (s), plafond d'ennemis vivants. */
+        @SerializedName("titanWaveBase") public int titanWaveBase = 5;
+        @SerializedName("titanWaveInterval") public int titanWaveInterval = 10;
+        @SerializedName("titanWaveCap") public int titanWaveCap = 60;
+        /** Attaque contre les bâtiments : dégâts et rayon (aussi appliqués par la charge aux bâtiments pris dedans). */
+        @SerializedName("titanBuildDamage") public int titanBuildDamage = 300;
+        @SerializedName("titanBuildRadius") public int titanBuildRadius = 6;
         @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
         @SerializedName("titanWindowCapPercent") public int titanWindowCapPercent = 8;
         /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */
