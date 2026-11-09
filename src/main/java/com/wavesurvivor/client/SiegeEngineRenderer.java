@@ -16,7 +16,9 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector4f;
 
 import java.io.Reader;
 import java.util.ArrayList;
@@ -54,8 +56,22 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
         boolean glow;
     }
 
+    /** Point d'ancrage dans un groupe (px) ; corde dynamique entre deux ancres (largeur en px, tuile de texture, lumineuse ou non). */
+    private static final class Anchor {
+        String group;
+        float[] pos = new float[3];
+    }
+
+    private static final class Str {
+        String from, to;
+        float width = 0.8f;
+        int tu, tv;
+    }
+
     private static final class Model {
         float sx, sz;
+        final Map<String, Anchor> anchors = new HashMap<>();
+        final List<Str> strings = new ArrayList<>();
         final Map<String, Group> groups = new LinkedHashMap<>();
         final List<Group> roots = new ArrayList<>();
     }
@@ -94,6 +110,28 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
                 if (p != null) p.children.add(g); else m.roots.add(g);
             }
             JsonObject tiles = o.getAsJsonObject("tile_uv");
+            if (o.has("anchors")) {
+                for (var e : o.getAsJsonObject("anchors").entrySet()) {
+                    JsonObject ao = e.getValue().getAsJsonObject();
+                    Anchor an = new Anchor();
+                    an.group = ao.get("group").getAsString();
+                    an.pos = f3(ao.get("pos"), 0);
+                    m.anchors.put(e.getKey(), an);
+                }
+            }
+            if (o.has("dynamic_strings")) {
+                for (JsonElement se : o.getAsJsonArray("dynamic_strings")) {
+                    JsonObject so = se.getAsJsonObject();
+                    Str st = new Str();
+                    st.from = so.get("from").getAsString();
+                    st.to = so.get("to").getAsString();
+                    if (so.has("width_px")) st.width = so.get("width_px").getAsFloat();
+                    JsonArray uv = tiles.getAsJsonArray(so.has("texture") ? so.get("texture").getAsString() : "cyan");
+                    st.tu = uv != null ? uv.get(0).getAsInt() : 0;
+                    st.tv = uv != null ? uv.get(1).getAsInt() : 0;
+                    m.strings.add(st);
+                }
+            }
             for (JsonElement pe : o.getAsJsonArray("parts")) {
                 JsonObject po = pe.getAsJsonObject();
                 Group g = m.groups.get(po.get("group").getAsString());
@@ -136,28 +174,25 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
         float t = now - e.fireTick();
         int rt = Math.max(1, e.reloadTicks());
         if (!e.isBallista()) {
+            // Tour-catapulte automatique : la plateforme tourne seule vers sa cible (cap synchronisé), la poutre bascule au tir
+            a.rot.put("turret", new float[]{0, -e.aimYaw(), 0});
             float armX;
             if (t < 0 || t >= rt) {                                       // armée, boulet en place
-                armX = 13f;
+                armX = 14f;
             } else if (t < 10f) {                                         // tir : la poutre bascule, le boulet part
-                armX = lerp(13f, -18f, t / 10f);
+                armX = lerp(14f, -24f, t / 10f);
                 if (t >= 2f) a.hidden.add("ammo");
             } else if (t < 16f) {                                         // rebond
-                armX = -18f + 4f * (float) Math.sin(Math.PI * (t - 10f) / 6f);
+                armX = -24f + 4f * (float) Math.sin(Math.PI * (t - 10f) / 6f);
                 a.hidden.add("ammo");
-            } else if (t < rt - 10f) {                                    // rechargement : treuil qui tourne, poutre qui remonte cran par cran
+            } else if (t < rt - 10f) {                                    // rechargement : la poutre remonte cran par cran
                 float p = (t - 16f) / Math.max(1f, rt - 26f);
-                armX = -18f + 31f * (float) (Math.floor(p * 14f) / 14f);
-                a.rot.put("winch", new float[]{0, 0, now * 9f});
+                armX = -24f + 38f * (float) (Math.floor(p * 16f) / 16f);
                 a.hidden.add("ammo");
             } else {                                                      // chargement : le boulet tombe dans la cuillère
-                armX = 13f;
+                armX = 14f;
             }
             a.rot.put("arm", new float[]{armX, 0, 0});
-            if (t >= 0 && t < 8f) {                                       // le châssis tressaute au tir
-                float hop = t < 3f ? t / 3f : (8f - t) / 5f;
-                a.tr.put("chassis", new float[]{0, 1.4f * hop, 0});
-            }
             return a;
         }
         // Baliste céleste : la tourelle suit le cap, l'arme l'inclinaison
@@ -176,12 +211,20 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
             float s = (float) Math.sin(Math.PI * t / 10f);
             wr = -12f * s;
             wl = 12f * s;
-            if (t < 4f) a.tr.put("string", new float[]{0, 0, 5f * (1f - t / 4f)});
             if (t < 2f) a.hidden.add("bolt");
             else if (t < 8f) a.tr.put("bolt", new float[]{0, 0, -10f * (1f - (t - 2f) / 6f)});
         }
         a.rot.put("wing_r", new float[]{0, wr, 0});
         a.rot.put("wing_l", new float[]{0, wl, 0});
+        // Encoche de la corde : au tir elle avance de 20 px en 2 ticks (la corde claque) puis revient (entre deux tirs, ou pendant le rechargement) ;
+        // à vide elle reste détendue.
+        float nock;
+        if (inReload) nock = 20f * (1f - rp / rt);
+        else if (e.ammo() <= 0) nock = 20f;
+        else if (t >= 0 && t < 2f) nock = 20f * t / 2f;
+        else if (t >= 2f && t < 12f) nock = 20f * (1f - (t - 2f) / 10f);
+        else nock = 0f;
+        a.tr.put("string", new float[]{0, 0, nock});
         if (e.ammo() <= 0 && !inReload) a.hidden.add("bolt");
         return a;
     }
@@ -201,7 +244,7 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
 
     @Override
     public void render(SiegeEngineEntity e, float yaw, float partial, PoseStack ps, MultiBufferSource buf, int light) {
-        String name = (e.isBallista() ? "celestial_ballista_l" : "catapult_l") + (e.engineLevel() >= 2 ? 2 : 1);
+        String name = e.isBallista() ? "celestial_ballista_l" + (e.engineLevel() >= 2 ? 2 : 1) : "catapult_tower_l1";
         Model m = load(name);
         if (m == null) return;
         Anim a = animate(e, partial);
@@ -209,12 +252,19 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
         ps.pushPose();
         // Entité = centre de l'emprise au sol ; le modèle part de son coin nord-ouest, en pixels
         ps.translate(-m.sx / 32.0, 0, -m.sz / 32.0);
-        for (Group g : m.roots) renderGroup(g, ps, vc, light, a);
+        Matrix4f rootInv = new Matrix4f(ps.last().pose()).invert();
+        Map<String, float[]> anchors = new HashMap<>();
+        for (Group g : m.roots) renderGroup(g, ps, vc, light, a, m, rootInv, anchors);
+        // Cordes dynamiques : deux fins rubans lumineux entre chaque ancre, en coordonnées monde après les transformations des groupes
+        for (Str st : m.strings) {
+            float[] p0 = anchors.get(st.from), p1 = anchors.get(st.to);
+            if (p0 != null && p1 != null) ribbon(ps.last(), vc, p0, p1, st);
+        }
         ps.popPose();
         super.render(e, yaw, partial, ps, buf, light);
     }
 
-    private static void renderGroup(Group g, PoseStack ps, VertexConsumer vc, int light, Anim a) {
+    private static void renderGroup(Group g, PoseStack ps, VertexConsumer vc, int light, Anim a, Model m, Matrix4f rootInv, Map<String, float[]> anchors) {
         if (a.hidden.contains(g.name)) return;
         ps.pushPose();
         float[] t = a.tr.get(g.name);
@@ -226,8 +276,40 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
         ps.translate(-g.pivot[0] / 16.0, -g.pivot[1] / 16.0, -g.pivot[2] / 16.0);
         PoseStack.Pose pose = ps.last();
         for (Part p : g.parts) cube(pose, vc, p, p.glow ? FULL_BRIGHT : light);
-        for (Group c : g.children) renderGroup(c, ps, vc, light, a);
+        for (Map.Entry<String, Anchor> en : m.anchors.entrySet()) {
+            if (!en.getValue().group.equals(g.name)) continue;
+            float[] ap = en.getValue().pos;
+            Vector4f v = new Vector4f(ap[0] / 16f, ap[1] / 16f, ap[2] / 16f, 1f);
+            pose.pose().transform(v);
+            rootInv.transform(v);
+            anchors.put(en.getKey(), new float[]{v.x * 16f, v.y * 16f, v.z * 16f});
+        }
+        for (Group c : g.children) renderGroup(c, ps, vc, light, a, m, rootInv, anchors);
         ps.popPose();
+    }
+
+    /** Un fin ruban lumineux entre deux points (px) : deux quads croisés, pour qu'il se voie de tous côtés. */
+    private static void ribbon(PoseStack.Pose pose, VertexConsumer vc, float[] a, float[] b, Str st) {
+        float dx = b[0] - a[0], dy = b[1] - a[1], dz = b[2] - a[2];
+        float len = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (len < 0.01f) return;
+        dx /= len; dy /= len; dz /= len;
+        // premier axe : perpendiculaire à la corde et à la verticale ; second : perpendiculaire aux deux
+        float n1x = dy * 0 - dz * 1, n1y = dz * 0 - dx * 0, n1z = dx * 1 - dy * 0;   // dir × (0,1,0)
+        float nl = (float) Math.sqrt(n1x * n1x + n1y * n1y + n1z * n1z);
+        if (nl < 1e-3f) { n1x = 1; n1y = 0; n1z = 0; nl = 1; }
+        n1x /= nl; n1y /= nl; n1z /= nl;
+        float n2x = dy * n1z - dz * n1y, n2y = dz * n1x - dx * n1z, n2z = dx * n1y - dy * n1x;
+        float h = st.width / 2f;
+        float u0 = (st.tu + 6) / (float) ATLAS_SIZE, u1 = (st.tu + 10) / (float) ATLAS_SIZE;
+        float v0 = (st.tv + 6) / (float) ATLAS_SIZE, v1 = (st.tv + 10) / (float) ATLAS_SIZE;
+        float[][] axes = {{n1x * h, n1y * h, n1z * h}, {n2x * h, n2y * h, n2z * h}};
+        for (float[] ax : axes) {
+            vertex(pose, vc, FULL_BRIGHT, a[0] - ax[0], a[1] - ax[1], a[2] - ax[2], u0, v0, 0, 1, 0);
+            vertex(pose, vc, FULL_BRIGHT, a[0] + ax[0], a[1] + ax[1], a[2] + ax[2], u1, v0, 0, 1, 0);
+            vertex(pose, vc, FULL_BRIGHT, b[0] + ax[0], b[1] + ax[1], b[2] + ax[2], u1, v1, 0, 1, 0);
+            vertex(pose, vc, FULL_BRIGHT, b[0] - ax[0], b[1] - ax[1], b[2] - ax[2], u0, v1, 0, 1, 0);
+        }
     }
 
     /** Un cube : six faces, chacune remplie en répétant la tuile 16 × 16 (sous-quads de 16 px au plus). */

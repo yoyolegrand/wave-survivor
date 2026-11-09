@@ -95,6 +95,9 @@ final class RiftTitan {
 
     static boolean active() { return titan != null && !dead; }
 
+    /** L'entité du Titan (cible de la tour-catapulte), ou null. */
+    static LivingEntity entity() { return titan != null && !dead && titan.isAlive() ? titan : null; }
+
     static boolean isDead() { return dead; }
 
     static boolean isTitan(Entity e) { return titanId != null && e.getUUID().equals(titanId); }

@@ -43,6 +43,9 @@ public class SiegeEngineEntity extends Entity {
     public int variant = 0;
     public long readyAt = 0, nextShot = 0;
     public boolean reloading = false;
+    /** Tour-catapulte : cible actuelle et prochaine recherche de cible (non sauvegardées). */
+    public java.util.UUID targetId;
+    public long nextAcquire = 0;
 
     public SiegeEngineEntity(EntityType<? extends SiegeEngineEntity> type, Level level) {
         super(type, level);
@@ -83,7 +86,7 @@ public class SiegeEngineEntity extends Entity {
 
     /** Dimensions de l'emprise (en blocs) : {largeur en X, hauteur, longueur en Z}. */
     public static double[] footprint(int kind) {
-        return kind == BALLISTA ? new double[]{3, 3, 3} : new double[]{2, 3, 6};
+        return kind == BALLISTA ? new double[]{3, 3, 3} : new double[]{6, 6, 6};   // la catapulte est une tour automatique de 6 × 6 × 6
     }
 
     // ─── Boîte de collision rectangulaire (2 × 6 ou 3 × 3) ───

@@ -410,6 +410,8 @@ public class HordeConfigMultiData {
         @SerializedName("meteorTrail") public String meteorTrail = "flame";
         @SerializedName("meteorCrater") public boolean meteorCrater = true;
         /** Engins de siège : rechargement de la catapulte (ticks) niveaux 1 / 2 ; baliste : intervalle entre deux tirs et rechargement (ticks) niveaux 1 / 2. */
+        /** Tour-catapulte : munitions illimitées (sinon 1 Pierre du trésor du royaume par tir). */
+        @SerializedName("catapultTowerUnlimited") public boolean catapultTowerUnlimited = false;
         @SerializedName("catapultReload1") public int catapultReload1 = 600;
         @SerializedName("catapultReload2") public int catapultReload2 = 480;
         @SerializedName("ballistaInterval1") public int ballistaInterval1 = 10;

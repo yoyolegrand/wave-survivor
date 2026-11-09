@@ -2032,7 +2032,8 @@ public class HordeEditorScreen extends Screen {
         y += 32;
         label(x, y, "§6§l" + t("ui.rift.sec_engines"));
         y += 14;
-        toggle(x, y, 220, t("ui.rift.engines_on"), r, "engines", true);
+        toggle(x, y, 150, t("ui.rift.engines_on"), r, "engines", true);
+        toggle(x + 158, y, 230, t("ui.rift.tower_unlimited"), r, "catapultTowerUnlimited", false);
         y += 26;
         flow(x, y);
         fl(t("ui.rift.cata_reload"));

@@ -72,7 +72,7 @@
    48
   ]
  },
- "note": "Unit\u00e9s = pixels (16 = 1 bloc). Origine = coin nord-ouest au sol de l'emprise. L'engin regarde vers le SUD (+Z). Chaque face est remplie en r\u00e9p\u00e9tant la tuile 16x16 de sa texture. Rotations en degr\u00e9s, ordre X puis Y puis Z autour du pivot du groupe ; un groupe enfant h\u00e9rite de son parent. 'glow' = pleine luminosit\u00e9.",
+ "note": "Unit\u00e9s = pixels (16 = 1 bloc). Origine = coin nord-ouest au sol de l'emprise. L'engin regarde vers le SUD (+Z). Chaque face est remplie en r\u00e9p\u00e9tant la tuile 16x16 de sa texture. Rotations en degr\u00e9s, ordre X puis Y puis Z autour du pivot du groupe ; un groupe enfant h\u00e9rite de son parent. 'glow' = pleine luminosit\u00e9. CORDE : pas de cube ; tracer \u00e0 chaque image 2 segments (quads fins, largeur width_px, face \u00e0 la cam\u00e9ra ou en croix) entre les ancrages 'dynamic_strings', calcul\u00e9s en coordonn\u00e9es monde apr\u00e8s les transformations de leurs groupes : la corde suit toujours les ailes et l'encoche.",
  "groups": {
   "base": {
    "pivot": [
@@ -150,7 +150,8 @@
     0,
     0
    ],
-   "parent": "weapon"
+   "parent": "weapon",
+   "note": "Groupe sans cube : il ne porte que l'ancrage 'nock' (encoche). Au tir, translation Z de +20 px (vers les ailes) en 2 ticks, puis retour lent pendant le rechargement."
   },
   "bolt": {
    "pivot": [
@@ -751,21 +752,6 @@
    "glow": true
   },
   {
-   "group": "string",
-   "from": [
-    3,
-    27.2,
-    13.6
-   ],
-   "to": [
-    45,
-    27.9,
-    14.3
-   ],
-   "texture": "cyan",
-   "glow": true
-  },
-  {
    "group": "bolt",
    "from": [
     23,
@@ -919,7 +905,7 @@
  "animations": {
   "fire": {
    "ticks": 10,
-   "string": "snap_forward",
+   "string": "nock: translation z +20 px en 2 ticks",
    "wing_r.rotation.y": [
     0,
     -12,
@@ -941,5 +927,47 @@
   },
   "magazine": 16,
   "fire_interval_ticks": 10
- }
+ },
+ "anchors": {
+  "wing_r_tip": {
+   "group": "wing_r",
+   "pos": [
+    46.5,
+    28.0,
+    24.0
+   ]
+  },
+  "wing_l_tip": {
+   "group": "wing_l",
+   "pos": [
+    1.5,
+    28.0,
+    24.0
+   ]
+  },
+  "nock": {
+   "group": "string",
+   "pos": [
+    24,
+    27.6,
+    13.8
+   ]
+  }
+ },
+ "dynamic_strings": [
+  {
+   "from": "wing_r_tip",
+   "to": "nock",
+   "width_px": 0.8,
+   "texture": "cyan",
+   "glow": true
+  },
+  {
+   "from": "wing_l_tip",
+   "to": "nock",
+   "width_px": 0.8,
+   "texture": "cyan",
+   "glow": true
+  }
+ ]
 }

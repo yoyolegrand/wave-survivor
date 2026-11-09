@@ -56,11 +56,14 @@ final class RiftEngines {
     /** Joueur → engin dont il choisit la variante (boutons du chat). */
     private static final Map<UUID, UUID> choosing = new HashMap<>();
     private static final List<Boulder> BOULDERS = new ArrayList<>();
+    /** Tours-catapultes posées (suivies à chaque tick pour viser et tirer toutes seules). */
+    private static final List<UUID> TOWERS = new ArrayList<>();
     private static final Map<UUID, Long> msgGate = new HashMap<>();
 
     private RiftEngines() {}
 
     static void clear() {
+        TOWERS.clear();
         BOULDERS.clear();
         msgGate.clear();
         choosing.clear();
@@ -103,20 +106,20 @@ final class RiftEngines {
     static int place(ServerLevel l, BlockPos at, boolean ballista) {
         if (l.dimension() != RiftManager.RIFT_DIM) return 2;
         double[] f = SiegeEngineEntity.footprint(ballista ? SiegeEngineEntity.BALLISTA : SiegeEngineEntity.CATAPULT);
-        int w = (int) f[0], d = (int) f[2], y = at.getY();
-        int ox = at.getX() - (ballista ? 1 : 0), oz = at.getZ() - (ballista ? 1 : 2);   // coin nord-ouest de l'emprise
+        int w = (int) f[0], d = (int) f[2], hgt = (int) f[1], y = at.getY();
+        int ox = at.getX() - (ballista ? 1 : 2), oz = at.getZ() - (ballista ? 1 : 2);   // coin nord-ouest de l'emprise
         int rMax = Math.max(4, RiftManager.islandRadiusNow() - 2);
         long r2 = (long) rMax * rMax;
         for (int x = ox; x < ox + w; x++) for (int z = oz; z < oz + d; z++) {
             long dx = x - RiftManager.CENTER.getX(), dz = z - RiftManager.CENTER.getZ();
             if (dx * dx + dz * dz > r2) return 2;
             if (l.getBlockState(new BlockPos(x, y - 1, z)).isAir()) return 1;
-            for (int h = 0; h < 3; h++) {
+            for (int h = 0; h < hgt; h++) {
                 BlockState s = l.getBlockState(new BlockPos(x, y + h, z));
                 if (!s.isAir() && !s.canBeReplaced()) return 1;
             }
         }
-        AABB box = new AABB(ox, y, oz, ox + w, y + 3, oz + d);
+        AABB box = new AABB(ox, y, oz, ox + w, y + hgt, oz + d);
         if (!l.getEntitiesOfClass(SiegeEngineEntity.class, box).isEmpty()) return 1;   // pas sur un autre engin
         SiegeEngineEntity e = ModEntities.SIEGE_ENGINE.get().create(l);
         if (e == null) return 1;
@@ -128,6 +131,7 @@ final class RiftEngines {
         e.setAim(0f, -18f);
         e.readyAt = 0;
         l.addFreshEntity(e);
+        if (!ballista) TOWERS.add(e.getUUID());
         l.playSound(null, e.blockPosition(), SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 1.2f, 0.7f);
         l.sendParticles(ParticleTypes.POOF, e.getX(), e.getY() + 0.5, e.getZ(), 20, w / 2.0, 0.3, d / 2.0, 0.02);
         return 0;
@@ -140,7 +144,82 @@ final class RiftEngines {
         if (!(p.level() instanceof ServerLevel l)) return;
         long now = l.getGameTime();
         if (p.isShiftKeyDown()) { openSheet(p, e); return; }   // Maj + clic droit : fiche de l'engin, amélioration (clic droit seul : tir)
-        if (e.isBallista()) useBallista(p, l, e, now); else useCatapult(p, l, e, now);
+        if (e.isBallista()) useBallista(p, l, e, now);
+        else say(p, "§7" + nameOf(e) + " : elle vise et tire toute seule. Maj + clic droit : fiche.", now);
+    }
+
+    // ─── Tour-catapulte automatique ───
+
+    private static final UUID NO_OWNER = new UUID(0L, 0L);
+
+    /** Chaque tick : la tour cherche une cible (le Titan, sinon l'ennemi le plus proche), tourne vers elle (30°/s) et tire dès que son rechargement est fini. */
+    static void towerTick(ServerLevel l, SiegeEngineEntity e, long now) {
+        if (e.isBallista() || e.isRemoved()) return;
+        if (now >= e.nextAcquire) {
+            e.nextAcquire = now + 10;
+            e.targetId = null;
+            LivingEntity best = RiftTitan.entity();
+            if (best == null) {
+                double bd = 70 * 70;
+                for (net.minecraft.world.entity.monster.Monster m : l.getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class,
+                        e.getBoundingBox().inflate(70, 40, 70))) {
+                    if (!m.isAlive()) continue;
+                    double d = m.distanceToSqr(e);
+                    if (d < bd) { bd = d; best = m; }
+                }
+            }
+            if (best != null) e.targetId = best.getUUID();
+        }
+        if (e.targetId == null || !(l.getEntity(e.targetId) instanceof LivingEntity tgt) || !tgt.isAlive()) { e.targetId = null; return; }
+        // Point visé : le point de la boîte de la cible le plus proche de la tour (le Titan est immense : on le touche dès qu'on l'atteint)
+        AABB tb = tgt.getBoundingBox();
+        Vec3 from = new Vec3(e.getX(), e.getY() + 5.1, e.getZ());
+        Vec3 p = new Vec3(Math.max(tb.minX, Math.min(from.x, tb.maxX)), Math.max(tb.minY + 1, Math.min(from.y, tb.maxY)), Math.max(tb.minZ, Math.min(from.z, tb.maxZ)));
+        double dx = p.x - from.x, dz = p.z - from.z;
+        float want = (float) Math.toDegrees(Math.atan2(-dx, dz));
+        float diff = net.minecraft.util.Mth.wrapDegrees(want - e.aimYaw());
+        float step = Math.max(-1.5f, Math.min(1.5f, diff));     // 30° par seconde au plus
+        float yaw = e.aimYaw() + step;
+        e.setAim(yaw, e.aimPitch());
+        if (Math.abs(diff) > 3f || now < e.readyAt) return;
+        // Munitions : 1 Pierre du trésor du royaume par tir, sauf si elles sont illimitées
+        boolean unlimited = rs().catapultTowerUnlimited;
+        var stone = com.wavesurvivor.horde.kingdom.KingdomTreasury.Res.STONE;
+        if (!unlimited) {
+            if (!com.wavesurvivor.horde.kingdom.KingdomTreasury.active() || !com.wavesurvivor.horde.kingdom.KingdomTreasury.has(stone, 1)) {
+                e.readyAt = now + 40;   // pas de pierre : on réessaie dans 2 s
+                if (now % 200 == 0) for (ServerPlayer pl : l.players()) if (pl.distanceToSqr(e) < 60 * 60) pl.displayClientMessage(Component.literal("§c" + nameOf(e) + " : plus de Pierre dans le trésor !"), true);
+                return;
+            }
+            com.wavesurvivor.horde.kingdom.KingdomTreasury.spend(stone, 1);
+            com.wavesurvivor.horde.kingdom.KingdomTreasury.sync(l.getServer());
+        }
+        fireTower(l, e, p, yaw, now);
+    }
+
+    /** Tir : la tour lance un boulet qui retombe sur le point visé (angle calculé pour la vitesse du boulet). */
+    private static void fireTower(ServerLevel l, SiegeEngineEntity e, Vec3 target, float yaw, long now) {
+        double fx = -Math.sin(Math.toRadians(yaw)), fz = Math.cos(Math.toRadians(yaw));
+        Vec3 muzzle = new Vec3(e.getX() + fx * 2.25, e.getY() + 5.1, e.getZ() + fz * 2.25);
+        boolean tre = e.engineLevel() >= 3 && e.variant == 3;
+        double speed = 2.5 * (e.engineLevel() >= 2 ? 1.1 : 1.0) * (tre ? 1.25 : 1.0);
+        double dist = Math.max(1, Math.hypot(target.x - muzzle.x, target.z - muzzle.z)), h = target.y - muzzle.y, g = 0.05;
+        double disc = speed * speed * speed * speed - g * (g * dist * dist + 2 * h * speed * speed);
+        double ang = disc >= 0 ? Math.atan((speed * speed - Math.sqrt(disc)) / (g * dist)) : Math.toRadians(45);   // hors de portée : tir à 45°
+        Boulder b = new Boulder();
+        b.pos = muzzle;
+        b.vel = new Vec3(fx * Math.cos(ang), Math.sin(ang), fz * Math.cos(ang)).scale(speed);
+        b.owner = NO_OWNER;
+        b.mul = (e.engineLevel() >= 2 ? 1.25f : 1f) * (tre ? 1.6f : 1f);
+        b.fire = e.engineLevel() >= 3 && e.variant == 1;
+        b.frag = e.engineLevel() >= 3 && e.variant == 2;
+        BOULDERS.add(b);
+        int reload = catapultReload(e);
+        e.readyAt = now + reload;
+        e.markFired(now);
+        e.setReloadTicks(reload);
+        l.playSound(null, BlockPos.containing(muzzle), SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 3f, 0.6f);
+        l.playSound(null, BlockPos.containing(muzzle), SoundEvents.DISPENSER_LAUNCH, SoundSource.BLOCKS, 3f, 0.5f);
     }
 
     /** Clic droit avec un lingot d'or : niveau 2 (payant), puis choix d'une variante au niveau 3. */
@@ -356,6 +435,13 @@ final class RiftEngines {
     // ─── Boulets de catapulte (trajectoire simulée) ───
 
     static void tick(ServerLevel l) {
+        long now = l.getGameTime();
+        if (!TOWERS.isEmpty()) {
+            for (UUID id : new ArrayList<>(TOWERS)) {
+                if (l.getEntity(id) instanceof SiegeEngineEntity e && !e.isRemoved()) towerTick(l, e, now);
+                else TOWERS.remove(id);
+            }
+        }
         if (BOULDERS.isEmpty()) return;
         for (Boulder b : new ArrayList<>(BOULDERS)) {
             boolean boom = false;

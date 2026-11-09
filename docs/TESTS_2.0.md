@@ -199,3 +199,9 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] **Maj + clic droit** sur une catapulte / baliste : un menu s'ouvre (comme pour les tours) : nom, étoiles, description, munitions (baliste), prochain niveau et son prix, bouton « Améliorer » (grisé si pas assez de ◆).
 - [ ] Niveau 2 : le modèle change ; le menu propose 3 variantes avec description et prix (survol = description complète), bouton « Choisir » : choix définitif ; niveau 3 : nom de la variante affiché.
 - [ ] Clic droit simple : tirer (inchangé). Le menu se met à jour après chaque achat.
+
+## Corde de la baliste et tour-catapulte automatique
+- [ ] **Baliste** : la corde (2 fins rubans cyan lumineux) relie toujours les pointes des deux ailes à l'encoche, pendant le tir, le battement des ailes et le rechargement. Au tir l'encoche avance de 20 px en 2 ticks (la corde claque) puis revient ; à vide la corde reste détendue.
+- [ ] **Tour-catapulte** (6 × 6 × 6, remplace la catapulte pilotable dans la boutique) : la tour se pose (36 blocs de sol, 6 de haut dégagés), puis **vise et tire seule** : le Titan en priorité, sinon l'ennemi le plus proche (≤ 70 blocs). La plateforme tourne vers la cible à 30°/s au plus ; la poutre bascule (+14° → −24°) au tir ; rechargement de 30 s ; le boulet réapparaît à la fin.
+- [ ] Munitions (**à valider**) : par défaut 1 Pierre du trésor du royaume par tir (message si le trésor n'en a plus) ; option « Tour : munitions illimitées » dans l'éditeur (page Titan).
+- [ ] Clic droit sur la tour : elle ne tire pas (message) ; Maj + clic droit : fiche (améliorations niveau 2 / variantes appliquées à ses tirs).
