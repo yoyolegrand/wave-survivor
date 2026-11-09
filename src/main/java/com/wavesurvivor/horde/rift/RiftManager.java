@@ -447,6 +447,14 @@ public final class RiftManager {
 
     // ─── Déroulement : portail → attente → Horde → fin ───
 
+    /** Réglages de la Faille en cours (cadences des engins). */
+    static HordeConfigMultiData.RiftSettings settingsPublic() { return settings(); }
+
+    /** Clic droit sur un engin de siège (appelé par l'entité). */
+    public static void engineUse(ServerPlayer p, com.wavesurvivor.entity.SiegeEngineEntity e) {
+        if (active && p.level().dimension() == RIFT_DIM) RiftEngines.onUse(p, e);
+    }
+
     private static HordeConfigMultiData.RiftSettings settings() {
         return horde != null && horde.configData != null ? horde.configData.rift() : new HordeConfigMultiData.RiftSettings();
     }
@@ -1181,17 +1189,6 @@ public final class RiftManager {
         if (e.getProjectile().level().isClientSide) return;
         RiftFortress.damageTarget(hit.getEntity(), 6f);
         e.getProjectile().discard();
-    }
-
-    /** Clic droit sur le pupitre d'une catapulte / d'une baliste. */
-    @SubscribeEvent
-    public void onUseEngine(net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock e) {
-        if (!active || e.getLevel().isClientSide || e.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND) return;
-        if (!(e.getEntity() instanceof ServerPlayer p) || p.level().dimension() != RIFT_DIM) return;
-        if (RiftEngines.onUse(p, e.getPos(), p.getServer().getTickCount())) {
-            e.setCanceled(true);
-            e.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
-        }
     }
 
     /** Au démarrage du serveur : aucune Faille n'est ouverte, on referme les portails restés ouverts (redémarrage, arrêt brutal). */

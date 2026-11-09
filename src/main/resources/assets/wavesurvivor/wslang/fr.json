@@ -3995,5 +3995,8 @@
   "ui.rift.trail_soul": "flammes d'âme",
   "ui.rift.trail_smoke": "fumée",
   "ui.rift.meteor_crater": "Cratère temporaire",
-  "ui.rift.hint_meteors": "§8Blocs : « id=poids, … » (ex. magma_block=3, obsidian=1). Le météore apparaît dans le ciel côté Titan environ 1,2 s avant l'impact et tombe en diagonale. Le cratère ne touche jamais les blocs posés par les joueurs."
+  "ui.rift.hint_meteors": "§8Blocs : « id=poids, … » (ex. magma_block=3, obsidian=1). Le météore apparaît dans le ciel côté Titan environ 1,2 s avant l'impact et tombe en diagonale. Le cratère ne touche jamais les blocs posés par les joueurs.",
+  "ui.rift.cata_reload": "Catapulte rech. (t) N1/N2",
+  "ui.rift.bal_interval": "Baliste tir (t) N1/N2",
+  "ui.rift.bal_reload": "rech. (t) N1/N2"
 }

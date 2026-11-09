@@ -4756,5 +4756,8 @@
   "ui.rift.trail_soul": "soul flames",
   "ui.rift.trail_smoke": "smoke",
   "ui.rift.meteor_crater": "Temporary crater",
-  "ui.rift.hint_meteors": "§8Blocks: \"id=weight, ...\" (e.g. magma_block=3, obsidian=1). The meteor appears in the sky on the Titan side about 1.2 s before impact and falls diagonally. The crater never touches player-placed blocks."
+  "ui.rift.hint_meteors": "§8Blocks: \"id=weight, ...\" (e.g. magma_block=3, obsidian=1). The meteor appears in the sky on the Titan side about 1.2 s before impact and falls diagonally. The crater never touches player-placed blocks.",
+  "ui.rift.cata_reload": "Catapult reload (t) L1/L2",
+  "ui.rift.bal_interval": "Ballista shot (t) L1/L2",
+  "ui.rift.bal_reload": "reload (t) L1/L2"
 }

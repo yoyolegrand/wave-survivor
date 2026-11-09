@@ -409,6 +409,13 @@ public class HordeConfigMultiData {
         @SerializedName("meteorFall") public int meteorFall = 24;
         @SerializedName("meteorTrail") public String meteorTrail = "flame";
         @SerializedName("meteorCrater") public boolean meteorCrater = true;
+        /** Engins de siège : rechargement de la catapulte (ticks) niveaux 1 / 2 ; baliste : intervalle entre deux tirs et rechargement (ticks) niveaux 1 / 2. */
+        @SerializedName("catapultReload1") public int catapultReload1 = 600;
+        @SerializedName("catapultReload2") public int catapultReload2 = 480;
+        @SerializedName("ballistaInterval1") public int ballistaInterval1 = 10;
+        @SerializedName("ballistaInterval2") public int ballistaInterval2 = 8;
+        @SerializedName("ballistaReload1") public int ballistaReload1 = 200;
+        @SerializedName("ballistaReload2") public int ballistaReload2 = 160;
         @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
         @SerializedName("titanWindowCapPercent") public int titanWindowCapPercent = 8;
         /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */

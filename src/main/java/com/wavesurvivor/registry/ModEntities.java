@@ -35,6 +35,15 @@ public class ModEntities {
                     .clientTrackingRange(10)
                     .build("breche"));
 
+    /** Engin de siège de la Faille (catapulte / baliste céleste) : modèle JSON, solide, pilotable au clic droit. */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.SiegeEngineEntity>> SIEGE_ENGINE = ENTITIES.register("siege_engine",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.SiegeEngineEntity>of(com.wavesurvivor.entity.SiegeEngineEntity::new, MobCategory.MISC)
+                    .sized(2.0f, 3.0f)
+                    .fireImmune()
+                    .clientTrackingRange(16)
+                    .updateInterval(Integer.MAX_VALUE)
+                    .build("siege_engine"));
+
     /** Éclat du Néant : vex violet, vol au ras du sol, se téléporte quand il est touché. */
     public static final RegistryObject<EntityType<com.wavesurvivor.entity.EclatNeant>> ECLAT_NEANT = ENTITIES.register("eclat_neant",
             () -> EntityType.Builder.<com.wavesurvivor.entity.EclatNeant>of(com.wavesurvivor.entity.EclatNeant::new, MobCategory.MONSTER)

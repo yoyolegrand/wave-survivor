@@ -94,6 +94,7 @@ public class ClientModEvents {
         event.registerBlockEntityRenderer(ModBlockEntities.SERAPH_SHRINE.get(), SeraphShrineRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.CRAFT_UTILITY.get(), ObeliskCrystalRenderer::new); // cristal tournant de l'Obélisque profane
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DIABLOTIN.get(), DiablotinRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.SIEGE_ENGINE.get(), SiegeEngineRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.BRECHE.get(), BrecheRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ECLAT_NEANT.get(),
                 ctx -> new DiablotinRenderer(ctx, 0.72f, 0.36f, 1.0f)); // violet du Néant

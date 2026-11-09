@@ -165,3 +165,12 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 
 ## Correctif : /ws skip pendant le Siège
 - [ ] Pendant le Siège, `/ws skip` (Assaut → Calme → Assaut…) : après le dernier assaut prévu (réglage « Assauts »), la Contre-offensive démarre ; plus d'assaut ni de calme en trop.
+
+## Modèles finaux des engins (niveaux 1 et 2)
+- [ ] Achat puis pose (clic droit sur le sol de l'île) : l'engin apparaît avec son **modèle final** (plus de blocs vanilla), tourné vers le sud ; il est solide (on ne le traverse pas) et on ne peut pas le casser.
+- [ ] **Catapulte** : le clic droit tire ; la poutre bascule (+13° → −18°), le boulet disparaît, le châssis tressaute, puis rebond ; pendant le rechargement le treuil tourne et la poutre remonte cran par cran ; le boulet réapparaît à la fin. 30 s (niveau 1) / 24 s (niveau 2).
+- [ ] **Baliste** : la tourelle suit le regard du tireur (cap) et l'arme son inclinaison ; chaque tir : corde qui claque, ailes qui frémissent, carreau qui disparaît puis glisse ; 1 tir / 0,5 s (niveau 1) / 0,4 s (niveau 2), chargeur de 16 ; rechargement : halo qui tourne, ailes repliées puis retour, carreau qui se matérialise (10 s / 8 s). Baliste vide : un clic la recharge (une seule attente).
+- [ ] Amélioration au lingot d'or : le modèle change (Renforcée / Consacrée), les cadences aussi ; les variantes de niveau 3 gardent le modèle de niveau 2 (leurs modèles viendront ensuite).
+- [ ] Éditeur, page Titan : cadences des engins (rechargement catapulte N1/N2, tir baliste N1/N2, rechargement baliste N1/N2, en ticks).
+- [ ] Textures : tuile 16×16 répétée sur chaque face, pièces lumineuses (cristaux, corde, halo) à pleine luminosité, pas de faces manquantes.
+- [ ] Rendu à distance (le Titan est à 12 blocs de l'île) et vu de près : pas de clignotement ni de coupure.

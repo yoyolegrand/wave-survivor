@@ -2011,6 +2011,17 @@ public class HordeEditorScreen extends Screen {
         label(x, y, "§6§l" + t("ui.rift.sec_engines"));
         y += 14;
         toggle(x, y, 220, t("ui.rift.engines_on"), r, "engines", true);
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.cata_reload"));
+        fInt(30, HordeJson.num(r, "catapultReload1", 600), v -> r.addProperty("catapultReload1", Math.max(20, Math.min(6000, v))));
+        fInt(30, HordeJson.num(r, "catapultReload2", 480), v -> r.addProperty("catapultReload2", Math.max(20, Math.min(6000, v))));
+        fl(t("ui.rift.bal_interval"));
+        fInt(26, HordeJson.num(r, "ballistaInterval1", 10), v -> r.addProperty("ballistaInterval1", Math.max(1, Math.min(100, v))));
+        fInt(26, HordeJson.num(r, "ballistaInterval2", 8), v -> r.addProperty("ballistaInterval2", Math.max(1, Math.min(100, v))));
+        fl(t("ui.rift.bal_reload"));
+        fInt(30, HordeJson.num(r, "ballistaReload1", 200), v -> r.addProperty("ballistaReload1", Math.max(20, Math.min(3000, v))));
+        fInt(30, HordeJson.num(r, "ballistaReload2", 160), v -> r.addProperty("ballistaReload2", Math.max(20, Math.min(3000, v))));
         y += 28;
         labelWrap(x, y, t("ui.rift.hint_titan"), W - 24);
     }
