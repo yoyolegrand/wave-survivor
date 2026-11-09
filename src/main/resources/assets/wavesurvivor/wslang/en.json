@@ -4724,5 +4724,6 @@
   "rift.engine.placed": "§aSiege engine placed!",
   "ui.rift.window_s": "Window (s)",
   "ui.rift.window_cap": "Window cap %",
-  "rift.ruin.rebuilt": "§aTower rebuilt (level 1) for {0} ◆."
+  "rift.ruin.rebuilt": "§aTower rebuilt (level 1) for {0} ◆.",
+  "ui.rift.titan_gap": "Gap (blocks)"
 }

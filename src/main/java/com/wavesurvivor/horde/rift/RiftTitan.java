@@ -87,11 +87,11 @@ final class RiftTitan {
 
     // ─── Apparition ───
 
-    /** Distance (vers le sud) entre le centre de l'île et le Titan : l'île + une marge + la demi-largeur du Titan agrandi. */
+    /** Distance (vers le sud) entre le centre de l'île et le Titan : l'île + une marge (réglable, 12 par défaut) + la demi-largeur du Titan agrandi. */
     static double distance(HordeConfigMultiData.RiftSettings settings, int sr) {
         EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(settings.titanEntity));
         double w = t != null ? t.getWidth() : 1.4;
-        return Math.max(70, sr + 35 + w * settings.titanScale * 0.5);
+        return Math.max(30, sr + Math.max(4, settings.titanGap) + w * settings.titanScale * 0.5);
     }
 
     static boolean spawn(ServerLevel l, HordeConfigMultiData.RiftSettings settings, int players, int sr) {

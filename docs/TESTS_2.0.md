@@ -110,3 +110,7 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Catapulte : **Infernale** (cibles enflammées), **À fragmentation** (5 éclats autour de l'impact), **Trébuchet de siège** (portée, dégâts ×2, recharge 37,5 s).
 - [ ] Baliste : **Séraphique** (flèche perforante), **Solaire** (rayon de lumière, cadence 0,2 s), **Du Jugement** (rayon qui marque : +25 % de dégâts subis pendant 8 s, pour toute l'équipe).
 - [ ] Les engins améliorés continuent de fonctionner à la Contre-offensive et face au Titan.
+
+## Titan plus proche
+- [ ] Le Titan apparaît à environ **12 blocs** du bord de l'île (marge réglable : éditeur, page Titan, « Marge (blocs) »), hors de portée du corps à corps mais atteignable à distance (engins, arcs).
+- [ ] Si le Titan est toujours petit à l'écran : vérifier que la taille enregistrée n'est pas restée à l'ancienne valeur (défaut 110).
