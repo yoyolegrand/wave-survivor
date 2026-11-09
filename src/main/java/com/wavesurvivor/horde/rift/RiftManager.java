@@ -450,6 +450,16 @@ public final class RiftManager {
     /** Réglages de la Faille en cours (cadences des engins). */
     static HordeConfigMultiData.RiftSettings settingsPublic() { return settings(); }
 
+    /** Un coup reçu par une boîte de contact du Titan est porté au Titan (appelé par TitanHitboxEntity). */
+    public static boolean hurtTitan(net.minecraft.world.damagesource.DamageSource source, float amount) {
+        return active && RiftTitan.hurtTitan(source, amount);
+    }
+
+    /** Le Titan existe-t-il encore ? (les boîtes de contact disparaissent sans lui) */
+    public static boolean titanAlive() {
+        return active && RiftTitan.active();
+    }
+
     /** Action de la fiche d'un engin (amélioration, variante). */
     public static void engineSheetAction(ServerPlayer p, int entityId, String action) {
         if (active && p.level().dimension() == RIFT_DIM) RiftEngines.sheetAction(p, entityId, action);

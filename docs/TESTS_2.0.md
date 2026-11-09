@@ -205,3 +205,9 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] **Tour-catapulte** (6 × 6 × 6, remplace la catapulte pilotable dans la boutique) : la tour se pose (36 blocs de sol, 6 de haut dégagés), puis **vise et tire seule** : le Titan en priorité, sinon l'ennemi le plus proche (≤ 70 blocs). La plateforme tourne vers la cible à 30°/s au plus ; la poutre bascule (+14° → −24°) au tir ; rechargement de 30 s ; le boulet réapparaît à la fin.
 - [ ] Munitions (**à valider**) : par défaut 1 Pierre du trésor du royaume par tir (message si le trésor n'en a plus) ; option « Tour : munitions illimitées » dans l'éditeur (page Titan).
 - [ ] Clic droit sur la tour : elle ne tire pas (message) ; Maj + clic droit : fiche (améliorations niveau 2 / variantes appliquées à ses tirs).
+
+## Correctif : le Titan était quasi impossible à toucher (boîtes de contact)
+- [ ] Les flèches de la baliste, les boulets de la tour-catapulte et les rayons touchent le Titan sur sa **face avant** (pas seulement près de son centre) ; sa barre de vie baisse.
+- [ ] Au corps à corps (pendant le stun de la charge), le joueur peut frapper le Titan sur la face avant, à portée normale.
+- [ ] Une explosion de boulet ne blesse le Titan qu'une fois (pas de dégâts multipliés par le nombre de boîtes).
+- [ ] Les boîtes de contact suivent le Titan pendant la charge et le retour, sont invisibles, sans collision, et disparaissent à sa mort.

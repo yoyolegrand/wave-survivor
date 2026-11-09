@@ -413,8 +413,17 @@ final class RiftEngines {
             l.sendParticles(mark ? ParticleTypes.GLOW : ParticleTypes.END_ROD, q.x, q.y, q.z, 1, 0, 0, 0, 0);
         }
         final Vec3 end = to;
+        boolean titanHit = false;
         for (Entity t : l.getEntitiesOfClass(Entity.class, new AABB(from, end).inflate(2.0))) {
             if (t instanceof Player || t instanceof SiegeEngineEntity) continue;
+            if (t instanceof com.wavesurvivor.entity.TitanHitboxEntity) {
+                if (!titanHit && !t.getBoundingBox().inflate(0.3).clip(from, end).isEmpty()) {
+                    titanHit = true;
+                    RiftTitan.hurtTitan(l.damageSources().playerAttack(p), dmg);
+                    if (mark && RiftTitan.entity() != null) RiftTitan.entity().getPersistentData().putLong("ws_rift_mark", l.getGameTime() + 160);
+                }
+                continue;
+            }
             boolean target = RiftFortress.isTarget(t);
             if (!(t instanceof LivingEntity) && !target) continue;
             if (t.getBoundingBox().inflate(0.3).clip(from, end).isEmpty()) continue;
@@ -451,7 +460,7 @@ final class RiftEngines {
                 BlockPos bp = BlockPos.containing(b.pos);
                 if (!l.getBlockState(bp).isAir() && l.getBlockState(bp).getFluidState().isEmpty()) boom = true;
                 else if (!l.getEntitiesOfClass(Entity.class, new AABB(b.pos, b.pos).inflate(1.3),
-                        t -> (t instanceof LivingEntity && !(t instanceof Player)) || RiftFortress.isTarget(t)).isEmpty()) boom = true;
+                        t -> (t instanceof LivingEntity && !(t instanceof Player)) || RiftFortress.isTarget(t) || t instanceof com.wavesurvivor.entity.TitanHitboxEntity).isEmpty()) boom = true;
                 if (b.pos.y < RiftManager.CENTER.getY() - 120) { BOULDERS.remove(b); boom = false; break; }
             }
             if (!BOULDERS.contains(b)) continue;
@@ -480,8 +489,19 @@ final class RiftEngines {
     }
 
     private static void blast(ServerLevel l, Vec3 center, double r, float mul, Entity owner, boolean fire) {
-        for (Entity t : l.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(r))) {
+        boolean titanDone = false;
+        for (Entity t : l.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(r + 8))) {
             if (t instanceof Player || t instanceof SiegeEngineEntity) continue;
+            if (t instanceof com.wavesurvivor.entity.TitanHitboxEntity || RiftTitan.isTitan(t)) {   // le Titan, via sa boîte de contact ou lui-même : une seule fois
+                if (titanDone) continue;
+                double d = t.getBoundingBox().getCenter().distanceTo(center);
+                if (d > r + (t instanceof com.wavesurvivor.entity.TitanHitboxEntity ? 4 : t.getBbWidth())) continue;
+                titanDone = true;
+                float dmg = (float) (80 * mul * (1 - 0.7 * Math.min(1, d / r))) * 1.5f;
+                if (fire && RiftTitan.entity() != null) RiftTitan.entity().setSecondsOnFire(6);
+                RiftTitan.hurtTitan(l.damageSources().explosion(null, owner), dmg);
+                continue;
+            }
             boolean target = RiftFortress.isTarget(t);
             if (!(t instanceof LivingEntity) && !target) continue;
             double d = t.getBoundingBox().getCenter().distanceTo(center);

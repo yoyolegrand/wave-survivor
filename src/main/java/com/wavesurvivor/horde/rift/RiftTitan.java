@@ -95,6 +95,61 @@ final class RiftTitan {
 
     static boolean active() { return titan != null && !dead; }
 
+    // ─── Boîtes de contact : un Titan géant n'est pas retrouvable par Minecraft loin de son centre (voir TitanHitboxEntity) ───
+
+    private static final List<UUID> hitboxes = new ArrayList<>();
+
+    /** Pose des boîtes de contact de 8 × 8 × 8 sur la face avant (côté île) du Titan, jusqu'à ~48 blocs de haut. */
+    private static void spawnHitboxes(ServerLevel l) {
+        clearHitboxes(l);
+        double hw = halfWidth();
+        int cols = (int) Math.max(1, Math.min(12, Math.ceil(2 * hw / 8)));
+        double height = titan.getBbHeight();
+        int rows = (int) Math.max(1, Math.min(6, Math.ceil(Math.min(height, 48) / 8)));
+        for (int i = 0; i < cols * rows; i++) {
+            com.wavesurvivor.entity.TitanHitboxEntity h = com.wavesurvivor.registry.ModEntities.TITAN_HITBOX.get().create(l);
+            if (h == null) continue;
+            h.moveTo(titan.getX(), titan.getY(), titan.getZ(), 0f, 0f);
+            l.addFreshEntity(h);
+            hitboxes.add(h.getUUID());
+        }
+        placeHitboxes(l);
+    }
+
+    /** Replace les boîtes de contact sur la face avant du Titan (à chaque déplacement du Titan). */
+    private static void placeHitboxes(ServerLevel l) {
+        if (titan == null || hitboxes.isEmpty()) return;
+        double hw = halfWidth();
+        int cols = (int) Math.max(1, Math.min(12, Math.ceil(2 * hw / 8)));
+        int rows = Math.max(1, hitboxes.size() / cols);
+        double front = titan.getZ() - hw;   // bord nord du Titan (côté île)
+        int k = 0;
+        for (UUID id : hitboxes) {
+            Entity h = l.getEntity(id);
+            int col = k % cols, row = k / cols;
+            k++;
+            if (h == null) continue;
+            double x = titan.getX() - hw + 4 + col * Math.min(8.0, (2 * hw - 8) / Math.max(1, cols - 1));
+            if (cols == 1) x = titan.getX();
+            h.setPos(x, titan.getY() + row * 8.0, front + 4);
+        }
+    }
+
+    private static void clearHitboxes(ServerLevel l) {
+        for (UUID id : new ArrayList<>(hitboxes)) {
+            Entity h = l.getEntity(id);
+            if (h != null) h.discard();
+        }
+        hitboxes.clear();
+    }
+
+    /** Un coup reçu par une boîte de contact : porté au Titan (chaque coup compte : pas de délai d'invulnérabilité entre deux coups). */
+    static boolean hurtTitan(net.minecraft.world.damagesource.DamageSource source, float amount) {
+        if (titan == null || dead || !titan.isAlive() || emerging) return false;
+        titan.invulnerableTime = 0;
+        return titan.hurt(source, amount);
+    }
+
     /** L'entité du Titan (cible de la tour-catapulte), ou null. */
     static LivingEntity entity() { return titan != null && !dead && titan.isAlive() ? titan : null; }
 
@@ -194,6 +249,7 @@ final class RiftTitan {
                 emerging = false;
                 titan.setInvulnerable(false);
                 titan.setPos(baseX, baseY, baseZ);
+                spawnHitboxes(l);
                 nextSkillAt = now + 100;
                 announce(l, "§5§l⚔ Le Titan vous a vus !");
                 summonAvatars(l);
@@ -726,6 +782,7 @@ final class RiftTitan {
                 f = Math.max(0, Math.min(1, f));
                 double s = f * f * (3 - 2 * f);
                 titan.setPos(baseX, baseY, baseZ + (chargeTargetZ - baseZ) * s);
+                placeHitboxes(l);
                 if (now % 2 == 0) for (ServerPlayer p : l.players()) ShakePacket.send(p, 6, 0.8f);
                 if (now >= chargeAt) impact(l, now);
             }
@@ -756,8 +813,10 @@ final class RiftTitan {
                 f = Math.max(0, Math.min(1, f));
                 double s = f * f * (3 - 2 * f);
                 titan.setPos(baseX, baseY, chargeTargetZ + (baseZ - chargeTargetZ) * s);
+                placeHitboxes(l);
                 if (now >= chargeAt) {
                     titan.setPos(baseX, baseY, baseZ);
+                    placeHitboxes(l);
                     charge = 0;
                     nextChargeAt = now + Math.max(10, rs.titanChargeInterval) * 20L;
                     nextSkillAt = now + 60;
@@ -852,6 +911,7 @@ final class RiftTitan {
         dead = true;
         pending.clear();
         clearMeteors(l);
+        clearHitboxes(l);
         if (bar != null) {
             bar.removeAllPlayers();
             bar = null;
@@ -869,6 +929,7 @@ final class RiftTitan {
     /** Retire le Titan, sa barre et ses avatars (fin de la Faille). */
     static void clear(ServerLevel l) {
         clearMeteors(l);
+        clearHitboxes(l);
         charge = 0;
         chargeDue = false;
         stunning = false;

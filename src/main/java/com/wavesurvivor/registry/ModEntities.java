@@ -35,6 +35,16 @@ public class ModEntities {
                     .clientTrackingRange(10)
                     .build("breche"));
 
+    /** Boîte de contact invisible du Titan de la Faille (relaie les coups reçus au Titan géant). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.TitanHitboxEntity>> TITAN_HITBOX = ENTITIES.register("titan_hitbox",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.TitanHitboxEntity>of(com.wavesurvivor.entity.TitanHitboxEntity::new, MobCategory.MISC)
+                    .sized(8.0f, 8.0f)
+                    .fireImmune()
+                    .noSave()
+                    .clientTrackingRange(16)
+                    .updateInterval(2)
+                    .build("titan_hitbox"));
+
     /** Engin de siège de la Faille (catapulte / baliste céleste) : modèle JSON, solide, pilotable au clic droit. */
     public static final RegistryObject<EntityType<com.wavesurvivor.entity.SiegeEngineEntity>> SIEGE_ENGINE = ENTITIES.register("siege_engine",
             () -> EntityType.Builder.<com.wavesurvivor.entity.SiegeEngineEntity>of(com.wavesurvivor.entity.SiegeEngineEntity::new, MobCategory.MISC)
