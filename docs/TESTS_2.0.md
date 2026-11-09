@@ -174,3 +174,7 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Éditeur, page Titan : cadences des engins (rechargement catapulte N1/N2, tir baliste N1/N2, rechargement baliste N1/N2, en ticks).
 - [ ] Textures : tuile 16×16 répétée sur chaque face, pièces lumineuses (cristaux, corde, halo) à pleine luminosité, pas de faces manquantes.
 - [ ] Rendu à distance (le Titan est à 12 blocs de l'île) et vu de près : pas de clignotement ni de coupure.
+
+## Correctif : taille réelle du Titan
+- [ ] Le Titan fait bien la taille réglée (×110 par défaut : ~300 blocs de haut) et non ~15 blocs ; son bord est à ~12 blocs de l'île.
+- [ ] Dans `latest.log` : « Titan … (demandé x110, appliqué x110 …) » ; un avertissement apparaît si Pehkui limite la taille.

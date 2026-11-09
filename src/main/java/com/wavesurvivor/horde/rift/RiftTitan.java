@@ -147,7 +147,11 @@ final class RiftTitan {
             p.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§5§lLE TITAN S'ÉVEILLE")));
         }
         l.playSound(null, RiftManager.CENTER, SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 8f, 0.4f);
-        WaveSurvivorMod.LOGGER.info("[Faille] Titan {} (x{}, {} PV) en {}", settings.titanEntity, settings.titanScale, maxHp, mob.blockPosition());
+        double real = PehkuiCompat.getScale(mob);
+        WaveSurvivorMod.LOGGER.info("[Faille] Titan {} (demandé x{}, appliqué x{}, {} PV) en {}", settings.titanEntity, settings.titanScale, real, maxHp, mob.blockPosition());
+        if (real > 0 && real < settings.titanScale * 0.9) {
+            WaveSurvivorMod.LOGGER.warn("[Faille] Pehkui limite la taille du Titan à x{} (demandé x{}) : vérifier la configuration de Pehkui.", real, settings.titanScale);
+        }
         return true;
     }
 
