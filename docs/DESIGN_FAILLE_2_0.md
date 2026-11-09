@@ -43,6 +43,13 @@ Rendu d'entité piloté par un compteur synchronisé (serveur → clients). **Au
 - Le bouclier tombe. Les joueurs attaquent : détruire **plusieurs catalyseurs** répartis dans la forteresse, puis le **portail** de la forteresse.
 - Les catalyseurs **n'apparaissent qu'au lancement de cette dernière vague** (jamais pendant les calmes du Siège).
 - Les ennemis continuent d'apparaître mais **ne visent que les joueurs** (plus le Monolithe).
+- **Règle des catalyseurs** (valeurs par défaut, toutes réglables dans l'éditeur, page « Siège et Contre-offensive ») :
+  - **3 chaînes = 3 phases** : chaque tiers de PV perdu brise une chaîne (éclat violet, son, la chaîne visible de l'autel disparaît) et fait surgir **3 à 5 gardiens** autour du catalyseur, **plus forts à chaque phase** (+35 % de PV et de dégâts par phase) ;
+  - **régénération de 2 % des PV par seconde** si aucun joueur n'est à moins de **8 blocs** (une chaîne brisée reste brisée) ;
+  - **PV adaptés au nombre de joueurs** (+40 % par joueur supplémentaire) ;
+  - **le cœur du donjon n'est attaquable qu'une fois les 6 catalyseurs détruits** (il n'apparaît qu'à ce moment) ;
+  - les catalyseurs du plan ont un autel, 3 piliers et des chaînes : les 3 chaînes visibles sont celles qui se brisent.
+- **Forteresses** : chaque forme = un plan (`data/wavesurvivor/rift/fortress_<id>.json`) + ses repères (fortress_center, gate, siege_gate, enemy_portal, heart, catalysts, spawn_points, shield, bridge, bridge_bastion). L'éditeur propose le choix d'une forme ou le tirage au sort. Première forme : la **Citadelle d'obsidienne** (plateforme de rayon 39, pont de 72 de long sur 15 de large avec bastion à mi-chemin, herse du Siège au bout, ouverte au début de la horde du Siège).
 
 ## 5. Phase 4 — Le Titan
 - **Cinématique** d'invocation (bandes noires, caméra vers l'horizon, tremblements, le Titan surgit de l'abîme ou descend des nuages ; passable).

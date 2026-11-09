@@ -130,3 +130,13 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Le pont de la forteresse se raccorde bien au bord de l'île ; les engins se posent sur le sol de l'île.
 - [ ] Rayons non standard (ex. 24) : l'île est tronquée au rayon réglé (plan du rayon supérieur).
 - [ ] Pas de gros à-coup au premier anneau (rayon 48 : ~430 Ko de plan).
+
+## Citadelle d'obsidienne (forteresse définitive)
+- [ ] Début du Siège : la Citadelle et le pont (72 de long) se posent par tranches (pas de gros à-coup), le pont se raccorde au bord de l'île, la porte regarde l'île.
+- [ ] Dôme du bouclier (rayon 42) : on ne peut pas entrer ; les joueurs refoulés sont replacés sur le pont, hors du dôme.
+- [ ] Au début de la horde du Siège : la **herse** au bout du pont s'ouvre ; les ennemis sortent de la forteresse et traversent le pont vers le Monolithe.
+- [ ] Éditeur, page Siège : choix de la forteresse (citadelle / tirage), régénération, rayon, gardiens min / max, force par phase.
+- [ ] Contre-offensive : **6 catalyseurs** sur le cercle du plan ; à chaque tiers de PV perdu une chaîne de l'autel disparaît (éclat violet, son) et 3 puis 4 puis 5 gardiens surgissent, plus forts.
+- [ ] Personne à moins de 8 blocs : le catalyseur regagne 2 % de PV par seconde (les chaînes brisées restent brisées).
+- [ ] Le **cœur** n'apparaît dans le donjon qu'après la destruction des 6 catalyseurs.
+- [ ] Les murs et barreaux du plan sont bien raccordés (pas de poteaux isolés) ; pas de blocs flottants.

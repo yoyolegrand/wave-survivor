@@ -373,8 +373,16 @@ public class HordeConfigMultiData {
         @SerializedName("resourceTrees") public int resourceTrees = 4;
         @SerializedName("resourceOres") public int resourceOres = 3;
         /** Phase 3 — Contre-offensive : nombre de catalyseurs, PV de chacun, PV du cœur de la forteresse, renforts toutes les X s. */
-        @SerializedName("catalysts") public int catalysts = 3;
-        @SerializedName("catalystHp") public int catalystHp = 150;
+        @SerializedName("catalysts") public int catalysts = 6;
+        @SerializedName("catalystHp") public int catalystHp = 400;
+        /** Forteresse : identifiant du plan (« citadelle »…) ou « random » (tirage au sort à l'ouverture de la Faille). */
+        @SerializedName("fortress") public String fortress = "citadelle";
+        /** Catalyseurs : régénération (% des PV par seconde) si aucun joueur à moins de N blocs ; gardiens par chaîne brisée (min, max) et bonus de force par phase (%). */
+        @SerializedName("catalystRegenPercent") public double catalystRegenPercent = 2.0;
+        @SerializedName("catalystRegenRadius") public int catalystRegenRadius = 8;
+        @SerializedName("catalystGuardMin") public int catalystGuardMin = 3;
+        @SerializedName("catalystGuardMax") public int catalystGuardMax = 5;
+        @SerializedName("catalystGuardBoostPercent") public int catalystGuardBoostPercent = 35;
         @SerializedName("coreHp") public int coreHp = 500;
         @SerializedName("reinforceSeconds") public int reinforceSeconds = 20;
         /** Phase 4 — Titan : entité, taille (Pehkui), PV, avatars (PV, % de PV max retirés à leur mort), plafond de dégâts par coup (% des PV max). */

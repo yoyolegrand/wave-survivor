@@ -4725,5 +4725,11 @@
   "ui.rift.window_s": "Window (s)",
   "ui.rift.window_cap": "Window cap %",
   "rift.ruin.rebuilt": "§aTower rebuilt (level 1) for {0} ◆.",
-  "ui.rift.titan_gap": "Gap (blocks)"
+  "ui.rift.titan_gap": "Gap (blocks)",
+  "ui.rift.regen": "Regen %/s",
+  "ui.rift.regen_radius": "Radius (blocks)",
+  "ui.rift.guard_min": "Guards min",
+  "ui.rift.guard_max": "max",
+  "ui.rift.guard_boost": "Strength/phase %",
+  "ui.rift.fortress": "Fortress: "
 }

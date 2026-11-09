@@ -1902,7 +1902,29 @@ public class HordeEditorScreen extends Screen {
         flow(x, y);
         fl(t("ui.rift.reinforce"));
         fInt(30, HordeJson.num(r, "reinforceSeconds", 20), v -> r.addProperty("reinforceSeconds", Math.max(5, Math.min(300, v))));
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.regen"));
+        fDbl(30, HordeJson.dbl(r, "catalystRegenPercent", 2.0), v -> r.addProperty("catalystRegenPercent", Math.max(0.0, Math.min(50.0, v))));
+        fl(t("ui.rift.regen_radius"));
+        fInt(26, HordeJson.num(r, "catalystRegenRadius", 8), v -> r.addProperty("catalystRegenRadius", Math.max(1, Math.min(60, v))));
+        fl(t("ui.rift.guard_min"));
+        fInt(26, HordeJson.num(r, "catalystGuardMin", 3), v -> r.addProperty("catalystGuardMin", Math.max(1, Math.min(20, v))));
+        fl(t("ui.rift.guard_max"));
+        fInt(26, HordeJson.num(r, "catalystGuardMax", 5), v -> r.addProperty("catalystGuardMax", Math.max(1, Math.min(30, v))));
+        fl(t("ui.rift.guard_boost"));
+        fInt(30, HordeJson.num(r, "catalystGuardBoostPercent", 35), v -> r.addProperty("catalystGuardBoostPercent", Math.max(0, Math.min(300, v))));
         y += 30;
+        String fcur = HordeJson.str(r, "fortress", "citadelle");
+        button(x, y - 2, 260, t("ui.rift.fortress") + fcur, () -> {
+            String[] forms = {"citadelle", "random"};
+            int i = 0;
+            for (int k = 0; k < forms.length; k++) if (forms[k].equalsIgnoreCase(fcur)) i = k;
+            r.addProperty("fortress", forms[(i + 1) % forms.length]);
+            changed();
+            init();
+        });
+        y += 28;
         labelWrap(x, y, t("ui.rift.hint_siege"), W - 24);
     }
 

@@ -144,6 +144,7 @@ public final class RiftManager {
         HordeConfigMultiData.RiftSettings rs = h != null && h.configData != null ? h.configData.rift() : new HordeConfigMultiData.RiftSettings();
         radius = Math.max(8, Math.min(48, rs.islandRadius));
         siegeFinal = Math.max(radius, Math.min(48, rs.siegeRadius));
+        RiftFortress.select(rs.fortress);
         ensureResourceEvents(h);
         forceChunks(rd, rs);
         buildIsland(rd);
@@ -319,6 +320,7 @@ public final class RiftManager {
             for (ServerPlayer p : new ArrayList<>(rd.players())) sendHome(p);
             RiftTitan.clear(rd);
             RiftFortress.clearTargets(rd);
+            RiftFortress.reset();
             RiftEngines.clear();
             clearIsland(rd);
         }
@@ -414,8 +416,8 @@ public final class RiftManager {
         int reach = (far ? siegeFinal : radius) + 16;
         forceRect(l, -reach, reach, -reach, reach);
         if (rs.siegeEnabled) {
-            int fx = siegeFinal + RiftFortress.GAP + 2 * RiftFortress.R + 12;
-            forceRect(l, siegeFinal - 8, fx, -(RiftFortress.R + 16), RiftFortress.R + 16);
+            int[] b = RiftFortress.bounds(siegeFinal);
+            forceRect(l, b[0] - 16, b[1] + 16, b[2] - 16, b[3] + 16);
         }
         if (rs.titanEnabled) {
             int d = (int) Math.ceil(RiftTitan.distance(rs, siegeFinal));
@@ -522,6 +524,7 @@ public final class RiftManager {
             }
             case SIEGE -> {
                 RiftFortress.shield(rd, siegeFinal, now);
+                RiftFortress.buildTick(rd);   // la forteresse se pose par tranches
                 if (growCur < growTarget) {
                     if (now >= growNextAt) {
                         int to = Math.min(growTarget, growCur + 2);
@@ -533,7 +536,7 @@ public final class RiftManager {
                         rd.playSound(null, CENTER, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 3f, 0.5f);
                     }
                 } else if (!siegeHordeOn) {
-                    if (now >= siegeStartAt) startSiegeHorde(server, rd);
+                    if (now >= siegeStartAt && RiftFortress.built()) startSiegeHorde(server, rd);
                 } else if (now % 20 == 0) {
                     waveWatch(server, rd, true);
                 }
@@ -678,7 +681,7 @@ public final class RiftManager {
         growNextAt = now + 40;
         siegeStartAt = now + 40 + ((growTarget - growCur + 1) / 2) * 8L + 80;
         siegeHordeOn = false;
-        RiftFortress.build(rd, siegeFinal);
+        RiftFortress.startBuild(siegeFinal);
         RiftEngines.clear(); // les engins ne sont plus pré-posés : on les achète à la boutique du Monolithe
         for (ServerPlayer p : rd.players()) {
             com.wavesurvivor.network.ShakePacket.send(p, 80, 1.2f);
@@ -712,6 +715,7 @@ public final class RiftManager {
             return;
         }
         siegeHordeOn = true;
+        RiftFortress.openPortcullis(rd, siegeFinal);   // la herse s'ouvre : les ennemis sortent de la forteresse
         lastWave = HordeManager.get().getCurrentWave();
         lastState = null;
         tellAll(rd, WSLang.t("rift.siege_go"));
@@ -775,11 +779,11 @@ public final class RiftManager {
         coreSpawned = false;
         BlockPos c = RiftFortress.center(siegeFinal);
         double f = 1.0 + 0.4 * Math.max(0, playerCount(rd) - 1);
-        int n = Math.max(1, Math.min(8, rs.catalysts));
+        java.util.List<BlockPos> cs = RiftFortress.catalystPositions(siegeFinal);
+        int n = Math.max(1, Math.min(cs.size(), rs.catalysts));
         for (int i = 0; i < n; i++) {
-            double a = i * Math.PI * 2 / n + 0.4;
-            RiftFortress.spawnTarget(rd, c.getX() + 0.5 + Math.cos(a) * 22.5, c.getY() + 2.0, c.getZ() + 0.5 + Math.sin(a) * 22.5,
-                    (float) (rs.catalystHp * f), WSLang.t("rift.catalyst"));
+            BlockPos p = cs.get(i * cs.size() / n);   // répartis sur le cercle des catalyseurs du plan
+            RiftFortress.spawnTarget(rd, p.getX() + 0.5, p.getY(), p.getZ() + 0.5, (float) (rs.catalystHp * f), WSLang.t("rift.catalyst"), true);
         }
         // Le bouclier tombe
         rd.playSound(null, c, SoundEvents.BEACON_DEACTIVATE, SoundSource.HOSTILE, 8f, 0.5f);
@@ -796,12 +800,14 @@ public final class RiftManager {
     private static void counterTick(MinecraftServer server, ServerLevel rd, long now) {
         if (now % 20 != 0) return;
         HordeConfigMultiData.RiftSettings rs = settings();
+        RiftFortress.catalystRegen(rd, Math.max(1, rs.catalystRegenRadius), rs.catalystRegenPercent);
         int alive = RiftFortress.aliveTargets(rd);
         BlockPos c = RiftFortress.center(siegeFinal);
         if (!coreSpawned && alive == 0) {
-            coreSpawned = true;
+            coreSpawned = true;   // le cœur du donjon n'apparaît (et n'est attaquable) qu'une fois les catalyseurs détruits
             double f = 1.0 + 0.4 * Math.max(0, playerCount(rd) - 1);
-            RiftFortress.spawnTarget(rd, c.getX() + 0.5, c.getY() + 3.0, c.getZ() + 0.5, (float) (rs.coreHp * f), WSLang.t("rift.core"));
+            BlockPos hp = RiftFortress.heart(siegeFinal);
+            RiftFortress.spawnTarget(rd, hp.getX() + 0.5, hp.getY(), hp.getZ() + 0.5, (float) (rs.coreHp * f), WSLang.t("rift.core"), false);
             tellAll(rd, WSLang.t("rift.core_appears"));
             for (ServerPlayer p : rd.players()) com.wavesurvivor.network.ShakePacket.send(p, 40, 1.0f);
         } else if (coreSpawned && alive == 0) {
@@ -819,6 +825,27 @@ public final class RiftManager {
                 var tpl = horde.configData.hordeEntities.get(RNG.nextInt(horde.configData.hordeEntities.size()));
                 int count = Math.max(2, tpl.baseCount + tpl.countIncrement) + playerCount(rd);
                 com.wavesurvivor.horde.spawn.HordeSpawner.spawnMobs(rd, tpl, RiftFortress.spawnPoint(siegeFinal), 5, count, playerCount(rd));
+            }
+        }
+    }
+
+    /** Une chaîne d'un catalyseur se brise : 3 à 5 gardiens surgissent autour, plus forts à chaque phase ({@code phase} = 0, 1, 2). */
+    static void catalystGuards(ServerLevel l, BlockPos at, int phase) {
+        if (horde == null || horde.configData == null || horde.configData.hordeEntities == null || horde.configData.hordeEntities.isEmpty()) return;
+        HordeConfigMultiData.RiftSettings rs = settings();
+        int lo = Math.max(1, rs.catalystGuardMin), hi = Math.max(lo, rs.catalystGuardMax);
+        int n = Math.min(hi, lo + phase);
+        double boost = 1.0 + Math.max(0, rs.catalystGuardBoostPercent) / 100.0 * phase;
+        for (int i = 0; i < n; i++) {
+            var tpl = horde.configData.hordeEntities.get(RNG.nextInt(horde.configData.hordeEntities.size()));
+            double a = i * Math.PI * 2 / n + RNG.nextDouble();
+            BlockPos pos = at.offset((int) Math.round(Math.cos(a) * 3), 0, (int) Math.round(Math.sin(a) * 3));
+            Entity e = com.wavesurvivor.horde.spawn.HordeSpawner.spawnSummonFromTemplate(l, tpl, pos, playerCount(l));
+            if (e instanceof net.minecraft.world.entity.LivingEntity le && boost > 1.0) {
+                var hpAttr = le.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH);
+                if (hpAttr != null) { hpAttr.setBaseValue(hpAttr.getBaseValue() * boost); le.setHealth(le.getMaxHealth()); }
+                var dmg = le.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE);
+                if (dmg != null) dmg.setBaseValue(dmg.getBaseValue() * boost);
             }
         }
     }

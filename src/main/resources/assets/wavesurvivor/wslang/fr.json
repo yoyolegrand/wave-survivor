@@ -3964,5 +3964,11 @@
   "ui.rift.window_s": "Fenêtre (s)",
   "ui.rift.window_cap": "Plafond fenêtre %",
   "rift.ruin.rebuilt": "§aTour rebâtie (niveau 1) pour {0} ◆.",
-  "ui.rift.titan_gap": "Marge (blocs)"
+  "ui.rift.titan_gap": "Marge (blocs)",
+  "ui.rift.regen": "Régén. %/s",
+  "ui.rift.regen_radius": "Rayon (blocs)",
+  "ui.rift.guard_min": "Gardiens min",
+  "ui.rift.guard_max": "max",
+  "ui.rift.guard_boost": "Force/phase %",
+  "ui.rift.fortress": "Forteresse : "
 }
