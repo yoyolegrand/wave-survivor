@@ -122,12 +122,11 @@ final class RiftEngines {
 
     /** Rechargement de la catapulte (ticks) : 30 s niveau 1, 24 s niveau 2 et variantes (le Trébuchet est plus lent). */
     private static int catapultReload(SiegeEngineEntity e) {
-        if (e.engineLevel() >= 3 && e.variant == 3) return 750;
+        if (e.engineLevel() >= 3 && e.variant == 3) return 720;   // Trébuchet : 36 s
         return Math.max(20, e.engineLevel() >= 2 ? rs().catapultReload2 : rs().catapultReload1);
     }
 
     private static int ballistaInterval(SiegeEngineEntity e) {
-        if (e.engineLevel() >= 3 && e.variant == 2) return 4;   // Solaire : rayon à haute cadence
         return Math.max(1, e.engineLevel() >= 2 ? rs().ballistaInterval2 : rs().ballistaInterval1);
     }
 
@@ -417,7 +416,7 @@ final class RiftEngines {
         Vec3 look = p.getLookAngle();
         Vec3 muzzle = new Vec3(e.getX(), e.getY() + 1.47, e.getZ()).add(look.scale(1.5));
         if (solar || judge) {
-            beam(p, l, muzzle, look, solar ? 5f : 4f, judge);   // rayon de lumière (Solaire) ou rayon qui marque (Jugement)
+            beam(p, l, muzzle, look, solar ? 7f : 4f, judge);   // rayon de lumière (Solaire) ou rayon qui marque (Jugement)
         } else {
             Arrow a = new Arrow(EntityType.ARROW, l);
             a.setOwner(p);

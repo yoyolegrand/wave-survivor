@@ -70,6 +70,9 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
 
     private static final class Model {
         float sx, sz;
+        /** Poutre de la tour : angle chargée / après le tir (lus dans « animations.fire »), groupes masqués au pilote. */
+        float armLoaded = 14f, armFired = -24f;
+        final Set<String> pilotHidden = new HashSet<>();
         final Map<String, Anchor> anchors = new HashMap<>();
         final List<Str> strings = new ArrayList<>();
         final Map<String, Group> groups = new LinkedHashMap<>();
@@ -110,6 +113,14 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
                 if (p != null) p.children.add(g); else m.roots.add(g);
             }
             JsonObject tiles = o.getAsJsonObject("tile_uv");
+            if (o.has("animations") && o.getAsJsonObject("animations").has("fire")) {
+                JsonObject fire = o.getAsJsonObject("animations").getAsJsonObject("fire");
+                if (fire.has("arm.rotation.x") && fire.get("arm.rotation.x").isJsonArray() && fire.getAsJsonArray("arm.rotation.x").size() >= 2) {
+                    m.armLoaded = fire.getAsJsonArray("arm.rotation.x").get(0).getAsFloat();
+                    m.armFired = fire.getAsJsonArray("arm.rotation.x").get(1).getAsFloat();
+                }
+            }
+            if (o.has("pilot_hidden_groups")) for (JsonElement g : o.getAsJsonArray("pilot_hidden_groups")) m.pilotHidden.add(g.getAsString());
             if (o.has("anchors")) {
                 for (var e : o.getAsJsonObject("anchors").entrySet()) {
                     JsonObject ao = e.getValue().getAsJsonObject();
@@ -168,7 +179,7 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
 
     private static float lerp(float a, float b, float t) { return a + (b - a) * Math.max(0f, Math.min(1f, t)); }
 
-    private static Anim animate(SiegeEngineEntity e, float partial) {
+    private static Anim animate(SiegeEngineEntity e, float partial, Model model) {
         Anim a = new Anim();
         float now = e.level().getGameTime() + partial;
         float t = now - e.fireTick();
@@ -177,20 +188,21 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
             // Tour-catapulte automatique : la plateforme tourne seule vers sa cible (cap synchronisé), la poutre bascule au tir
             a.rot.put("turret", new float[]{0, -e.aimYaw(), 0});
             float armX;
+            float ld = model.armLoaded, fr = model.armFired;
             if (t < 0 || t >= rt) {                                       // armée, boulet en place
-                armX = 14f;
+                armX = ld;
             } else if (t < 10f) {                                         // tir : la poutre bascule, le boulet part
-                armX = lerp(14f, -24f, t / 10f);
+                armX = lerp(ld, fr, t / 10f);
                 if (t >= 2f) a.hidden.add("ammo");
             } else if (t < 16f) {                                         // rebond
-                armX = -24f + 4f * (float) Math.sin(Math.PI * (t - 10f) / 6f);
+                armX = fr + 4f * (float) Math.sin(Math.PI * (t - 10f) / 6f);
                 a.hidden.add("ammo");
             } else if (t < rt - 10f) {                                    // rechargement : la poutre remonte cran par cran
                 float p = (t - 16f) / Math.max(1f, rt - 26f);
-                armX = -24f + 38f * (float) (Math.floor(p * 16f) / 16f);
+                armX = fr + (ld - fr) * (float) (Math.floor(p * 16f) / 16f);
                 a.hidden.add("ammo");
             } else {                                                      // chargement : le boulet tombe dans la cuillère
-                armX = 14f;
+                armX = ld;
             }
             a.rot.put("arm", new float[]{armX, 0, 0});
             return a;
@@ -236,6 +248,17 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
         this.shadowRadius = 0f;
     }
 
+    /** Un modèle par niveau et par variante (niveau 3 : la variante choisie). */
+    private static String modelName(SiegeEngineEntity e) {
+        int lv = e.engineLevel(), v = e.variant;
+        if (e.isBallista()) {
+            if (lv >= 3 && v >= 1) return "celestial_ballista_l3_" + new String[]{"seraphic", "solar", "judgement"}[Math.min(2, v - 1)];
+            return "celestial_ballista_l" + (lv >= 2 ? 2 : 1);
+        }
+        if (lv >= 3 && v >= 1) return "catapult_tower_l3_" + new String[]{"infernal", "fragmentation", "trebuchet"}[Math.min(2, v - 1)];
+        return "catapult_tower_l" + (lv >= 2 ? 2 : 1);
+    }
+
     @Override
     public ResourceLocation getTextureLocation(SiegeEngineEntity e) { return ATLAS; }
 
@@ -244,10 +267,12 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
 
     @Override
     public void render(SiegeEngineEntity e, float yaw, float partial, PoseStack ps, MultiBufferSource buf, int light) {
-        String name = e.isBallista() ? "celestial_ballista_l" + (e.engineLevel() >= 2 ? 2 : 1) : "catapult_tower_l1";
-        Model m = load(name);
+        Model m = load(modelName(e));
         if (m == null) return;
-        Anim a = animate(e, partial);
+        Anim a = animate(e, partial, m);
+        // Le joueur qui pilote la baliste ne voit pas les groupes « pilot_hidden_groups » (halo…)
+        var me = Minecraft.getInstance().player;
+        if (e.isBallista() && me != null && me.getVehicle() == e && Minecraft.getInstance().options.getCameraType().isFirstPerson()) a.hidden.addAll(m.pilotHidden);
         VertexConsumer vc = buf.getBuffer(RenderType.entityCutoutNoCull(ATLAS));
         ps.pushPose();
         // Entité = centre de l'emprise au sol ; le modèle part de son coin nord-ouest, en pixels
