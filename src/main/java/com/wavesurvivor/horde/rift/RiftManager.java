@@ -223,6 +223,11 @@ public final class RiftManager {
         return new double[]{CENTER.getX() + 0.5 + (RNG.nextDouble() - 0.5) * 5, CENTER.getZ() + 0.5 + 3.5 + RNG.nextDouble() * 2};
     }
 
+    /** Choix d'une variante de niveau 3 pour l'engin que le joueur vient d'améliorer (boutons du chat). */
+    public static void chooseEngineVariant(ServerPlayer p, int i) {
+        if (active) RiftEngines.chooseVariant(p, i);
+    }
+
     /** Engin de siège acheté : posé par l'objet (catapulte / baliste). @return 0 posé · 1 pas de place · 2 hors de l'île · 3 Faille inactive */
     public static int placeEngine(ServerLevel level, BlockPos at, boolean ballista) {
         if (!active || !inCombat()) return 3;
@@ -943,6 +948,7 @@ public final class RiftManager {
     /** Plafond de dégâts par coup sur le Titan. */
     @SubscribeEvent
     public void onTitanHurt(net.minecraftforge.event.entity.living.LivingHurtEvent e) {
+        if (active && e.getEntity().getPersistentData().contains("ws_rift_mark")) e.setAmount(RiftEngines.markedDamage(e.getEntity(), e.getAmount()));
         if (active && RiftTitan.active() && RiftTitan.isTitan(e.getEntity())) e.setAmount(RiftTitan.capDamage(e.getAmount(), e.getEntity().getServer().getTickCount()));
     }
 

@@ -103,3 +103,10 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 ## Bénédictions conservées Horde → Siège
 - [ ] Les bénédictions obtenues pendant la Horde sont **toujours actives** au Siège, à la Contre-offensive et face au Titan.
 - [ ] Elles se dissipent à la **fin de la Faille** (victoire, défaite ou arrêt).
+
+## Améliorations des engins (statistiques ; visuels à venir de Claude Chat)
+- [ ] Clic droit sur le pupitre **avec un lingot d'or** : niveau 2 (catapulte 60 ◆ « renforcée », baliste 50 ◆ « consacrée »). Catapulte : recharge 22,5 s, dégâts ×1,25, boulet plus rapide. Baliste : cadence 0,4 s, 7,6 dégâts par flèche.
+- [ ] Nouveau clic avec un lingot d'or au niveau 2 : boutons cliquables dans le chat pour choisir la **variante** (100 ◆ catapulte, 80 ◆ baliste), définitive pour cet engin.
+- [ ] Catapulte : **Infernale** (cibles enflammées), **À fragmentation** (5 éclats autour de l'impact), **Trébuchet de siège** (portée, dégâts ×2, recharge 37,5 s).
+- [ ] Baliste : **Séraphique** (flèche perforante), **Solaire** (rayon de lumière, cadence 0,2 s), **Du Jugement** (rayon qui marque : +25 % de dégâts subis pendant 8 s, pour toute l'équipe).
+- [ ] Les engins améliorés continuent de fonctionner à la Contre-offensive et face au Titan.

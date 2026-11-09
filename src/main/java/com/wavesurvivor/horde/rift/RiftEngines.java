@@ -49,6 +49,8 @@ final class RiftEngines {
         long readyAt, nextShot;
         int ammo;
         boolean reloading;
+        /** Niveau (1 base, 2 renforcée / consacrée, 3 variante choisie) et variante (0 = aucune, 1 à 3). */
+        int level = 1, variant = 0;
 
         Engine(BlockPos lectern, boolean ballista, Vec3 muzzle) {
             this.lectern = lectern;
@@ -60,6 +62,21 @@ final class RiftEngines {
     private static final class Boulder {
         Vec3 pos, vel;
         UUID owner;
+        float mul = 1f;
+        boolean fire, frag;
+    }
+
+    /** Prix de l'amélioration au niveau 2, puis de la variante de niveau 3 (catapulte, baliste). */
+    private static final int[] UP2 = {60, 50}, UP3 = {100, 80};
+    private static final String[][] VARIANTS = {
+            {"Infernale", "À fragmentation", "Trébuchet de siège"}, {"Séraphique", "Solaire", "Du Jugement"}};
+    private static final Map<UUID, Engine> choosing = new HashMap<>();
+
+    private static String nameOf(Engine e) {
+        String base = e.ballista ? "Baliste céleste" : "Catapulte";
+        if (e.level == 2) return base + (e.ballista ? " consacrée" : " renforcée");
+        if (e.level >= 3 && e.variant >= 1) return base + " " + VARIANTS[e.ballista ? 1 : 0][e.variant - 1];
+        return base;
     }
 
     private static final List<Engine> ENGINES = new ArrayList<>();
@@ -72,6 +89,7 @@ final class RiftEngines {
         ENGINES.clear();
         BOULDERS.clear();
         msgGate.clear();
+        choosing.clear();
     }
 
     // ─── Construction (tous les engins regardent vers le SUD, là où surgit le Titan) ───
@@ -157,10 +175,45 @@ final class RiftEngines {
         for (Engine e : ENGINES) {
             if (!e.lectern.equals(pos)) continue;
             if (!(p.level() instanceof ServerLevel l)) return true;
+            if (p.getMainHandItem().is(Items.GOLD_INGOT)) { upgrade(p, e, now); return true; } // lingot d'or en main : amélioration
             if (e.ballista) useBallista(p, l, e, now); else useCatapult(p, l, e, now);
             return true;
         }
         return false;
+    }
+
+    /** Clic droit avec un lingot d'or : niveau 2 (payant), puis choix d'une variante au niveau 3. */
+    private static void upgrade(ServerPlayer p, Engine e, long now) {
+        int k = e.ballista ? 1 : 0;
+        if (e.level == 1) {
+            if (!com.wavesurvivor.altar.AltarDefense.trySpend(p, UP2[k])) return;
+            e.level = 2;
+            if (p.level() instanceof ServerLevel l) l.playSound(null, e.lectern, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1f, 1.2f);
+            say(p, "§a" + nameOf(e) + " ! Clic droit avec un lingot d'or pour choisir sa variante.", now);
+        } else if (e.level == 2) {
+            choosing.put(p.getUUID(), e);
+            net.minecraft.network.chat.MutableComponent line = Component.literal("§6Variante (" + UP3[k] + " ◆) : ");
+            for (int i = 0; i < 3; i++) {
+                final String cmd = "/wavesurvivor riftengine " + i;
+                line.append(Component.literal("§e§l[" + VARIANTS[k][i] + "]  ").withStyle(st -> st.withClickEvent(
+                        new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, cmd))));
+            }
+            p.sendSystemMessage(line);
+        } else {
+            say(p, "§7" + nameOf(e) + " : niveau maximal.", now);
+        }
+    }
+
+    /** Choix de la variante (clic dans le chat) : définitif pour cet engin. */
+    static void chooseVariant(ServerPlayer p, int i) {
+        Engine e = choosing.get(p.getUUID());
+        if (e == null || e.level != 2 || i < 0 || i > 2 || p.distanceToSqr(e.lectern.getX() + 0.5, e.lectern.getY() + 0.5, e.lectern.getZ() + 0.5) > 400) return;
+        if (!com.wavesurvivor.altar.AltarDefense.trySpend(p, UP3[e.ballista ? 1 : 0])) return;
+        e.level = 3;
+        e.variant = i + 1;
+        choosing.remove(p.getUUID());
+        if (p.level() instanceof ServerLevel l) l.playSound(null, e.lectern, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1f, 1f);
+        p.displayClientMessage(Component.literal("§a" + nameOf(e) + " !"), true);
     }
 
     private static void say(ServerPlayer p, String msg, long now) {
@@ -185,7 +238,7 @@ final class RiftEngines {
 
     private static void useCatapult(ServerPlayer p, ServerLevel l, Engine e, long now) {
         if (now < e.readyAt) {
-            say(p, "§7Catapulte en rechargement : §f" + ((e.readyAt - now + 19) / 20) + " s", now);
+            say(p, "§7" + nameOf(e) + " en rechargement : §f" + ((e.readyAt - now + 19) / 20) + " s", now);
             return;
         }
         if (!p.isCreative() && take(p, Items.COBBLESTONE, 1) < 1) {
@@ -196,10 +249,14 @@ final class RiftEngines {
         Vec3 dir = new Vec3(look.x, Math.max(look.y, 0.25), look.z).normalize();
         Boulder b = new Boulder();
         b.pos = e.muzzle;
-        b.vel = dir.scale(p.isShiftKeyDown() ? 1.6 : 2.5);
+        double speed = (p.isShiftKeyDown() ? 1.6 : 2.5) * (e.level >= 2 ? 1.1 : 1.0) * (e.level >= 3 && e.variant == 3 ? 1.25 : 1.0);
+        b.vel = dir.scale(speed);
         b.owner = p.getUUID();
+        b.mul = (e.level >= 2 ? 1.25f : 1f) * (e.level >= 3 && e.variant == 3 ? 1.6f : 1f);
+        b.fire = e.level >= 3 && e.variant == 1;
+        b.frag = e.level >= 3 && e.variant == 2;
         BOULDERS.add(b);
-        e.readyAt = now + 600;
+        e.readyAt = now + (e.level >= 3 && e.variant == 3 ? 750 : e.level >= 2 ? 450 : 600);
         l.playSound(null, BlockPos.containing(e.muzzle), SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 3f, 0.6f);
         l.playSound(null, BlockPos.containing(e.muzzle), SoundEvents.DISPENSER_LAUNCH, SoundSource.BLOCKS, 3f, 0.5f);
         say(p, "§6Catapulte : tir ! Rechargement 30 s", now);
@@ -227,15 +284,21 @@ final class RiftEngines {
             return;
         }
         if (now < e.nextShot) return;
-        e.nextShot = now + 10;
-        Arrow a = new Arrow(EntityType.ARROW, l);
-        a.setOwner(p);
-        a.setPos(e.muzzle.x, e.muzzle.y, e.muzzle.z);
-        a.setBaseDamage(1.5);                         // 6 dégâts à pleine vitesse
-        a.pickup = AbstractArrow.Pickup.DISALLOWED;
+        boolean solar = e.level >= 3 && e.variant == 2, judge = e.level >= 3 && e.variant == 3, seraph = e.level >= 3 && e.variant == 1;
+        e.nextShot = now + (solar ? 4 : e.level >= 2 ? 8 : 10);
         Vec3 look = p.getLookAngle();
-        a.shoot(look.x, look.y, look.z, 4.0f, 0.0f);
-        l.addFreshEntity(a);
+        if (solar || judge) {
+            beam(p, l, e, look, solar ? 5f : 4f, judge);   // rayon de lumière (Solaire) ou rayon qui marque (Jugement)
+        } else {
+            Arrow a = new Arrow(EntityType.ARROW, l);
+            a.setOwner(p);
+            a.setPos(e.muzzle.x, e.muzzle.y, e.muzzle.z);
+            a.setBaseDamage(e.level >= 2 ? 1.9 : 1.5);   // 6 dégâts à pleine vitesse (7,6 consacrée)
+            if (seraph) a.setPierceLevel((byte) 4);       // carreau perforant
+            a.pickup = AbstractArrow.Pickup.DISALLOWED;
+            a.shoot(look.x, look.y, look.z, 4.0f, 0.0f);
+            l.addFreshEntity(a);
+        }
         e.ammo--;
         l.playSound(null, BlockPos.containing(e.muzzle), SoundEvents.CROSSBOW_SHOOT, SoundSource.BLOCKS, 2.5f, 0.6f);
         l.sendParticles(ParticleTypes.END_ROD, e.muzzle.x, e.muzzle.y, e.muzzle.z, 3, 0.1, 0.1, 0.1, 0.02);
@@ -244,8 +307,39 @@ final class RiftEngines {
             e.readyAt = now + 200;
             say(p, "§bBaliste vide : rechargement (clic pour recharger)", now);
         } else {
-            p.displayClientMessage(Component.literal("§bBaliste §f" + e.ammo + " / 16"), true);
+            p.displayClientMessage(Component.literal("§b" + nameOf(e) + " §f" + e.ammo + " / 16"), true);
         }
+    }
+
+    /** Tir instantané (rayon) : touche tout ce qui est sur la ligne ; {@code mark} : la cible est marquée (+25 % de dégâts subis, 8 s). */
+    private static void beam(ServerPlayer p, ServerLevel l, Engine e, Vec3 dir, float dmg, boolean mark) {
+        Vec3 from = e.muzzle, to = from.add(dir.scale(70));
+        net.minecraft.world.phys.BlockHitResult bh = l.clip(new net.minecraft.world.level.ClipContext(from, to,
+                net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, p));
+        if (bh.getType() != net.minecraft.world.phys.HitResult.Type.MISS) to = bh.getLocation();
+        double len = from.distanceTo(to);
+        for (double d = 0; d < len; d += 1.0) {
+            Vec3 q = from.add(dir.scale(d));
+            l.sendParticles(mark ? ParticleTypes.GLOW : ParticleTypes.END_ROD, q.x, q.y, q.z, 1, 0, 0, 0, 0);
+        }
+        final Vec3 end = to;
+        for (Entity t : l.getEntitiesOfClass(Entity.class, new AABB(from, end).inflate(2.0))) {
+            if (t instanceof Player) continue;
+            boolean target = RiftFortress.isTarget(t);
+            if (!(t instanceof LivingEntity) && !target) continue;
+            if (t.getBoundingBox().inflate(0.3).clip(from, end).isEmpty()) continue;
+            if (target) RiftFortress.damageTarget(t, dmg);
+            else {
+                ((LivingEntity) t).hurt(l.damageSources().playerAttack(p), dmg);
+                if (mark) t.getPersistentData().putLong("ws_rift_mark", l.getGameTime() + 160);
+            }
+        }
+    }
+
+    /** Dégâts supplémentaires sur une cible marquée par la baliste du Jugement. */
+    static float markedDamage(LivingEntity e, float amount) {
+        long until = e.getPersistentData().getLong("ws_rift_mark");
+        return until > e.level().getGameTime() ? amount * 1.25f : amount;
     }
 
     // ─── Boulets de catapulte (trajectoire simulée) ───
@@ -277,14 +371,26 @@ final class RiftEngines {
         Entity owner = l.getServer().getPlayerList().getPlayer(b.owner);
         l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, b.pos.x, b.pos.y, b.pos.z, 1, 0, 0, 0, 0);
         l.playSound(null, BlockPos.containing(b.pos), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4f, 0.8f);
-        double r = 4.0;
-        for (Entity t : l.getEntitiesOfClass(Entity.class, new AABB(b.pos, b.pos).inflate(r))) {
+        blast(l, b.pos, 4.0, b.mul, owner, b.fire);
+        if (b.frag) {   // fragmentation : 5 éclats autour de l'impact
+            for (int i = 0; i < 5; i++) {
+                double a = i * Math.PI * 2 / 5 + Math.random();
+                Vec3 q = b.pos.add(Math.cos(a) * 3.5, 0.5, Math.sin(a) * 3.5);
+                l.sendParticles(ParticleTypes.EXPLOSION, q.x, q.y, q.z, 1, 0, 0, 0, 0);
+                blast(l, q, 2.2, b.mul * 0.45f, owner, false);
+            }
+        }
+    }
+
+    private static void blast(ServerLevel l, Vec3 center, double r, float mul, Entity owner, boolean fire) {
+        for (Entity t : l.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(r))) {
             if (t instanceof Player) continue;
             boolean target = RiftFortress.isTarget(t);
             if (!(t instanceof LivingEntity) && !target) continue;
-            double d = t.getBoundingBox().getCenter().distanceTo(b.pos);
+            double d = t.getBoundingBox().getCenter().distanceTo(center);
             if (d > r + t.getBbWidth()) continue;
-            float dmg = (float) (80 * (1 - 0.7 * Math.min(1, d / r)));
+            float dmg = (float) (80 * mul * (1 - 0.7 * Math.min(1, d / r)));
+            if (fire && t instanceof LivingEntity) t.setSecondsOnFire(6);
             boolean big = target || RiftTitan.isTitan(t) || t.getPersistentData().getBoolean("ws_rift_avatar");
             if (big) dmg *= 1.5f;
             if (target) RiftFortress.damageTarget(t, dmg);

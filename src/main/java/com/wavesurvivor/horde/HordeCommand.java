@@ -246,6 +246,14 @@ public class HordeCommand {
                                             IntegerArgumentType.getInteger(ctx, "i"));
                                     return 1;
                                 })))
+                // Faille : choix de la variante d'un engin de siège (boutons cliquables du chat)
+                .then(Commands.literal("riftengine")
+                        .then(Commands.argument("i", IntegerArgumentType.integer(0, 2))
+                                .executes(ctx -> {
+                                    com.wavesurvivor.horde.rift.RiftManager.chooseEngineVariant(ctx.getSource().getPlayerOrException(),
+                                            IntegerArgumentType.getInteger(ctx, "i"));
+                                    return 1;
+                                })))
                 .then(Commands.literal("lang")
                         .executes(ctx -> {
                             ctx.getSource().sendSuccess(() -> com.wavesurvivor.i18n.WSLang.c("lang.current",
