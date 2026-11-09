@@ -1226,6 +1226,13 @@ public final class RiftManager {
         if (active && RiftTitan.active() && RiftTitan.isTitan(e.getEntity())) e.setAmount(RiftTitan.capDamage(e.getAmount(), e.getEntity().getServer().getTickCount()));
     }
 
+    /** Blocs d'affichage de météore laissés par un arrêt brutal : refusés à l'entrée dans le monde (les vivants sont connus de RiftTitan). */
+    @SubscribeEvent
+    public void onMeteorJoin(net.minecraftforge.event.entity.EntityJoinLevelEvent e) {
+        if (e.getLevel().isClientSide || !(e.getEntity() instanceof net.minecraft.world.entity.Display.BlockDisplay d)) return;
+        if (d.getTags().contains("ws_meteor") && !RiftTitan.isMeteorPart(d.getUUID())) e.setCanceled(true);
+    }
+
     /** Les monstres de la horde ne s'en prennent jamais au Titan (un golem de fer est une cible naturelle pour eux) ni à ses boîtes de contact : ils restent concentrés sur le Monolithe. */
     @SubscribeEvent
     public void onMobTarget(net.minecraftforge.event.entity.living.LivingChangeTargetEvent e) {

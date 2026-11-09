@@ -239,3 +239,7 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 
 ## Correctif : les vagues ne s'attaquent plus au Titan
 - [ ] Pendant le Titan, les monstres de l'invasion (portail sur le pont) **ne visent jamais le Titan** (golem de fer) ; ils se dirigent vers le Monolithe.
+
+## Correctif : les blocs 3D du météore n'apparaissaient pas
+- [ ] Les météores (amas de blocs) tombent bien en diagonale depuis le ciel côté Titan, ~1,2 s avant l'impact, de près et de loin, de jour et de nuit.
+- [ ] Journal de débogage facultatif : lancer le jeu avec `-Dwavesurvivor.debugMeteors=true` pour voir le nombre de météores et de blocs vivants dans `latest.log`.

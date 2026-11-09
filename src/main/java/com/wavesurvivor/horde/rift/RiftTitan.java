@@ -475,10 +475,25 @@ final class RiftTitan {
         return o.add(base);
     }
 
+    /** Identifiants des blocs d'affichage de météore vivants (le nettoyage au chargement du monde supprime les autres). */
+    private static final Set<UUID> METEOR_IDS = new HashSet<>();
+    /** Journal de débogage : -Dwavesurvivor.debugMeteors=true */
+    private static final boolean DEBUG_METEORS = Boolean.getBoolean("wavesurvivor.debugMeteors");
+
+    static boolean isMeteorPart(UUID id) { return METEOR_IDS.contains(id); }
+
+    private static void dropMeteorPart(Display.BlockDisplay d, String why) {
+        if (d == null) return;
+        METEOR_IDS.remove(d.getUUID());
+        if (!d.isRemoved()) d.discard();
+        if (DEBUG_METEORS) WaveSurvivorMod.LOGGER.info("[Météore] bloc retiré ({})", why);
+    }
+
     private static Display.BlockDisplay spawnPart(ServerLevel l, Meteor m, BlockState st, CompoundTag transformation) {
         Display.BlockDisplay d = EntityType.BLOCK_DISPLAY.create(l);
         if (d == null) return null;
-        d.moveTo(m.tx, m.ty, m.tz, 0f, 0f);
+        // L'entité naît à son point de départ, dans le ciel (côté Titan) ; la translation l'amène ensuite jusqu'au point d'impact
+        d.moveTo(m.tx + m.off.x, m.ty + m.off.y, m.tz + m.off.z, 0f, 0f);
         CompoundTag tag = d.saveWithoutId(new CompoundTag());
         tag.put("block_state", NbtUtils.writeBlockState(st));
         tag.put("transformation", transformation);
@@ -486,10 +501,17 @@ final class RiftTitan {
         light.putInt("sky", 15);
         light.putInt("block", 15);
         tag.put("brightness", light);
-        tag.putFloat("view_range", 3.0f);
+        tag.putFloat("view_range", 6.0f);
+        tag.putFloat("width", 0f);    // 0 : jamais écarté par le culling
+        tag.putFloat("height", 0f);
         d.load(tag);
-        d.addTag(com.wavesurvivor.horde.skill.IceFx.TAG);   // nettoyage automatique si le monde se recharge
-        l.addFreshEntity(d);
+        d.addTag("ws_meteor");        // étiquette propre (IceFx supprime les blocs d'affichage « ws_fx » qu'il ne connaît pas)
+        METEOR_IDS.add(d.getUUID());  // avant l'ajout au monde : le nettoyage à l'entrée ne doit pas le refuser
+        if (!l.addFreshEntity(d)) {
+            METEOR_IDS.remove(d.getUUID());
+            WaveSurvivorMod.LOGGER.warn("[Météore] un bloc d'affichage n'a pas pu être ajouté au monde.");
+            return null;
+        }
         return d;
     }
 
@@ -540,11 +562,11 @@ final class RiftTitan {
         for (Meteor m : new ArrayList<>(METEORS)) {
             if (!m.spawned && now >= m.spawnAt) {
                 m.spawned = true;
-                m.animAt = now + 1;
+                m.animAt = now + 2;   // 2 ticks : le client doit avoir reçu l'entité avant la nouvelle transformation
                 Quaternionf id = new Quaternionf();
                 for (int i = 0; i < m.layout.size(); i++) {
                     float[] p = m.layout.get(i);
-                    Vector3f c = partCenter(p, m.k, id, new Vector3f(m.off));
+                    Vector3f c = partCenter(p, m.k, id, new Vector3f(0, 0, 0));   // relatif à l'entité, déjà dans le ciel
                     m.parts.add(spawnPart(l, m, m.states.get(i), meteorTransform(c, id, p[3] * m.k)));
                 }
                 l.playSound(null, BlockPos.containing(m.tx, m.ty, m.tz), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 4f, 0.5f);
@@ -552,7 +574,7 @@ final class RiftTitan {
             if (m.spawned && !m.animated && now >= m.animAt) {
                 m.animated = true;
                 int dur = (int) Math.max(1, m.impactAt - now);
-                Vector3f end = new Vector3f(0, 1.6f * m.k, 0);
+                Vector3f end = new Vector3f(-m.off.x, -m.off.y + 1.6f * m.k, -m.off.z);   // le point d'impact, relatif à l'entité
                 for (int i = 0; i < m.layout.size() && i < m.parts.size(); i++) {
                     Display.BlockDisplay d = m.parts.get(i);
                     if (d == null || d.isRemoved()) continue;
@@ -575,6 +597,7 @@ final class RiftTitan {
                 impact(l, m, now);
             }
         }
+        if (DEBUG_METEORS && !METEORS.isEmpty() && now % 5 == 0) WaveSurvivorMod.LOGGER.info("[Météore] {} météore(s) en vol, {} bloc(s) d'affichage vivant(s).", METEORS.size(), METEOR_IDS.size());
         if (!RESTORES.isEmpty()) {
             for (Restore r : new ArrayList<>(RESTORES)) {
                 if (now < r.at) continue;
@@ -600,7 +623,7 @@ final class RiftTitan {
         for (ServerPlayer p : alive(l)) {
             if (Math.hypot(p.getX() - x, p.getZ() - z) <= hit && Math.abs(p.getY() - y) < 4) p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.meteorDamage));
         }
-        for (Display.BlockDisplay d : m.parts) if (d != null && !d.isRemoved()) d.discard();
+        for (Display.BlockDisplay d : m.parts) dropMeteorPart(d, "impact");
         // Petit cratère temporaire (magma et pierre noire fumants) : jamais sur les blocs posés par les joueurs
         if (rs.meteorCrater) {
             int r = (int) Math.max(1, Math.min(3, Math.round(radius / 3)));
@@ -619,8 +642,9 @@ final class RiftTitan {
 
     /** Retire les météores en vol et rend le terrain (fin du Titan ou de la Faille). */
     private static void clearMeteors(ServerLevel l) {
-        for (Meteor m : METEORS) for (Display.BlockDisplay d : m.parts) if (d != null && !d.isRemoved()) d.discard();
+        for (Meteor m : METEORS) for (Display.BlockDisplay d : m.parts) dropMeteorPart(d, "nettoyage");
         METEORS.clear();
+        METEOR_IDS.clear();
         for (Restore r : RESTORES) l.setBlock(r.pos, r.state, 3);
         RESTORES.clear();
     }
