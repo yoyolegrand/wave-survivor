@@ -236,3 +236,6 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] **Pilotage** : clic droit sur la baliste = on s'assoit derrière l'arme, caméra légèrement au-dessus (vue dégagée au-dessus du fût), la tourelle et l'arme suivent la souris ; **clic droit maintenu = tir** (16 carreaux, 0,5 s niveau 1, 0,4 s niveau 2 et 3 ; rechargement 10 s / 8 s) ; **Maj = descendre** ; réticule et chargeur à l'écran ; le halo (pilot_hidden_groups) est masqué pour le pilote.
 - [ ] Maj + clic droit (non assis) : fiche d'amélioration ; icônes de la boutique : tour-catapulte et baliste céleste.
 - [ ] Un seul pilote à la fois (message sinon).
+
+## Correctif : les vagues ne s'attaquent plus au Titan
+- [ ] Pendant le Titan, les monstres de l'invasion (portail sur le pont) **ne visent jamais le Titan** (golem de fer) ; ils se dirigent vers le Monolithe.

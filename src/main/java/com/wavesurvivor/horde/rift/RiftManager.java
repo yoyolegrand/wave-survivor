@@ -205,7 +205,7 @@ public final class RiftManager {
 
     /** Horde et Siège : tous les ennemis viennent détruire le Monolithe (Contre-offensive et Titan : ils ne visent que les joueurs). */
     public static boolean forceProfaners() {
-        return active && (phase == Phase.HORDE || phase == Phase.SIEGE || phase == Phase.LOBBY);
+        return active && (phase == Phase.HORDE || phase == Phase.SIEGE || phase == Phase.LOBBY || phase == Phase.TITAN);   // Titan : les vagues de l'invasion visent le Monolithe
     }
 
     /** Rayon actuel de l'île (il grandit pendant le Siège) : sert à garder arbres et gisements dessus. */
@@ -1224,6 +1224,14 @@ public final class RiftManager {
     public void onTitanHurt(net.minecraftforge.event.entity.living.LivingHurtEvent e) {
         if (active && e.getEntity().getPersistentData().contains("ws_rift_mark")) e.setAmount(RiftEngines.markedDamage(e.getEntity(), e.getAmount()));
         if (active && RiftTitan.active() && RiftTitan.isTitan(e.getEntity())) e.setAmount(RiftTitan.capDamage(e.getAmount(), e.getEntity().getServer().getTickCount()));
+    }
+
+    /** Les monstres de la horde ne s'en prennent jamais au Titan (un golem de fer est une cible naturelle pour eux) ni à ses boîtes de contact : ils restent concentrés sur le Monolithe. */
+    @SubscribeEvent
+    public void onMobTarget(net.minecraftforge.event.entity.living.LivingChangeTargetEvent e) {
+        if (!active || e.getNewTarget() == null) return;
+        net.minecraft.world.entity.LivingEntity t = e.getNewTarget();
+        if (RiftTitan.isTitan(t) || t.getPersistentData().getBoolean("ws_rift_titan")) e.setCanceled(true);
     }
 
     /** Frappe au corps à corps sur un catalyseur / le cœur de la forteresse. */
