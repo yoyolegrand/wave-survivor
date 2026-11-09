@@ -5,6 +5,15 @@ import com.wavesurvivor.compat.PehkuiCompat;
 import com.wavesurvivor.config.model.HordeConfigMultiData;
 import com.wavesurvivor.network.ShakePacket;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.FloatTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -151,6 +160,7 @@ final class RiftTitan {
             if (!dead) onTitanDeath(l);
             return;
         }
+        tickMeteors(l, now);
         if (emerging) {
             double y = Math.min(baseY, titan.getY() + 0.45);
             titan.setPos(baseX, y, baseZ);
@@ -283,8 +293,105 @@ final class RiftTitan {
         });
     }
 
+    // ─── Pluie de météores : zone d'annonce qui se remplit, météore en blocs d'affichage qui tombe en diagonale, impact, cratère ───
+
+    private static final class Meteor {
+        double tx, ty, tz;
+        Vector3f off;
+        long spawnAt, impactAt, animAt;
+        boolean spawned, animated;
+        float k;
+        Quaternionf endRot;
+        final List<Display.BlockDisplay> parts = new ArrayList<>();
+        final List<float[]> layout = new ArrayList<>();
+        final List<BlockState> states = new ArrayList<>();
+    }
+
+    private static final class Restore {
+        final BlockPos pos;
+        final BlockState state;
+        final long at;
+        Restore(BlockPos pos, BlockState state, long at) { this.pos = pos; this.state = state; this.at = at; }
+    }
+
+    private static final List<Meteor> METEORS = new ArrayList<>();
+    private static final List<Restore> RESTORES = new ArrayList<>();
+    /** Amas arrondi d'environ 3 × 3 × 3 : un cœur, six faces et quatre excroissances (x, y, z, taille, en blocs pour une taille de 3). */
+    private static final float[][] CLUSTER = {
+            {0, 0, 0, 1.7f}, {1, 0, 0, 1.2f}, {-1, 0, 0, 1.2f}, {0, 1, 0, 1.2f}, {0, -1, 0, 1.2f}, {0, 0, 1, 1.2f}, {0, 0, -1, 1.2f},
+            {0.8f, 0.8f, 0.8f, 0.9f}, {-0.8f, 0.8f, -0.8f, 0.9f}, {0.8f, -0.8f, -0.8f, 0.9f}, {-0.8f, -0.8f, 0.8f, 0.9f}};
+
+    /** « magma_block=3, blackstone=3, … » → liste de blocs tirés selon leur poids. */
+    private static BlockState pickBlock(String spec) {
+        List<BlockState> pool = new ArrayList<>();
+        if (spec != null) for (String part : spec.split(",")) {
+            String s = part.trim();
+            if (s.isEmpty()) continue;
+            int w = 1;
+            int eq = s.lastIndexOf('=');
+            if (eq > 0) {
+                try { w = Math.max(1, Math.min(50, Integer.parseInt(s.substring(eq + 1).trim()))); } catch (NumberFormatException ignored) { }
+                s = s.substring(0, eq).trim();
+            }
+            ResourceLocation id = ResourceLocation.tryParse(s.contains(":") ? s : "minecraft:" + s);
+            if (id == null || !BuiltInRegistries.BLOCK.containsKey(id)) continue;
+            BlockState st = BuiltInRegistries.BLOCK.get(id).defaultBlockState();
+            for (int i = 0; i < w; i++) pool.add(st);
+        }
+        if (pool.isEmpty()) return Blocks.MAGMA_BLOCK.defaultBlockState();
+        return pool.get(RNG.nextInt(pool.size()));
+    }
+
+    private static ListTag floats(float... v) {
+        ListTag t = new ListTag();
+        for (float f : v) t.add(FloatTag.valueOf(f));
+        return t;
+    }
+
+    /** Transformation d'un bloc d'affichage dont le CENTRE est à {@code c} (relatif à l'entité), tourné de {@code rot}, de côté {@code s}. */
+    private static CompoundTag meteorTransform(Vector3f c, Quaternionf rot, float s) {
+        Vector3f corner = rot.transform(new Vector3f(-s / 2f, -s / 2f, -s / 2f));
+        CompoundTag tag = new CompoundTag();
+        tag.put("translation", floats(c.x + corner.x, c.y + corner.y, c.z + corner.z));
+        tag.put("left_rotation", floats(rot.x, rot.y, rot.z, rot.w));
+        tag.put("scale", floats(s, s, s));
+        tag.put("right_rotation", floats(0, 0, 0, 1));
+        return tag;
+    }
+
+    /** Positionne le centre d'un morceau : décalage du morceau dans l'amas (tourné avec l'amas) + position de l'amas. */
+    private static Vector3f partCenter(float[] p, float k, Quaternionf rot, Vector3f base) {
+        Vector3f o = rot.transform(new Vector3f(p[0] * k, p[1] * k, p[2] * k));
+        return o.add(base);
+    }
+
+    private static Display.BlockDisplay spawnPart(ServerLevel l, Meteor m, BlockState st, CompoundTag transformation) {
+        Display.BlockDisplay d = EntityType.BLOCK_DISPLAY.create(l);
+        if (d == null) return null;
+        d.moveTo(m.tx, m.ty, m.tz, 0f, 0f);
+        CompoundTag tag = d.saveWithoutId(new CompoundTag());
+        tag.put("block_state", NbtUtils.writeBlockState(st));
+        tag.put("transformation", transformation);
+        CompoundTag light = new CompoundTag();
+        light.putInt("sky", 15);
+        light.putInt("block", 15);
+        tag.put("brightness", light);
+        tag.putFloat("view_range", 3.0f);
+        d.load(tag);
+        d.addTag(com.wavesurvivor.horde.skill.IceFx.TAG);   // nettoyage automatique si le monde se recharge
+        l.addFreshEntity(d);
+        return d;
+    }
+
+    private static net.minecraft.core.particles.ParticleOptions trail(String kind, boolean smoke) {
+        if (smoke) return ParticleTypes.LARGE_SMOKE;
+        return "soul".equalsIgnoreCase(kind) ? ParticleTypes.SOUL_FIRE_FLAME : "smoke".equalsIgnoreCase(kind) ? ParticleTypes.CAMPFIRE_COSY_SMOKE : ParticleTypes.FLAME;
+    }
+
     private static void meteors(ServerLevel l, long now, List<ServerPlayer> alive) {
-        int n = 3 + alive.size();
+        final int n = Math.max(1, rs.meteorBase + Math.max(0, rs.meteorPerPlayer) * alive.size());
+        final double radius = Math.max(1.5, rs.meteorRadius);
+        final int delay = Math.max(10, rs.meteorDelay), fall = Math.max(8, Math.min(delay - 2, rs.meteorFall));
         List<double[]> spots = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             ServerPlayer t = alive.get(RNG.nextInt(alive.size()));
@@ -294,18 +401,118 @@ final class RiftTitan {
             spots.add(new double[]{x, gy, z});
         }
         if (spots.isEmpty()) return;
-        schedule(l, now, 50, "Pluie de météores !", t -> {
-            for (double[] s : spots) ring(l, s[0], s[1], s[2], 3.0, RED, 20);
-        }, () -> {
+        final long start = now, impact = now + delay;
+        // Un météore par zone : visible dans le ciel côté Titan, ~1,2 s avant l'impact
+        for (double[] s : spots) {
+            Meteor m = new Meteor();
+            m.tx = s[0]; m.ty = s[1]; m.tz = s[2];
+            m.k = (float) Math.max(0.3, rs.meteorSize / 3.0);
+            double dx = baseX - s[0], dz = baseZ - s[2], len = Math.max(1, Math.hypot(dx, dz));
+            m.off = new Vector3f((float) (dx / len * 28), 40f, (float) (dz / len * 28));
+            m.impactAt = impact;
+            m.spawnAt = impact - fall;
+            m.endRot = new Quaternionf().rotateAxis((float) Math.toRadians(150), 0.6f, 0.8f, 0.3f);
+            for (float[] p : CLUSTER) { m.layout.add(p); m.states.add(pickBlock(rs.meteorBlocks)); }
+            METEORS.add(m);
+        }
+        schedule(l, now, delay, "Pluie de météores !", t -> {
+            // La zone se remplit du centre vers le bord, en plus du cercle
+            double f = Math.max(0.05, Math.min(1.0, (t - start) / (double) delay));
             for (double[] s : spots) {
-                for (int h = 0; h < 30; h += 3) l.sendParticles(ParticleTypes.FLAME, s[0], s[1] + h, s[2], 3, 0.3, 0.2, 0.3, 0.02);
-                l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, s[0], s[1] + 1, s[2], 1, 0, 0, 0, 0);
-                l.playSound(null, BlockPos.containing(s[0], s[1], s[2]), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 4f, 0.7f);
-                for (ServerPlayer p : alive(l)) {
-                    if (Math.hypot(p.getX() - s[0], p.getZ() - s[2]) <= 3.2 && Math.abs(p.getY() - s[1]) < 4) p.hurt(l.damageSources().explosion(null, titan), 12f);
+                ring(l, s[0], s[1], s[2], radius, RED, (int) (radius * 7));
+                for (double r = 1; r <= radius * f; r += 1.0) ring(l, s[0], s[1], s[2], r, RED, Math.max(6, (int) (r * 4)));
+            }
+        }, () -> { });
+    }
+
+    /** Animation des météores (chaque tick) : apparition, chute en diagonale en tournant, traînée, impact. */
+    private static void tickMeteors(ServerLevel l, long now) {
+        for (Meteor m : new ArrayList<>(METEORS)) {
+            if (!m.spawned && now >= m.spawnAt) {
+                m.spawned = true;
+                m.animAt = now + 1;
+                Quaternionf id = new Quaternionf();
+                for (int i = 0; i < m.layout.size(); i++) {
+                    float[] p = m.layout.get(i);
+                    Vector3f c = partCenter(p, m.k, id, new Vector3f(m.off));
+                    m.parts.add(spawnPart(l, m, m.states.get(i), meteorTransform(c, id, p[3] * m.k)));
+                }
+                l.playSound(null, BlockPos.containing(m.tx, m.ty, m.tz), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 4f, 0.5f);
+            }
+            if (m.spawned && !m.animated && now >= m.animAt) {
+                m.animated = true;
+                int dur = (int) Math.max(1, m.impactAt - now);
+                Vector3f end = new Vector3f(0, 1.6f * m.k, 0);
+                for (int i = 0; i < m.layout.size() && i < m.parts.size(); i++) {
+                    Display.BlockDisplay d = m.parts.get(i);
+                    if (d == null || d.isRemoved()) continue;
+                    float[] p = m.layout.get(i);
+                    CompoundTag tag = d.saveWithoutId(new CompoundTag());
+                    tag.put("transformation", meteorTransform(partCenter(p, m.k, m.endRot, end), m.endRot, p[3] * m.k));
+                    tag.putInt("interpolation_duration", dur);
+                    tag.putInt("start_interpolation", 0);
+                    d.load(tag);
                 }
             }
-        });
+            if (m.spawned && now < m.impactAt) {
+                double f = Math.max(0, Math.min(1, (now - m.spawnAt) / (double) Math.max(1, m.impactAt - m.spawnAt)));
+                double x = m.tx + m.off.x * (1 - f), y = m.ty + 1.6 * m.k + m.off.y * (1 - f), z = m.tz + m.off.z * (1 - f);
+                l.sendParticles(trail(rs.meteorTrail, false), x, y, z, 6, 0.5 * m.k, 0.5 * m.k, 0.5 * m.k, 0.02);
+                l.sendParticles(trail(rs.meteorTrail, true), x, y, z, 3, 0.4 * m.k, 0.4 * m.k, 0.4 * m.k, 0.01);
+            }
+            if (now >= m.impactAt) {
+                METEORS.remove(m);
+                impact(l, m, now);
+            }
+        }
+        if (!RESTORES.isEmpty()) {
+            for (Restore r : new ArrayList<>(RESTORES)) {
+                if (now < r.at) continue;
+                RESTORES.remove(r);
+                l.setBlock(r.pos, r.state, 3);
+            }
+        }
+    }
+
+    private static void impact(ServerLevel l, Meteor m, long now) {
+        double x = m.tx, y = m.ty, z = m.tz, radius = Math.max(1.5, rs.meteorRadius), hit = radius * (6.4 / 6.0);
+        BlockPos at = BlockPos.containing(x, y, z);
+        l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, x, y + 1, z, 2, 0.6, 0.4, 0.6, 0);
+        l.sendParticles(ParticleTypes.LAVA, x, y + 1, z, 20, radius * 0.4, 0.3, radius * 0.4, 0);
+        for (BlockState st : m.states) {
+            l.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, st), x, y + 1.2, z, 6, 1.2 * m.k, 0.6, 1.2 * m.k, 0.35);
+        }
+        l.playSound(null, at, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 5f, 0.6f);
+        for (ServerPlayer p : l.players()) {
+            double d = Math.hypot(p.getX() - x, p.getZ() - z);
+            if (d <= radius * 5) ShakePacket.send(p, 24, (float) Math.max(0.3, 1.2 - d / (radius * 5)));
+        }
+        for (ServerPlayer p : alive(l)) {
+            if (Math.hypot(p.getX() - x, p.getZ() - z) <= hit && Math.abs(p.getY() - y) < 4) p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.meteorDamage));
+        }
+        for (Display.BlockDisplay d : m.parts) if (d != null && !d.isRemoved()) d.discard();
+        // Petit cratère temporaire (magma et pierre noire fumants) : jamais sur les blocs posés par les joueurs
+        if (rs.meteorCrater) {
+            int r = (int) Math.max(1, Math.min(3, Math.round(radius / 3)));
+            for (int dx = -r; dx <= r; dx++) for (int dz = -r; dz <= r; dz++) {
+                if (dx * dx + dz * dz > r * r + 1 || RNG.nextInt(3) == 0) continue;
+                BlockPos p = new BlockPos(at.getX() + dx, groundY(l, at.getX() + dx, at.getZ() + dz) - 1, at.getZ() + dz);
+                BlockState cur = l.getBlockState(p);
+                if (cur.isAir() || !cur.getFluidState().isEmpty() || cur.is(Blocks.MAGMA_BLOCK) || com.wavesurvivor.horde.kingdom.KingdomClaim.isPlaced(p)) continue;
+                if (cur.getBlock() instanceof net.minecraft.world.level.block.EntityBlock) continue;
+                RESTORES.add(new Restore(p, cur, now + 200));
+                l.setBlock(p, (RNG.nextBoolean() ? Blocks.MAGMA_BLOCK : Blocks.BLACKSTONE).defaultBlockState(), 3);
+                l.sendParticles(ParticleTypes.SMOKE, p.getX() + 0.5, p.getY() + 1.1, p.getZ() + 0.5, 3, 0.2, 0.1, 0.2, 0.01);
+            }
+        }
+    }
+
+    /** Retire les météores en vol et rend le terrain (fin du Titan ou de la Faille). */
+    private static void clearMeteors(ServerLevel l) {
+        for (Meteor m : METEORS) for (Display.BlockDisplay d : m.parts) if (d != null && !d.isRemoved()) d.discard();
+        METEORS.clear();
+        for (Restore r : RESTORES) l.setBlock(r.pos, r.state, 3);
+        RESTORES.clear();
     }
 
     /** Onde de choc sur un quart de l'arène : on la fuit ou on saute. */
@@ -464,6 +671,7 @@ final class RiftTitan {
     private static void onTitanDeath(ServerLevel l) {
         dead = true;
         pending.clear();
+        clearMeteors(l);
         if (bar != null) {
             bar.removeAllPlayers();
             bar = null;
@@ -480,6 +688,7 @@ final class RiftTitan {
 
     /** Retire le Titan, sa barre et ses avatars (fin de la Faille). */
     static void clear(ServerLevel l) {
+        clearMeteors(l);
         if (titan != null && !titan.isRemoved()) titan.discard();
         for (UUID id : new ArrayList<>(avatars)) {
             Entity e = l.getEntity(id);

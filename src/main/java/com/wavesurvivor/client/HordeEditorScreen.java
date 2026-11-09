@@ -1825,12 +1825,14 @@ public class HordeEditorScreen extends Screen {
             return;
         }
         JsonObject r = HordeJson.obj(cd(), "rift");
-        button(x, y - 2, 130, (riftSub == 0 ? "§e§l" : "§7") + t("ui.rift.sub_start"), () -> { riftSub = 0; init(); });
-        button(x + 134, y - 2, 130, (riftSub == 1 ? "§e§l" : "§7") + t("ui.rift.sub_siege"), () -> { riftSub = 1; init(); });
-        button(x + 268, y - 2, 130, (riftSub == 2 ? "§e§l" : "§7") + t("ui.rift.sub_titan"), () -> { riftSub = 2; init(); });
+        button(x, y - 2, 98, (riftSub == 0 ? "§e§l" : "§7") + t("ui.rift.sub_start"), () -> { riftSub = 0; init(); });
+        button(x + 102, y - 2, 98, (riftSub == 1 ? "§e§l" : "§7") + t("ui.rift.sub_siege"), () -> { riftSub = 1; init(); });
+        button(x + 204, y - 2, 98, (riftSub == 2 ? "§e§l" : "§7") + t("ui.rift.sub_titan"), () -> { riftSub = 2; init(); });
+        button(x + 306, y - 2, 98, (riftSub == 3 ? "§e§l" : "§7") + t("ui.rift.sub_meteors"), () -> { riftSub = 3; init(); });
         y += 26;
         if (riftSub == 1) { buildRiftSiege(r, x, y); return; }
         if (riftSub == 2) { buildRiftTitan(r, x, y); return; }
+        if (riftSub == 3) { buildRiftMeteors(r, x, y); return; }
         label(x, y, "§6§l" + t("ui.rift.sec_opening"));
         y += 14;
         flow(x, y);
@@ -1926,6 +1928,46 @@ public class HordeEditorScreen extends Screen {
         });
         y += 28;
         labelWrap(x, y, t("ui.rift.hint_siege"), W - 24);
+    }
+
+    /** Faille — page « Pluie de météores » (compétence du Titan). */
+    private void buildRiftMeteors(JsonObject r, int x, int y) {
+        label(x, y, "§6§l" + t("ui.rift.sec_meteors"));
+        y += 14;
+        flow(x, y);
+        fl(t("ui.rift.meteor_blocks"));
+        fText(300, HordeJson.str(r, "meteorBlocks", "magma_block=3, blackstone=3, obsidian=2, crying_obsidian=1"), v -> r.addProperty("meteorBlocks", v));
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.meteor_size"));
+        fDbl(30, HordeJson.dbl(r, "meteorSize", 3.0), v -> r.addProperty("meteorSize", Math.max(1.0, Math.min(12.0, v))));
+        fl(t("ui.rift.meteor_radius"));
+        fDbl(30, HordeJson.dbl(r, "meteorRadius", 6.0), v -> r.addProperty("meteorRadius", Math.max(2.0, Math.min(20.0, v))));
+        fl(t("ui.rift.meteor_damage"));
+        fInt(30, HordeJson.num(r, "meteorDamage", 12), v -> r.addProperty("meteorDamage", Math.max(1, Math.min(200, v))));
+        y += 26;
+        flow(x, y);
+        fl(t("ui.rift.meteor_base"));
+        fInt(26, HordeJson.num(r, "meteorBase", 3), v -> r.addProperty("meteorBase", Math.max(1, Math.min(30, v))));
+        fl(t("ui.rift.meteor_per_player"));
+        fInt(26, HordeJson.num(r, "meteorPerPlayer", 1), v -> r.addProperty("meteorPerPlayer", Math.max(0, Math.min(10, v))));
+        fl(t("ui.rift.meteor_delay"));
+        fInt(30, HordeJson.num(r, "meteorDelay", 50), v -> r.addProperty("meteorDelay", Math.max(10, Math.min(200, v))));
+        fl(t("ui.rift.meteor_fall"));
+        fInt(30, HordeJson.num(r, "meteorFall", 24), v -> r.addProperty("meteorFall", Math.max(8, Math.min(100, v))));
+        y += 26;
+        String tr = HordeJson.str(r, "meteorTrail", "flame");
+        button(x, y - 2, 170, t("ui.rift.meteor_trail") + t("ui.rift.trail_" + tr), () -> {
+            String[] k = {"flame", "soul", "smoke"};
+            int i = 0;
+            for (int q = 0; q < k.length; q++) if (k[q].equals(tr)) i = q;
+            r.addProperty("meteorTrail", k[(i + 1) % k.length]);
+            changed();
+            init();
+        });
+        toggle(x + 180, y - 2, 170, t("ui.rift.meteor_crater"), r, "meteorCrater", true);
+        y += 30;
+        labelWrap(x, y, t("ui.rift.hint_meteors"), W - 24);
     }
 
     /** Faille — page « Titan et engins de siège ». */

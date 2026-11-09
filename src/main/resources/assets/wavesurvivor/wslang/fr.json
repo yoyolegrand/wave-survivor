@@ -3979,5 +3979,21 @@
   "rift.session.resumed": "§aLa Faille reprend (point de reprise : {0}).",
   "rift.session.none": "§cAucune Faille à reprendre.",
   "rift.session.abandoned": "§7Faille sauvegardée abandonnée.",
-  "rift.session.rebuilding": "§7La forteresse se reforme…"
+  "rift.session.rebuilding": "§7La forteresse se reforme…",
+  "ui.rift.sub_meteors": "Météores",
+  "ui.rift.sec_meteors": "Pluie de météores (Titan)",
+  "ui.rift.meteor_blocks": "Blocs",
+  "ui.rift.meteor_size": "Taille",
+  "ui.rift.meteor_radius": "Rayon",
+  "ui.rift.meteor_damage": "Dégâts",
+  "ui.rift.meteor_base": "Nombre",
+  "ui.rift.meteor_per_player": "+/joueur",
+  "ui.rift.meteor_delay": "Annonce (t)",
+  "ui.rift.meteor_fall": "Chute (t)",
+  "ui.rift.meteor_trail": "Traînée : ",
+  "ui.rift.trail_flame": "flammes",
+  "ui.rift.trail_soul": "flammes d'âme",
+  "ui.rift.trail_smoke": "fumée",
+  "ui.rift.meteor_crater": "Cratère temporaire",
+  "ui.rift.hint_meteors": "§8Blocs : « id=poids, … » (ex. magma_block=3, obsidian=1). Le météore apparaît dans le ciel côté Titan environ 1,2 s avant l'impact et tombe en diagonale. Le cratère ne touche jamais les blocs posés par les joueurs."
 }

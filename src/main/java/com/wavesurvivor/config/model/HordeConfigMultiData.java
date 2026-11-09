@@ -398,6 +398,17 @@ public class HordeConfigMultiData {
         @SerializedName("titanGap") public int titanGap = 12;
         /** Poing du Titan contre le Monolithe : dégâts bruts infligés à l'intégrité du Monolithe par coup (0 = désactivé). */
         @SerializedName("titanMonolithDamage") public int titanMonolithDamage = 60;
+        /** Pluie de météores : blocs (« id=poids, … »), taille, rayon, dégâts, nombre (base + par joueur), annonce et chute (ticks), traînée, cratère. */
+        @SerializedName("meteorBlocks") public String meteorBlocks = "magma_block=3, blackstone=3, obsidian=2, crying_obsidian=1";
+        @SerializedName("meteorSize") public double meteorSize = 3.0;
+        @SerializedName("meteorRadius") public double meteorRadius = 6.0;
+        @SerializedName("meteorDamage") public int meteorDamage = 12;
+        @SerializedName("meteorBase") public int meteorBase = 3;
+        @SerializedName("meteorPerPlayer") public int meteorPerPlayer = 1;
+        @SerializedName("meteorDelay") public int meteorDelay = 50;
+        @SerializedName("meteorFall") public int meteorFall = 24;
+        @SerializedName("meteorTrail") public String meteorTrail = "flame";
+        @SerializedName("meteorCrater") public boolean meteorCrater = true;
         @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
         @SerializedName("titanWindowCapPercent") public int titanWindowCapPercent = 8;
         /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */

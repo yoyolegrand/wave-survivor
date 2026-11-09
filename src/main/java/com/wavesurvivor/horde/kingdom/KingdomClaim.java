@@ -225,7 +225,7 @@ public final class KingdomClaim {
     }
 
     /** Étape 5 : vrai si ce bloc a été posé par un joueur dans le claim (mur). */
-    static boolean isPlaced(BlockPos p) {
+    public static boolean isPlaced(BlockPos p) {
         return PLACED.containsKey(p);
     }
 

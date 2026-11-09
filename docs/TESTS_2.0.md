@@ -154,3 +154,11 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Fin de la Faille (victoire, défaite, /ws rift stop) : la sauvegarde est effacée ; nouvelle Faille = ancienne sauvegarde effacée.
 - [ ] À la fermeture du serveur, les joueurs sont renvoyés dans le monde normal (devant le portail) et l'île est vidée.
 - [ ] Les engins de siège posés ne sont pas conservés par la reprise (à racheter) — à confirmer.
+
+## Pluie de météores améliorée
+- [ ] Annonce : cercle de rayon 6 par zone, disque de particules rouges qui se remplit du centre vers le bord pendant 2,5 s ; texte et lueur du Titan inchangés.
+- [ ] ~1,2 s avant l'impact, un **météore en blocs** (amas arrondi ~3×3×3 : magma, pierre noire, obsidienne, obsidienne pleureuse) apparaît dans le ciel côté Titan (~40 blocs plus haut) et tombe en diagonale en tournant, avec traînée de flammes et de fumée.
+- [ ] Impact : explosion, gerbe de débris aux couleurs du météore, secousse d'écran pour les joueurs proches, météore supprimé ; dégâts jusqu'à 6,4 blocs (12 par défaut).
+- [ ] Cratère temporaire (magma / pierre noire fumants, ~10 s) : n'abîme jamais les blocs posés par les joueurs ; le terrain revient à l'identique.
+- [ ] Vu de près et de loin (le Titan est à ~12 blocs de l'île) : le météore reste visible.
+- [ ] Éditeur, nouvelle page « Météores » : blocs et proportions, taille, rayon, dégâts, nombre (3 + 1 par joueur), annonce (50 t), chute (24 t), traînée (flammes / âme / fumée), cratère oui/non.

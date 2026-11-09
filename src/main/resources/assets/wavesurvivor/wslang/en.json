@@ -4740,5 +4740,21 @@
   "rift.session.resumed": "§aThe Rift resumes (checkpoint: {0}).",
   "rift.session.none": "§cNo Rift to resume.",
   "rift.session.abandoned": "§7Saved Rift abandoned.",
-  "rift.session.rebuilding": "§7The fortress is reforming..."
+  "rift.session.rebuilding": "§7The fortress is reforming...",
+  "ui.rift.sub_meteors": "Meteors",
+  "ui.rift.sec_meteors": "Meteor shower (Titan)",
+  "ui.rift.meteor_blocks": "Blocks",
+  "ui.rift.meteor_size": "Size",
+  "ui.rift.meteor_radius": "Radius",
+  "ui.rift.meteor_damage": "Damage",
+  "ui.rift.meteor_base": "Count",
+  "ui.rift.meteor_per_player": "+/player",
+  "ui.rift.meteor_delay": "Warning (t)",
+  "ui.rift.meteor_fall": "Fall (t)",
+  "ui.rift.meteor_trail": "Trail: ",
+  "ui.rift.trail_flame": "flames",
+  "ui.rift.trail_soul": "soul flames",
+  "ui.rift.trail_smoke": "smoke",
+  "ui.rift.meteor_crater": "Temporary crater",
+  "ui.rift.hint_meteors": "§8Blocks: \"id=weight, ...\" (e.g. magma_block=3, obsidian=1). The meteor appears in the sky on the Titan side about 1.2 s before impact and falls diagonally. The crater never touches player-placed blocks."
 }
