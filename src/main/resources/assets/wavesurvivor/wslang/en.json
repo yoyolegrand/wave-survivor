@@ -4732,5 +4732,13 @@
   "ui.rift.guard_max": "max",
   "ui.rift.guard_boost": "Strength/phase %",
   "ui.rift.fortress": "Fortress: ",
-  "ui.rift.monolith_hit": "Monolith strike"
+  "ui.rift.monolith_hit": "Monolith strike",
+  "rift.session.phase.1": "Horde, wave {0}",
+  "rift.session.phase.2": "Siege, assault {0} cleared",
+  "rift.session.phase.3": "start of the Counter-offensive",
+  "rift.session.pending": "§5§lThe Rift §r§7\"{0}\" was interrupted: {1}.",
+  "rift.session.resumed": "§aThe Rift resumes (checkpoint: {0}).",
+  "rift.session.none": "§cNo Rift to resume.",
+  "rift.session.abandoned": "§7Saved Rift abandoned.",
+  "rift.session.rebuilding": "§7The fortress is reforming..."
 }

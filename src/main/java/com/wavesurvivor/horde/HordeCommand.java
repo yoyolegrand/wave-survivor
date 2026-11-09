@@ -247,6 +247,16 @@ public class HordeCommand {
                                     return 1;
                                 })))
                 // Faille : choix de la variante d'un engin de siège (boutons cliquables du chat)
+                // Faille : reprise ou abandon de la Faille sauvegardée (boutons du message de connexion)
+                .then(Commands.literal("riftresume").executes(ctx -> {
+                    ctx.getSource().getPlayerOrException();
+                    return com.wavesurvivor.horde.rift.RiftManager.resumeSaved(ctx.getSource().getServer(), ctx.getSource().getPlayerOrException()) ? 1 : 0;
+                }))
+                .then(Commands.literal("riftabandon").executes(ctx -> {
+                    com.wavesurvivor.horde.rift.RiftManager.abandonSaved(ctx.getSource().getServer());
+                    ctx.getSource().sendSuccess(() -> com.wavesurvivor.i18n.WSLang.c("rift.session.abandoned"), true);
+                    return 1;
+                }))
                 .then(Commands.literal("riftengine")
                         .then(Commands.argument("i", IntegerArgumentType.integer(0, 2))
                                 .executes(ctx -> {

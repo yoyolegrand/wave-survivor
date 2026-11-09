@@ -79,6 +79,8 @@ public final class RiftManager {
     private static HordeConfigMultiData.ConfigDataInner spawnCfg;
     private static int spawnRadiusBackup, waveBackup;
     /** Siège sur le moteur du Kingdom : mode et réglages d'origine de la horde, rétablis à la fin de la phase. */
+    /** Reprise d'une Faille sauvegardée : points de reprise à rejouer (null hors reprise). */
+    private static RiftSession resuming;
     private static String modeBackup;
     private static HordeConfigMultiData.KingdomSettings kingdomBackup;
     private static boolean kingdomOverride;
@@ -138,6 +140,8 @@ public final class RiftManager {
             WaveSurvivorMod.LOGGER.error("[Faille] Dimension {} introuvable (data/wavesurvivor/dimension/rift.json absent ?).", RIFT_DIM.location());
             return false;
         }
+        RiftSession.discard(server);
+        resuming = null;
         horde = h;
         world = w;
         home = altar;
@@ -310,6 +314,8 @@ public final class RiftManager {
 
     /** Ferme la Faille : renvoie tout le monde chez soi, vide l'île et libère les chunks. */
     public static void stop(MinecraftServer server) {
+        RiftSession.discard(server);   // fin de la Faille : plus rien à reprendre (sauf à la fermeture du serveur)
+        resuming = null;
         phase = Phase.NONE;
         if (HordeManager.get().isRunning()) HordeManager.get().stopSilently(); // Horde, Siège, ou royaume en veille (Contre-offensive, Titan)
         com.wavesurvivor.altar.AltarDefense.onHordeEnd(server, false);
@@ -496,6 +502,7 @@ public final class RiftManager {
             if (!anyAlive) { defeat(server, rd); return; }
         }
         RiftEngines.tick(rd);
+        if (now % 600 == 0) captureSession(server, false);   // point de reprise toutes les 30 s
         switch (phase) {
             case PORTAL -> {
                 if (gate != null && gate.isOpen()) phase = Phase.LOBBY;
@@ -561,6 +568,11 @@ public final class RiftManager {
         registered.clear();
         for (ServerPlayer p : rd.players()) if (!p.isSpectator() && p.isAlive()) registered.add(p.getUUID());
         if (registered.isEmpty() || horde == null || horde.configData == null) { startAt = -1; return; }
+        if (resuming != null && resuming.phase != 1) { resumeLate(server, rd); return; }   // reprise au Siège / à la Contre-offensive
+        if (resuming != null) {   // reprise de la Horde : même difficulté et mêmes mutateurs
+            com.wavesurvivor.horde.difficulty.HordeDifficulty.setPending(com.wavesurvivor.horde.difficulty.Difficulty.byId(resuming.difficulty));
+            com.wavesurvivor.horde.mutator.HordeMutators.setPending(com.wavesurvivor.horde.mutator.Mutator.parse(resuming.mutators));
+        }
         // L'île est plus petite que le rayon d'apparition habituel : on le limite le temps de la partie
         spawnCfg = horde.configData;
         spawnRadiusBackup = spawnCfg.spawnRadius;
@@ -575,6 +587,14 @@ public final class RiftManager {
             return;
         }
         phase = Phase.HORDE;
+        if (resuming != null) {   // la vague sauvegardée redémarre dans 5 s ; Monolithe et compteurs retrouvés
+            RiftSession s = resuming;
+            resuming = null;
+            HordeManager.get().resumeAt(s.wave, s.elapsed);
+            if (s.maxHp > 0) com.wavesurvivor.altar.AltarDefense.restore(s.hp, s.maxHp, s.levels);
+            com.wavesurvivor.horde.rewards.KillTracker.restore(s.kills);
+            tellAll(rd, WSLang.t("rift.session.resumed", s.wave));
+        }
         lastWave = HordeManager.get().getCurrentWave();
         tellAll(rd, WSLang.t("rift.horde_go"));
         WaveSurvivorMod.LOGGER.info("[Faille] Horde '{}' lancée sur l'île ({} joueurs).", horde.hordeName, registered.size());
@@ -716,6 +736,18 @@ public final class RiftManager {
         }
         siegeHordeOn = true;
         RiftFortress.openPortcullis(rd, siegeFinal);   // la herse s'ouvre : les ennemis sortent de la forteresse
+        if (resuming != null) {   // reprise : trésor, rôles, défenses et assaut atteint ; Contre-offensive : on enchaîne directement
+            RiftSession s = resuming;
+            resuming = null;
+            com.wavesurvivor.horde.rewards.KillTracker.restore(s.kills);
+            if (!s.kingdom.isEmpty()) com.wavesurvivor.horde.kingdom.KingdomManager.restoreState(s.kingdom, server);
+            if (s.phase == 3) {
+                HordeManager.get().clearKingdomMobs();
+                com.wavesurvivor.horde.kingdom.KingdomManager.enterHold();
+                siegeCleared();
+            }
+            tellAll(rd, WSLang.t("rift.session.resumed", s.wave));
+        }
         lastWave = HordeManager.get().getCurrentWave();
         lastState = null;
         tellAll(rd, WSLang.t("rift.siege_go"));
@@ -771,12 +803,152 @@ public final class RiftManager {
         return active && phase == Phase.SIEGE && kingdomOverride;
     }
 
+    // ─── Sauvegarde et reprise ───
+
+    /**
+     * Enregistre un point de reprise : Horde (vague atteinte), Siège (au calme, avec le royaume) ou début de la Contre-offensive.
+     * Les autres moments ne changent pas la sauvegarde existante (le Titan n'a pas de point de reprise).
+     */
+    static void captureSession(MinecraftServer server, boolean counterStart) {
+        if (server == null || !active || horde == null || horde.configData == null || home == null || world == null) return;
+        HordeManager hm = HordeManager.get();
+        int ph;
+        int wave = 0;
+        net.minecraft.nbt.CompoundTag kingdom = new net.minecraft.nbt.CompoundTag();
+        if (counterStart) {
+            ph = 3;
+            kingdom = com.wavesurvivor.horde.kingdom.KingdomManager.saveState();
+        } else if (phase == Phase.HORDE && hm.isRunning()) {
+            ph = 1;
+            wave = hm.getCurrentWave();
+            if (hm.getState() != HordeManager.State.RUNNING) wave++;
+            wave = Math.max(1, Math.min(wave, Math.max(1, horde.configData.totalWaves)));
+        } else if (phase == Phase.SIEGE && siegeHordeOn && com.wavesurvivor.horde.kingdom.KingdomManager.isCalmPhase()) {
+            ph = 2;
+            kingdom = com.wavesurvivor.horde.kingdom.KingdomManager.saveState();
+            wave = kingdom.getInt("cycle");
+        } else {
+            return;
+        }
+        RiftSession s = RiftSession.get(server);
+        s.phase = ph;
+        s.wave = wave;
+        s.horde = horde.hordeName;
+        s.dim = world.dimension().location().toString();
+        s.altar = home;
+        s.fortress = RiftFortress.currentId();
+        s.kingdom = kingdom;
+        var diff = com.wavesurvivor.horde.difficulty.HordeDifficulty.active();
+        s.difficulty = diff == null ? "" : diff.id;
+        s.mutators = com.wavesurvivor.horde.mutator.Mutator.join(com.wavesurvivor.horde.mutator.HordeMutators.active());
+        float[] snap = com.wavesurvivor.altar.AltarDefense.snapshot();
+        if (snap != null) {
+            s.hp = snap[0];
+            s.maxHp = snap[1];
+            for (int i = 0; i < 3; i++) s.levels[i] = (int) snap[2 + i];
+        }
+        s.elapsed = hm.getStartedAtTick() > 0 ? Math.max(0, server.getTickCount() - hm.getStartedAtTick()) : 0;
+        s.kills.clear();
+        s.kills.putAll(com.wavesurvivor.horde.rewards.KillTracker.snapshotKills());
+        s.setDirty();
+    }
+
+    /** Abandon de la Faille sauvegardée (bouton « Abandonner »). */
+    public static void abandonSaved(MinecraftServer server) {
+        RiftSession.discard(server);
+    }
+
+    /** Fermeture du serveur : point de reprise enregistré, puis la Faille est fermée proprement (île vidée, joueurs renvoyés). */
+    public static void shutdown(MinecraftServer server) {
+        if (!active) return;
+        captureSession(server, false);
+        RiftSession.setKeep(true);
+        try {
+            stop(server);
+        } finally {
+            RiftSession.setKeep(false);
+        }
+    }
+
+    /** Reprend la Faille sauvegardée : île et forteresse reconstruites, joueurs envoyés sur l'île, puis la phase sauvegardée repart. */
+    public static boolean resumeSaved(MinecraftServer server, ServerPlayer starter) {
+        RiftSession s = RiftSession.get(server);
+        if (!s.present()) { if (starter != null) starter.sendSystemMessage(Component.literal(WSLang.t("rift.session.none"))); return false; }
+        if (active) { if (starter != null) starter.sendSystemMessage(Component.literal(WSLang.t("rift.already"))); return false; }
+        if (!available()) { if (starter != null) starter.sendSystemMessage(Component.literal(WSLang.t("rift.need_pehkui"))); return false; }
+        HordeConfigMultiData h = WaveSurvivorMod.getConfig().findHorde(s.horde);
+        ServerLevel rd = server.getLevel(RIFT_DIM);
+        ServerLevel w = server.getLevel(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION,
+                new net.minecraft.resources.ResourceLocation(s.dim)));
+        if (h == null || rd == null || w == null || s.altar == null) {
+            if (starter != null) starter.sendSystemMessage(Component.literal(WSLang.t("session.missing", s.horde)));
+            return false;
+        }
+        RiftSession copy = s.copy();
+        s.phase = 0;   // la reprise remet tout à zéro : une nouvelle sauvegarde sera écrite dans 30 s
+        s.setDirty();
+        horde = h;
+        world = w;
+        home = copy.altar;
+        HordeConfigMultiData.RiftSettings rs = h.configData != null ? h.configData.rift() : new HordeConfigMultiData.RiftSettings();
+        siegeFinal = Math.max(Math.max(8, Math.min(48, rs.islandRadius)), Math.min(48, rs.siegeRadius));
+        radius = copy.phase == 1 ? Math.max(8, Math.min(48, rs.islandRadius)) : siegeFinal;   // Siège / Contre-offensive : l'île a fini de grandir
+        RiftFortress.select(copy.fortress);
+        ensureResourceEvents(h);
+        forceChunks(rd, rs);
+        buildIsland(rd);
+        active = true;
+        phase = Phase.LOBBY;
+        long now = server.getTickCount();
+        startAt = now + 100;
+        endAt = -1;
+        registered.clear();
+        waiting.clear();
+        reviveAt.clear();
+        prevMode.clear();
+        gate = null;
+        resuming = copy;
+        for (ServerPlayer p : new ArrayList<>(server.getPlayerList().getPlayers())) enter(p);
+        WaveSurvivorMod.LOGGER.info("[Faille] Reprise de '{}' (phase {}, vague/assaut {}).", copy.horde, copy.phase, copy.wave);
+        return true;
+    }
+
+    /** Reprise au Siège ou à la Contre-offensive : Monolithe et défense rétablis, forteresse reposée, puis le Siège (et son royaume) redémarre. */
+    private static void resumeLate(MinecraftServer server, ServerLevel rd) {
+        RiftSession s = resuming;
+        ensureDefense(horde.hordeName);
+        placeMonolith(rd);
+        com.wavesurvivor.horde.difficulty.HordeDifficulty.setPending(com.wavesurvivor.horde.difficulty.Difficulty.byId(s.difficulty));
+        com.wavesurvivor.horde.mutator.HordeMutators.setPending(com.wavesurvivor.horde.mutator.Mutator.parse(s.mutators));
+        com.wavesurvivor.altar.AltarDefense.onHordeStart(server, horde.hordeName, RIFT_DIM.location().toString(), MONOLITH);
+        if (!com.wavesurvivor.altar.AltarDefense.isActive()) {
+            tellAll(rd, WSLang.t("rift.start_fail"));
+            startAt = -1;
+            resuming = null;
+            return;
+        }
+        com.wavesurvivor.horde.difficulty.HordeDifficulty.begin(server);
+        com.wavesurvivor.horde.mutator.HordeMutators.begin(server, false);
+        if (s.maxHp > 0) com.wavesurvivor.altar.AltarDefense.restore(s.hp, s.maxHp, s.levels);
+        long now = server.getTickCount();
+        phase = Phase.SIEGE;
+        growCur = growTarget = siegeFinal;
+        radius = siegeFinal;
+        growNextAt = now;
+        siegeStartAt = now + 20;
+        siegeHordeOn = false;
+        RiftEngines.clear();
+        RiftFortress.startBuild(siegeFinal);
+        tellAll(rd, WSLang.t("rift.session.rebuilding"));
+    }
+
     // ─── Phase 3 : la Contre-offensive ───
 
     private static void startCounter(MinecraftServer server, ServerLevel rd, long now) {
         HordeConfigMultiData.RiftSettings rs = settings();
         phase = Phase.COUNTER;
         coreSpawned = false;
+        captureSession(server, true);   // point de reprise : la Contre-offensive recommence avec tous ses catalyseurs
         BlockPos c = RiftFortress.center(siegeFinal);
         double f = 1.0 + 0.4 * Math.max(0, playerCount(rd) - 1);
         java.util.List<BlockPos> cs = RiftFortress.catalystPositions(siegeFinal);

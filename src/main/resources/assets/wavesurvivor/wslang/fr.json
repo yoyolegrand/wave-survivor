@@ -3971,5 +3971,13 @@
   "ui.rift.guard_max": "max",
   "ui.rift.guard_boost": "Force/phase %",
   "ui.rift.fortress": "Forteresse : ",
-  "ui.rift.monolith_hit": "Poing/Monolithe"
+  "ui.rift.monolith_hit": "Poing/Monolithe",
+  "rift.session.phase.1": "Horde, vague {0}",
+  "rift.session.phase.2": "Siège, assaut {0} passé",
+  "rift.session.phase.3": "début de la Contre-offensive",
+  "rift.session.pending": "§5§lLa Faille §r§7« {0} » est interrompue : {1}.",
+  "rift.session.resumed": "§aLa Faille reprend (point de reprise : {0}).",
+  "rift.session.none": "§cAucune Faille à reprendre.",
+  "rift.session.abandoned": "§7Faille sauvegardée abandonnée.",
+  "rift.session.rebuilding": "§7La forteresse se reforme…"
 }

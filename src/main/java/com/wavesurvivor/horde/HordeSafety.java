@@ -32,6 +32,11 @@ public class HordeSafety {
 
     @SubscribeEvent
     public void onServerStopping(ServerStoppingEvent event) {
+        // 2.0 : La Faille — point de reprise, puis fermeture propre (île vidée, joueurs renvoyés dans le monde normal)
+        if (com.wavesurvivor.horde.rift.RiftManager.isActive()) {
+            try { com.wavesurvivor.horde.rift.RiftManager.shutdown(event.getServer()); }
+            catch (Exception ex) { WaveSurvivorMod.LOGGER.error("[HordeSafety] Échec de la fermeture de la Faille", ex); }
+        }
         boolean falling = com.wavesurvivor.altar.MonolithFall.active(); // défaite en cours : rien à reprendre
         com.wavesurvivor.altar.MonolithFall.cancel(); // séquence de défaite interrompue : l'arrêt propre ci-dessous suffit
         HordeManager hm = HordeManager.get();

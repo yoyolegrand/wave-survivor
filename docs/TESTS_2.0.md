@@ -145,3 +145,12 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] À partir de la phase 2 du Titan : attaque annoncée « Le Titan vise le Monolithe ! » (cercle rouge sur le Monolithe, 3,5 s), puis coup à l'intégrité du Monolithe (60 par défaut) ; joueurs au pied du Monolithe blessés.
 - [ ] Le Monolithe se répare au clic droit ; s'il tombe, défaite de la Faille.
 - [ ] Éditeur, page Titan : « Poing/Monolithe » (0 = désactivé).
+
+## Sauvegarde et reprise de la Faille
+- [ ] Horde en cours (vague 3 par ex.) : fermer le monde, le rouvrir → message « La Faille … est interrompue : Horde, vague 3 » avec boutons **Reprendre / Abandonner**. « Reprendre » : île reconstruite, joueurs envoyés dessus, la vague 3 repart (Monolithe aux mêmes PV et niveaux, même difficulté et mutateurs).
+- [ ] Siège (après quelques assauts, pendant un calme) : fermer / rouvrir → reprise : île à son rayon final, Citadelle reposée (message « La forteresse se reforme… »), puis le Siège repart avec trésor, rôles, défenses et assaut atteint.
+- [ ] Contre-offensive : fermer / rouvrir → reprise au **début** de la Contre-offensive (tous les catalyseurs, 3 chaînes chacun). Titan : pas de point de reprise (on reprend au début de la Contre-offensive).
+- [ ] « Abandonner » : plus de message à la connexion suivante.
+- [ ] Fin de la Faille (victoire, défaite, /ws rift stop) : la sauvegarde est effacée ; nouvelle Faille = ancienne sauvegarde effacée.
+- [ ] À la fermeture du serveur, les joueurs sont renvoyés dans le monde normal (devant le portail) et l'île est vidée.
+- [ ] Les engins de siège posés ne sont pas conservés par la reprise (à racheter) — à confirmer.

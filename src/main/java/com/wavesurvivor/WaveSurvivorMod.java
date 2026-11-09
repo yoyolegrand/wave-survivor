@@ -109,6 +109,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.rift.RiftManager());
         // Sauvegarde de partie : message « Reprendre / Abandonner » à la connexion
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.HordeSession());
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.rift.RiftSession());
         // Explosions des unités de la horde : dégâts au Monolithe, aux murs et aux défenses
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.BuildingAttack());
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.anomaly.AnomalyManager());

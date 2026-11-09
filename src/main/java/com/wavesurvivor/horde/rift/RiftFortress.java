@@ -137,6 +137,11 @@ final class RiftFortress {
         WaveSurvivorMod.LOGGER.info("[Faille] Forteresse : {}", current != null ? current.id : "aucune (plan illisible)");
     }
 
+    /** Identifiant de la forme choisie (sauvegarde de partie). */
+    static String currentId() {
+        return current != null ? current.id : FORM_IDS[0];
+    }
+
     private static Form form() {
         if (current == null) select(null);
         return current;
