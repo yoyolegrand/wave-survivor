@@ -301,3 +301,9 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 
 ## Portail intérieur de la Faille
 - [ ] Toucher un portail dans la forteresse (pendant la partie) ramène sur l'île, près du Monolithe ; en fin de partie, le portail de sortie renvoie chez soi
+
+## Bonus d'Héritage dans la Faille
+- [ ] Survivant 1 / 2 : absorption / régénération au début de chaque vague, Assaut, Contre-offensive et Titan
+- [ ] Survivant 3 : réapparition plus rapide (-5 s) et 5 s d'invulnérabilité après une mort dans la Faille
+- [ ] Survivant 4 / 5 : réduction de dégâts après un coup, coup fatal évité (ne marchaient pas entre deux phases)
+- [ ] Marchand 1 / 3 : émeraudes et clés au début de la Horde ; Seigneur 1 : trésor de départ bonus au début du Siège

@@ -275,6 +275,11 @@ public class Heritage {
         }
     }
 
+    /** Une partie est en cours : horde, Kingdom ou Faille (la Faille enchaîne des phases où la horde est parfois à l'arrêt entre deux). */
+    public static boolean inRun() {
+        return com.wavesurvivor.horde.HordeManager.get().isRunning() || com.wavesurvivor.horde.rift.RiftManager.isActive();
+    }
+
     /** Survivant 5 : coups fatals déjà évités pendant cette horde (2 maximum). */
     private static final java.util.Map<UUID, Integer> LAST_STAND = new java.util.HashMap<>();
 
@@ -315,7 +320,7 @@ public class Heritage {
     @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW)
     public void onLethal(net.minecraftforge.event.entity.living.LivingDamageEvent e) {
         if (!(e.getEntity() instanceof ServerPlayer p) || p.isCreative()) return;
-        if (e.getAmount() < p.getHealth() || !com.wavesurvivor.horde.HordeManager.get().isRunning()) return;
+        if (e.getAmount() < p.getHealth() || !inRun()) return;
         if (!has(p, Branch.SURVIVOR, 5) || LAST_STAND.getOrDefault(p.getUUID(), 0) >= 2) return;
         LAST_STAND.merge(p.getUUID(), 1, Integer::sum);
         e.setAmount(Math.max(0f, p.getHealth() - 1f));
@@ -330,7 +335,7 @@ public class Heritage {
     @SubscribeEvent
     public void onHurt(net.minecraftforge.event.entity.living.LivingHurtEvent e) {
         if (!(e.getEntity() instanceof ServerPlayer p) || p.isCreative() || !has(p, Branch.SURVIVOR, 4)) return;
-        if (!com.wavesurvivor.horde.HordeManager.get().isRunning()) return;
+        if (!inRun()) return;
         long now = p.level().getGameTime();
         Long last = LAST_HIT.get(p.getUUID());
         if (last != null && now - last <= 60) e.setAmount(e.getAmount() * 0.7f);
@@ -369,7 +374,7 @@ public class Heritage {
     public void onMerchant(net.minecraftforge.event.entity.player.PlayerContainerEvent.Open e) {
         if (!(e.getContainer() instanceof net.minecraft.world.inventory.MerchantMenu menu)) return;
         if (!(e.getEntity() instanceof ServerPlayer p) || !has(p, Branch.MERCHANT, 2)) return;
-        if (!com.wavesurvivor.horde.HordeManager.get().isRunning()) return;
+        if (!inRun()) return;
         for (net.minecraft.world.item.trading.MerchantOffer o : menu.getOffers()) {
             int cut = (int) Math.floor(o.getBaseCostA().getCount() * 0.15);
             if (cut > 0) o.addToSpecialPriceDiff(-cut);

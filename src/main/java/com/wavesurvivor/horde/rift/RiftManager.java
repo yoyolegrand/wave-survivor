@@ -673,6 +673,7 @@ public final class RiftManager {
                 if (p == null || p.level().dimension() != RIFT_DIM) continue;
                 restoreMode(p);
                 respawnOnIsland(p, rd);
+                com.wavesurvivor.horde.renaissance.Heritage.onRevive(p);   // Survivant 3 : 5 s d'invulnérabilité
                 p.sendSystemMessage(Component.literal(WSLang.t("rift.revived")));
             }
         }
@@ -1161,6 +1162,7 @@ public final class RiftManager {
     private static void startCounter(MinecraftServer server, ServerLevel rd, long now) {
         HordeConfigMultiData.RiftSettings rs = settings();
         phase = Phase.COUNTER;
+        com.wavesurvivor.horde.renaissance.Heritage.onWaveStart(server);   // Survivant 1 / 2 au début de la Contre-offensive
         coreSpawned = false;
         captureSession(server, true);   // point de reprise : la Contre-offensive recommence avec tous ses catalyseurs
         BlockPos c = RiftFortress.center(siegeFinal);
@@ -1250,6 +1252,7 @@ public final class RiftManager {
         for (Entity e : gone) e.discard();
         phase = Phase.TITAN;
         titanWaveN = 0;
+        com.wavesurvivor.horde.renaissance.Heritage.onWaveStart(server);   // Survivant 1 / 2 à l'arrivée du Titan
         RiftTitan.spawn(rd, settings(), playerCount(rd), siegeFinal);
     }
 
@@ -1351,7 +1354,7 @@ public final class RiftManager {
         p.clearFire();
         p.fallDistance = 0;
         if (inCombat() && registered.contains(p.getUUID())) {
-            int secs = Math.max(3, settings().reviveSeconds);
+            int secs = com.wavesurvivor.horde.renaissance.Heritage.respawnSeconds(p, Math.max(3, settings().reviveSeconds)); // Héritage : Survivant 3
             prevMode.put(p.getUUID(), p.gameMode.getGameModeForPlayer());
             p.setGameMode(GameType.SPECTATOR);
             p.teleportTo(rd, CENTER.getX() + 0.5, CENTER.getY() + 10, CENTER.getZ() + 0.5, p.getYRot(), 30f);
