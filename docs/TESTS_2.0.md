@@ -295,3 +295,6 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 ## Construction libre en Contre-offensive / Titan
 - [ ] En survie, pendant la Contre-offensive et le Titan : on peut poser des blocs partout (pont jusqu'au dernier portail) et les recasser
 - [ ] On peut casser le terrain, mais pas les murs de la forteresse (sauf les blocs qu'on y a posés soi-même)
+
+## XP des rôles en fin de Faille
+- [ ] Victoire ou défaite de la Faille après un Siège : l'XP de Maîtrise des rôles joués est versée (message « +X XP de Maîtrise » dans le chat, ×2 en victoire, ×0,5 en défaite) et les niveaux montent

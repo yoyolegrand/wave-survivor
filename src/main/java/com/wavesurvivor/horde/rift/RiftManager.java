@@ -789,7 +789,7 @@ public final class RiftManager {
         WaveSurvivorMod.LOGGER.info("[Faille] Défaite : plus aucun joueur debout.");
         tellAll(rd, WSLang.t("rift.defeat"));
         com.wavesurvivor.horde.renaissance.RenaissanceRewards.markDefeat(); // PR des vagues acquises
-        toEnding(server, rd);
+        toEnding(server, rd, false);
         HordeManager.get().stopSilently();
     }
 
@@ -812,7 +812,7 @@ public final class RiftManager {
             nextPhase = rs.siegeEnabled ? Phase.SIEGE : rs.titanEnabled ? Phase.TITAN : Phase.NONE;
             if (nextPhase == Phase.NONE) {   // fin de la Faille : les récompenses ont déjà été données par le HordeManager
                 tellAll(rd, WSLang.t("rift.victory"));
-                toEnding(server, rd);
+                toEnding(server, rd, true);
                 return;
             }
             tellAll(rd, WSLang.t(rs.siegeEnabled ? "rift.next_siege" : "rift.next_titan"));
@@ -1256,7 +1256,7 @@ public final class RiftManager {
     private static void finalVictory(MinecraftServer server, ServerLevel rd) {
         tellAll(rd, WSLang.t("rift.victory"));
         finalRewards(server, rd);
-        toEnding(server, rd);
+        toEnding(server, rd, true);
     }
 
     /** Récompenses de fin de Faille : celles de la horde (classement, coffres…) et le butin du Titan. */
@@ -1299,8 +1299,10 @@ public final class RiftManager {
         rd.sendParticles(net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL, EXIT_PORTAL.getX() + 0.5, EXIT_PORTAL.getY() + 1.5, EXIT_PORTAL.getZ() + 0.5, 80, 1.0, 1.5, 0.3, 0.2);
     }
 
-    private static void toEnding(MinecraftServer server, ServerLevel rd) {
+    private static void toEnding(MinecraftServer server, ServerLevel rd, boolean victory) {
         phase = Phase.ENDING;
+        // XP de Maîtrise des rôles du Kingdom (Siège, Contre-offensive, Titan) : versée ici, avant que le royaume en veille soit retiré
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.finish(server, victory);
         if (HordeManager.get().isRunning() && com.wavesurvivor.horde.kingdom.KingdomManager.isActive()) HordeManager.get().stopSilently(); // royaume en veille : boutique et défenses retirées avec la partie
         endAt = server.getTickCount() + Math.max(10, settings().endPauseSeconds) * 20L;
         restoreSpawnRadius();
