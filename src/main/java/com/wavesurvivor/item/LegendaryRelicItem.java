@@ -23,7 +23,7 @@ public class LegendaryRelicItem extends RelicItem {
     /** Effets traduits : chiffres du niveau, et niveau auquel agissent les deux reliques d'origine ({P}). */
     @Override
     public List<String> effectTexts(int lvl) {
-        String roman = RelicFusions.parentLevel(lvl) >= 3 ? "III" : "II";
+        String roman = RelicEffects.roman(RelicFusions.parentLevel(lvl));
         return super.effectTexts(lvl).stream().map(t -> t.replace("{P}", roman)).toList();
     }
 

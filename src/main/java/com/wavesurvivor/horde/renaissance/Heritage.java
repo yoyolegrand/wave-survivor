@@ -36,7 +36,7 @@ public class Heritage {
     public static final int MAX_RANK = 5;
     public static final int[] RANK_THRESHOLD = {60, 120, 200, 300, 450};
 
-    private static CompoundTag data(Player p) {
+    static CompoundTag data(Player p) {
         CompoundTag root = p.getPersistentData();
         CompoundTag persisted = root.getCompound("PlayerPersisted");
         CompoundTag d = persisted.getCompound("ws_heritage");
@@ -75,7 +75,7 @@ public class Heritage {
 
     /** Multiplicateur de PR gagnés : +5 % par rang (+10 % avec le nœud Marchand 4). */
     public static double prMultiplier(Player p) {
-        return 1.0 + 0.05 * rank(p) + (has(p, Branch.MERCHANT, 4) ? 0.15 : 0.0);
+        return 1.0 + 0.05 * rank(p) + (has(p, Branch.MERCHANT, 4) ? 0.15 : 0.0) + (RiftLegacy.has(p, 5) ? 0.10 : 0.0); // Faille 5 : +10 % de PR
     }
 
     public static boolean canRebirth(Player p) {
@@ -251,7 +251,7 @@ public class Heritage {
         int[] n = new int[3];
         for (Branch b : Branch.values()) n[b.ordinal()] = level(p, b);
         com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
-                new com.wavesurvivor.network.HeritageSyncPacket(rank(p), n, invested(p), wonSince(p)));
+                new com.wavesurvivor.network.HeritageSyncPacket(rank(p), n, invested(p), wonSince(p), RiftLegacy.state(p)));
     }
 
     // ─── Événements ───
@@ -400,7 +400,8 @@ public class Heritage {
     public void onName(PlayerEvent.NameFormat e) {
         if (e.getEntity().level().isClientSide) return;
         int r = rank(e.getEntity());
-        if (r > 0) e.setDisplayname(Component.literal(rankColor(r) + "[" + WSLang.t(titleKey(r)) + "] §r").append(e.getDisplayname()));
+        String rift = RiftLegacy.titlePrefix(e.getEntity());   // 2.0 : titre de la Faille (Brise-Titan…)
+        if (r > 0 || !rift.isEmpty()) e.setDisplayname(Component.literal((r > 0 ? rankColor(r) + "[" + WSLang.t(titleKey(r)) + "] §r" : "") + rift).append(e.getDisplayname()));
     }
 
     /** Titre dans la liste des joueurs (Tab). */
@@ -408,7 +409,8 @@ public class Heritage {
     public void onTabName(PlayerEvent.TabListNameFormat e) {
         if (e.getEntity().level().isClientSide) return;
         int r = rank(e.getEntity());
-        if (r > 0) e.setDisplayName(Component.literal(rankColor(r) + "[" + WSLang.t(titleKey(r)) + "] §r").append(e.getEntity().getName()));
+        String rift = RiftLegacy.titlePrefix(e.getEntity());
+        if (r > 0 || !rift.isEmpty()) e.setDisplayName(Component.literal((r > 0 ? rankColor(r) + "[" + WSLang.t(titleKey(r)) + "] §r" : "") + rift).append(e.getEntity().getName()));
     }
 
     private static String rankColor(int r) {

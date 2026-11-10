@@ -1323,11 +1323,12 @@ final class RiftTitan {
     /** Ouvre une fenêtre de vulnérabilité (le Titan brille, sa barre devient rouge). */
     private static void openWindow(ServerLevel l, long now) {
         if (titan == null || rs.titanWindowSeconds <= 0) return;
-        windowUntil = now + rs.titanWindowSeconds * 20L;
+        int secs = rs.titanWindowSeconds + (com.wavesurvivor.horde.renaissance.RiftLegacy.anyone(l.getServer(), 2) ? 2 : 0);   // Héritage de la Faille 2 : +2 s
+        windowUntil = now + secs * 20L;
         windowDealt = 0f;
         titan.setGlowingTag(true);
         if (bar != null) bar.setColor(BossEvent.BossBarColor.RED);
-        announce(l, "§c§l⚔ " + com.wavesurvivor.i18n.WSLang.t("rift.t.window_open", rs.titanWindowSeconds));
+        announce(l, "§c§l⚔ " + com.wavesurvivor.i18n.WSLang.t("rift.t.window_open", secs));
     }
 
     static void onAvatarDeath(ServerLevel l, Entity avatar) {

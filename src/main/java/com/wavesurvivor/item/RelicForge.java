@@ -17,13 +17,25 @@ public final class RelicForge {
 
     private RelicForge() {}
 
-    /** PR pour atteindre le niveau II puis III. */
-    public static int upgradeCost(int fromLevel) {
-        return fromLevel <= 1 ? 15 : 30;
+    /** PR pour atteindre le niveau II, III puis IV (une légendaire coûte 75 PR pour le niveau IV). */
+    public static int upgradeCost(int fromLevel, boolean legendary) {
+        return fromLevel <= 1 ? 15 : fromLevel == 2 ? 30 : legendary ? 75 : 50;
     }
 
-    /** Plan d'amélioration : emplacement qui monte, emplacement consommé, niveau de départ, coût. */
-    public record Plan(int targetSlot, int consumeSlot, int fromLevel, int cost) {}
+    /** Éclats de Faille demandés : seulement pour le niveau IV (1 pour une relique, 2 pour une légendaire). */
+    public static int shardCost(int fromLevel, boolean legendary) {
+        return fromLevel >= 3 ? (legendary ? 2 : 1) : 0;
+    }
+
+    /** Éclats de Faille dans l'inventaire principal. */
+    public static int shardsIn(List<ItemStack> inv) {
+        int n = 0;
+        for (int i = 0; i < Math.min(36, inv.size()); i++) if (inv.get(i).is(com.wavesurvivor.registry.ModItems.RIFT_SHARD.get())) n += inv.get(i).getCount();
+        return n;
+    }
+
+    /** Plan d'amélioration : emplacement qui monte, emplacement consommé, niveau de départ, coût en PR, Éclats de Faille demandés. */
+    public record Plan(int targetSlot, int consumeSlot, int fromLevel, int cost, int shards) {}
 
     /** Plan d'amélioration pour cette relique dans l'inventaire principal (36 cases), ou null (pas de doublon / d\u00e9j\u00e0 III). */
     public static Plan planUpgrade(List<ItemStack> inv, Item item) {
@@ -34,7 +46,7 @@ public final class RelicForge {
             ItemStack ts = inv.get(t);
             if (!ts.is(item)) continue;
             int tl = RelicEffects.levelOf(ts);
-            if (tl >= 3 || tl <= bestTLvl) continue;
+            if (tl >= 4 || tl <= bestTLvl) continue;
             int consume = -1, cLvl = 99;
             for (int i = 0; i < Math.min(36, inv.size()); i++) {
                 if (i == t) continue;
@@ -46,13 +58,14 @@ public final class RelicForge {
             if (consume >= 0) { bestT = t; bestTLvl = tl; bestC = consume; }
         }
         if (bestT < 0) return null;
-        return new Plan(bestT, bestC, bestTLvl, upgradeCost(bestTLvl));
+        boolean legendary = item instanceof LegendaryRelicItem;
+        return new Plan(bestT, bestC, bestTLvl, upgradeCost(bestTLvl, legendary), shardCost(bestTLvl, legendary));
     }
 
     /** Même plan avec la remise de l'Héritage (Marchand 7 : −20 %). */
     public static Plan planUpgrade(List<ItemStack> inv, Item item, net.minecraft.world.entity.player.Player p) {
         Plan pl = planUpgrade(inv, item);
-        return pl == null ? null : new Plan(pl.targetSlot(), pl.consumeSlot(), pl.fromLevel(), com.wavesurvivor.horde.renaissance.Heritage.forgeCost(p, pl.cost()));
+        return pl == null ? null : new Plan(pl.targetSlot(), pl.consumeSlot(), pl.fromLevel(), com.wavesurvivor.horde.renaissance.Heritage.forgeCost(p, pl.cost()), pl.shards());
     }
 
     /** Reliques présentes dans l'inventaire principal → niveaux de chaque copie (ordre d'apparition). */

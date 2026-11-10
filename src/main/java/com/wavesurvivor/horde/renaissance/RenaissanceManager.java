@@ -60,8 +60,20 @@ public class RenaissanceManager {
             sendState(p, false, TAB_FORGE, false);
             return;
         }
+        if (plan.shards() > 0 && com.wavesurvivor.item.RelicForge.shardsIn(inv) < plan.shards()) {   // niveau IV : Éclats de Faille
+            fail(p, com.wavesurvivor.i18n.WSLang.t("forge.need_shards", plan.shards()));
+            sendState(p, false, TAB_FORGE, false);
+            return;
+        }
         RenaissanceStore.addPoints(p, -plan.cost());
         Heritage.addInvested(p, plan.cost()); // compte pour la Renaissance
+        for (int i = 0, left = plan.shards(); i < Math.min(36, inv.size()) && left > 0; i++) {
+            ItemStack st = inv.get(i);
+            if (!st.is(com.wavesurvivor.registry.ModItems.RIFT_SHARD.get())) continue;
+            int k = Math.min(left, st.getCount());
+            st.shrink(k);
+            left -= k;
+        }
         inv.get(plan.consumeSlot()).shrink(1);
         ItemStack target = inv.get(plan.targetSlot());
         com.wavesurvivor.item.RelicEffects.setLevel(target, plan.fromLevel() + 1);

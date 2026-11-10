@@ -336,3 +336,13 @@ Test rapide : `/ws rift skill <meteors|tracking|lava|giant|stomp|rock|beam|roar|
 - [ ] Défaite : PR des phases acquises seulement, pas de reliquaire
 - [ ] Accès (en survie) : l'autel refuse la Faille tant qu'on n'a pas gagné une horde classique ET un Kingdom ; conditions visibles sur l'écran de l'autel ; invasion activable dans l'éditeur
 - [ ] Éditeur Faille › Départ : section « Récompenses et accès »
+
+## Éclat de Faille, reliques niveau IV, Héritage de la Faille
+- [ ] Objet « Éclat de Faille » (onglet créatif du mod), texture provisoire en attendant celle de Chat ; infobulle FR/EN
+- [ ] Titan vaincu : 2 Éclats par participant (+1 avec le nœud 3), podium +2 / +1 / +1
+- [ ] Forge : relique III → IV pour 50 PR + 1 éclat + 1 copie ; légendaire III → IV pour 75 PR + 2 éclats + 1 copie ; bouton grisé sans éclats (infobulle) ; Marchand 7 réduit seulement les PR
+- [ ] Relique IV : nom « … IV », infobulle « ×2,5 », effets ×2,5 ; légendaire IV : ses deux reliques d'origine agissent au niveau IV
+- [ ] Renaissance › onglet « Faille » : Panthéon (Titans vaincus, podiums, Marques) + 3 titres (Normal / Difficile / Cauchemar) avec leur aura ; 5 nœuds (1-1-2-2-3 Marques)
+- [ ] Titan vaincu : +1 Marque (+1 en Cauchemar, +1 si 1er du podium) ; nouveau titre annoncé à tous, affiché devant le pseudo et dans Tab, aura visible
+- [ ] Nœud 1 : engins +20 % PV et dégâts ; nœud 2 : fenêtres du Titan +2 s ; nœud 4 : réapparition −5 s + un coup fatal évité par Faille ; nœud 5 : +10 % dégâts contre boss / Titan et +10 % PR partout
+- [ ] La Renaissance (renaître) ne remet PAS l'Héritage de la Faille à zéro

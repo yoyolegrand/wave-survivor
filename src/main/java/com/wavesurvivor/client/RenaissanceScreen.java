@@ -118,17 +118,21 @@ public class RenaissanceScreen extends Screen {
         top = (height - PANEL_H) / 2;
 
         int tabY = top + 22;
+        int tx = width / 2 - 183;
         Button sacTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.sacrifice")), b -> switchTab(0))
-                .bounds(width / 2 - 155, tabY, 60, 18).build());
+                .bounds(tx, tabY, 59, 18).build());
         Button shopTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.boutique")), b -> switchTab(1))
-                .bounds(width / 2 - 93, tabY, 60, 18).build());
+                .bounds(tx + 61, tabY, 59, 18).build());
         Button forgeTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.tab")), b -> switchTab(2))
-                .bounds(width / 2 - 31, tabY, 60, 18).build());
+                .bounds(tx + 122, tabY, 59, 18).build());
         Button herTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("heritage.tab")), b -> switchTab(3))
-                .bounds(width / 2 + 31, tabY, 60, 18).build());
+                .bounds(tx + 183, tabY, 59, 18).build());
+        Button riftTab = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("rift.legacy.tab")), b -> switchTab(4))
+                .bounds(tx + 244, tabY, 59, 18).build());
         addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("voc.ui.tab")),
                         b -> Minecraft.getInstance().setScreen(new VocationsScreen(this, null, false)))
-                .bounds(width / 2 + 93, tabY, 60, 18).build()); // Vocations (1.9) : écran à part, même panneau
+                .bounds(tx + 305, tabY, 59, 18).build()); // Vocations (1.9) : écran à part, même panneau
+        riftTab.active = tab != 4;
         sacTab.active = tab != 0;
         shopTab.active = tab != 1;
         forgeTab.active = tab != 2;
@@ -145,6 +149,7 @@ public class RenaissanceScreen extends Screen {
         if (tab == 0) buildSacrificeWidgets();
         else if (tab == 2) buildForgeWidgets();
         else if (tab == 3) buildHeritageWidgets();
+        else if (tab == 4) buildRiftWidgets();
         else buildShopWidgets();
     }
 
@@ -277,12 +282,72 @@ public class RenaissanceScreen extends Screen {
     private void unusedHeritage() {
     }
 
+    // ─── 2.0 — Onglet « Faille » : Panthéon (titres) + 5 nœuds payés en Marques du Titan ───
+
+    private static final int RIFT_NODE_Y = 168, RIFT_NODE_H = 20;
+
+    private void buildRiftWidgets() {
+        int[] st = com.wavesurvivor.horde.renaissance.RiftLegacy.CLIENT;
+        int n = st[4];
+        String lbl = n >= com.wavesurvivor.horde.renaissance.RiftLegacy.NODES ? com.wavesurvivor.i18n.WSLang.t("heritage.btn_max")
+                : com.wavesurvivor.i18n.WSLang.t("rift.legacy.btn_buy", com.wavesurvivor.horde.renaissance.RiftLegacy.NODE_COST[n]);
+        Button b = addRenderableWidget(Button.builder(Component.literal(lbl),
+                bt -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.RelicForgePacket("riftnode", "")))
+                .bounds(left + PANEL_W - 158, top + RIFT_NODE_Y + 5 * (RIFT_NODE_H + 3) + 4, 150, 18).build());
+        b.active = n < com.wavesurvivor.horde.renaissance.RiftLegacy.NODES && st[3] >= com.wavesurvivor.horde.renaissance.RiftLegacy.NODE_COST[n];
+    }
+
+    private List<Component> renderRift(GuiGraphics g, int mx, int my) {
+        List<Component> tip = null;
+        int[] st = com.wavesurvivor.horde.renaissance.RiftLegacy.CLIENT;
+        var W = com.wavesurvivor.i18n.WSLang.class;
+        // Panthéon
+        g.drawString(font, "§5§l" + com.wavesurvivor.i18n.WSLang.t("rift.legacy.pantheon"), left + 10, top + 46, 0xFFFFFFFF, false);
+        g.drawString(font, com.wavesurvivor.i18n.WSLang.t("rift.legacy.stats", st[0], st[2], st[3]), left + 10, top + 58, 0xFFBBBBBB, false);
+        String[] diffs = {"normal", "hard", "nightmare"};
+        String[] cols = {"§5", "§d", "§c"};
+        for (int i = 1; i <= 3; i++) {
+            int y = top + 72 + (i - 1) * 26, x = left + 10;
+            boolean got = st[1] >= i;
+            g.fill(x, y, x + PANEL_W - 20, y + 23, got ? 0x40A855F7 : 0x30202028);
+            g.renderOutline(x, y, PANEL_W - 20, 23, got ? 0xFFB070F0 : 0xFF444455);
+            g.drawString(font, (got ? cols[i - 1] + "§l" : "§8") + com.wavesurvivor.i18n.WSLang.t("rift.legacy.title." + i)
+                    + (got ? " §a✔" : " §8✖"), x + 6, y + 3, 0xFFFFFFFF, false);
+            g.drawString(font, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.legacy.title_req", com.wavesurvivor.i18n.WSLang.t("difficulty." + diffs[i - 1]))
+                    + " §8· " + com.wavesurvivor.i18n.WSLang.t("rift.legacy.aura." + i), x + 6, y + 13, 0xFFFFFFFF, false);
+        }
+        // Nœuds
+        g.drawString(font, "§5§l" + com.wavesurvivor.i18n.WSLang.t("rift.legacy.nodes"), left + 10, top + RIFT_NODE_Y - 12, 0xFFFFFFFF, false);
+        for (int k = 1; k <= com.wavesurvivor.horde.renaissance.RiftLegacy.NODES; k++) {
+            int y = top + RIFT_NODE_Y + (k - 1) * (RIFT_NODE_H + 3), x = left + 10, w = PANEL_W - 20;
+            boolean owned = st[4] >= k, next = st[4] == k - 1;
+            g.fill(x, y, x + w, y + RIFT_NODE_H, owned ? 0xFF2E7D32 : next ? 0xFF5E2A86 : 0xFF2A2A33);
+            g.renderOutline(x, y, w, RIFT_NODE_H, owned ? 0xFF66BB6A : next ? 0xFFC58BFF : 0xFF444455);
+            String name = com.wavesurvivor.i18n.WSLang.t("rift.legacy.node." + k);
+            String desc = com.wavesurvivor.i18n.WSLang.t("rift.legacy.node." + k + ".desc");
+            String line = (owned ? "§a✔ §f" : next ? "§e" : "§8") + name + " §7— " + desc;
+            if (font.width(line) > w - 50) line = font.plainSubstrByWidth(line, w - 54) + "…";
+            g.drawString(font, line, x + 5, y + 6, 0xFFFFFFFF, false);
+            String cost = owned ? "" : "§d" + com.wavesurvivor.horde.renaissance.RiftLegacy.NODE_COST[k - 1] + " ✦";
+            g.drawString(font, cost, x + w - 6 - font.width(cost), y + 6, 0xFFFFFFFF, false);
+            if (mx >= x && mx < x + w && my >= y && my < y + RIFT_NODE_H) {
+                tip = new ArrayList<>();
+                tip.add(Component.literal((owned ? "§a✔ " : "§d") + name));
+                for (String l : desc.split("\n")) tip.add(Component.literal("§7" + l));
+                if (!owned) tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("rift.legacy.cost", com.wavesurvivor.horde.renaissance.RiftLegacy.NODE_COST[k - 1])));
+                if (!owned && !next) tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("heritage.locked")));
+            }
+        }
+        g.drawString(font, "§8" + com.wavesurvivor.i18n.WSLang.t("rift.legacy.marks_hint"), left + 10, top + PANEL_H - 14, 0xFFFFFFFF, false);
+        return tip;
+    }
+
     // ─── Forge (1.5) : améliorer les reliques (doublon + PR), fusionner (lot 3) ───
 
     private final List<net.minecraft.world.item.Item> forgeRows = new ArrayList<>();
     private String forgeSig = "";
 
-    private static String roman(int l) { return l >= 3 ? "III" : l == 2 ? "II" : "I"; }
+    private static String roman(int l) { return com.wavesurvivor.item.RelicEffects.roman(l); }
 
     private void buildForgeWidgets() {
         forgeRows.clear();
@@ -314,13 +379,17 @@ public class RenaissanceScreen extends Screen {
             var plan = com.wavesurvivor.item.RelicForge.planUpgrade(inv, it, Minecraft.getInstance().player);
             int best = 0;
             for (ItemStack st : inv) if (st.is(it)) best = Math.max(best, com.wavesurvivor.item.RelicEffects.levelOf(st));
-            String lbl = plan != null ? com.wavesurvivor.i18n.WSLang.t("forge.btn_upgrade", roman(plan.fromLevel() + 1), plan.cost())
-                    : best >= 3 ? com.wavesurvivor.i18n.WSLang.t("forge.btn_max") : com.wavesurvivor.i18n.WSLang.t("forge.btn_need");
+            String lbl = plan != null ? (plan.shards() > 0
+                    ? com.wavesurvivor.i18n.WSLang.t("forge.btn_upgrade_shards", roman(plan.fromLevel() + 1), plan.cost(), plan.shards())
+                    : com.wavesurvivor.i18n.WSLang.t("forge.btn_upgrade", roman(plan.fromLevel() + 1), plan.cost()))
+                    : best >= 4 ? com.wavesurvivor.i18n.WSLang.t("forge.btn_max") : com.wavesurvivor.i18n.WSLang.t("forge.btn_need");
             final String id = BuiltInRegistries.ITEM.getKey(it).toString();
             Button b = addRenderableWidget(Button.builder(Component.literal(lbl),
                     bt -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.RelicForgePacket("upgrade", id)))
                     .bounds(left + PANEL_W - 104, y, 96, 18).build());
-            b.active = plan != null && points >= plan.cost();
+            b.active = plan != null && points >= plan.cost() && com.wavesurvivor.item.RelicForge.shardsIn(inv) >= plan.shards();
+            if (plan != null && plan.shards() > 0) b.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                    Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.shards_tip", plan.shards(), com.wavesurvivor.item.RelicForge.shardsIn(inv)))));
             y += ROW_H;
         }
     }
@@ -464,10 +533,10 @@ public class RenaissanceScreen extends Screen {
             if (font.width(name) > 110) name = font.plainSubstrByWidth(name, 106) + "…";
             g.drawString(font, "§f" + name, left + 30, y + 1, 0xFFFFFFFF, false);
             // Copies par niveau : « I×2  II×1 »
-            int[] byLvl = new int[4];
-            for (int l : rel.getOrDefault(it, List.of())) byLvl[Math.max(1, Math.min(3, l))]++;
+            int[] byLvl = new int[5];
+            for (int l : rel.getOrDefault(it, List.of())) byLvl[Math.max(1, Math.min(4, l))]++;
             StringBuilder sb = new StringBuilder("§7");
-            for (int l = 1; l <= 3; l++) if (byLvl[l] > 0) sb.append(roman(l)).append("×").append(byLvl[l]).append("  ");
+            for (int l = 1; l <= 4; l++) if (byLvl[l] > 0) sb.append(roman(l)).append("×").append(byLvl[l]).append("  ");
             g.drawString(font, sb.toString(), left + 30, y + 10, 0xFFFFFFFF, false);
             if (mx >= left + 10 && mx < left + 26 && my >= y && my < y + 16) {
                 tip = new ArrayList<>(Screen.getTooltipFromItem(Minecraft.getInstance(), icon));
@@ -773,6 +842,7 @@ public class RenaissanceScreen extends Screen {
         if (tab == 0) tooltip = renderSacrifice(g, mx, my);
         else if (tab == 2) tooltip = renderForge(g, mx, my);
         else if (tab == 3) tooltip = renderHeritage(g, mx, my);
+        else if (tab == 4) tooltip = renderRift(g, mx, my);
         else tooltip = renderShop(g, mx, my);
 
         if (tooltip != null && !tooltip.isEmpty()) {

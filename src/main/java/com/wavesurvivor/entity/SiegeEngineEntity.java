@@ -98,6 +98,8 @@ public class SiegeEngineEntity extends Entity {
         int lv = engineLevel();
         // mêmes bonus que les bâtiments du royaume : Bâtisseur, Pierre de Fondation, réglage de PV de la horde
         float bonus = level().isClientSide ? 1f : (float) com.wavesurvivor.horde.kingdom.KingdomClaim.buildingHpMult();
+        // Héritage de la Faille 1 (Cœur d'acier) : +20 % de PV si un joueur connecté l'a
+        if (!level().isClientSide && com.wavesurvivor.horde.renaissance.RiftLegacy.anyone(level().getServer(), 1)) bonus *= 1.2f;
         return b * (lv >= 3 ? 1.6f : lv == 2 ? 1.3f : 1f) * bonus;
     }
 

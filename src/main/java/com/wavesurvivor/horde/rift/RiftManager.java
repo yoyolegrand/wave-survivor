@@ -315,6 +315,7 @@ public final class RiftManager {
     /** Ferme la Faille : renvoie tout le monde chez soi, vide l'île et libère les chunks. */
     public static void stop(MinecraftServer server) {
         riftBosses = 0;
+        com.wavesurvivor.horde.renaissance.RiftLegacy.resetRun();
         RiftSession.discard(server);   // fin de la Faille : plus rien à reprendre (sauf à la fermeture du serveur)
         resuming = null;
         phase = Phase.NONE;
@@ -1291,6 +1292,10 @@ public final class RiftManager {
         if (horde == null) return;
         try {
             java.util.Map<UUID, Integer> kills = new HashMap<>(com.wavesurvivor.horde.rewards.KillTracker.snapshotKills());
+            podiumRank.clear();
+            List<java.util.Map.Entry<UUID, Integer>> order = new ArrayList<>(kills.entrySet());
+            order.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+            for (int i = 0; i < Math.min(3, order.size()); i++) podiumRank.put(order.get(i).getKey(), i + 1);
             com.wavesurvivor.horde.rewards.RewardsDistributor.distribute(horde, server);   // récompenses de classement réglées dans l'éditeur
             riftPayout(server, rd, true);
             podium(server, rd, kills);
@@ -1335,6 +1340,9 @@ public final class RiftManager {
      * + 1 par boss, + le bonus du Titan s'il est tué, + 15 à la première victoire ; × difficulté, mutateurs et bonus personnels (Renaissance, reliques).
      * En défaite : ce qui a été acquis jusque-là (phases terminées comprises).
      */
+    /** Rang au podium de la Faille en cours (1 à 3), calculé juste avant les récompenses. */
+    private static final java.util.Map<UUID, Integer> podiumRank = new HashMap<>();
+
     private static void riftPayout(MinecraftServer server, ServerLevel rd, boolean victory) {
         if (horde == null || horde.configData == null) return;
         HordeConfigMultiData.RiftSettings rs = settings();
@@ -1371,6 +1379,19 @@ public final class RiftManager {
             WaveSurvivorMod.LOGGER.info("[Faille] {} +{} PR ({} vagues, {} assauts, {} boss, Titan={}, victoire={})", p.getGameProfile().getName(), total, hordeWaves, assaults, riftBosses, titan, victory);
         }
         if (!victory) return;
+        // Titan vaincu : Éclats de Faille pour chaque participant (+1 avec l'Héritage de la Faille 3) et Panthéon (titres, Marques du Titan)
+        if (titan) {
+            var dd = com.wavesurvivor.horde.difficulty.HordeDifficulty.active();
+            String diffId = dd != null ? dd.id : "normal";
+            for (ServerPlayer p : participants(server, rd)) {
+                int shards = Math.max(0, rs.shardsPerPlayer) + (com.wavesurvivor.horde.renaissance.RiftLegacy.has(p, 3) ? 1 : 0);
+                if (shards > 0) {
+                    net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.RIFT_SHARD.get(), shards));
+                    p.sendSystemMessage(Component.literal(WSLang.t("rift.reward.shards", shards)));
+                }
+                com.wavesurvivor.horde.renaissance.RiftLegacy.onVictory(p, diffId, podiumRank.getOrDefault(p.getUUID(), 0));
+            }
+        }
         // Chaque participant : Reliquaire(s) scellé(s) (une relique au hasard)
         int n = Math.max(0, rs.rewardReliquaries);
         if (n > 0) for (ServerPlayer p : participants(server, rd)) {
@@ -1384,15 +1405,18 @@ public final class RiftManager {
         HordeConfigMultiData.RiftSettings rs = settings();
         List<java.util.Map.Entry<UUID, Integer>> ranked = new ArrayList<>(kills.entrySet());
         ranked.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
-        int[] pr = {rs.topPr1, rs.topPr2, rs.topPr3}, rel = {rs.topReliq1, rs.topReliq2, rs.topReliq3};
+        int[] pr = {rs.topPr1, rs.topPr2, rs.topPr3}, rel = {rs.topReliq1, rs.topReliq2, rs.topReliq3}, sh = {rs.topShards1, rs.topShards2, rs.topShards3};
+        boolean titanDown = RiftTitan.isDead();
         String[] medal = {"§6§l", "§f§l", "§c§l"};
         for (int i = 0; i < Math.min(3, ranked.size()); i++) {
             ServerPlayer p = server.getPlayerList().getPlayer(ranked.get(i).getKey());
             if (p == null) continue;
             if (pr[i] > 0) com.wavesurvivor.horde.renaissance.RenaissanceStore.addPoints(p, pr[i]);
             if (rel[i] > 0) net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.RELIQUAIRE_SCELLE.get(), rel[i]));
+            if (titanDown && sh[i] > 0) net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.RIFT_SHARD.get(), sh[i]));
             for (ServerPlayer o : participants(server, rd)) {
-                o.sendSystemMessage(Component.literal(medal[i] + WSLang.t("rift.podium", i + 1, p.getGameProfile().getName(), ranked.get(i).getValue(), Math.max(0, pr[i]), Math.max(0, rel[i]))));
+                o.sendSystemMessage(Component.literal(medal[i] + WSLang.t("rift.podium", i + 1, p.getGameProfile().getName(), ranked.get(i).getValue(), Math.max(0, pr[i]), Math.max(0, rel[i]))
+                        + (titanDown && sh[i] > 0 ? WSLang.t("rift.podium_shards", sh[i]) : "")));
             }
         }
     }
@@ -1468,6 +1492,7 @@ public final class RiftManager {
         p.fallDistance = 0;
         if (inCombat() && registered.contains(p.getUUID())) {
             int secs = com.wavesurvivor.horde.renaissance.Heritage.respawnSeconds(p, Math.max(3, settings().reviveSeconds)); // Héritage : Survivant 3
+            if (com.wavesurvivor.horde.renaissance.RiftLegacy.has(p, 4)) secs = Math.max(2, secs - 5);   // Héritage de la Faille 4 : −5 s
             prevMode.put(p.getUUID(), p.gameMode.getGameModeForPlayer());
             p.setGameMode(GameType.SPECTATOR);
             p.teleportTo(rd, CENTER.getX() + 0.5, CENTER.getY() + 10, CENTER.getZ() + 0.5, p.getYRot(), 30f);

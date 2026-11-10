@@ -479,6 +479,11 @@ public class HordeConfigMultiData {
         @SerializedName("topReliq1") public int topReliq1 = 2;
         @SerializedName("topReliq2") public int topReliq2 = 1;
         @SerializedName("topReliq3") public int topReliq3 = 1;
+        /** Éclats de Faille (Titan vaincu) : par participant, puis en plus pour le podium. */
+        @SerializedName("shardsPerPlayer") public int shardsPerPlayer = 2;
+        @SerializedName("topShards1") public int topShards1 = 2;
+        @SerializedName("topShards2") public int topShards2 = 1;
+        @SerializedName("topShards3") public int topShards3 = 1;
         /** Accès : avoir déjà gagné une horde classique, un Kingdom, une invasion de village (chaque condition activable). */
         @SerializedName("requireHordeWin") public boolean requireHordeWin = true;
         @SerializedName("requireKingdomWin") public boolean requireKingdomWin = true;

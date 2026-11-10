@@ -57,6 +57,11 @@ final class RiftEngines {
     private static final Map<UUID, UUID> choosing = new HashMap<>();
     private static final List<Boulder> BOULDERS = new ArrayList<>();
 
+    /** Héritage de la Faille 1 (Cœur d'acier) : +20 % de dégâts des engins si un joueur connecté l'a. */
+    private static float boost(ServerLevel l) {
+        return com.wavesurvivor.horde.renaissance.RiftLegacy.anyone(l.getServer(), 1) ? 1.2f : 1f;
+    }
+
     /** Engins enrayés par le rugissement du Titan jusqu'à ce tick de jeu. */
     private static long jamUntil;
 
@@ -351,7 +356,7 @@ final class RiftEngines {
         b.pos = muzzle;
         b.vel = new Vec3(fx * Math.cos(ang), Math.sin(ang), fz * Math.cos(ang)).scale(speed);
         b.owner = NO_OWNER;
-        b.mul = (e.engineLevel() >= 2 ? 1.25f : 1f) * (tre ? 1.6f : 1f);
+        b.mul = (e.engineLevel() >= 2 ? 1.25f : 1f) * (tre ? 1.6f : 1f) * boost(l);
         b.fire = e.engineLevel() >= 3 && e.variant() == 1;
         b.frag = e.engineLevel() >= 3 && e.variant() == 2;
         BOULDERS.add(b);
@@ -482,7 +487,7 @@ final class RiftEngines {
         double speed = 2.5 * (e.engineLevel() >= 2 ? 1.1 : 1.0) * (tre ? 1.25 : 1.0);   // la portée se règle avec l'inclinaison du regard
         b.vel = dir.scale(speed);
         b.owner = p.getUUID();
-        b.mul = (e.engineLevel() >= 2 ? 1.25f : 1f) * (tre ? 1.6f : 1f);
+        b.mul = (e.engineLevel() >= 2 ? 1.25f : 1f) * (tre ? 1.6f : 1f) * boost(l);
         b.fire = e.engineLevel() >= 3 && e.variant() == 1;
         b.frag = e.engineLevel() >= 3 && e.variant() == 2;
         BOULDERS.add(b);
@@ -531,12 +536,12 @@ final class RiftEngines {
         Vec3 look = p.getLookAngle();
         Vec3 muzzle = new Vec3(e.getX(), e.getY() + 1.47, e.getZ()).add(look.scale(1.5));
         if (solar || judge) {
-            beam(p, l, muzzle, look, solar ? 7f : 4f, judge);   // rayon de lumière (Solaire) ou rayon qui marque (Jugement)
+            beam(p, l, muzzle, look, (solar ? 7f : 4f) * boost(l), judge);   // rayon de lumière (Solaire) ou rayon qui marque (Jugement)
         } else {
             Arrow a = new Arrow(EntityType.ARROW, l);
             a.setOwner(p);
             a.setPos(muzzle.x, muzzle.y, muzzle.z);
-            a.setBaseDamage(e.engineLevel() >= 2 ? 1.9 : 1.5);   // 6 dégâts à pleine vitesse (7,6 consacrée)
+            a.setBaseDamage((e.engineLevel() >= 2 ? 1.9 : 1.5) * boost(l));   // 6 dégâts à pleine vitesse (7,6 consacrée)
             if (seraph) a.setPierceLevel((byte) 4);                 // carreau perforant
             a.pickup = AbstractArrow.Pickup.DISALLOWED;
             a.shoot(look.x, look.y, look.z, 4.0f, 0.0f);

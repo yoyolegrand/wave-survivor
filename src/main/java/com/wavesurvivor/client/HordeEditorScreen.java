@@ -1908,6 +1908,14 @@ public class HordeEditorScreen extends Screen {
         fInt(18, HordeJson.num(r, "topReliq1", 2), v -> r.addProperty("topReliq1", Math.max(0, Math.min(16, v))));
         fInt(18, HordeJson.num(r, "topReliq2", 1), v -> r.addProperty("topReliq2", Math.max(0, Math.min(16, v))));
         fInt(18, HordeJson.num(r, "topReliq3", 1), v -> r.addProperty("topReliq3", Math.max(0, Math.min(16, v))));
+        y += 22;
+        flow(x, y);
+        fl(t("ui.rift.shards"));
+        fInt(22, HordeJson.num(r, "shardsPerPlayer", 2), v -> r.addProperty("shardsPerPlayer", Math.max(0, Math.min(16, v))));
+        fl(t("ui.rift.top_shards"));
+        fInt(18, HordeJson.num(r, "topShards1", 2), v -> r.addProperty("topShards1", Math.max(0, Math.min(16, v))));
+        fInt(18, HordeJson.num(r, "topShards2", 1), v -> r.addProperty("topShards2", Math.max(0, Math.min(16, v))));
+        fInt(18, HordeJson.num(r, "topShards3", 1), v -> r.addProperty("topShards3", Math.max(0, Math.min(16, v))));
         y += 24;
         toggle(x + 60, y - 2, 110, t("ui.rift.req_horde"), r, "requireHordeWin", true);
         toggle(x + 174, y - 2, 110, t("ui.rift.req_kingdom"), r, "requireKingdomWin", true);

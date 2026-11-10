@@ -107,6 +107,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.RaidManager());
         // La Faille (2.0) : île de la dimension dédiée, retour des joueurs, filet anti-chute
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.rift.RiftManager());
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.RiftLegacy()); // 2.0 : Héritage de la Faille
         // Sauvegarde de partie : message « Reprendre / Abandonner » à la connexion
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.HordeSession());
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.rift.RiftSession());

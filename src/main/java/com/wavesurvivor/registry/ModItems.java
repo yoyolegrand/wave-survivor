@@ -173,6 +173,9 @@ public class ModItems {
             () -> new com.wavesurvivor.item.SeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
 
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
+    /** 2.0 — Éclat de Faille (Titan vaincu) : monte une relique au niveau IV à la Forge. */
+    public static final RegistryObject<Item> RIFT_SHARD = ITEMS.register("rift_shard",
+            () -> new com.wavesurvivor.item.RiftShardItem(new Item.Properties()));
     public static final RegistryObject<Item> RELIQUAIRE_SCELLE = ITEMS.register("reliquaire_scelle",
             () -> new com.wavesurvivor.item.RelicCacheItem(new Item.Properties()));
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
@@ -506,6 +509,7 @@ public class ModItems {
                         output.accept(SERAPH_BOOTS.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
+                        output.accept(RIFT_SHARD.get());
                         output.accept(SIEGE_CATAPULT_ITEM.get());
                         output.accept(SIEGE_BALLISTA_ITEM.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());

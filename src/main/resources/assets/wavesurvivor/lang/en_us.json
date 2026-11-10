@@ -212,5 +212,6 @@
   "block.wavesurvivor.rift_vein_teal": "Rift Vein (Teal)",
   "block.wavesurvivor.rift_vein_violet": "Rift Vein (Violet)",
   "item.wavesurvivor.siege_catapult": "Siege Catapult Tower",
-  "item.wavesurvivor.siege_ballista": "Celestial Siege Ballista"
+  "item.wavesurvivor.siege_ballista": "Celestial Siege Ballista",
+  "item.wavesurvivor.rift_shard": "Rift Shard"
 }

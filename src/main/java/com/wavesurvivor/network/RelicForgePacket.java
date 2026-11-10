@@ -48,6 +48,10 @@ public class RelicForgePacket {
                     catch (IllegalArgumentException ignored) {}
                     RenaissanceManager.sendState(p, false, 3, false);
                 }
+                case "riftnode" -> {   // 2.0 : nœud suivant de l'Héritage de la Faille
+                    com.wavesurvivor.horde.renaissance.RiftLegacy.buy(p);
+                    RenaissanceManager.sendState(p, false, 4, false);
+                }
                 case "rebirth" -> {
                     com.wavesurvivor.horde.renaissance.Heritage.rebirth(p);
                     RenaissanceManager.sendState(p, false, 3, false);

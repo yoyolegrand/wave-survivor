@@ -120,16 +120,21 @@ public class RelicEffects {
     public static int levelOf(ItemStack st) {
         if (st == null || st.isEmpty() || !st.hasTag()) return 1;
         int l = st.getTag().getInt(LEVEL_TAG);
-        return Math.max(1, Math.min(3, l == 0 ? 1 : l));
+        return Math.max(1, Math.min(4, l == 0 ? 1 : l));
     }
 
     public static void setLevel(ItemStack st, int lvl) {
-        st.getOrCreateTag().putInt(LEVEL_TAG, Math.max(1, Math.min(3, lvl)));
+        st.getOrCreateTag().putInt(LEVEL_TAG, Math.max(1, Math.min(4, lvl)));
     }
 
-    /** Multiplicateur d'effet selon le niveau : I = ×1, II = ×1,5, III = ×2. */
+    /** Multiplicateur d'effet selon le niveau : I = ×1, II = ×1,5, III = ×2, IV (Éclat de Faille) = ×2,5. */
     public static float mult(int lvl) {
-        return lvl >= 3 ? 2f : lvl == 2 ? 1.5f : 1f;
+        return lvl >= 4 ? 2.5f : lvl == 3 ? 2f : lvl == 2 ? 1.5f : 1f;
+    }
+
+    /** Chiffre romain d'un niveau de relique. */
+    public static String roman(int lvl) {
+        return lvl >= 4 ? "IV" : lvl == 3 ? "III" : lvl == 2 ? "II" : "I";
     }
 
     private static Method findCurios, slotStack;

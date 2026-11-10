@@ -212,5 +212,6 @@
   "block.wavesurvivor.rift_vein_teal": "Veine de faille (turquoise)",
   "block.wavesurvivor.rift_vein_violet": "Veine de faille (violette)",
   "item.wavesurvivor.siege_catapult": "Tour-catapulte de siège",
-  "item.wavesurvivor.siege_ballista": "Baliste céleste de siège"
+  "item.wavesurvivor.siege_ballista": "Baliste céleste de siège",
+  "item.wavesurvivor.rift_shard": "Éclat de Faille"
 }

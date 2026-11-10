@@ -30,7 +30,8 @@ public final class RelicFusions {
 
     /** Niveau auquel une légendaire de niveau {@code legendaryLevel} fait agir ses deux reliques d'origine : II au niveau I, III ensuite. */
     public static int parentLevel(int legendaryLevel) {
-        return Math.min(3, PARENT_LEVEL + Math.max(1, legendaryLevel) - 1);
+        // légendaire IV (Éclats de Faille) : ses deux reliques d'origine agissent au niveau IV
+        return legendaryLevel >= 4 ? 4 : Math.min(3, PARENT_LEVEL + Math.max(1, legendaryLevel) - 1);
     }
 
     /** Une recette : identifiant, les deux reliques à fusionner, la légendaire obtenue. */

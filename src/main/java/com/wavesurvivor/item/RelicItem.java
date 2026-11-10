@@ -79,14 +79,14 @@ public class RelicItem extends Item {
     public Component getName(ItemStack stack) {
         int lvl = RelicEffects.levelOf(stack);
         Component base = super.getName(stack);
-        return lvl <= 1 ? base : Component.empty().append(base).append(lvl == 2 ? " II" : " III");
+        return lvl <= 1 ? base : Component.empty().append(base).append(" " + RelicEffects.roman(lvl));
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.literal(WSLang.t(title)).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
         int lvl = RelicEffects.levelOf(stack);
-        if (lvl > 1) tooltip.add(Component.literal(WSLang.t("relic.level", lvl == 2 ? "II" : "III", lvl == 2 ? "×1,5" : "×2")).withStyle(ChatFormatting.AQUA));
+        if (lvl > 1) tooltip.add(Component.literal(WSLang.t("relic.level", RelicEffects.roman(lvl), lvl == 2 ? "×1,5" : lvl == 3 ? "×2" : "×2,5")).withStyle(ChatFormatting.AQUA));
         for (String e : effectTexts(lvl)) tooltip.add(Component.literal("✦ " + e).withStyle(ChatFormatting.LIGHT_PURPLE));
         appendDetails(stack, tooltip);
         tooltip.add(Component.literal(WSLang.t("relic.active_in", WSLang.t(slot))).withStyle(ChatFormatting.GRAY));
