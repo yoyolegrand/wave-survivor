@@ -550,8 +550,7 @@ final class RiftFortress {
         TARGETS.put(e.getUUID(), new float[]{hp, hp});
         LABELS.put(e.getUUID(), label);
         if (catalyst) CHAINS.put(e.getUUID(), 0);
-        // Repérable de loin : faisceau vertical (rayon de cristal de l'End) et contour lumineux visible à travers les murs
-        e.setBeamTarget(BlockPos.containing(x, y + 70, z));
+        // Repérable de loin : contour lumineux visible à travers les murs (pas de faisceau : il cachait la barre de PV)
         e.setGlowingTag(true);
         refreshName(e);
         l.addFreshEntity(e);

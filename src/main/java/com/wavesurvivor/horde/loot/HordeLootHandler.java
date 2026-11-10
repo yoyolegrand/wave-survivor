@@ -34,6 +34,20 @@ public class HordeLootHandler {
         if (boss != null && loot != null && !loot.isEmpty()) BOSS_LOOT.put(boss.getUUID(), loot);
     }
 
+    /**
+     * Correctif de plantage (ConcurrentModificationException dans GoalSelector) : un squelette de la horde tué PENDANT son propre tour d'IA
+     * (dégâts renvoyés, magie…) lâche son arme → le jeu vide sa main (setItemSlot) → le squelette recalcule ses objectifs d'attaque
+     * (reassessWeaponGoal) alors qu'ils sont en cours de parcours. Les monstres de la horde ne lâchent donc pas leur équipement :
+     * leur butin vient des tables de la horde.
+     */
+    @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST)
+    public void onHordeMobDeath(net.minecraftforge.event.entity.living.LivingDeathEvent event) {
+        if (event.isCanceled() || event.getEntity().level().isClientSide) return;
+        if (!(event.getEntity() instanceof net.minecraft.world.entity.monster.AbstractSkeleton sk)) return;
+        if (MobRegistry.get(sk.getUUID()) == null && !com.wavesurvivor.horde.rift.RiftManager.isActive()) return;
+        for (net.minecraft.world.entity.EquipmentSlot slot : net.minecraft.world.entity.EquipmentSlot.values()) sk.setDropChance(slot, 0f);
+    }
+
     @SubscribeEvent
     public void onLivingDrops(LivingDropsEvent event) {
         LivingEntity entity = event.getEntity();
