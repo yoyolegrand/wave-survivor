@@ -370,3 +370,7 @@ Test rapide (dans la dimension de la Faille : `/ws rift open` puis `/ws rift ent
 - [ ] Arcaniste : +50 % de dégâts aux catalyseurs (Faille ET Kingdom) ; la fiche du rôle l'indique
 - [ ] Catalyseur de la Faille détruit : XP de Maîtrise de l'Arcaniste (« catalyseur fermé ») + ses talents (bouclier, recul, foudre) ; set Abîme 2 → +1 Essence au joueur qui l'achève
 - [ ] Set Abîme 3 (Sang de faille) actif près d'un catalyseur de la Faille
+
+## Citadelle : entrée du donjon, portail intérieur
+- [ ] Citadelle : l'entrée du donjon (vers le cœur et le portail) se monte en survie, marche par marche (plus de rebord de 2 blocs)
+- [ ] Entrer dans le portail du fond de la forteresse (pendant la partie) ramène sur l'île près du Monolithe ; en fin de partie, le portail de sortie renvoie chez soi

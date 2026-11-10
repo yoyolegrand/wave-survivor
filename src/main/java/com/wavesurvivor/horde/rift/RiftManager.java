@@ -1512,6 +1512,34 @@ public final class RiftManager {
         }
     }
 
+    /** Dernier passage par un portail de la Faille (anti-rebond : un seul voyage par seconde et demie). */
+    private static final Map<UUID, Long> PORTAL_CD = new HashMap<>();
+
+    /** Un joueur touche un portail DANS la Faille : sortie en fin de partie, sinon retour sur l'île près du Monolithe. */
+    public static void portalTouch(ServerPlayer p) {
+        if (!active || p.isSpectator() || !p.isAlive()) return;
+        long now = p.getServer().getTickCount();
+        Long last = PORTAL_CD.get(p.getUUID());
+        if (last != null && now - last < 30) return;
+        PORTAL_CD.put(p.getUUID(), now);
+        if (exitOpen()) sendHome(p);
+        else backToMonolith(p);
+    }
+
+    /** Filet de sécurité : un joueur dont les pieds ou la tête sont dans un bloc de portail le traverse, même si le jeu n'a pas signalé le contact. */
+    private static void portalScan(ServerLevel rd) {
+        var portal = com.wavesurvivor.registry.ModBlocks.RIFT_PORTAL.get();
+        for (ServerPlayer p : new ArrayList<>(rd.players())) {
+            if (p.isSpectator() || !p.isAlive()) continue;
+            net.minecraft.world.phys.AABB b = p.getBoundingBox().inflate(0.05);
+            boolean in = false;
+            for (BlockPos q : BlockPos.betweenClosed(BlockPos.containing(b.minX, b.minY, b.minZ), BlockPos.containing(b.maxX, b.maxY, b.maxZ))) {
+                if (rd.getBlockState(q).is(portal)) { in = true; break; }
+            }
+            if (in) portalTouch(p);
+        }
+    }
+
     /** Portail touché dans la Faille pendant la partie : le joueur revient sur l'île, près du Monolithe. */
     public static void backToMonolith(ServerPlayer p) {
         if (!active || !(p.level() instanceof ServerLevel rd)) return;
@@ -1573,6 +1601,10 @@ public final class RiftManager {
                 DUE_KEYS.remove(i);
                 try { r.run(); } catch (Exception ex) { WaveSurvivorMod.LOGGER.warn("[Faille] Tâche différée : {}", ex.getMessage()); }
             }
+        }
+        if (now % 4 == 0) {
+            ServerLevel prd = server.getLevel(RIFT_DIM);
+            if (prd != null) portalScan(prd);
         }
         if (now % 10 != 0) return;
         ServerLevel rd = server.getLevel(RIFT_DIM);
