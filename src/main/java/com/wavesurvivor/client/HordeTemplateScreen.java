@@ -18,7 +18,7 @@ import java.util.List;
 public class HordeTemplateScreen extends Screen {
 
     private static final int PANEL_W = 360, CARD_W = 168, CARD_H = 70;
-    private static final String[] ICONS = {"⚔", "🏰", "♛", "🔔", "📄"};
+    private static final String[] ICONS = {"⚔", "🏰", "♛", "🔔", "🌀", "📄"};
     private final HordeEditorListScreen parent;
     private int left, top;
 

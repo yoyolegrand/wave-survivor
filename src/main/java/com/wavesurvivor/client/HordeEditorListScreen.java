@@ -23,18 +23,18 @@ public class HordeEditorListScreen extends Screen {
     private static final int ROW_H = 24;
     /** Début de la liste (sous la barre d'onglets). */
     private static final int LIST_Y = 76;
-    private static final String[] TAB_KEYS = {"waves", "kingdom", "invasion"};
+    private static final String[] TAB_KEYS = {"waves", "kingdom", "invasion", "rift"};
     /** Onglet affiché (gardé d'une ouverture à l'autre). */
     private static String tabMode = "waves";
 
     /** Choisit l'onglet à afficher à la prochaine ouverture (après avoir enregistré une horde : son onglet). */
     public static void focusMode(String mode) {
-        tabMode = mode != null && (mode.equals("kingdom") || mode.equals("invasion")) ? mode : "waves";
+        tabMode = mode != null && (mode.equals("kingdom") || mode.equals("invasion") || mode.equals("rift")) ? mode : "waves";
     }
 
     private static String modeOf(HordeEditorPackets.Entry e) {
         String m = e.mode() == null ? "waves" : e.mode().toLowerCase();
-        return m.equals("kingdom") || m.equals("invasion") ? m : "waves";
+        return m.equals("kingdom") || m.equals("invasion") || m.equals("rift") ? m : "waves";
     }
 
     final List<HordeEditorPackets.Entry> entries;
@@ -85,7 +85,7 @@ public class HordeEditorListScreen extends Screen {
 
         // Onglets : Hordes / Kingdom / Invasions (une horde enregistrée se range d'elle-même dans le bon onglet)
         String[] tabNames = {com.wavesurvivor.i18n.WSLang.t("cfg.tab_hordes"), com.wavesurvivor.i18n.WSLang.t("cfg.tab_kingdom"),
-                com.wavesurvivor.i18n.WSLang.t("cfg.tab_invasions")};
+                com.wavesurvivor.i18n.WSLang.t("cfg.tab_invasions"), com.wavesurvivor.i18n.WSLang.t("cfg.tab_rift")};
         for (int t = 0; t < TAB_KEYS.length; t++) {
             final String key = TAB_KEYS[t];
             boolean sel = key.equals(tabMode);
@@ -95,7 +95,7 @@ public class HordeEditorListScreen extends Screen {
                 pendingDelete = null;
                 pendingRevert = null;
                 init();
-            }).bounds(left + 8 + t * 120, top + 50, 116, 18).build());
+            }).bounds(left + 8 + t * 92, top + 50, 89, 18).build());
         }
 
         // Nouvelle horde : choix d'un modèle de départ (Classique courte / longue, Kingdom, Vide)

@@ -12,7 +12,7 @@ public final class HordeTemplates {
 
     private HordeTemplates() {}
 
-    public static final String[] IDS = {"short", "long", "kingdom", "invasion", "empty"};
+    public static final String[] IDS = {"short", "long", "kingdom", "invasion", "rift", "empty"};
 
     /** Construit la horde du modèle {@code id} avec le nom donné. */
     public static JsonObject build(String id, String name) {
@@ -21,6 +21,7 @@ public final class HordeTemplates {
             case "long" -> classicLong(name);
             case "kingdom" -> kingdom(name);
             case "invasion" -> invasion(name);
+            case "rift" -> rift(name);
             default -> HordeJson.newHorde(name);
         };
     }
@@ -106,6 +107,21 @@ public final class HordeTemplates {
         JsonObject cd = HordeJson.obj(h, "configData");
         cd.addProperty("totalWaves", waves);
         cd.addProperty("delayBetweenWaves", delay);
+        return h;
+    }
+
+    // ─── La Faille (2.0) : mode Faille, monstres vanilla pour chaque phase (à personnaliser par phase dans l'éditeur) ───
+
+    private static JsonObject rift(String name) {
+        JsonObject h = base(name, "tpl.rift.hdesc", 5, 25);
+        JsonObject cd = HordeJson.obj(h, "configData");
+        cd.addProperty("mode", "rift");
+        cd.addProperty("spawnRadius", 14);
+        cd.add("rift", new JsonObject());
+        JsonArray mobs = HordeJson.arr(cd, "hordeEntities");
+        mobs.add(mob("minecraft:zombie", n("zombie"), 5, 3, 26, 3, 0.26, 0, 0, null, 100));
+        mobs.add(mob("minecraft:skeleton", n("skeleton"), 3, 2, 22, 3, 0.25, 2, 0, "minecraft:bow", 100));
+        mobs.add(mob("minecraft:spider", n("spider"), 2, 2, 20, 3, 0.32, 3, 0, null, 100));
         return h;
     }
 

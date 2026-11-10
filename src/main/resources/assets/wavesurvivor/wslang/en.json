@@ -4234,7 +4234,7 @@
   "craft.block.bait_totem": "§7Right click: lures monsters within 64 blocks for 30 s (not bosses)\n§c60 s cooldown",
   "craft.block.profane_obelisk": "§7Monsters within 12 blocks: 1 damage per second\n§cPlayers within 12 blocks: Hunger",
   "craft.block.blood_altar": "§7Right click: sacrifice 4 hearts for experience\n§c30 s cooldown",
-  "craft.item.dawn_blade": "§7Netherite-tier damage (8)\n§7+50% against undead and the Corrupted\n§7Glows at night\n§eConsecrated: can be upgraded with grace fragments",
+  "craft.item.dawn_blade": "§7Netherite-tier damage (8)\n§7+50% against undead and the Corrupted\n§7Killing an undead: Strength I for 5 s\n§7Glows at night\n§eConsecrated: can be upgraded with grace fragments",
   "craft.item.blessed_arrow": "§7Sets undead and the Corrupted ablaze and knocks them back",
   "craft.item.grace_totem": "§7Held in hand, replaces death (like a totem of undying)\n§7Also heals allies within 6 blocks (4 hearts)",
   "craft.item.taint_scythe": "§7Damage: 9 (1 more than the Dawnblade)\n§7Area weapon (wide sweep), 5% life steal\n§cA missed swing costs 1 heart\n§dProfaned: can be upgraded with taint fragments",
@@ -4825,6 +4825,22 @@
   "ui.rift.fcine_title": "Title",
   "ui.rift.sec_fcine": "Fortress cinematic",
   "ui.rift.emerald_min": "Emeralds per monster: min",
-  "ui.rift.emerald_max": "Emeralds per monster: max"
-
-§7Killing an undead: Strength I for 5 s}
+  "ui.rift.emerald_max": "Emeralds per monster: max",
+  "ui.rift.ph_horde": "Horde",
+  "ui.rift.ph_siege": "Siege",
+  "ui.rift.ph_counter": "Counter-attack",
+  "ui.rift.ph_titan": "Titan",
+  "ui.rift.special_chance_0": "Chance a wave is special (Horde):",
+  "ui.rift.special_chance_1": "Chance a Siege assault is special:",
+  "ui.rift.special_chance_2": "Chance of a special group per broken chain:",
+  "ui.rift.special_chance_3": "Chance of a special group per Titan wave:",
+  "ui.rift.boss_hint_0": "§7\"Wave\" = Horde wave number",
+  "ui.rift.boss_hint_1": "§7\"Wave\" = Siege assault number",
+  "ui.rift.boss_hint_2": "§7\"Wave\" = 1 to 3: chain broken (1st, 2nd, 3rd)",
+  "ui.rift.boss_hint_3": "§7\"Wave\" = n-th bridge wave (Titan)",
+  "rift.special_group": "Special group: {0}",
+  "cfg.tab_rift": "Rift",
+  "tpl.rift": "The Rift",
+  "tpl.rift.desc": "Portal to a floating island: Horde, Siege (Kingdom engine), Counter-attack, then the Titan. Monsters set per phase.",
+  "tpl.rift.hdesc": "A Rift opens: survive the Horde, the Siege, the Counter-attack and the Titan."
+}

@@ -3,7 +3,7 @@
   "hordes": [
     {
       "hordeName": "La Faille",
-      "hordeDescription": "Un portail s'ouvre vers une dimension de nuit éternelle : une horde vous attend sur une île flottante. (2.0 en construction : phase Horde jouable, Siège et Titan à venir.)",
+      "hordeDescription": "Un portail s'ouvre vers une dimension de nuit éternelle : survivez à la Horde sur l'île flottante, tenez le Siège de la forteresse, lancez la Contre-offensive, puis affrontez le Titan.",
       "configData": {
         "totalWaves": 5,
         "delayBetweenWaves": 25,
@@ -137,6 +137,120 @@
               "healthMultiplier": 0.1,
               "damageMultiplier": 0.1
             }
+          },
+          {
+            "entity_type": "wavesurvivor:rootling",
+            "custom_name": "§5Rootling de la Faille",
+            "base_count": 3,
+            "count_increment": 2,
+            "max_health": 14,
+            "attack_damage": 4,
+            "movement_speed": 0.36,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:stick",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 60
+              },
+              {
+                "item": "minecraft:amethyst_shard",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 25
+              },
+              {
+                "item": "wavesurvivor:taint_shard",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 12
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "wavesurvivor:stone_brute",
+            "custom_name": "§5Brute de pierre de la Faille",
+            "base_count": 1,
+            "count_increment": 1,
+            "max_health": 90,
+            "attack_damage": 12,
+            "movement_speed": 0.25,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:cobblestone",
+                "minQty": 2,
+                "maxQty": 5,
+                "chance": 60
+              },
+              {
+                "item": "minecraft:iron_nugget",
+                "minQty": 2,
+                "maxQty": 5,
+                "chance": 35
+              },
+              {
+                "item": "wavesurvivor:taint_shard",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 20
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 3,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "wavesurvivor:neantide",
+            "custom_name": "§5Néantide de la Faille",
+            "base_count": 1,
+            "count_increment": 1,
+            "max_health": 40,
+            "attack_damage": 7,
+            "movement_speed": 0.3,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:ender_pearl",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 25
+              },
+              {
+                "item": "minecraft:amethyst_shard",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 50
+              },
+              {
+                "item": "wavesurvivor:taint_shard",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 25
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 4,
+            "max_wave": 0
           }
         ],
         "useSpecialWaves": false,

@@ -130,6 +130,15 @@ final class RiftGate {
 
     boolean isOpen() { return open; }
 
+    /** Point d'arrivée sûr au retour : devant la façade (côté autel), sur le sol, hors de l'ovale (qui se referme en pierre). */
+    BlockPos frontSpot() {
+        BlockPos f = w(0, 0, -9);
+        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, f.getX(), f.getZ());
+        return new BlockPos(f.getX(), y - 1, f.getZ());
+    }
+
+    ServerLevel gateLevel() { return level; }
+
     boolean isRunning() { return running; }
 
     // ─── Géométrie ───

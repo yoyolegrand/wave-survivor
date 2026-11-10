@@ -189,9 +189,30 @@ public class HordeEditorScreen extends Screen {
     // ─── Accès JSON ───
 
     private JsonObject cd() { return HordeJson.obj(horde, "configData"); }
-    private JsonArray mobs() { return HordeJson.arr(cd(), "hordeEntities"); }
-    private JsonArray specials() { return HordeJson.arr(cd(), "specialWaves"); }
-    private JsonArray bosses() { return HordeJson.arr(cd(), "bossWaves"); }
+    private JsonArray mobs() { return HordeJson.arr(cd(), rift() ? RIFT_ENT[riftPhase] : "hordeEntities"); }
+    private JsonArray specials() { return HordeJson.arr(cd(), rift() ? RIFT_SPECIAL[riftPhase] : "specialWaves"); }
+    private JsonArray bosses() { return HordeJson.arr(cd(), rift() ? RIFT_BOSS[riftPhase] : "bossWaves"); }
+
+    /** 2.0 — Faille : phase éditée dans les onglets Mobs / Spéciales / Boss (0 Horde, 1 Siège, 2 Contre-offensive, 3 Titan). */
+    private static int riftPhase = 0;
+    private static final String[] RIFT_ENT = {"hordeEntities", "siegeEntities", "counterEntities", "titanEntities"};
+    private static final String[] RIFT_SPECIAL = {"specialWaves", "siegeSpecialWaves", "counterSpecialWaves", "titanSpecialWaves"};
+    private static final String[] RIFT_BOSS = {"bossWaves", "siegeBossWaves", "counterBossWaves", "titanBossWaves"};
+    private static final String[] RIFT_PH = {"", "siege", "counter", "titan"};
+
+    /** Rangée de 4 sous-onglets (Horde / Siège / Contre-offensive / Titan) en haut des onglets Mobs, Spéciales et Boss du mode Faille. */
+    private void riftPhaseRow(int y) {
+        String[] keys = {"ui.rift.ph_horde", "ui.rift.ph_siege", "ui.rift.ph_counter", "ui.rift.ph_titan"};
+        int x = listX();
+        for (int i = 0; i < 4; i++) {
+            final int ph = i;
+            button(x + i * 104, y, 100, (riftPhase == i ? "§e§l" : "§7") + t(keys[i]), () -> {
+                riftPhase = ph;
+                selMob = selSpecial = selSpecialEnt = selBoss = -1;
+                init();
+            });
+        }
+    }
     private JsonArray merchants() { return HordeJson.arr(cd(), "merchants"); }
     private JsonArray pauses() { return HordeJson.arr(cd(), "wavePauses"); }
     private JsonArray chaosEvents() { return HordeJson.arr(cd(), "chaosEvents"); }
@@ -856,6 +877,7 @@ public class HordeEditorScreen extends Screen {
         fl(t("ui.force_end_hint"));
         y += 20;
         // Prix de consolation en cas de défaite (-1 = réglage général)
+        if (!rift()) {
         flow(x, y);
         fl(t("ui.consolation"));
         fInt(30, HordeJson.num(cd, "consolationPercent", -1), v -> cd.addProperty("consolationPercent", Math.max(-1, Math.min(100, v))));
@@ -870,6 +892,7 @@ public class HordeEditorScreen extends Screen {
             y += 12;
         }
         y += 8;
+        }
         // Bouton « Prêt » pendant les pauses (pas en Kingdom : le Calme a sa propre logique)
         if (!kingdom()) {
             JsonObject rd = HordeJson.obj(cd, "ready");
@@ -899,7 +922,7 @@ public class HordeEditorScreen extends Screen {
             y += 20;
         }
         // Bonus si la vague est nettoyée avant la fin du décompte
-        {
+        if (!rift()) {
             JsonObject fb = HordeJson.obj(cd, "forceEndBonus");
             flow(x, y);
             fl(t("ui.force_end_bonus"));
@@ -919,6 +942,7 @@ public class HordeEditorScreen extends Screen {
             y += 20;
         }
         if (!kingdom()) {
+        if (!rift()) {
         flow(x, y);
         fl(com.wavesurvivor.i18n.WSLang.t("ui.rayon_de_game_over"));
         fInt(44, HordeJson.num(cd, "gameOverRadius", 0), v -> cd.addProperty("gameOverRadius", Math.max(0, v)));
@@ -931,6 +955,7 @@ public class HordeEditorScreen extends Screen {
         fInt(24, HordeJson.num(cd, "raidRadius", 18), v -> cd.addProperty("raidRadius", Math.max(10, Math.min(40, v))));
         fl(t("ui.raid_hint_classic"));
         y += 20;
+        }
         flow(x, y);
         fl(com.wavesurvivor.i18n.WSLang.t("ui.spawn_batch"));
         fInt(26, HordeJson.num(cd, "spawnBatchSize", 5), v -> cd.addProperty("spawnBatchSize", Math.max(0, v)));
@@ -1147,6 +1172,7 @@ public class HordeEditorScreen extends Screen {
 
     private void buildMobs() {
         int ly = top + 46;
+        if (rift()) { riftPhaseRow(top + 44); ly = top + 68; }
         mobList.place(listX(), ly, 134, rowsFrom(ly));
         int by = mobList.bottom() + 4, bx = listX();
         button(bx, by, 22, "§a+", () -> { mobs().add(HordeJson.newMob()); selMob = mobs().size() - 1; changed(); init(); });
@@ -1252,7 +1278,7 @@ public class HordeEditorScreen extends Screen {
         }
         y += 18;
         // Mode Kingdom : Gardien des Portes + rôle de siège (Bélier / Sapeur / Grimpeur)
-        if (isMob && kingdom()) {
+        if (isMob && (kingdom() || (rift() && riftPhase == 1))) {
             flow(x, y);
             boolean isGuardian = HordeJson.bool(m, "kingdom_guardian", false);
             fBtn(74, (isGuardian ? "§6§l⛨ " : "§8⛨ ") + com.wavesurvivor.i18n.WSLang.t("ui.kgd.guardian"), () -> {
@@ -1522,10 +1548,16 @@ public class HordeEditorScreen extends Screen {
     private void buildSpecials() {
         JsonObject cd = cd();
         int y0 = top + 46;
-        toggle(listX(), y0, 134, com.wavesurvivor.i18n.WSLang.t("ui.speciales_5feb"), cd, "useSpecialWaves", false);
-        label(detailX(), y0 + 4, kt("ui.chance_qu_une_vague_soit_speciale", "ui.kgd.special_chance"));
-        intBox(detailX() + 176, y0 + 1, 26, HordeJson.num(cd, "specialWaveChance", 35),
-                v -> cd.addProperty("specialWaveChance", Math.max(0, Math.min(100, v))));
+        if (rift()) { riftPhaseRow(top + 44); y0 = top + 68; }
+        // Faille : la Horde garde ses réglages ; les autres phases ont les leurs (objet « rift »)
+        boolean phased = rift() && riftPhase > 0;
+        JsonObject spTgt = phased ? HordeJson.obj(cd, "rift") : cd;
+        String spOn = phased ? RIFT_PH[riftPhase] + "SpecialOn" : "useSpecialWaves";
+        String spCh = phased ? RIFT_PH[riftPhase] + "SpecialChance" : "specialWaveChance";
+        toggle(listX(), y0, 134, com.wavesurvivor.i18n.WSLang.t("ui.speciales_5feb"), spTgt, spOn, false);
+        label(detailX(), y0 + 4, rift() ? t("ui.rift.special_chance_" + riftPhase) : kt("ui.chance_qu_une_vague_soit_speciale", "ui.kgd.special_chance"));
+        intBox(detailX() + 176, y0 + 1, 26, HordeJson.num(spTgt, spCh, 35),
+                v -> spTgt.addProperty(spCh, Math.max(0, Math.min(100, v))));
         label(detailX() + 206, y0 + 4, "%");
 
         int ly = y0 + 22;
@@ -2233,9 +2265,13 @@ public class HordeEditorScreen extends Screen {
     private void buildBosses() {
         JsonObject cd = cd();
         int y0 = top + 46;
-        toggle(listX(), y0, 134, com.wavesurvivor.i18n.WSLang.t("ui.boss_d908"), cd, "useBossWaves", false);
-        if (!invasion()) button(detailX(), y0, 150, bossRushView ? t("ui.br.back") : t("ui.br.btn"), () -> { bossRushView = !bossRushView; if (bossRushView) endlessView = false; init(); });
-        if (!kingdom() && !invasion()) button(detailX() + 154, y0, 130, endlessView ? t("ui.br.back") : t("ui.en.btn"), () -> { endlessView = !endlessView; if (endlessView) bossRushView = false; init(); });
+        if (rift()) { riftPhaseRow(top + 44); y0 = top + 68; }
+        boolean bPhased = rift() && riftPhase > 0;
+        toggle(listX(), y0, 134, com.wavesurvivor.i18n.WSLang.t("ui.boss_d908"), bPhased ? HordeJson.obj(cd, "rift") : cd,
+                bPhased ? RIFT_PH[riftPhase] + "BossOn" : "useBossWaves", false);
+        if (rift()) label(detailX(), y0 + 4, t("ui.rift.boss_hint_" + riftPhase));
+        if (!invasion() && !rift()) button(detailX(), y0, 150, bossRushView ? t("ui.br.back") : t("ui.br.btn"), () -> { bossRushView = !bossRushView; if (bossRushView) endlessView = false; init(); });
+        if (!kingdom() && !invasion() && !rift()) button(detailX() + 154, y0, 130, endlessView ? t("ui.br.back") : t("ui.en.btn"), () -> { endlessView = !endlessView; if (endlessView) bossRushView = false; init(); });
         if (kingdom()) label(detailX() + 156, y0 + 4, com.wavesurvivor.i18n.WSLang.t("ui.kgd.boss_hint"));
         int ly = y0 + 22;
         bossList.place(listX(), ly, 134, rowsFrom(ly));
@@ -2281,11 +2317,11 @@ public class HordeEditorScreen extends Screen {
             init();
         }).active = b != null;
 
-        if (bossRushView && !invasion()) {
+        if (bossRushView && !invasion() && !rift()) {
             buildBossRushSettings(detailX(), ly);
             return;
         }
-        if (endlessView && !kingdom() && !invasion()) {
+        if (endlessView && !kingdom() && !invasion() && !rift()) {
             buildEndlessSettings(detailX(), ly);
             return;
         }
@@ -4618,7 +4654,7 @@ public class HordeEditorScreen extends Screen {
             status = com.wavesurvivor.i18n.WSLang.t("ui.modifications_non_enregistrees_fermer_a");
             return;
         }
-        HordeEditorListScreen.focusMode(invasion() ? "invasion" : kingdom() ? "kingdom" : "waves");
+        HordeEditorListScreen.focusMode(rift() ? "rift" : invasion() ? "invasion" : kingdom() ? "kingdom" : "waves");
         NetworkHandler.CHANNEL.sendToServer(new HordeEditorPackets.Request("", HordeEditorPackets.PURPOSE_LIST));
         sendPresence(false);
         if (ACTIVE == this) ACTIVE = null;

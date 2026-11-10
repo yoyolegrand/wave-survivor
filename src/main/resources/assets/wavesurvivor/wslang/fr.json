@@ -4064,5 +4064,22 @@
   "ui.rift.fcine_title": "Titre",
   "ui.rift.sec_fcine": "Cinématique de la forteresse",
   "ui.rift.emerald_min": "Émeraudes/monstre : min",
-  "ui.rift.emerald_max": "Émeraudes/monstre : max"
+  "ui.rift.emerald_max": "Émeraudes/monstre : max",
+  "ui.rift.ph_horde": "Horde",
+  "ui.rift.ph_siege": "Siège",
+  "ui.rift.ph_counter": "Contre-offensive",
+  "ui.rift.ph_titan": "Titan",
+  "ui.rift.special_chance_0": "Chance qu’une vague soit spéciale (Horde) :",
+  "ui.rift.special_chance_1": "Chance qu’un Assaut du Siège soit spécial :",
+  "ui.rift.special_chance_2": "Chance d’un groupe spécial à chaque chaîne brisée :",
+  "ui.rift.special_chance_3": "Chance d’un groupe spécial à chaque vague du Titan :",
+  "ui.rift.boss_hint_0": "§7« Vague » = numéro de la vague de la Horde",
+  "ui.rift.boss_hint_1": "§7« Vague » = numéro de l’Assaut du Siège",
+  "ui.rift.boss_hint_2": "§7« Vague » = 1 à 3 : chaîne brisée (1re, 2e, 3e)",
+  "ui.rift.boss_hint_3": "§7« Vague » = n-ième vague du pont (Titan)",
+  "rift.special_group": "Groupe spécial : {0}",
+  "cfg.tab_rift": "Faille",
+  "tpl.rift": "La Faille",
+  "tpl.rift.desc": "Portail vers une île flottante : Horde, Siège (moteur du Kingdom), Contre-offensive, puis le Titan. Monstres réglables par phase.",
+  "tpl.rift.hdesc": "Une Faille s’ouvre : survivez à la Horde, au Siège, à la Contre-offensive et au Titan."
 }

@@ -281,3 +281,13 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Faille : chaque monstre tué (Horde, Siège, Contre-offensive, vagues du Titan) lâche 1 à 2 émeraudes, et elles se convertissent en pièces du Kingdom au ramassage
 - [ ] Éditeur de la Faille, page Météores : « Émeraudes/monstre » min / max réglables (0 = aucune)
 - [ ] Lame de l'aube : tuer un mort-vivant au corps à corps donne Force I pendant 5 s (pas pour les autres monstres, ni à l'arc)
+
+## Éditeur de la Faille par phase, retour du portail, Corrompus
+- [ ] Liste de l'éditeur : 4e onglet « Faille » ; « Nouvelle horde » propose le modèle « La Faille » ; une horde en mode Faille se range dans cet onglet
+- [ ] Éditeur en mode Faille, onglet Général : plus de consolation / bonus de fin de vague / rayon de game over / arène ; le bouton de mode en bas est visible
+- [ ] Onglets Mobs, Spéciales, Boss : 4 sous-onglets Horde / Siège / Contre-offensive / Titan, chacun avec sa propre liste
+- [ ] Siège : les monstres du sous-onglet « Siège » sortent aux Assauts (liste vide = ceux de la Horde) ; rôles (Bélier, Sapeur…) disponibles
+- [ ] Contre-offensive : gardiens des catalyseurs et renforts tirés du sous-onglet « Contre-offensive » ; groupe spécial / boss (Vague 1 à 3) à chaque chaîne brisée si activés
+- [ ] Titan : vagues du pont tirées du sous-onglet « Titan » ; groupe spécial / boss (Vague = n-ième vague) si activés
+- [ ] Horde « La Faille » par défaut : Rootling (vague 2), Brute de pierre (3), Néantide (4) ; drops : bâtons / pierre / perles… + éclats de souillure ; émeraudes ajoutées par la Faille
+- [ ] Retour de la Faille (portail de sortie ou fin) : on arrive devant le portail, jamais dans l'ovale refermé (pas d'étouffement)

@@ -166,6 +166,20 @@ public class HordeConfigMultiData {
         @SerializedName("hordeEntities")
         public List<HordeEntity> hordeEntities;
 
+        /**
+         * 2.0 — La Faille : monstres, vagues spéciales et boss propres à chaque phase (vides ou absents = ceux de la Horde).
+         * Siège = moteur du Kingdom (Assauts), Contre-offensive = gardiens des catalyseurs et renforts, Titan = vagues du pont.
+         */
+        @SerializedName("siegeEntities") public List<HordeEntity> siegeEntities;
+        @SerializedName("counterEntities") public List<HordeEntity> counterEntities;
+        @SerializedName("titanEntities") public List<HordeEntity> titanEntities;
+        @SerializedName("siegeSpecialWaves") public List<SpecialWave> siegeSpecialWaves;
+        @SerializedName("counterSpecialWaves") public List<SpecialWave> counterSpecialWaves;
+        @SerializedName("titanSpecialWaves") public List<SpecialWave> titanSpecialWaves;
+        @SerializedName("siegeBossWaves") public List<BossWave> siegeBossWaves;
+        @SerializedName("counterBossWaves") public List<BossWave> counterBossWaves;
+        @SerializedName("titanBossWaves") public List<BossWave> titanBossWaves;
+
         @SerializedName("useSpecialWaves")
         public boolean useSpecialWaves;
 
@@ -441,6 +455,16 @@ public class HordeConfigMultiData {
         /** Ruines des bâtiments du Kingdom : % des ressources investies à payer pour les réparer. */
         @SerializedName("ruinRepairPercent") public int ruinRepairPercent = 50;
         /** Émeraudes lâchées par chaque monstre tué dans la Faille (monnaie du Kingdom : achats et améliorations). */
+        /** Vagues spéciales / boss par phase (la Horde garde « useSpecialWaves » et « useBossWaves » de l'onglet) : activés + chance (%) par groupe. */
+        @SerializedName("siegeSpecialOn") public boolean siegeSpecialOn = false;
+        @SerializedName("siegeSpecialChance") public int siegeSpecialChance = 35;
+        @SerializedName("siegeBossOn") public boolean siegeBossOn = false;
+        @SerializedName("counterSpecialOn") public boolean counterSpecialOn = false;
+        @SerializedName("counterSpecialChance") public int counterSpecialChance = 35;
+        @SerializedName("counterBossOn") public boolean counterBossOn = false;
+        @SerializedName("titanSpecialOn") public boolean titanSpecialOn = false;
+        @SerializedName("titanSpecialChance") public int titanSpecialChance = 35;
+        @SerializedName("titanBossOn") public boolean titanBossOn = false;
         @SerializedName("emeraldMin") public int emeraldMin = 1;
         @SerializedName("emeraldMax") public int emeraldMax = 2;
         @SerializedName("titanBuildDamage") public int titanBuildDamage = 300;

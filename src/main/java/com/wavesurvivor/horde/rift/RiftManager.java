@@ -365,12 +365,25 @@ public final class RiftManager {
             } catch (Exception ignored) { /* étiquette illisible : point de réapparition */ }
         }
         if (to == null) to = home != null && world != null ? home : dest.getSharedSpawnPos();
+        // Le joueur est entré en touchant l'ovale du portail, qui se referme en pierre : on le ressort devant la façade, jamais dedans
+        if (gate != null && gate.gateLevel() == dest && to.distSqr(gate.origin) <= 20 * 20) to = gate.frontSpot();
+        to = safeSpot(dest, to);
         p.getPersistentData().remove(RETURN_TAG);
         restoreMode(p);
         p.teleportTo(dest, to.getX() + 0.5, to.getY() + 1, to.getZ() + 0.5, p.getYRot(), 0f);
         p.fallDistance = 0;
         p.setDeltaMovement(0, 0, 0);
         p.sendSystemMessage(Component.literal(WSLang.t("rift.left")));
+    }
+
+    /** Évite d'arriver dans un bloc plein : si les pieds ou la tête sont coincés, on remonte à la surface la plus proche. */
+    private static BlockPos safeSpot(ServerLevel l, BlockPos to) {
+        BlockPos feet = to.above(), head = to.above(2);
+        boolean free = l.getBlockState(feet).getCollisionShape(l, feet).isEmpty() && l.getBlockState(head).getCollisionShape(l, head).isEmpty()
+                && l.getBlockState(feet).getFluidState().isEmpty();
+        if (free) return to;
+        int y = l.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, to.getX(), to.getZ());
+        return new BlockPos(to.getX(), y - 1, to.getZ());
     }
 
     // ─── Île ───
@@ -465,15 +478,71 @@ public final class RiftManager {
         if (active) RiftTitan.crystalDown(l);
     }
 
+    /** Monstres d'une phase (« counter », « titan ») : sa liste si elle est renseignée, sinon ceux de la Horde. */
+    static java.util.List<com.wavesurvivor.horde.model.HordeEntity> phaseEntities(String ph) {
+        if (horde == null || horde.configData == null) return null;
+        var cd = horde.configData;
+        var own = ph.equals("counter") ? cd.counterEntities : ph.equals("titan") ? cd.titanEntities : null;
+        if (own != null && !own.isEmpty()) return own;
+        return listsSwapped ? bkEntities : cd.hordeEntities;
+    }
+
+    /** Vague spéciale d'une phase : avec la chance réglée, un groupe prédéfini (composition fixe) surgit en plus. */
+    private static void phaseSpecial(ServerLevel l, String ph, BlockPos at, int radius, int wave) {
+        if (horde == null || horde.configData == null) return;
+        var cd = horde.configData;
+        HordeConfigMultiData.RiftSettings rs = settings();
+        boolean counter = ph.equals("counter");
+        boolean on = counter ? rs.counterSpecialOn : rs.titanSpecialOn;
+        int chance = counter ? rs.counterSpecialChance : rs.titanSpecialChance;
+        var pool = counter ? cd.counterSpecialWaves : cd.titanSpecialWaves;
+        if (!on || pool == null || pool.isEmpty() || RNG.nextInt(100) >= chance) return;
+        int total = 0;
+        java.util.List<com.wavesurvivor.horde.model.SpecialWave> ok = new ArrayList<>();
+        for (var sw : pool) if (sw.entities != null && !sw.entities.isEmpty() && sw.chance > 0 && sw.allowedAt(wave)) { ok.add(sw); total += sw.chance; }
+        if (total <= 0) return;
+        int r = RNG.nextInt(total), cum = 0;
+        for (var sw : ok) {
+            cum += sw.chance;
+            if (r < cum) {
+                for (var swe : sw.entities) {
+                    com.wavesurvivor.horde.spawn.HordeSpawner.spawnMobs(l, swe.toHordeEntity(), at, radius, Math.max(1, swe.count), playerCount(l));
+                }
+                feed(l, "§5" + WSLang.t("rift.special_group", WSLang.t(sw.name)));
+                return;
+            }
+        }
+    }
+
+    /** Boss d'une phase : ceux dont « Vague » = {@code n} (Contre-offensive : 1 à 3 = chaîne brisée ; Titan : n-ième vague du pont). */
+    private static void phaseBoss(ServerLevel l, String ph, BlockPos at, int radius, int n) {
+        if (horde == null || horde.configData == null) return;
+        var cd = horde.configData;
+        HordeConfigMultiData.RiftSettings rs = settings();
+        boolean counter = ph.equals("counter");
+        if (!(counter ? rs.counterBossOn : rs.titanBossOn)) return;
+        var pool = counter ? cd.counterBossWaves : cd.titanBossWaves;
+        if (pool == null) return;
+        for (var bw : pool) {
+            if (bw != null && bw.waveNumber == n) com.wavesurvivor.horde.boss.BossManager.spawnBoss(l, bw, at, radius, l.getServer());
+        }
+    }
+
+    private static int titanWaveN;
+
     /** Vague du Titan : {@code count} unités de la horde sortent d'un portail ouvert sur le pont (assez près de l'île pour ne pas partir de la forteresse). */
     static void titanWave(ServerLevel l, int count) {
-        if (!active || horde == null || horde.configData == null || horde.configData.hordeEntities == null || horde.configData.hordeEntities.isEmpty()) return;
+        var pool = phaseEntities("titan");
+        if (!active || pool == null || pool.isEmpty()) return;
         BlockPos p = RiftFortress.bridgePoint(siegeFinal, 26);
         l.sendParticles(net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL, p.getX() + 0.5, p.getY() + 2, p.getZ() + 0.5, 80, 1.2, 2.0, 2.5, 0.2);
         l.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL, p.getX() + 0.5, p.getY() + 1.5, p.getZ() + 0.5, 60, 1.0, 1.5, 2.0, 0.5);
         l.playSound(null, p, SoundEvents.END_PORTAL_SPAWN, SoundSource.HOSTILE, 2.5f, 1.3f);
-        var tpl = horde.configData.hordeEntities.get(RNG.nextInt(horde.configData.hordeEntities.size()));
+        var tpl = pool.get(RNG.nextInt(pool.size()));
         com.wavesurvivor.horde.spawn.HordeSpawner.spawnMobs(l, tpl, p, 3, count, playerCount(l));
+        titanWaveN++;
+        phaseSpecial(l, "titan", p, 3, titanWaveN);
+        phaseBoss(l, "titan", p, 3, titanWaveN);
     }
 
     /** Le Titan existe-t-il encore ? (les boîtes de contact disparaissent sans lui) */
@@ -523,7 +592,24 @@ public final class RiftManager {
         com.wavesurvivor.network.EventFeedPacket.toAll(rd.getServer(), Component.literal(msg), icon, color, color == com.wavesurvivor.network.EventFeedPacket.DANGER);
     }
 
+    /** Listes de la Horde mises de côté pendant le Siège (monstres, spéciales, boss propres au Siège). */
+    private static boolean listsSwapped;
+    private static java.util.List<com.wavesurvivor.horde.model.HordeEntity> bkEntities;
+    private static java.util.List<com.wavesurvivor.horde.model.SpecialWave> bkSpecials;
+    private static java.util.List<com.wavesurvivor.horde.model.BossWave> bkBosses;
+    private static boolean bkUseSpecial, bkUseBoss;
+    private static int bkSpecialChance;
+
     private static void restoreSpawnRadius() {
+        if (spawnCfg != null && listsSwapped) {
+            spawnCfg.hordeEntities = bkEntities;
+            spawnCfg.specialWaves = bkSpecials;
+            spawnCfg.useSpecialWaves = bkUseSpecial;
+            spawnCfg.specialWaveChance = bkSpecialChance;
+            spawnCfg.bossWaves = bkBosses;
+            spawnCfg.useBossWaves = bkUseBoss;
+        }
+        listsSwapped = false;
         if (spawnCfg != null) {
             spawnCfg.spawnRadius = spawnRadiusBackup;
             if (waveBackup > 0) spawnCfg.totalWaves = waveBackup;
@@ -797,6 +883,22 @@ public final class RiftManager {
         kingdomOverride = true;
         spawnCfg.mode = "kingdom";
         spawnCfg.kingdom = siegeKingdomSettings(rs);
+        // Monstres, vagues spéciales et boss propres au Siège (onglets de la Faille) ; vide = ceux de la Horde
+        if (!listsSwapped) {
+            bkEntities = spawnCfg.hordeEntities; bkSpecials = spawnCfg.specialWaves; bkBosses = spawnCfg.bossWaves;
+            bkUseSpecial = spawnCfg.useSpecialWaves; bkUseBoss = spawnCfg.useBossWaves; bkSpecialChance = spawnCfg.specialWaveChance;
+            listsSwapped = true;
+        }
+        if (spawnCfg.siegeEntities != null && !spawnCfg.siegeEntities.isEmpty()) spawnCfg.hordeEntities = spawnCfg.siegeEntities;
+        if (spawnCfg.siegeSpecialWaves != null) {
+            spawnCfg.specialWaves = spawnCfg.siegeSpecialWaves;
+            spawnCfg.useSpecialWaves = rs.siegeSpecialOn;
+            spawnCfg.specialWaveChance = rs.siegeSpecialChance;
+        }
+        if (spawnCfg.siegeBossWaves != null) {
+            spawnCfg.bossWaves = spawnCfg.siegeBossWaves;
+            spawnCfg.useBossWaves = rs.siegeBossOn;
+        }
         boolean ok = HordeManager.get().startAtQuiet(horde, server, MONOLITH, RIFT_DIM.location().toString());
         if (!ok) {
             restoreSpawnRadius();
@@ -1073,11 +1175,12 @@ public final class RiftManager {
             return;
         }
         // Renforts : les ennemis continuent d'arriver de la forteresse
-        if (now >= nextReinforce && horde != null && horde.configData != null && horde.configData.hordeEntities != null && !horde.configData.hordeEntities.isEmpty()) {
+        var counterPool = phaseEntities("counter");
+        if (now >= nextReinforce && counterPool != null && !counterPool.isEmpty()) {
             nextReinforce = now + Math.max(5, rs.reinforceSeconds) * 20L;
             int near = rd.getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, new net.minecraft.world.phys.AABB(c).inflate(160, 60, 160)).size();
             if (near < 35) {
-                var tpl = horde.configData.hordeEntities.get(RNG.nextInt(horde.configData.hordeEntities.size()));
+                var tpl = counterPool.get(RNG.nextInt(counterPool.size()));
                 int count = Math.max(2, tpl.baseCount + tpl.countIncrement) + playerCount(rd);
                 com.wavesurvivor.horde.spawn.HordeSpawner.spawnMobs(rd, tpl, RiftFortress.spawnPoint(siegeFinal), 5, count, playerCount(rd));
             }
@@ -1086,13 +1189,16 @@ public final class RiftManager {
 
     /** Une chaîne d'un catalyseur se brise : 3 à 5 gardiens surgissent autour, plus forts à chaque phase ({@code phase} = 0, 1, 2). */
     static void catalystGuards(ServerLevel l, BlockPos at, int phase) {
-        if (horde == null || horde.configData == null || horde.configData.hordeEntities == null || horde.configData.hordeEntities.isEmpty()) return;
+        var guardPool = phaseEntities("counter");
+        if (guardPool == null || guardPool.isEmpty()) return;
         HordeConfigMultiData.RiftSettings rs = settings();
         int lo = Math.max(1, rs.catalystGuardMin), hi = Math.max(lo, rs.catalystGuardMax);
         int n = Math.min(hi, lo + phase);
         double boost = 1.0 + Math.max(0, rs.catalystGuardBoostPercent) / 100.0 * phase;
+        phaseSpecial(l, "counter", at, 4, phase + 1);
+        phaseBoss(l, "counter", at, 4, phase + 1);
         for (int i = 0; i < n; i++) {
-            var tpl = horde.configData.hordeEntities.get(RNG.nextInt(horde.configData.hordeEntities.size()));
+            var tpl = guardPool.get(RNG.nextInt(guardPool.size()));
             double a = i * Math.PI * 2 / n + RNG.nextDouble();
             BlockPos pos = at.offset((int) Math.round(Math.cos(a) * 3), 0, (int) Math.round(Math.sin(a) * 3));
             Entity e = com.wavesurvivor.horde.spawn.HordeSpawner.spawnSummonFromTemplate(l, tpl, pos, playerCount(l));
@@ -1114,6 +1220,7 @@ public final class RiftManager {
         for (Entity e : rd.getAllEntities()) if (e instanceof net.minecraft.world.entity.monster.Enemy && !(e instanceof ServerPlayer)) gone.add(e);
         for (Entity e : gone) e.discard();
         phase = Phase.TITAN;
+        titanWaveN = 0;
         RiftTitan.spawn(rd, settings(), playerCount(rd), siegeFinal);
     }
 
