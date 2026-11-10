@@ -1321,6 +1321,13 @@ public final class RiftManager {
         }
     }
 
+    /** Portail touché dans la Faille pendant la partie : le joueur revient sur l'île, près du Monolithe. */
+    public static void backToMonolith(ServerPlayer p) {
+        if (!active || !(p.level() instanceof ServerLevel rd)) return;
+        respawnOnIsland(p, rd);
+        rd.playSound(null, p.blockPosition(), SoundEvents.PORTAL_TRAVEL, SoundSource.PLAYERS, 0.6f, 1.2f);
+    }
+
     private static void respawnOnIsland(ServerPlayer p, ServerLevel rd) {
         double[] at = arrival();
         p.teleportTo(rd, at[0], CENTER.getY() + 1, at[1], p.getYRot(), 0f);

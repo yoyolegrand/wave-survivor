@@ -34,7 +34,8 @@ public class RiftPortalBlock extends Block {
         if (level.isClientSide || !(entity instanceof ServerPlayer p)) return;
         if (!RiftManager.isActive() || p.isSpectator() || !p.isAlive()) return;
         if (p.level().dimension() == RiftManager.RIFT_DIM) {   // dans la Faille : c'est le portail de sortie de fin de partie
-            if (RiftManager.exitOpen()) RiftManager.sendHome(p);
+            if (RiftManager.exitOpen()) RiftManager.sendHome(p);   // fin de partie : retour chez soi
+            else RiftManager.backToMonolith(p);                    // sinon : retour à l'île, devant le Monolithe
             return;
         }
         RiftManager.enter(p);

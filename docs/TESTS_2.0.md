@@ -298,3 +298,6 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 
 ## XP des rôles en fin de Faille
 - [ ] Victoire ou défaite de la Faille après un Siège : l'XP de Maîtrise des rôles joués est versée (message « +X XP de Maîtrise » dans le chat, ×2 en victoire, ×0,5 en défaite) et les niveaux montent
+
+## Portail intérieur de la Faille
+- [ ] Toucher un portail dans la forteresse (pendant la partie) ramène sur l'île, près du Monolithe ; en fin de partie, le portail de sortie renvoie chez soi
