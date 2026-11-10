@@ -112,6 +112,19 @@ final class RiftTitan {
 
     static boolean active() { return titan != null && !dead; }
 
+    /**
+     * Type d'entité du Titan : identifiant du jeu (vanilla ou moddé, ex. « minecraft:warden ») ou nom d'une entité personnalisée de
+     * l'éditeur (son type de base est utilisé). Identifiant inconnu : golem de fer.
+     */
+    static EntityType<?> titanType(String id) {
+        if (id == null || id.isBlank()) return EntityType.IRON_GOLEM;
+        var custom = com.wavesurvivor.horde.spawn.CustomEntityRegistry.get(id.trim());
+        String rl = custom != null && custom.baseEntityType != null ? custom.baseEntityType : id.trim();
+        ResourceLocation key = ResourceLocation.tryParse(rl.contains(":") ? rl : "minecraft:" + rl);
+        if (key == null || !BuiltInRegistries.ENTITY_TYPE.containsKey(key)) return EntityType.IRON_GOLEM;
+        return BuiltInRegistries.ENTITY_TYPE.get(key);
+    }
+
     // ─── Boîtes de contact : un Titan géant n'est pas retrouvable par Minecraft loin de son centre (voir TitanHitboxEntity) ───
 
     private static final List<UUID> hitboxes = new ArrayList<>();
@@ -191,7 +204,7 @@ final class RiftTitan {
 
     /** Distance (vers le sud) entre le centre de l'île et le Titan : l'île + une marge (réglable, 12 par défaut) + la demi-largeur du Titan agrandi. */
     static double distance(HordeConfigMultiData.RiftSettings settings, int sr) {
-        EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(settings.titanEntity));
+        EntityType<?> t = titanType(settings.titanEntity);
         double w = t != null ? t.getWidth() : 1.4;
         return Math.max(30, sr + Math.max(4, settings.titanGap) + w * settings.titanScale * 0.5);
     }
@@ -203,7 +216,7 @@ final class RiftTitan {
         phase = 0;
         pending.clear();
         avatars.clear();
-        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(settings.titanEntity));
+        EntityType<?> type = titanType(settings.titanEntity);
         Entity e = type.create(l);
         if (!(e instanceof Mob)) e = EntityType.IRON_GOLEM.create(l);
         Mob mob = (Mob) e;
@@ -1329,7 +1342,7 @@ final class RiftTitan {
     // ─── La charge : le Titan fonce sur l'île, tremblement, stun, corps à corps, puis retourne à sa place ───
 
     private static double halfWidth() {
-        EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(rs.titanEntity));
+        EntityType<?> t = titanType(rs.titanEntity);
         return (t != null ? t.getWidth() : 1.4) * rs.titanScale * 0.5;
     }
 
@@ -1567,7 +1580,7 @@ final class RiftTitan {
     // ─── Cinématique d'apparition (~12 s) : silence, l'abîme s'éveille, le Titan surgit, rugissement, son nom, fin ───
 
     private static double titanHeight() {
-        EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(rs.titanEntity));
+        EntityType<?> t = titanType(rs.titanEntity);
         return (t != null ? t.getHeight() : 2.7) * rs.titanScale;
     }
 

@@ -1918,8 +1918,6 @@ public class HordeEditorScreen extends Screen {
     }
 
     private static int riftSub = 0;
-    private static final String[] TITAN_TYPES = {"minecraft:iron_golem", "minecraft:zombie", "minecraft:wither_skeleton", "minecraft:ravager",
-            "minecraft:evoker", "minecraft:warden", "minecraft:enderman", "minecraft:piglin_brute"};
 
     /** Faille — page « Siège et Contre-offensive ». */
     private void buildRiftSiege(JsonObject r, int x, int y) {
@@ -2100,14 +2098,12 @@ public class HordeEditorScreen extends Screen {
         label(x, y, "§6§l" + t("ui.rift.sec_titan"));
         y += 14;
         toggle(x, y, 120, t("ui.rift.titan_on"), r, "titanEnabled", true);
-        String cur = HordeJson.str(r, "titanEntity", "minecraft:iron_golem");
-        button(x + 130, y - 1, 220, t("ui.rift.titan_entity") + cur.replace("minecraft:", ""), () -> {
-            int i = 0;
-            for (int k = 0; k < TITAN_TYPES.length; k++) if (TITAN_TYPES[k].equals(cur)) i = k;
-            r.addProperty("titanEntity", TITAN_TYPES[(i + 1) % TITAN_TYPES.length]);
-            changed();
-            init();
-        });
+        // Titan : n'importe quelle entité — identifiant tapé, liste déroulante (avec recherche) ou œuf d'apparition pris dans l'inventaire
+        flow(x + 130, y + 1);
+        fl(t("ui.rift.titan_entity"));
+        fText(150, HordeJson.str(r, "titanEntity", "minecraft:iron_golem"), v -> r.addProperty("titanEntity", v.trim()));
+        fBtn(16, "§e▼", () -> openEntityPicker(HordeJson.str(r, "titanEntity", ""), id -> r.addProperty("titanEntity", id)));
+        fBtn(24, t("ui.egg.btn"), () -> openEggPicker(id -> r.addProperty("titanEntity", id), false));
         y += 26;
         flow(x, y);
         fl(t("ui.rift.titan_scale"));
