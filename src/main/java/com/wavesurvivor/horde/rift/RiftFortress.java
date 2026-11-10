@@ -675,15 +675,28 @@ final class RiftFortress {
     /** Une chaîne se brise : éclat violet, son, la chaîne visible de l'autel disparaît, des gardiens surgissent (plus forts à chaque phase). */
     private static void breakChain(ServerLevel l, Entity crystal, int n) {
         BlockPos c = crystal.blockPosition();
-        // Colonnes de chaînes de l'autel (rayon 4), triées par angle : la n-ième disparaît
-        Map<Long, List<BlockPos>> cols = new HashMap<>();
+        // Chaînes de l'autel (rayon 4), regroupées par direction autour du cristal : les blocs à moins de 40° d'écart forment une même
+        // chaîne (colonne verticale, ou chaîne horizontale / en diagonale comme sur les autels de la Citadelle). La n-ième disparaît entière.
+        List<BlockPos> found = new ArrayList<>();
         for (int dx = -4; dx <= 4; dx++) for (int dz = -4; dz <= 4; dz++) for (int dy = -3; dy <= 8; dy++) {
             BlockPos p = c.offset(dx, dy, dz);
-            if (l.getBlockState(p).is(Blocks.CHAIN)) cols.computeIfAbsent(((long) p.getX() << 32) ^ (p.getZ() & 0xffffffffL), k -> new ArrayList<>()).add(p);
+            if (l.getBlockState(p).is(Blocks.CHAIN)) found.add(p);
         }
-        List<List<BlockPos>> list = new ArrayList<>(cols.values());
-        list.sort((a, b) -> Double.compare(Math.atan2(a.get(0).getZ() - c.getZ(), a.get(0).getX() - c.getX()),
-                Math.atan2(b.get(0).getZ() - c.getZ(), b.get(0).getX() - c.getX())));
+        found.sort((a, b) -> Double.compare(Math.atan2(a.getZ() - c.getZ(), a.getX() - c.getX()), Math.atan2(b.getZ() - c.getZ(), b.getX() - c.getX())));
+        List<List<BlockPos>> list = new ArrayList<>();
+        double prev = 0;
+        for (BlockPos p : found) {
+            double ang = Math.toDegrees(Math.atan2(p.getZ() - c.getZ(), p.getX() - c.getX()));
+            if (list.isEmpty() || ang - prev > 40) list.add(new ArrayList<>());
+            list.get(list.size() - 1).add(p);
+            prev = ang;
+        }
+        if (list.size() > 1) {   // le cercle se referme : la dernière et la première chaîne peuvent n'en faire qu'une
+            BlockPos first = list.get(0).get(0), last = list.get(list.size() - 1).get(list.get(list.size() - 1).size() - 1);
+            double a0 = Math.toDegrees(Math.atan2(first.getZ() - c.getZ(), first.getX() - c.getX())) + 360;
+            double a1 = Math.toDegrees(Math.atan2(last.getZ() - c.getZ(), last.getX() - c.getX()));
+            if (a0 - a1 <= 40) { list.get(0).addAll(list.remove(list.size() - 1)); }
+        }
         if (!list.isEmpty()) {
             List<BlockPos> col = list.get(Math.min(n - 1, list.size() - 1));
             for (BlockPos p : col) {

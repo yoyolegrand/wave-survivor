@@ -357,3 +357,4 @@ Test rapide (dans la dimension de la Faille : `/ws rift open` puis `/ws rift ent
 - [ ] Chaque forme : chaque tiers de PV d'un catalyseur fait disparaître UNE colonne de chaînes entière (3 phases → plus aucune chaîne)
 - [ ] Bastion : les gardiens apparaissent sur l'îlot du catalyseur (pas dans le vide) et rejoignent les joueurs ; les ennemis venant de la porte circulent sur la plateforme
 - [ ] Changer de forme avec la commande : l'ancienne forteresse disparaît entièrement (l'île reste)
+- [ ] Citadelle : chaque tiers de PV d'un catalyseur fait disparaître une chaîne ENTIÈRE (les 2 blocs) ; après la 3e phase il ne reste plus aucune chaîne autour du cristal
