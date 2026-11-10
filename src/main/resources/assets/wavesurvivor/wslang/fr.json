@@ -4206,5 +4206,6 @@
   "rift.test.need_dim": "À lancer depuis la dimension de la Faille (/ws rift open puis /ws rift enter).",
   "rift.test.fortress_fail": "Forme inconnue ou plan illisible : {0} (citadelle, ruche, bastion, ziggurat).",
   "rift.test.fortress_ok": "Test : {0} en cours de pose.",
-  "rift.test.catalysts_ok": "Test : {0} catalyseur(s) posé(s) aux repères."
+  "rift.test.catalysts_ok": "Test : {0} catalyseur(s) posé(s) aux repères.",
+  "ui.rift.chests": "Coffres roulette"
 }

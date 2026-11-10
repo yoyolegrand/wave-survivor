@@ -358,3 +358,9 @@ Test rapide (dans la dimension de la Faille : `/ws rift open` puis `/ws rift ent
 - [ ] Bastion : les gardiens apparaissent sur l'îlot du catalyseur (pas dans le vide) et rejoignent les joueurs ; les ennemis venant de la porte circulent sur la plateforme
 - [ ] Changer de forme avec la commande : l'ancienne forteresse disparaît entièrement (l'île reste)
 - [ ] Citadelle : chaque tiers de PV d'un catalyseur fait disparaître une chaîne ENTIÈRE (les 2 blocs) ; après la 3e phase il ne reste plus aucune chaîne autour du cristal
+
+## Calmes du Siège, coffres roulette et clés de la Faille
+- [ ] Siège : chaque Calme dure 3 min (1 min + 2 min) ; réglable dans l'éditeur (page Siège)
+- [ ] Pauses de la Horde et Calmes du Siège : 6 coffres roulette (les Reliquaires) en cercle autour du Monolithe de l'île ; ils disparaissent à la vague / l'Assaut suivant ; nombre réglable (0 = aucun)
+- [ ] Clés lâchées : Zombie / Rootling → Reliquaire des Trésors (3 %), Archer → Arcanique (3 %), Araignée → Abysses (3 %), Gardien → Nether (6 %), Brute de pierre → End (5 %), Néantide → End (6 %), boss → Reliquaire du Boss (100 %)
+- [ ] (Si « La Faille » a été enregistrée dans l'éditeur, ses monstres n'ont pas ces clés : rétablir la horde ↺ ou les ajouter à la main)

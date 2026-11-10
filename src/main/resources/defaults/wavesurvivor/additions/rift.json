@@ -58,6 +58,12 @@
                 "minQty": 1,
                 "maxQty": 2,
                 "chance": 30
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_des_tresors",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 3
               }
             ],
             "playerScaling": {
@@ -82,6 +88,12 @@
                 "minQty": 2,
                 "maxQty": 6,
                 "chance": 40
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_arcanique",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 3
               }
             ],
             "playerScaling": {
@@ -106,6 +118,12 @@
                 "minQty": 1,
                 "maxQty": 3,
                 "chance": 40
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_des_abysses",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 3
               }
             ],
             "playerScaling": {
@@ -130,6 +148,12 @@
                 "minQty": 1,
                 "maxQty": 3,
                 "chance": 40
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_du_nether",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -166,6 +190,12 @@
                 "minQty": 1,
                 "maxQty": 1,
                 "chance": 12
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_des_tresors",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 3
               }
             ],
             "playerScaling": {
@@ -204,6 +234,12 @@
                 "minQty": 1,
                 "maxQty": 2,
                 "chance": 20
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_de_l_end",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 5
               }
             ],
             "playerScaling": {
@@ -242,6 +278,12 @@
                 "minQty": 1,
                 "maxQty": 2,
                 "chance": 25
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_de_l_end",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 6
               }
             ],
             "playerScaling": {
@@ -291,6 +333,12 @@
                 "item": "minecraft:amethyst_shard",
                 "minQty": 4,
                 "maxQty": 8,
+                "chance": 100
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_du_boss",
+                "minQty": 1,
+                "maxQty": 1,
                 "chance": 100
               }
             ],

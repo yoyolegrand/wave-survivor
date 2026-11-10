@@ -383,7 +383,9 @@ public class HordeConfigMultiData {
         /** Siège (moteur du Kingdom) : unités par assaut au premier assaut, hausse par assaut (en %) et durée du calme (s). */
         @SerializedName("siegeBudget") public int siegeBudget = 40;
         @SerializedName("siegeGrowthPercent") public int siegeGrowthPercent = 25;
-        @SerializedName("siegeCalmSeconds") public int siegeCalmSeconds = 60;
+        @SerializedName("siegeCalmSeconds") public int siegeCalmSeconds = 180;   // 3 min de Calme (1 min + 2 min)
+        /** Coffres roulette posés autour du Monolithe pendant les pauses de la Horde et les Calmes du Siège (0 = aucun). */
+        @SerializedName("riftChests") public int riftChests = 6;
         @SerializedName("resourceTrees") public int resourceTrees = 4;
         @SerializedName("resourceOres") public int resourceOres = 3;
         /** Phase 3 — Contre-offensive : nombre de catalyseurs, PV de chacun, PV du cœur de la forteresse, renforts toutes les X s. */

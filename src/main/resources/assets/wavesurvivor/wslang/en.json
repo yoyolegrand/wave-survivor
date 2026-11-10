@@ -4967,5 +4967,6 @@
   "rift.test.need_dim": "Run it from the Rift dimension (/ws rift open then /ws rift enter).",
   "rift.test.fortress_fail": "Unknown form or unreadable plan: {0} (citadelle, ruche, bastion, ziggurat).",
   "rift.test.fortress_ok": "Test: {0} is being built.",
-  "rift.test.catalysts_ok": "Test: {0} catalyst(s) placed at the markers."
+  "rift.test.catalysts_ok": "Test: {0} catalyst(s) placed at the markers.",
+  "ui.rift.chests": "Roulette chests"
 }

@@ -434,7 +434,8 @@ public class HordeManager {
             }
         } else {
             if (merchLvl != null) MerchantSpawner.spawnAll(activeHorde, merchLvl);
-            RouletteChestSpawner.spawnAll(activeHorde.hordeName, srv);
+            // La Faille : coffres autour du Monolithe de l'île ; sinon les emplacements enregistrés de la horde
+            if (!com.wavesurvivor.horde.rift.RiftManager.placeChests(merchLvl)) RouletteChestSpawner.spawnAll(activeHorde.hordeName, srv);
         }
     }
 
@@ -672,7 +673,7 @@ public class HordeManager {
                         MerchantSpawner.spawnAll(activeHorde, merchLvl);
                     }
                     // Roulette chests : spawn pendant la pause entre vagues (même cycle que marchands)
-                    RouletteChestSpawner.spawnAll(activeHorde.hordeName, srv);
+                    if (!com.wavesurvivor.horde.rift.RiftManager.placeChests(merchLvl)) RouletteChestSpawner.spawnAll(activeHorde.hordeName, srv);
                 }
             }
             return;

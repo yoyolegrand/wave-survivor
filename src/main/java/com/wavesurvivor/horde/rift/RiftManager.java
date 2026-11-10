@@ -1252,6 +1252,23 @@ public final class RiftManager {
         return p;
     }
 
+    /**
+     * Pauses de la Horde et Calmes du Siège : coffres roulette en cercle autour du Monolithe de l'île (le Monolithe de la Faille n'est pas
+     * un autel enregistré, le placement des hordes ne s'applique donc pas ici). @return vrai si la Faille s'en est chargée.
+     */
+    public static boolean placeChests(ServerLevel lvl) {
+        if (!active || lvl == null || lvl.dimension() != RIFT_DIM) return false;
+        int n = settings().riftChests;
+        if (n <= 0) return true;
+        com.wavesurvivor.altar.AltarRecipes.Zone z = new com.wavesurvivor.altar.AltarRecipes.Zone();
+        z.maxChests = n;
+        z.autoLayout = true;
+        int r = phase == Phase.HORDE ? Math.max(6, radius - 3) : Math.max(8, Math.min(siegeFinal - 6, 18));
+        var layout = com.wavesurvivor.altar.AltarLayout.compute(lvl, MONOLITH, r, z, java.util.List.of());
+        com.wavesurvivor.horde.roulette.RouletteChestSpawner.spawnAtSpots(lvl, layout.chests());
+        return true;
+    }
+
     /** Rayon d'île du Siège : celui de la Faille ouverte, sinon celui de la horde « La Faille » par défaut (tests). */
     static int testRadius() {
         return active ? siegeFinal : Math.max(16, Math.min(48, new HordeConfigMultiData.RiftSettings().siegeRadius));
