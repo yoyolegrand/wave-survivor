@@ -160,6 +160,17 @@ public class CraftEquipEvents {
         e.setAmount(amt);
     }
 
+    /** Lame de l'aube : tuer un mort-vivant (ou un Corrompu) au corps à corps donne Force I pendant quelques secondes. */
+    @SubscribeEvent
+    public void onUndeadKill(net.minecraftforge.event.entity.living.LivingDeathEvent e) {
+        if (!(e.getSource().getEntity() instanceof ServerPlayer p) || e.getSource().getDirectEntity() != p || e.getEntity() == p) return;
+        if (!holds(p, ModItems.DAWN_BLADE.get()) || !undeadOrCorrupted(e.getEntity())) return;
+        int secs = (int) CraftConfig.equipNum("dawn_blade", "killStrengthSeconds", 5);
+        if (secs <= 0) return;
+        p.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, secs * 20, 0));
+        if (p.level() instanceof ServerLevel sl) sl.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, p.getX(), p.getY(1.0), p.getZ(), 10, 0.3, 0.5, 0.3, 0.05);
+    }
+
     /** Balayage large de la Faux : les ennemis proches de la victime reçoivent une part des dégâts. */
     private static void sweep(ServerPlayer p, LivingEntity victim, float amt) {
         double r = CraftConfig.equipNum("taint_scythe", "sweepRadius", 3);

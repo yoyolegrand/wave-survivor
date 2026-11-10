@@ -4823,5 +4823,8 @@
   "ui.rift.fcine_seconds": "Length (s)",
   "ui.rift.fcine_speed": "Blocks/tick",
   "ui.rift.fcine_title": "Title",
-  "ui.rift.sec_fcine": "Fortress cinematic"
-}
+  "ui.rift.sec_fcine": "Fortress cinematic",
+  "ui.rift.emerald_min": "Emeralds per monster: min",
+  "ui.rift.emerald_max": "Emeralds per monster: max"
+
+§7Killing an undead: Strength I for 5 s}

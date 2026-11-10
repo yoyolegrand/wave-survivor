@@ -276,3 +276,8 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 ## Retouches visuelles : portail plus sombre, icônes 32 × 32
 - [ ] Portail de la Faille : nébuleuse violet profond sombre qui ondule lentement, rares étoiles qui s'allument ; **moins saturé**, pas fluo. Contour de l'ovale : environ moitié moins d'obsidienne pleureuse (le reste obsidienne et pierre noire) ; veines de faille réduites à de fins filaments (8 vrilles courtes au lieu de 14). Voir de près et de loin.
 - [ ] Icônes de la boutique (tour-catapulte, baliste céleste) en 32 × 32 : nettes, sans flou, dans la boutique du Monolithe, la barre d'objets et l'inventaire.
+
+## Émeraudes de la Faille + Lame de l'aube
+- [ ] Faille : chaque monstre tué (Horde, Siège, Contre-offensive, vagues du Titan) lâche 1 à 2 émeraudes, et elles se convertissent en pièces du Kingdom au ramassage
+- [ ] Éditeur de la Faille, page Météores : « Émeraudes/monstre » min / max réglables (0 = aucune)
+- [ ] Lame de l'aube : tuer un mort-vivant au corps à corps donne Force I pendant 5 s (pas pour les autres monstres, ni à l'arc)

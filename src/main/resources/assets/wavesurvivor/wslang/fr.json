@@ -3500,7 +3500,7 @@
   "craft.block.bait_totem": "§7Clic droit : attire les monstres à moins de 64 blocs pendant 30 s (sauf boss)\n§cRecharge 60 s",
   "craft.block.profane_obelisk": "§7Monstres à moins de 12 blocs : 1 dégât par seconde\n§cJoueurs à moins de 12 blocs : Faim",
   "craft.block.blood_altar": "§7Clic droit : sacrifiez 4 cœurs contre de l'expérience\n§cRecharge 30 s",
-  "craft.item.dawn_blade": "§7Dégâts de niveau Netherite (8)\n§7+50 % contre les morts-vivants et les Corrompus\n§7Brille la nuit\n§eConsacrée : améliorable avec des fragments de grâce",
+  "craft.item.dawn_blade": "§7Dégâts de niveau Netherite (8)\n§7+50 % contre les morts-vivants et les Corrompus\n§7Tuer un mort-vivant : Force I pendant 5 s\n§7Brille la nuit\n§eConsacrée : améliorable avec des fragments de grâce",
   "craft.item.blessed_arrow": "§7Embrase et repousse les morts-vivants et les Corrompus",
   "craft.item.grace_totem": "§7Tenu en main, remplace la mort (comme un totem d'immortalité)\n§7Soigne aussi les alliés à moins de 6 blocs (4 cœurs)",
   "craft.item.taint_scythe": "§7Dégâts : 9 (1 de plus que la Lame)\n§7Arme de zone (balayage large), vol de vie 5 %\n§cUn coup manqué coûte 1 cœur\n§dProfanée : améliorable avec des fragments de souillure",
@@ -4062,5 +4062,7 @@
   "ui.rift.fcine_seconds": "Durée (s)",
   "ui.rift.fcine_speed": "Blocs/tick",
   "ui.rift.fcine_title": "Titre",
-  "ui.rift.sec_fcine": "Cinématique de la forteresse"
+  "ui.rift.sec_fcine": "Cinématique de la forteresse",
+  "ui.rift.emerald_min": "Émeraudes/monstre : min",
+  "ui.rift.emerald_max": "Émeraudes/monstre : max"
 }

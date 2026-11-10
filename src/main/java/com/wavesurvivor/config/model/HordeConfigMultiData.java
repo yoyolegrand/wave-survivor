@@ -440,6 +440,9 @@ public class HordeConfigMultiData {
         /** Attaque contre les bâtiments : dégâts et rayon (aussi appliqués par la charge aux bâtiments pris dedans). */
         /** Ruines des bâtiments du Kingdom : % des ressources investies à payer pour les réparer. */
         @SerializedName("ruinRepairPercent") public int ruinRepairPercent = 50;
+        /** Émeraudes lâchées par chaque monstre tué dans la Faille (monnaie du Kingdom : achats et améliorations). */
+        @SerializedName("emeraldMin") public int emeraldMin = 1;
+        @SerializedName("emeraldMax") public int emeraldMax = 2;
         @SerializedName("titanBuildDamage") public int titanBuildDamage = 300;
         @SerializedName("titanBuildRadius") public int titanBuildRadius = 6;
         /** Cinématique d'apparition : activée, passable (maintenir S'accroupir 1 s), durée (s), nom et sous-titre affichés, sons. */

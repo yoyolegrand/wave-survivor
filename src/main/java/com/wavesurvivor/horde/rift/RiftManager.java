@@ -1249,6 +1249,22 @@ public final class RiftManager {
         }
     }
 
+    /**
+     * Tout monstre tué dans la Faille lâche des émeraudes (monnaie du Kingdom : sans elles, impossible d'acheter ou d'améliorer).
+     * Valable pendant toute la partie (Horde, Siège, Contre-offensive, Titan) ; le Kingdom les convertit au ramassage.
+     */
+    @SubscribeEvent
+    public void onMonsterDrops(net.minecraftforge.event.entity.living.LivingDropsEvent e) {
+        if (!active || !(e.getEntity() instanceof net.minecraft.world.entity.monster.Enemy) || e.getEntity() instanceof ServerPlayer) return;
+        if (e.getEntity().level().dimension() != RIFT_DIM || e.getEntity().getPersistentData().getBoolean("ws_rift_avatar")) return;
+        HordeConfigMultiData.RiftSettings s = settings();
+        int min = Math.max(0, s.emeraldMin), max = Math.max(min, s.emeraldMax);
+        int n = min == max ? min : min + e.getEntity().getRandom().nextInt(max - min + 1);
+        if (n <= 0) return;
+        e.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(e.getEntity().level(), e.getEntity().getX(), e.getEntity().getY(), e.getEntity().getZ(),
+                new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.EMERALD, n)));
+    }
+
     /** Mort d'un avatar du Titan : le Titan perd des PV. */
     @SubscribeEvent
     public void onAvatarDeath(LivingDeathEvent e) {

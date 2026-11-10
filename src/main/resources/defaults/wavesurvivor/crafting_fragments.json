@@ -59,7 +59,7 @@
   },
   "equipment": {
     "_comment": "Équipement de l'Artisanat. Pourcentages en %, durées en secondes, vie en PV (2 = un cœur).",
-    "dawn_blade": { "undeadBonusPercent": 50 },
+    "dawn_blade": { "undeadBonusPercent": 50, "killStrengthSeconds": 5 },
     "blessed_arrow": { "fireSeconds": 5, "knockback": 1.5 },
     "grace_totem": { "allyRadius": 6, "allyHeal": 8 },
     "taint_scythe": { "sweepRadius": 3, "sweepPercent": 60, "lifestealPercent": 5, "missCost": 1 },
