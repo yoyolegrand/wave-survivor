@@ -284,7 +284,7 @@ public class RenaissanceScreen extends Screen {
 
     // ─── 2.0 — Onglet « Faille » : Panthéon (titres) + 5 nœuds payés en Marques du Titan ───
 
-    private static final int RIFT_NODE_Y = 168, RIFT_NODE_H = 20;
+    private static final int RIFT_NODE_Y = 158, RIFT_NODE_H = 18, RIFT_NODE_PITCH = 21, RIFT_BOTTOM = 266;
 
     private void buildRiftWidgets() {
         int[] st = com.wavesurvivor.horde.renaissance.RiftLegacy.CLIENT;
@@ -293,7 +293,7 @@ public class RenaissanceScreen extends Screen {
                 : com.wavesurvivor.i18n.WSLang.t("rift.legacy.btn_buy", com.wavesurvivor.horde.renaissance.RiftLegacy.NODE_COST[n]);
         Button b = addRenderableWidget(Button.builder(Component.literal(lbl),
                 bt -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.RelicForgePacket("riftnode", "")))
-                .bounds(left + PANEL_W - 158, top + RIFT_NODE_Y + 5 * (RIFT_NODE_H + 3) + 4, 150, 18).build());
+                .bounds(left + PANEL_W - 158, top + RIFT_BOTTOM, 150, 18).build());
         b.active = n < com.wavesurvivor.horde.renaissance.RiftLegacy.NODES && st[3] >= com.wavesurvivor.horde.renaissance.RiftLegacy.NODE_COST[n];
     }
 
@@ -307,19 +307,19 @@ public class RenaissanceScreen extends Screen {
         String[] diffs = {"normal", "hard", "nightmare"};
         String[] cols = {"§5", "§d", "§c"};
         for (int i = 1; i <= 3; i++) {
-            int y = top + 72 + (i - 1) * 26, x = left + 10;
+            int y = top + 70 + (i - 1) * 24, x = left + 10;
             boolean got = st[1] >= i;
-            g.fill(x, y, x + PANEL_W - 20, y + 23, got ? 0x40A855F7 : 0x30202028);
-            g.renderOutline(x, y, PANEL_W - 20, 23, got ? 0xFFB070F0 : 0xFF444455);
+            g.fill(x, y, x + PANEL_W - 20, y + 22, got ? 0x40A855F7 : 0x30202028);
+            g.renderOutline(x, y, PANEL_W - 20, 22, got ? 0xFFB070F0 : 0xFF444455);
             g.drawString(font, (got ? cols[i - 1] + "§l" : "§8") + com.wavesurvivor.i18n.WSLang.t("rift.legacy.title." + i)
                     + (got ? " §a✔" : " §8✖"), x + 6, y + 3, 0xFFFFFFFF, false);
             g.drawString(font, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.legacy.title_req", com.wavesurvivor.i18n.WSLang.t("difficulty." + diffs[i - 1]))
-                    + " §8· " + com.wavesurvivor.i18n.WSLang.t("rift.legacy.aura." + i), x + 6, y + 13, 0xFFFFFFFF, false);
+                    + " §8· " + com.wavesurvivor.i18n.WSLang.t("rift.legacy.aura." + i), x + 6, y + 12, 0xFFFFFFFF, false);
         }
         // Nœuds
         g.drawString(font, "§5§l" + com.wavesurvivor.i18n.WSLang.t("rift.legacy.nodes"), left + 10, top + RIFT_NODE_Y - 12, 0xFFFFFFFF, false);
         for (int k = 1; k <= com.wavesurvivor.horde.renaissance.RiftLegacy.NODES; k++) {
-            int y = top + RIFT_NODE_Y + (k - 1) * (RIFT_NODE_H + 3), x = left + 10, w = PANEL_W - 20;
+            int y = top + RIFT_NODE_Y + (k - 1) * RIFT_NODE_PITCH, x = left + 10, w = PANEL_W - 20;
             boolean owned = st[4] >= k, next = st[4] == k - 1;
             g.fill(x, y, x + w, y + RIFT_NODE_H, owned ? 0xFF2E7D32 : next ? 0xFF5E2A86 : 0xFF2A2A33);
             g.renderOutline(x, y, w, RIFT_NODE_H, owned ? 0xFF66BB6A : next ? 0xFFC58BFF : 0xFF444455);
@@ -327,9 +327,9 @@ public class RenaissanceScreen extends Screen {
             String desc = com.wavesurvivor.i18n.WSLang.t("rift.legacy.node." + k + ".desc");
             String line = (owned ? "§a✔ §f" : next ? "§e" : "§8") + name + " §7— " + desc;
             if (font.width(line) > w - 50) line = font.plainSubstrByWidth(line, w - 54) + "…";
-            g.drawString(font, line, x + 5, y + 6, 0xFFFFFFFF, false);
+            g.drawString(font, line, x + 5, y + 5, 0xFFFFFFFF, false);
             String cost = owned ? "" : "§d" + com.wavesurvivor.horde.renaissance.RiftLegacy.NODE_COST[k - 1] + " ✦";
-            g.drawString(font, cost, x + w - 6 - font.width(cost), y + 6, 0xFFFFFFFF, false);
+            g.drawString(font, cost, x + w - 6 - font.width(cost), y + 5, 0xFFFFFFFF, false);
             if (mx >= x && mx < x + w && my >= y && my < y + RIFT_NODE_H) {
                 tip = new ArrayList<>();
                 tip.add(Component.literal((owned ? "§a✔ " : "§d") + name));
@@ -338,7 +338,13 @@ public class RenaissanceScreen extends Screen {
                 if (!owned && !next) tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("heritage.locked")));
             }
         }
-        g.drawString(font, "§8" + com.wavesurvivor.i18n.WSLang.t("rift.legacy.marks_hint"), left + 10, top + PANEL_H - 14, 0xFFFFFFFF, false);
+        // Rappel des Marques à gauche du bouton, sur 2 lignes au plus (ne passe jamais sous le bouton)
+        int hy = top + RIFT_BOTTOM;
+        for (net.minecraft.util.FormattedCharSequence ln : font.split(Component.literal("§8" + com.wavesurvivor.i18n.WSLang.t("rift.legacy.marks_hint")), PANEL_W - 180)) {
+            if (hy > top + RIFT_BOTTOM + 30) break;
+            g.drawString(font, ln, left + 10, hy, 0xFFFFFFFF, false);
+            hy += 10;
+        }
         return tip;
     }
 
