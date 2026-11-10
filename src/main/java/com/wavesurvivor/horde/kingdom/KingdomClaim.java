@@ -697,7 +697,7 @@ public final class KingdomClaim {
             if (level == null || e.getLevel() != level || !(e.getEntity() instanceof ServerPlayer p)) return;
             BlockPos pos = e.getPos();
             if (!inside(pos)) {
-                if (buildOnlyInClaim && !p.isCreative()) {
+                if (buildOnlyInClaim && !p.isCreative() && !com.wavesurvivor.horde.rift.RiftManager.freeBuild(pos, false)) {
                     e.setCanceled(true);
                     p.displayClientMessage(WSLang.c("kingdom.claim_outside"), true);
                 } else if (e.getPlacedBlock().getBlock() instanceof DefenseBlock) {
@@ -718,6 +718,7 @@ public final class KingdomClaim {
             if (level == null || e.getLevel() != level) return;
             BlockPos pos = e.getPos();
             if (!inside(pos) && buildOnlyInClaim && e.getPlayer() != null && !e.getPlayer().isCreative()
+                    && !com.wavesurvivor.horde.rift.RiftManager.freeBuild(pos, true)
                     && !(e.getState().getBlock() instanceof TrapBlock && trapAllowed(pos))) { // un piège posé hors du claim peut être repris
                 e.setCanceled(true);
                 e.getPlayer().displayClientMessage(WSLang.c("kingdom.claim_outside"), true);

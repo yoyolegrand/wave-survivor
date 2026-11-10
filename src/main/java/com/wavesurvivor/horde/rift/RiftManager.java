@@ -332,6 +332,7 @@ public final class RiftManager {
         }
         DUE_KEYS.clear();
         DUE_TASKS.clear();
+        PLAYER_PLACED.clear();
         nextPhase = Phase.NONE;
         siegeHordeOn = false;
         coreSpawned = false;
@@ -374,6 +375,34 @@ public final class RiftManager {
         p.fallDistance = 0;
         p.setDeltaMovement(0, 0, 0);
         p.sendSystemMessage(Component.literal(WSLang.t("rift.left")));
+    }
+
+    /** Blocs posés par les joueurs dans la Faille (cassables même dans la forteresse). */
+    private static final java.util.Set<Long> PLAYER_PLACED = new java.util.HashSet<>();
+
+    /**
+     * Contre-offensive et Titan : on peut construire partout (ponts, passerelles) hors du claim du Kingdom, et casser les blocs
+     * qu'on a posés ainsi que le terrain ; seuls les murs de la forteresse elle-même restent intacts.
+     */
+    public static boolean freeBuild(BlockPos pos, boolean breaking) {
+        if (!active) return false;
+        boolean late = phase == Phase.COUNTER || phase == Phase.TITAN
+                || (phase == Phase.INTERLUDE && (nextPhase == Phase.COUNTER || nextPhase == Phase.TITAN));
+        if (!late) return false;
+        if (!breaking || PLAYER_PLACED.contains(pos.asLong())) return true;
+        int[] b = RiftFortress.bounds(siegeFinal);
+        int dx = pos.getX() - CENTER.getX(), dz = pos.getZ() - CENTER.getZ();
+        return !(dx >= b[0] && dx <= b[1] && dz >= b[2] && dz <= b[3]);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onPlayerPlace(net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent e) {
+        if (active && e.getEntity() instanceof ServerPlayer && e.getLevel() instanceof ServerLevel l && l.dimension() == RIFT_DIM) PLAYER_PLACED.add(e.getPos().asLong());
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onPlayerBreak(net.minecraftforge.event.level.BlockEvent.BreakEvent e) {
+        if (active) PLAYER_PLACED.remove(e.getPos().asLong());
     }
 
     /** Évite d'arriver dans un bloc plein : si les pieds ou la tête sont coincés, on remonte à la surface la plus proche. */

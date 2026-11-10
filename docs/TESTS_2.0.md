@@ -291,3 +291,7 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Titan : vagues du pont tirées du sous-onglet « Titan » ; groupe spécial / boss (Vague = n-ième vague) si activés
 - [ ] Horde « La Faille » par défaut : Rootling (vague 2), Brute de pierre (3), Néantide (4) ; drops : bâtons / pierre / perles… + éclats de souillure ; émeraudes ajoutées par la Faille
 - [ ] Retour de la Faille (portail de sortie ou fin) : on arrive devant le portail, jamais dans l'ovale refermé (pas d'étouffement)
+
+## Construction libre en Contre-offensive / Titan
+- [ ] En survie, pendant la Contre-offensive et le Titan : on peut poser des blocs partout (pont jusqu'au dernier portail) et les recasser
+- [ ] On peut casser le terrain, mais pas les murs de la forteresse (sauf les blocs qu'on y a posés soi-même)
