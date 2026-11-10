@@ -27,9 +27,46 @@ public final class RiftCommand {
                 .then(Commands.literal("enter").executes(ctx -> enter(ctx.getSource())))
                 .then(Commands.literal("leave").executes(ctx -> leave(ctx.getSource())))
                 .then(Commands.literal("stop").executes(ctx -> stop(ctx.getSource())))
+                .then(Commands.literal("fortress").then(Commands.argument("id", com.mojang.brigadier.arguments.StringArgumentType.word())
+                        .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(RiftFortress.FORM_IDS, b))
+                        .executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), true))
+                        .then(Commands.literal("fast").executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), false)))))
+                .then(Commands.literal("catalysts").executes(ctx -> catalysts(ctx.getSource())))
                 .then(Commands.literal("skill").then(Commands.argument("name", com.mojang.brigadier.arguments.StringArgumentType.word())
                         .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(RiftTitan.DEBUG_SKILLS, b))
                         .executes(ctx -> skill(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "name")))));
+    }
+
+    /**
+     * Test : pose la forme {@code id} dans la Faille (dimension de la Faille), à la place de la forteresse actuelle — avec la cinématique
+     * de construction, ou d'un coup avec « fast ».
+     */
+    private static int fortress(CommandSourceStack src, String id, boolean cine) {
+        ServerPlayer p = src.getPlayer();
+        if (p == null) return 0;
+        if (p.level().dimension() != RiftManager.RIFT_DIM) {
+            src.sendFailure(Component.literal(WSLang.t("rift.test.need_dim")));
+            return 0;
+        }
+        if (!RiftFortress.testBuild(p.serverLevel(), id, RiftManager.testRadius(), cine)) {
+            src.sendFailure(Component.literal(WSLang.t("rift.test.fortress_fail", id)));
+            return 0;
+        }
+        src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.fortress_ok", WSLang.t("rift.fortress." + id))), false);
+        return 1;
+    }
+
+    /** Test : cristaux de catalyseur aux 6 repères de la forme posée (casser leurs chaînes, voir les gardiens). */
+    private static int catalysts(CommandSourceStack src) {
+        ServerPlayer p = src.getPlayer();
+        if (p == null) return 0;
+        if (p.level().dimension() != RiftManager.RIFT_DIM) {
+            src.sendFailure(Component.literal(WSLang.t("rift.test.need_dim")));
+            return 0;
+        }
+        int n = RiftFortress.testCatalysts(p.serverLevel(), RiftManager.testRadius(), 300f);
+        src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.catalysts_ok", n)), false);
+        return 1;
     }
 
     /** Test : le Titan lance tout de suite l'attaque demandée (météores, traqueurs, lave, géant, piétinement, rocher, regard, rugissement, charge). */

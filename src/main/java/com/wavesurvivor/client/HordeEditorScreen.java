@@ -1977,8 +1977,8 @@ public class HordeEditorScreen extends Screen {
         fInt(30, HordeJson.num(r, "catalystGuardBoostPercent", 35), v -> r.addProperty("catalystGuardBoostPercent", Math.max(0, Math.min(300, v))));
         y += 30;
         String fcur = HordeJson.str(r, "fortress", "citadelle");
-        button(x, y - 2, 260, t("ui.rift.fortress") + fcur, () -> {
-            String[] forms = {"citadelle", "random"};
+        button(x, y - 2, 260, t("ui.rift.fortress") + ("random".equalsIgnoreCase(fcur) ? t("ui.rift.fortress_random") : t("rift.fortress." + fcur)), () -> {
+            String[] forms = {"citadelle", "ruche", "bastion", "ziggurat", "random"};
             int i = 0;
             for (int k = 0; k < forms.length; k++) if (forms[k].equalsIgnoreCase(fcur)) i = k;
             r.addProperty("fortress", forms[(i + 1) % forms.length]);

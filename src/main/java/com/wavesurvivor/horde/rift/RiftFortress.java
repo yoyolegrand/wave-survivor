@@ -42,7 +42,7 @@ import java.util.UUID;
 final class RiftFortress {
 
     /** Formes de forteresse disponibles (fichier fortress_&lt;id&gt;.json). La première est celle par défaut. */
-    static final String[] FORM_IDS = {"citadelle"};
+    static final String[] FORM_IDS = {"citadelle", "ruche", "bastion", "ziggurat"};
 
     private static final Random RNG = new Random();
     private static final DustParticleOptions VIOLET = new DustParticleOptions(new org.joml.Vector3f(0.65f, 0.2f, 0.95f), 1.3f);
@@ -492,6 +492,66 @@ final class RiftFortress {
     }
 
     /** Efface l'état de pose (fin ou arrêt de la Faille). */
+    // ─── Test (/ws rift fortress <id>) : pose une forme sans jouer le Siège ───
+
+    private static boolean testing;
+
+    static boolean testing() { return testing; }
+
+    static boolean known(String id) {
+        for (String s : FORM_IDS) if (s.equalsIgnoreCase(id)) return true;
+        return false;
+    }
+
+    /**
+     * Remplace la forteresse actuelle par la forme {@code id} : zone de la forteresse vidée (l'île n'est pas touchée), cibles retirées,
+     * puis pose avec ou sans cinématique de construction.
+     */
+    static boolean testBuild(ServerLevel l, String id, int sr, boolean withCine) {
+        if (!known(id)) return false;
+        clearTargets(l);
+        clearArea(l, sr);
+        reset();
+        select(id);
+        if (current == null || !current.id.equalsIgnoreCase(id)) return false;
+        startBuild(sr, false);
+        pendingCine = withCine;
+        if (withCine) beginCine(l, l.getServer().getTickCount());
+        testing = true;
+        return true;
+    }
+
+    /** Pose de test : appelée à chaque tick tant qu'elle n'est pas finie. */
+    static void testTick(ServerLevel l, long now) {
+        if (!testing) return;
+        buildTick(l, now);
+        if (built()) testing = false;
+    }
+
+    /** Vide l'emprise commune des plans (151 × 96 × 79 à partir du bord de l'île), sans toucher l'île ni la première rangée du pont. */
+    private static void clearArea(ServerLevel l, int sr) {
+        BlockPos c = RiftManager.CENTER;
+        BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+        BlockState air = Blocks.AIR.defaultBlockState();
+        for (int x = c.getX() + sr + 1; x <= c.getX() + sr + 150; x++) {
+            for (int z = c.getZ() - 39; z <= c.getZ() + 39; z++) {
+                for (int y = c.getY() - 18; y <= c.getY() + 80; y++) {
+                    if (!l.getBlockState(m.set(x, y, z)).isAir()) l.setBlock(m, air, 2 | 16);
+                }
+            }
+        }
+    }
+
+    /** Test : cibles de catalyseur aux repères du plan (pour vérifier les chaînes). */
+    static int testCatalysts(ServerLevel l, int sr, float hp) {
+        int n = 0;
+        for (BlockPos p : catalystPositions(sr)) {
+            spawnTarget(l, p.getX() + 0.5, p.getY(), p.getZ() + 0.5, hp, com.wavesurvivor.i18n.WSLang.t("rift.catalyst"), true);
+            n++;
+        }
+        return n;
+    }
+
     static void reset() {
         cine = false;
         pendingCine = false;

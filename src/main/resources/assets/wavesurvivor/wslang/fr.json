@@ -4198,5 +4198,13 @@
   "rift.legacy.title_new": "§5§l✦ {0} obtient le titre {1} §5§l!",
   "rift.legacy.not_enough": "§cIl faut {0} Marque(s) du Titan (vous en avez {1}).",
   "rift.legacy.bought": "§d✦ Héritage de la Faille : {0} débloqué !",
-  "rift.legacy.last_stand": "§5✦ Survivant de l’abîme : le coup fatal est évité !"
+  "rift.legacy.last_stand": "§5✦ Survivant de l’abîme : le coup fatal est évité !",
+  "rift.fortress.ruche": "La Ruche de cristal",
+  "rift.fortress.bastion": "Le Bastion flottant",
+  "rift.fortress.ziggurat": "La Ziggurat du Néant",
+  "ui.rift.fortress_random": "Au hasard (parmi les 4)",
+  "rift.test.need_dim": "À lancer depuis la dimension de la Faille (/ws rift open puis /ws rift enter).",
+  "rift.test.fortress_fail": "Forme inconnue ou plan illisible : {0} (citadelle, ruche, bastion, ziggurat).",
+  "rift.test.fortress_ok": "Test : {0} en cours de pose.",
+  "rift.test.catalysts_ok": "Test : {0} catalyseur(s) posé(s) aux repères."
 }

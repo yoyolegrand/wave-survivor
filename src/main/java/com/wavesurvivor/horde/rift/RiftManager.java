@@ -1243,6 +1243,20 @@ public final class RiftManager {
         }
     }
 
+    /** Le repère d'un catalyseur est dans l'air (cristal) : les gardiens apparaissent sur le sol en dessous (îlots du Bastion compris). */
+    private static BlockPos onGround(ServerLevel l, BlockPos p) {
+        for (int dy = 0; dy <= 10; dy++) {
+            BlockPos q = p.below(dy);
+            if (l.getBlockState(q).isAir() && !l.getBlockState(q.below()).getCollisionShape(l, q.below()).isEmpty()) return q;
+        }
+        return p;
+    }
+
+    /** Rayon d'île du Siège : celui de la Faille ouverte, sinon celui de la horde « La Faille » par défaut (tests). */
+    static int testRadius() {
+        return active ? siegeFinal : Math.max(16, Math.min(48, new HordeConfigMultiData.RiftSettings().siegeRadius));
+    }
+
     /** Une chaîne d'un catalyseur se brise : 3 à 5 gardiens surgissent autour, plus forts à chaque phase ({@code phase} = 0, 1, 2). */
     static void catalystGuards(ServerLevel l, BlockPos at, int phase) {
         var guardPool = phaseEntities("counter");
@@ -1256,7 +1270,7 @@ public final class RiftManager {
         for (int i = 0; i < n; i++) {
             var tpl = guardPool.get(RNG.nextInt(guardPool.size()));
             double a = i * Math.PI * 2 / n + RNG.nextDouble();
-            BlockPos pos = at.offset((int) Math.round(Math.cos(a) * 3), 0, (int) Math.round(Math.sin(a) * 3));
+            BlockPos pos = onGround(l, at.offset((int) Math.round(Math.cos(a) * 3), 0, (int) Math.round(Math.sin(a) * 3)));
             Entity e = com.wavesurvivor.horde.spawn.HordeSpawner.spawnSummonFromTemplate(l, tpl, pos, playerCount(l));
             if (e instanceof net.minecraft.world.entity.LivingEntity le && boost > 1.0) {
                 var hpAttr = le.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH);
@@ -1506,6 +1520,10 @@ public final class RiftManager {
 
     @SubscribeEvent
     public void onTick(TickEvent.ServerTickEvent e) {
+        if (e.phase == TickEvent.Phase.END && RiftFortress.testing()) {   // pose de test (/ws rift fortress <id>)
+            ServerLevel trd = e.getServer().getLevel(RIFT_DIM);
+            if (trd != null) RiftFortress.testTick(trd, e.getServer().getTickCount());
+        }
         if (e.phase != TickEvent.Phase.END || !active) return;
         if (gate != null && gate.isRunning()) gate.tick();
         else if (gate != null) gate.tickOpen(e.getServer().getTickCount());

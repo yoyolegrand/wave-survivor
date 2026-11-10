@@ -346,3 +346,14 @@ Test rapide : `/ws rift skill <meteors|tracking|lava|giant|stomp|rock|beam|roar|
 - [ ] Titan vaincu : +1 Marque (+1 en Cauchemar, +1 si 1er du podium) ; nouveau titre annoncé à tous, affiché devant le pseudo et dans Tab, aura visible
 - [ ] Nœud 1 : engins +20 % PV et dégâts ; nœud 2 : fenêtres du Titan +2 s ; nœud 4 : réapparition −5 s + un coup fatal évité par Faille ; nœud 5 : +10 % dégâts contre boss / Titan et +10 % PR partout
 - [ ] La Renaissance (renaître) ne remet PAS l'Héritage de la Faille à zéro
+
+## Forteresses : Ruche de cristal, Bastion flottant, Ziggurat du Néant
+Test rapide (dans la dimension de la Faille : `/ws rift open` puis `/ws rift enter`) : `/ws rift fortress <citadelle|ruche|bastion|ziggurat>` (avec cinématique) ou `/ws rift fortress <id> fast` (pose directe) ; puis `/ws rift catalysts` pose les 6 cristaux de catalyseur (300 PV) pour tester les chaînes.
+- [ ] Éditeur Faille › Siège : bouton Forteresse qui fait défiler Citadelle → Ruche → Bastion → Ziggurat → Au hasard (noms traduits)
+- [ ] « Au hasard » tire parmi les 4 formes
+- [ ] Ruche : pose complète, cinématique OK, améthyste bourgeonnante présente (des bourgeons peuvent pousser)
+- [ ] Bastion : rocher du donjon, marches flottantes, chaînes verticales, lanternes et îlots des catalyseurs restent en place (rien ne tombe ni ne casse) ; cœur atteignable par l'escalier
+- [ ] Ziggurat : 4 étages, grand escalier, cœur au sommet, colonne de verre noir
+- [ ] Chaque forme : chaque tiers de PV d'un catalyseur fait disparaître UNE colonne de chaînes entière (3 phases → plus aucune chaîne)
+- [ ] Bastion : les gardiens apparaissent sur l'îlot du catalyseur (pas dans le vide) et rejoignent les joueurs ; les ennemis venant de la porte circulent sur la plateforme
+- [ ] Changer de forme avec la commande : l'ancienne forteresse disparaît entièrement (l'île reste)

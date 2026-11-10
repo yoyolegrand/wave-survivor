@@ -4959,5 +4959,13 @@
   "rift.legacy.title_new": "§5§l✦ {0} earns the title {1}§5§l!",
   "rift.legacy.not_enough": "§cYou need {0} Titan Mark(s) (you have {1}).",
   "rift.legacy.bought": "§d✦ Rift Legacy: {0} unlocked!",
-  "rift.legacy.last_stand": "§5✦ Abyss Survivor: the fatal blow is avoided!"
+  "rift.legacy.last_stand": "§5✦ Abyss Survivor: the fatal blow is avoided!",
+  "rift.fortress.ruche": "The Crystal Hive",
+  "rift.fortress.bastion": "The Floating Bastion",
+  "rift.fortress.ziggurat": "The Void Ziggurat",
+  "ui.rift.fortress_random": "Random (among the 4)",
+  "rift.test.need_dim": "Run it from the Rift dimension (/ws rift open then /ws rift enter).",
+  "rift.test.fortress_fail": "Unknown form or unreadable plan: {0} (citadelle, ruche, bastion, ziggurat).",
+  "rift.test.fortress_ok": "Test: {0} is being built.",
+  "rift.test.catalysts_ok": "Test: {0} catalyst(s) placed at the markers."
 }
