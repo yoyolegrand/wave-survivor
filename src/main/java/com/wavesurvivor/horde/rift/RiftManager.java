@@ -483,7 +483,7 @@ public final class RiftManager {
 
     /** Un joueur passe la cinématique du Titan (maintenir S'accroupir 1 s). */
     public static void titanCineSkip(ServerPlayer p) {
-        if (active) RiftTitan.cineSkip(p);
+        if (active) { RiftTitan.cineSkip(p); RiftFortress.cineSkip(p); }
     }
 
     /** Le pilote d'une baliste maintient le clic droit (paquet du client). */
@@ -599,7 +599,7 @@ public final class RiftManager {
             }
             case SIEGE -> {
                 RiftFortress.shield(rd, siegeFinal, now);
-                RiftFortress.buildTick(rd);   // la forteresse se pose par tranches
+                RiftFortress.buildTick(rd, now);   // la forteresse se pose (cinématique de construction, ou par tranches)
                 if (growCur < growTarget) {
                     if (now >= growNextAt) {
                         int to = Math.min(growTarget, growCur + 2);
@@ -611,6 +611,7 @@ public final class RiftManager {
                         rd.playSound(null, CENTER, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 3f, 0.5f);
                     }
                 } else if (!siegeHordeOn) {
+                    if (RiftFortress.pendingCine()) RiftFortress.beginCine(rd, now);   // l'île a fini de grandir : la forteresse se construit
                     if (now >= siegeStartAt && RiftFortress.built()) startSiegeHorde(server, rd);
                 } else if (now % 20 == 0) {
                     waveWatch(server, rd, true);
@@ -770,7 +771,7 @@ public final class RiftManager {
         growNextAt = now + 40;
         siegeStartAt = now + 40 + ((growTarget - growCur + 1) / 2) * 8L + 80;
         siegeHordeOn = false;
-        RiftFortress.startBuild(siegeFinal);
+        RiftFortress.startBuild(siegeFinal, true);   // cinématique de construction une fois l'île agrandie
         RiftEngines.clear(); // les engins ne sont plus pré-posés : on les achète à la boutique du Monolithe
         for (ServerPlayer p : rd.players()) {
             com.wavesurvivor.network.ShakePacket.send(p, 80, 1.2f);
@@ -1020,7 +1021,7 @@ public final class RiftManager {
         siegeStartAt = now + 20;
         siegeHordeOn = false;
         RiftEngines.clear();
-        RiftFortress.startBuild(siegeFinal);
+        RiftFortress.startBuild(siegeFinal, false);   // reprise : la forteresse se reforme sans cinématique
         tellAll(rd, WSLang.t("rift.session.rebuilding"));
     }
 

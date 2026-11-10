@@ -4054,5 +4054,13 @@
   "ui.rift.cine_seconds": "Durée (s)",
   "ui.rift.cine_name": "Nom",
   "ui.rift.cine_sub": "Sous-titre",
-  "rift.exit_open": "§aUn portail de sortie s’est ouvert près du Monolithe : traversez-le pour rentrer."
+  "rift.exit_open": "§aUn portail de sortie s’est ouvert près du Monolithe : traversez-le pour rentrer.",
+  "rift.fortress.citadelle": "La Citadelle d’obsidienne",
+  "rift.fortress.sub": "Forteresse ennemie",
+  "ui.rift.fcine_on": "Cinématique forteresse",
+  "ui.rift.fcine_skip": "Passable",
+  "ui.rift.fcine_seconds": "Durée (s)",
+  "ui.rift.fcine_speed": "Blocs/tick",
+  "ui.rift.fcine_title": "Titre",
+  "ui.rift.sec_fcine": "Cinématique de la forteresse"
 }

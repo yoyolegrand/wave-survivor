@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wavesurvivor.WaveSurvivorMod;
+import com.wavesurvivor.config.model.HordeConfigMultiData;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -218,21 +219,229 @@ final class RiftFortress {
 
     // ─── Pose (étalée sur plusieurs ticks) ───
 
-    /** Démarre la pose de la forteresse et du pont. */
-    static void startBuild(int sr) {
+    /** Démarre la pose de la forteresse et du pont ; {@code allowCine} : jouer la cinématique de construction (une fois l'île agrandie). */
+    static void startBuild(int sr, boolean allowCine) {
         form();
         job = current != null;
         jobY = 0;
         jobZ = 0;
         jobSr = sr;
         FIXUPS.clear();
+        cine = false;
+        pendingCine = job && allowCine && RiftManager.settingsPublic().fortressCine;
     }
 
-    static boolean built() { return !job; }
+    static boolean built() { return !job && !cine && !pendingCine; }
+
+    static boolean pendingCine() { return pendingCine; }
+
+    // ─── Cinématique de construction (~20 s) ───
+    // 0-60 déchirure dans le vide · 60-140 socle · 140-200 pont · 200-300 murs · 300-360 sommets puis chaînes / bannières / portail · 360-400 bouclier
+
+    private static final class Cell {
+        final int x, y, z, cls;
+        final BlockState st;
+        final BlockPos pos;
+        Cell(int x, int y, int z, BlockState st, int cls, BlockPos pos) { this.x = x; this.y = y; this.z = z; this.st = st; this.cls = cls; this.pos = pos; }
+    }
+
+    private static final int SOCLE = 0, PONT = 1, MURS = 2, SOMMETS = 3, FIN = 4;
+    private static boolean pendingCine, cine, cineTitled, cinePortal, cineShieldDone;
+    private static long cineStart;
+    private static double cineF;
+    private static final List<List<Cell>> CELLS = new ArrayList<>();
+    private static final int[] PTR = new int[5];
+    private static final java.util.Set<UUID> cineSkipped = new java.util.HashSet<>();
+
+    private static int classify(Form f, int x, int y, int z, BlockState st) {
+        String n = BuiltInRegistries.BLOCK.getKey(st.getBlock()).getPath();
+        boolean bridgeBand = x < f.bEnd[0] - 1 && Math.abs(z - f.bStart[2]) <= f.bWidth / 2 + 1;
+        if (bridgeBand) return PONT;                                                    // dessous et dalles du pont, lanternes comprises
+        if (y < f.center[1]) return SOCLE;                                              // sous la plateforme : cône rocheux
+        if (n.equals("chain") || n.endsWith("_banner") || n.contains("lantern") || n.equals("rift_portal")) return FIN;
+        if (y >= f.center[1] + 15 || ((n.endsWith("_stairs") || n.endsWith("_slab")) && y >= f.center[1] + 8)) return SOMMETS;   // toits, flèches, pinacles
+        return MURS;
+    }
+
+    /** Début de la cinématique : plan classé par phase (bas vers haut), joueurs figés, caméra vers la forteresse. */
+    static void beginCine(ServerLevel l, long now) {
+        pendingCine = false;
+        Form f = form();
+        if (f == null) { cine = false; return; }
+        CELLS.clear();
+        for (int i = 0; i < 5; i++) { CELLS.add(new ArrayList<>()); PTR[i] = 0; }
+        for (int y = 0; y < f.layers.length; y++) {
+            String[] rows = f.layers[y];
+            for (int z = 0; z < rows.length; z++) {
+                String row = rows[z];
+                for (int x = 0; x < row.length(); x++) {
+                    BlockState st = f.pal.get(row.charAt(x));
+                    if (st == null || st.isAir()) continue;
+                    CELLS.get(classify(f, x, y, z, st)).add(new Cell(x, y, z, st, 0, w(jobSr, new int[]{x, y, z})));
+                }
+            }
+        }
+        // Ordres : bas vers haut ; le pont se construit du bout côté forteresse jusqu'au bord de l'île, dalle par dalle
+        java.util.Comparator<Cell> byY = java.util.Comparator.<Cell>comparingInt(c -> c.y).thenComparingInt(c -> c.z).thenComparingInt(c -> c.x);
+        for (int i = 0; i < 5; i++) CELLS.get(i).sort(i == PONT
+                ? java.util.Comparator.<Cell>comparingInt(c -> -c.x).thenComparingInt(c -> c.y).thenComparingInt(c -> c.z) : byY);
+        HordeConfigMultiData.RiftSettings rs = RiftManager.settingsPublic();
+        cineF = Math.max(8, Math.min(60, rs.fortressCineSeconds)) / 20.0;
+        cineStart = now;
+        cine = true;
+        cineTitled = cinePortal = cineShieldDone = false;
+        cineSkipped.clear();
+        int dur = (int) (400 * cineF);
+        BlockPos fc = center(jobSr);
+        for (ServerPlayer p : l.players()) {
+            if (p.isSpectator()) continue;
+            p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, dur + 20, 9, false, false));
+            p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.JUMP, dur + 20, 128, false, false));
+            p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE, dur + 20, 4, false, false));
+            com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                    new com.wavesurvivor.network.TitanCinePackets.Cine(true, dur, fc.getX() + 0.5, fc.getY() + 12, fc.getZ() + 0.5, rs.fortressCineSkippable));
+        }
+    }
+
+    /** Un joueur passe la cinématique de construction (individuel). */
+    static void cineSkip(ServerPlayer p) {
+        if (!cine || !cineSkipped.add(p.getUUID())) return;
+        p.removeEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN);
+        p.removeEffect(net.minecraft.world.effect.MobEffects.JUMP);
+        p.removeEffect(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE);
+        com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                new com.wavesurvivor.network.TitanCinePackets.Cine(false, 0, 0, 0, 0, false));
+    }
+
+    private static void snd(ServerLevel l, BlockPos at, net.minecraft.sounds.SoundEvent ev, float vol, float pitch) {
+        l.playSound(null, at, ev, SoundSource.BLOCKS, vol, pitch);
+    }
+
+    /** Pose {@code n} blocs de la classe {@code cls} ; retourne le nombre posé. */
+    private static int place(ServerLevel l, int cls, int n, long t) {
+        List<Cell> list = CELLS.get(cls);
+        int placed = 0;
+        BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+        while (PTR[cls] < list.size() && placed < n) {
+            Cell c = list.get(PTR[cls]++);
+            l.setBlock(m.set(c.pos), c.st, 2);
+            placed++;
+            String name = BuiltInRegistries.BLOCK.getKey(c.st.getBlock()).getPath();
+            if (name.endsWith("_wall") || name.equals("iron_bars") || name.equals("chain")) FIXUPS.add(c.pos);
+            if (name.contains("lantern") && placed < 3) snd(l, c.pos, SoundEvents.LANTERN_PLACE, 1.5f, 1.0f);
+            if (placed % 12 == 0 && cls != PONT) l.sendParticles(VIOLET, c.pos.getX() + 0.5, c.pos.getY() + 0.8, c.pos.getZ() + 0.5, 1, 0.2, 0.2, 0.2, 0.01);
+        }
+        return placed;
+    }
+
+    private static void cineTick(ServerLevel l, long now) {
+        long t = now - cineStart;
+        double f = cineF;
+        Form fm = current;
+        BlockPos fc = center(jobSr);
+        HordeConfigMultiData.RiftSettings rs = RiftManager.settingsPublic();
+        int speed = Math.max(20, rs.fortressCineSpeed);
+        long t1 = (long) (60 * f), t2 = (long) (140 * f), t3 = (long) (200 * f), t4 = (long) (300 * f), t5 = (long) (340 * f), t6 = (long) (360 * f), tEnd = (long) (400 * f);
+        // 1. La Faille : déchirure violette verticale dans le vide, éclairs visuels, tonnerre lointain
+        if (t < t1) {
+            double p = t / (double) Math.max(1, t1);
+            if (t == 0) { snd(l, fc, SoundEvents.LIGHTNING_BOLT_THUNDER, 6f, 0.6f); snd(l, fc, SoundEvents.PORTAL_TRIGGER, 5f, 0.7f); }
+            int h = (int) (6 + 60 * p);
+            for (int i = 0; i < 6 + (int) (16 * p); i++) {
+                double y = fc.getY() - 5 + RNG.nextDouble() * h;
+                l.sendParticles(ParticleTypes.REVERSE_PORTAL, fc.getX() + 0.5 + (RNG.nextDouble() - 0.5) * 3, y, fc.getZ() + 0.5 + (RNG.nextDouble() - 0.5) * 3, 1, 0.1, 0.3, 0.1, 0.05);
+                l.sendParticles(VIOLET, fc.getX() + 0.5, y, fc.getZ() + 0.5, 1, 0.3, 0.2, 0.3, 0.0);
+            }
+            if (t % 14 == 7) {
+                net.minecraft.world.entity.LightningBolt bolt = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(l);
+                if (bolt != null) {
+                    bolt.moveTo(fc.getX() + 0.5 + (RNG.nextDouble() - 0.5) * 50, fc.getY(), fc.getZ() + 0.5 + (RNG.nextDouble() - 0.5) * 50);
+                    bolt.setVisualOnly(true);
+                    l.addFreshEntity(bolt);
+                }
+            }
+            if (t % 10 == 0) for (ServerPlayer pl : l.players()) com.wavesurvivor.network.ShakePacket.send(pl, 10, (float) (0.2 + 0.5 * p));
+            return;
+        }
+        // 2 à 5 : pose progressive, chaque phase du bas vers le haut ; le quota de la phase est toujours terminé avant sa fin
+        long[][] win = {{t1, t2}, {t2, t3}, {t3, t4}, {t4, t5}, {t5, t6}};
+        int[] cls = {SOCLE, PONT, MURS, SOMMETS, FIN};
+        for (int i = 0; i < 5; i++) {
+            if (t < win[i][0]) break;
+            int left = CELLS.get(cls[i]).size() - PTR[cls[i]];
+            if (left <= 0) continue;
+            long ticksLeft = Math.max(1, win[i][1] - t);
+            int rate = t >= win[i][1] ? left : Math.max(speed, (int) Math.ceil(left / (double) ticksLeft));
+            if (t < win[i][1] || left > 0) place(l, cls[i], rate, t);
+        }
+        // sons d'ambiance : grondement du socle, pierre posée sur les murs
+        if (t >= t1 && t < t2 && t % 10 == 0) snd(l, fc, SoundEvents.DEEPSLATE_BREAK, 5f, 0.5f);
+        if (t >= t3 && t < t4 && t % 3 == 0) snd(l, fc.offset((int) ((RNG.nextDouble() - 0.5) * 40), 5, (int) ((RNG.nextDouble() - 0.5) * 40)), SoundEvents.STONE_PLACE, 3f, 0.7f + RNG.nextFloat() * 0.4f);
+        if (t >= t1 && t % 12 == 0) for (ServerPlayer pl : l.players()) com.wavesurvivor.network.ShakePacket.send(pl, 12, 0.35f);
+        // le portail ennemi s'allume
+        if (!cinePortal && t >= t6 - 6 && fm != null) {
+            cinePortal = true;
+            BlockPos pp = w(jobSr, fm.portal);
+            snd(l, pp, SoundEvents.END_PORTAL_SPAWN, 6f, 1.0f);
+            l.sendParticles(ParticleTypes.REVERSE_PORTAL, pp.getX() + 0.5, pp.getY() + 1.5, pp.getZ() + 0.5, 80, 1.5, 2.0, 1.5, 0.3);
+        }
+        // 6. Le bouclier : un dôme violet de particules se referme depuis le sol (repère « shield »), puis le titre
+        if (t >= t6 && fm != null) {
+            double p = Math.min(1.0, (t - t6) / (double) Math.max(1, tEnd - t6));
+            BlockPos sc = w(jobSr, fm.shieldC);
+            double R = fm.shieldR;
+            int rings = (int) Math.ceil(p * 8);
+            if (t % 3 == 0) {
+                for (int ring = 0; ring <= rings; ring++) {
+                    double rr = R * Math.sqrt(Math.max(0.05, 1 - sq(ring / 8.0)));
+                    double y = sc.getY() + ring * (R / 8.0) - (R * 0.15);
+                    for (int i = 0; i < 48; i++) {
+                        double a = (i / 48.0) * Math.PI * 2;
+                        l.sendParticles(((i + ring) & 1) == 0 ? TEAL : VIOLET, sc.getX() + 0.5 + Math.cos(a) * rr, y, sc.getZ() + 0.5 + Math.sin(a) * rr, 1, 0, 0, 0, 0);
+                    }
+                }
+            }
+            if (!cineShieldDone) { cineShieldDone = true; snd(l, sc, SoundEvents.BEACON_ACTIVATE, 8f, 0.6f); }
+            if (!cineTitled) {
+                cineTitled = true;
+                String key = "rift.fortress." + fm.id;
+                String title = rs.fortressCineTitle != null && !rs.fortressCineTitle.isBlank() ? rs.fortressCineTitle : com.wavesurvivor.i18n.WSLang.t(key);
+                for (ServerPlayer pl : l.players()) {
+                    pl.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(10, Math.max(20, (int) (tEnd - t6) - 10), 10));
+                    pl.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(Component.literal("§7" + com.wavesurvivor.i18n.WSLang.t("rift.fortress.sub"))));
+                    pl.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(Component.literal("§5§l" + title)));
+                }
+            }
+        }
+        // Fin : tout le reste est posé, bandes retirées, contrôle rendu ; le Siège commence
+        if (t >= tEnd) {
+            for (int i = 0; i < 5; i++) place(l, i, Integer.MAX_VALUE, t);
+            for (BlockPos p : FIXUPS) {
+                BlockState s = l.getBlockState(p);
+                BlockState u = net.minecraft.world.level.block.Block.updateFromNeighbourShapes(s, l, p);
+                if (u != s) l.setBlock(p, u, 2 | 16);
+            }
+            FIXUPS.clear();
+            cine = false;
+            job = false;
+            for (ServerPlayer pl : l.players()) {
+                pl.removeEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN);
+                pl.removeEffect(net.minecraft.world.effect.MobEffects.JUMP);
+                pl.removeEffect(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE);
+                if (!cineSkipped.contains(pl.getUUID())) {
+                    com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> pl),
+                            new com.wavesurvivor.network.TitanCinePackets.Cine(false, 0, 0, 0, 0, false));
+                }
+            }
+            CELLS.clear();
+            WaveSurvivorMod.LOGGER.info("[Faille] Forteresse '{}' construite (cinématique).", fm != null ? fm.id : "?");
+        }
+    }
 
     /** Pose une tranche du plan (≈ 20 000 blocs par tick). À appeler à chaque tick tant que {@link #built()} est faux. */
-    static void buildTick(ServerLevel l) {
-        if (!job) return;
+    static void buildTick(ServerLevel l, long now) {
+        if (cine) { cineTick(l, now); return; }   // cinématique de construction
+        if (!job || pendingCine) return;           // en attente de la fin de l'agrandissement de l'île
         Form f = current;
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
         int budget = 20000;
@@ -284,6 +493,9 @@ final class RiftFortress {
 
     /** Efface l'état de pose (fin ou arrêt de la Faille). */
     static void reset() {
+        cine = false;
+        pendingCine = false;
+        CELLS.clear();
         job = false;
         FIXUPS.clear();
         current = null;
@@ -293,6 +505,7 @@ final class RiftFortress {
 
     /** Particules du dôme et refoulement des joueurs : on ne peut ni entrer dans la forteresse ni l'atteindre tant que le bouclier tient. */
     static void shield(ServerLevel l, int sr, long time) {
+        if (pendingCine || cine || job) return;   // pas de bouclier tant que la forteresse n'est pas construite
         Form f = form();
         BlockPos sc = w(sr, f.shieldC);
         double cx = sc.getX() + 0.5, cz = sc.getZ() + 0.5, R = f.shieldR;

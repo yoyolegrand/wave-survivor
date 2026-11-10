@@ -449,6 +449,12 @@ public class HordeConfigMultiData {
         @SerializedName("titanCineName") public String titanCineName = "LE COLOSSE";
         @SerializedName("titanCineSub") public String titanCineSub = "Titan de la Faille";
         @SerializedName("titanCineSounds") public boolean titanCineSounds = true;
+        /** Cinématique de construction de la forteresse : activée, passable, durée (s), blocs posés par tick (minimum), titre (vide = nom de la forteresse). */
+        @SerializedName("fortressCine") public boolean fortressCine = true;
+        @SerializedName("fortressCineSkippable") public boolean fortressCineSkippable = true;
+        @SerializedName("fortressCineSeconds") public int fortressCineSeconds = 20;
+        @SerializedName("fortressCineSpeed") public int fortressCineSpeed = 150;
+        @SerializedName("fortressCineTitle") public String fortressCineTitle = "";
         @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
         @SerializedName("titanWindowCapPercent") public int titanWindowCapPercent = 8;
         /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */

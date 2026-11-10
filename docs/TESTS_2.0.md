@@ -259,3 +259,16 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] **Défaite ou victoire** : à l'ouverture de la pause de fin, le **Titan disparaît** (avec ses cristaux, boîtes de contact, avatars, météores et barre de vie), les monstres restants sont retirés, et un **portail de sortie** (cadre d'obsidienne pleureuse) s'ouvre au nord du Monolithe ; le traverser renvoie chez soi sans attendre la fin du chrono.
 - [ ] Les annonces du Titan (fureur, avatars, points faibles, Monolithe frappé, charge, stun…) et de la Faille (horde, siège, contre-offensive, défaite…) apparaissent dans le **fil d'événements** (étiquettes en haut à gauche) et non plus dans le chat.
 - [ ] **Engins** : après l'achat de la variante de niveau 3, l'engin affiche bien le **modèle de sa variante** (avant, la variante n'était pas transmise au client : il restait au modèle du niveau 2). `latest.log` : lignes « Modèle d'engin chargé : … » pour chaque niveau / variante rencontré.
+
+## Cinématique de construction de la forteresse (~20 s, début du Siège)
+- [ ] Après l'agrandissement de l'île : bandes noires, caméra vers la forteresse (est), joueurs figés et invulnérables ; la forteresse n'apparaît **pas d'un coup**.
+- [ ] **0-60 Faille** : déchirure violette verticale dans le vide à l'emplacement de la forteresse (particules + éclairs visuels sans dégâts), tonnerre lointain + portail.
+- [ ] **60-140 Socle** : le cône rocheux puis la dalle, du bas vers le haut, étincelles violettes, grondement.
+- [ ] **140-200 Pont** : du bout côté forteresse jusqu'au bord de l'île, dalle par dalle ; son de lanterne à chaque lanterne posée.
+- [ ] **200-300 Murs** : muraille, tours, donjon, catalyseurs, rangée par rangée de bas en haut, sons de pierre posée.
+- [ ] **300-360 Sommets** : toits, flèches, pinacles, puis chaînes, bannières, lanternes ; le portail ennemi s'allume (son d'ouverture).
+- [ ] **360-400 Bouclier** : dôme de particules qui se referme depuis le sol (repère « shield »), titre « La Citadelle d'obsidienne », puis début du Siège (herse ouverte, horde).
+- [ ] Passable en maintenant S'accroupir 1 s (individuel). Solo et à deux.
+- [ ] Éditeur : cinématique de la forteresse (activée, passable, durée, blocs/tick minimum, titre).
+- [ ] Reprise de partie au Siège : la forteresse se reforme **sans** cinématique.
+- [ ] Murs, barreaux et chaînes bien raccordés à la fin ; plus de bouclier visible avant la fin de la construction.

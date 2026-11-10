@@ -4815,5 +4815,13 @@
   "ui.rift.cine_seconds": "Length (s)",
   "ui.rift.cine_name": "Name",
   "ui.rift.cine_sub": "Subtitle",
-  "rift.exit_open": "§aAn exit portal opened near the Monolith: walk through it to go home."
+  "rift.exit_open": "§aAn exit portal opened near the Monolith: walk through it to go home.",
+  "rift.fortress.citadelle": "The Obsidian Citadel",
+  "rift.fortress.sub": "Enemy fortress",
+  "ui.rift.fcine_on": "Fortress cinematic",
+  "ui.rift.fcine_skip": "Skippable",
+  "ui.rift.fcine_seconds": "Length (s)",
+  "ui.rift.fcine_speed": "Blocks/tick",
+  "ui.rift.fcine_title": "Title",
+  "ui.rift.sec_fcine": "Fortress cinematic"
 }
