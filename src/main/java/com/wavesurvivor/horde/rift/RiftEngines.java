@@ -94,6 +94,7 @@ final class RiftEngines {
             t.putInt("kind", e.kind());
             t.putInt("level", e.engineLevel());
             t.putInt("variant", e.variant());
+            if (e.maxHp() > 0) t.putFloat("hp", e.hp() / e.maxHp());
             out.add(t);
         }
         return out;
@@ -111,6 +112,8 @@ final class RiftEngines {
             e.setKind(ballista ? SiegeEngineEntity.BALLISTA : SiegeEngineEntity.CATAPULT);
             e.setEngineLevel(Math.max(1, t.getInt("level")));
             e.setVariant(t.getInt("variant"));
+            e.applyMaxHp();
+            if (t.contains("hp")) e.setHpRatio(t.getFloat("hp"));
             e.setAmmo(ballista ? 0 : 1);
             e.setReloadTicks(ballista ? ballistaReload(e) : catapultReload(e));
             e.setAim(0f, -18f);
@@ -118,6 +121,68 @@ final class RiftEngines {
             TOWERS.add(e.getUUID());
         }
     }
+
+    /** Positions des engins posés (cibles des attaques du Titan contre les bâtiments). */
+    static List<BlockPos> positions(ServerLevel l) {
+        List<BlockPos> out = new ArrayList<>();
+        for (UUID id : TOWERS) if (l.getEntity(id) instanceof SiegeEngineEntity e && !e.isRemoved()) out.add(e.blockPosition());
+        return out;
+    }
+
+    /** Dégâts aux engins dont la boîte est à moins de {@code r} blocs de {@code c} (attaques du Titan, explosions). */
+    static void damageNear(ServerLevel l, Vec3 c, double r, float dmg) {
+        if (dmg <= 0) return;
+        for (SiegeEngineEntity e : l.getEntitiesOfClass(SiegeEngineEntity.class, new AABB(c, c).inflate(r + 4))) {
+            AABB b = e.getBoundingBox();
+            double dx = Math.max(0, Math.max(b.minX - c.x, c.x - b.maxX)), dy = Math.max(0, Math.max(b.minY - c.y, c.y - b.maxY)),
+                    dz = Math.max(0, Math.max(b.minZ - c.z, c.z - b.maxZ));
+            if (dx * dx + dy * dy + dz * dz <= r * r) e.damage(dmg);
+        }
+    }
+
+    /** Dégâts aux engins dont la boîte touche le rectangle (charge du Titan, effondrement de l'île). */
+    static void damageRect(ServerLevel l, double x0, double x1, double z0, double z1, float dmg) {
+        if (dmg <= 0) return;
+        AABB zone = new AABB(x0, RiftManager.CENTER.getY() - 20, z0, x1, RiftManager.CENTER.getY() + 40, z1);
+        for (SiegeEngineEntity e : l.getEntitiesOfClass(SiegeEngineEntity.class, zone)) e.damage(dmg);
+    }
+
+    /** Coup d'un monstre au contact d'un engin. @return vrai si un engin a été touché. */
+    static boolean hitNear(ServerLevel l, net.minecraft.world.entity.Mob m, double reach, float dmg) {
+        for (SiegeEngineEntity e : l.getEntitiesOfClass(SiegeEngineEntity.class, m.getBoundingBox().inflate(reach))) {
+            if (e.isRemoved()) continue;
+            m.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+            m.getLookControl().setLookAt(e.getX(), e.getY() + 1, e.getZ());
+            l.playSound(null, e.blockPosition(), SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1f, 0.7f);
+            e.damage(Math.max(1f, dmg));
+            return true;
+        }
+        return false;
+    }
+
+    /** Engin à 0 PV : il vole en éclats (on peut en racheter un à la boutique). */
+    static void destroyed(SiegeEngineEntity e) {
+        if (!(e.level() instanceof ServerLevel l) || e.isRemoved()) return;
+        e.ejectPassengers();
+        TOWERS.remove(e.getUUID());
+        double h = SiegeEngineEntity.footprint(e.kind())[1];
+        l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, e.getX(), e.getY() + h * 0.5, e.getZ(), 2, 1, 1, 1, 0);
+        l.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, net.minecraft.world.level.block.Blocks.SPRUCE_PLANKS.defaultBlockState()),
+                e.getX(), e.getY() + h * 0.5, e.getZ(), 60, 1.5, h * 0.4, 1.5, 0.3);
+        l.playSound(null, e.blockPosition(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.BLOCKS, 3f, 0.6f);
+        l.playSound(null, e.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 2f, 0.9f);
+        RiftManager.feed(l, "§c" + com.wavesurvivor.i18n.WSLang.t("rift.engine.destroyed", nameOf(e)));
+        e.discard();
+    }
+
+    /** Coût d'une réparation complète (◆) : proportionnel aux PV manquants. */
+    private static int repairCost(SiegeEngineEntity e) {
+        if (e.maxHp() <= 0 || e.hp() >= e.maxHp()) return 0;
+        return Math.max(1, (int) Math.ceil((1f - e.hp() / e.maxHp()) * REPAIR_FULL[e.isBallista() ? 1 : 0]));
+    }
+
+    /** Prix d'une réparation complète d'un engin détruit à 99 % (tour-catapulte, baliste). */
+    private static final int[] REPAIR_FULL = {80, 60};
 
     static void clear() {
         TOWERS.clear();
@@ -343,14 +408,21 @@ final class RiftEngines {
         int k = e.isBallista() ? 1 : 0;
         com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
                 new com.wavesurvivor.network.EngineSheetPackets.Sheet(e.getId(), e.kind(), e.engineLevel(), e.engineLevel() >= 3 ? e.variant() : 0,
-                        UP2[k], UP3[k], coins(p), e.ammo()));
+                        UP2[k], UP3[k], coins(p), e.ammo(), (int) Math.ceil(e.hp()), (int) e.maxHp(), repairCost(e)));
     }
 
     /** Action de la fiche : « upgrade » (niveau 2) ou « variant0 » à « variant2 » (niveau 3, définitif). */
     static void sheetAction(ServerPlayer p, int entityId, String action) {
         if (!(p.level() instanceof ServerLevel l) || !(l.getEntity(entityId) instanceof SiegeEngineEntity e) || p.distanceToSqr(e) > 20 * 20) return;
         long now = l.getGameTime();
-        if ("upgrade".equals(action)) {
+        if ("repair".equals(action)) {
+            int cost = repairCost(e);
+            if (cost > 0 && (p.isCreative() || com.wavesurvivor.altar.AltarDefense.trySpend(p, cost))) {
+                e.repair();
+                l.playSound(null, e.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1f, 1.1f);
+                l.sendParticles(ParticleTypes.HAPPY_VILLAGER, e.getX(), e.getY() + 2, e.getZ(), 20, 1, 1, 1, 0);
+            }
+        } else if ("upgrade".equals(action)) {
             if (e.engineLevel() == 1) upgrade(p, e, now);
         } else if (action.startsWith("variant") && action.length() == 8) {
             int i = action.charAt(7) - '0';

@@ -470,6 +470,8 @@ public class HordeConfigMultiData {
         @SerializedName("titanBuildDamage") public int titanBuildDamage = 300;
         /** Compétences du Titan : chaque charge brise un secteur du bord de l'île (profondeur en blocs), coups pour abattre le rocher, dégâts du piétinement. */
         @SerializedName("titanIslandBreak") public boolean titanIslandBreak = true;
+        /** Siège, Contre-offensive, Titan : tous les monstres abîment les bâtiments et engins qu'ils frôlent. */
+        @SerializedName("monstersAttackBuildings") public boolean monstersAttackBuildings = true;
         @SerializedName("titanBreakDepth") public int titanBreakDepth = 7;
         @SerializedName("titanRockHits") public int titanRockHits = 3;
         @SerializedName("titanStompDamage") public int titanStompDamage = 10;

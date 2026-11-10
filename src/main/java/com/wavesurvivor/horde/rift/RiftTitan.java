@@ -585,7 +585,8 @@ final class RiftTitan {
         // Un météore par zone : visible dans le ciel côté Titan, ~1,2 s avant l'impact
         int craterR = rs.meteorCrater ? (int) Math.max(1, Math.min(3, Math.round(radius / 3))) : 0;
         for (double[] s : spots) {
-            newMeteor(s[0], s[1], s[2], (float) Math.max(0.3, rs.meteorSize / 3.0), radius, rs.meteorDamage, craterR, 200, impact, fall, 1f, rs.meteorBlocks);
+            newMeteor(s[0], s[1], s[2], (float) Math.max(0.3, rs.meteorSize / 3.0), radius, rs.meteorDamage, craterR, 200, impact, fall, 1f, rs.meteorBlocks)
+                    .buildDamage = Math.max(1, rs.titanBuildDamage / 3f);
         }
         schedule(l, now, delay, "Pluie de météores !", t -> {
             // La zone se remplit du centre vers le bord, en plus du cercle
@@ -632,6 +633,7 @@ final class RiftTitan {
             Meteor m = newMeteor(t.getX(), gy, t.getZ(), (float) Math.max(0.3, rs.meteorSize / 3.0) * 0.85f, Math.max(1.5, rs.meteorRadius) * 0.8,
                     rs.meteorDamage * 1.2, 1, 160, imp, fall, 1f, rs.meteorBlocks);
             m.follow = t.getUUID();
+            m.buildDamage = Math.max(1, rs.titanBuildDamage / 3f);
             m.lockAt = imp - fall;
             mine.add(m);
         }
@@ -666,7 +668,9 @@ final class RiftTitan {
             int gy = groundY(l, (int) Math.floor(x), (int) Math.floor(z));
             if (gy <= l.getMinBuildHeight() + 1) continue;
             long imp = now + 50 + RNG.nextInt(50);
-            mine.add(newMeteor(x, gy, z, 0.45f, 2.0, Math.max(1, rs.meteorDamage * 0.5), 1, 240, imp, 16, 0.8f, "magma_block=4, blackstone=1"));
+            Meteor lm = newMeteor(x, gy, z, 0.45f, 2.0, Math.max(1, rs.meteorDamage * 0.5), 1, 240, imp, 16, 0.8f, "magma_block=4, blackstone=1");
+            lm.buildDamage = Math.max(1, rs.titanBuildDamage / 6f);
+            mine.add(lm);
         }
         if (mine.isEmpty()) return;
         long last = now;
@@ -782,7 +786,7 @@ final class RiftTitan {
             if (Math.hypot(p.getX() - x, p.getZ() - z) <= hit && Math.abs(p.getY() - y) < 4) p.hurt(l.damageSources().explosion(null, titan), (float) Math.max(1, m.damage));
         }
         for (Display.BlockDisplay d : m.parts) dropMeteorPart(d, "impact");
-        if (m.buildDamage > 0) com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(at, (int) Math.ceil(radius), m.buildDamage);
+        if (m.buildDamage > 0) hitBuildings(l, at, (int) Math.ceil(radius), m.buildDamage);
         if (m.craterR > 0) crater(l, at, m.craterR, now, m.craterTicks);
     }
 
@@ -957,7 +961,7 @@ final class RiftTitan {
                 for (BlockPos dp : defs) {
                     if (hitDef.contains(dp) || Math.abs(Math.hypot(dp.getX() + 0.5 - ox, dp.getZ() + 0.5 - oz) - r) > 1.2) continue;
                     hitDef.add(dp);
-                    com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(dp, 1, Math.max(1, rs.titanBuildDamage / 3f));
+                    hitBuildings(l, dp, 1, Math.max(1, rs.titanBuildDamage / 3f));
                 }
                 if (kk % 6 == 0) l.playSound(null, BlockPos.containing(ox, gy, oz - r), SoundEvents.DEEPSLATE_BREAK, SoundSource.HOSTILE, 3f, 0.5f);
             });
@@ -1142,7 +1146,7 @@ final class RiftTitan {
                 pl.hurtMarked = true;
             }
         }
-        com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(r.target, 4, Math.max(1, rs.titanBuildDamage * 1.5f));
+        hitBuildings(l, r.target, 4, Math.max(1, rs.titanBuildDamage * 1.5f));
         if (r.monolith) com.wavesurvivor.altar.AltarDefense.externalHit(l, rs.titanMonolithDamage);
         crater(l, r.target, 2, now, 300);
         announce(l, "§c" + com.wavesurvivor.i18n.WSLang.t("rift.titan.rock_impact"));
@@ -1181,7 +1185,7 @@ final class RiftTitan {
                     }
                     if (kk % 3 == 0) scorch(l, BlockPos.containing(px, py - 1, pz), nowT, 160, true);
                     if (kk % 10 == 0) {
-                        com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(BlockPos.containing(px, py, pz), 2, Math.max(1, rs.titanBuildDamage / 4f));
+                        hitBuildings(l, BlockPos.containing(px, py, pz), 2, Math.max(1, rs.titanBuildDamage / 4f));
                         l.playSound(null, BlockPos.containing(px, py, pz), SoundEvents.BEACON_AMBIENT, SoundSource.HOSTILE, 4f, 0.5f);
                     }
                     if (kk % 5 == 0) {
@@ -1447,7 +1451,7 @@ final class RiftTitan {
             }
         }
         // Les bâtiments pris dans la zone sont écrasés
-        com.wavesurvivor.horde.kingdom.KingdomClaim.damageRect(zone[0], zone[1], zone[2], zone[3], Math.max(1, rs.titanBuildDamage));
+        hitRect(l, zone[0], zone[1], zone[2], zone[3], Math.max(1, rs.titanBuildDamage));
         breakSector(l, now);
         charge = 3;
         chargeAt = now + Math.max(2, rs.titanChargeStun) * 20L + stunBonus;
@@ -1502,7 +1506,7 @@ final class RiftTitan {
         final int[] falling = {0};
         for (int[] col : cols) RiftManager.later(l.getServer(), 4 + col[2] + RNG.nextInt(4), () -> collapseColumn(l, col[0], col[1], falling));
         // Les bâtiments posés sur ce bord s'écroulent avec lui
-        com.wavesurvivor.horde.kingdom.KingdomClaim.damageRect(zone[0], zone[1], c.getZ() + sr - depth, c.getZ() + sr + 3, Math.max(1, rs.titanBuildDamage * 4f));
+        hitRect(l, zone[0], zone[1], c.getZ() + sr - depth, c.getZ() + sr + 3, Math.max(1, rs.titanBuildDamage * 4f));
     }
 
     /** Une colonne de l'île tombe : les blocs du dessus chutent (blocs qui tombent), le reste disparaît dans l'abîme. */
@@ -1758,7 +1762,25 @@ final class RiftTitan {
     private static List<BlockPos> defensePositions() {
         List<BlockPos> out = new ArrayList<>();
         com.wavesurvivor.horde.kingdom.KingdomDefenses.forEachDefense((p, k) -> out.add(p));
+        if (titan != null && titan.level() instanceof ServerLevel l) out.addAll(RiftEngines.positions(l));   // les engins de siège aussi
         return out;
+    }
+
+    private static boolean warnedNoBuildings;
+
+    /** Dégâts aux bâtiments du royaume (murs, tours, remparts) ET aux engins de siège dans un rayon. */
+    private static int hitBuildings(ServerLevel l, BlockPos at, int r, float dmg) {
+        RiftEngines.damageNear(l, Vec3.atCenterOf(at), r + 1.5, dmg);
+        if (!warnedNoBuildings && com.wavesurvivor.horde.kingdom.KingdomClaim.trackedCount() == 0) {
+            warnedNoBuildings = true;
+            WaveSurvivorMod.LOGGER.info("[Faille] Titan : aucun bâtiment du royaume n'a de PV suivis (claim inactif ou vide).");
+        }
+        return com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(at, r, dmg);
+    }
+
+    private static int hitRect(ServerLevel l, double x0, double x1, double z0, double z1, float dmg) {
+        RiftEngines.damageRect(l, x0, x1, z0, z1, dmg);
+        return com.wavesurvivor.horde.kingdom.KingdomClaim.damageRect(x0, x1, z0, z1, dmg);
     }
 
     /** Le Titan vise un bâtiment : annoncé (cercle rouge), puis tout ce qui est dans la zone est endommagé. */
@@ -1770,7 +1792,7 @@ final class RiftTitan {
         schedule(l, now, 60, "Le Titan écrase un bâtiment !", x -> ring(l, t.getX() + 0.5, t.getY() + 0.2, t.getZ() + 0.5, r, RED, 28), () -> {
             l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, t.getX() + 0.5, t.getY() + 1, t.getZ() + 0.5, 2, 0.8, 0.5, 0.8, 0);
             l.playSound(null, t, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
-            com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(t, (int) Math.ceil(r), Math.max(1, rs.titanBuildDamage));
+            hitBuildings(l, t, (int) Math.ceil(r), Math.max(1, rs.titanBuildDamage));
             for (ServerPlayer p : alive(l)) {
                 if (Math.hypot(p.getX() - t.getX() - 0.5, p.getZ() - t.getZ() - 0.5) <= r) p.hurt(l.damageSources().explosion(null, titan), 10f);
                 ShakePacket.send(p, 25, 1.0f);

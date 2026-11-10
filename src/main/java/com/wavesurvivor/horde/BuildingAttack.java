@@ -39,17 +39,22 @@ public class BuildingAttack {
         if (!hm.isRunning() || com.wavesurvivor.altar.MonolithFall.active()) return;
         for (Map.Entry<UUID, HordeEntity> en : MobRegistry.entries()) { // table concurrente : parcours sûr sans copie
             HordeEntity t = en.getValue();
-            if (t == null || !t.attackBuildings) continue;
+            if (t == null) continue;
+            // Faille : tous les monstres abîment ce qu'ils frôlent (bâtiments, engins), sans viser le Monolithe pour autant
+            boolean rift = !t.attackBuildings && com.wavesurvivor.horde.rift.RiftManager.monstersHitBuildings();
+            if (!t.attackBuildings && !rift) continue;
             Entity e = findEntity(server, en.getKey());
             if (!(e instanceof Mob m) || !m.isAlive() || !(m.level() instanceof ServerLevel lvl)) continue;
             if (AltarDefense.isProfaner(m.getUUID())) continue; // le Profanateur a d\u00e9j\u00e0 sa propre attaque du Monolithe
             float dmg = hitDamage(m, t);
-            if (AltarDefense.inReach(lvl, m.position(), MONOLITH_REACH)) {
+            if (!rift && AltarDefense.inReach(lvl, m.position(), MONOLITH_REACH)) {
                 m.swing(InteractionHand.MAIN_HAND);
                 AltarDefense.externalHit(lvl, dmg);
                 continue;
             }
-            com.wavesurvivor.horde.kingdom.KingdomClaim.hitNear(m, BUILDING_REACH, dmg);
+            if (!com.wavesurvivor.horde.kingdom.KingdomClaim.hitNear(m, BUILDING_REACH, dmg)) {
+                com.wavesurvivor.horde.rift.RiftManager.hitEngineNear(m, BUILDING_REACH, dmg);
+            }
         }
     }
 
@@ -84,5 +89,6 @@ public class BuildingAttack {
         float dmg = t.buildingDamage > 0 ? (float) t.buildingDamage : DEFAULT_BLAST;
         if (AltarDefense.inReach(lvl, src.position(), BLAST_MONOLITH)) AltarDefense.externalHit(lvl, dmg);
         com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(BlockPos.containing(src.position()), BLAST_RADIUS, dmg);
+        com.wavesurvivor.horde.rift.RiftManager.engineBlast(lvl, src.position(), BLAST_RADIUS + 1.5, dmg);
     }
 }

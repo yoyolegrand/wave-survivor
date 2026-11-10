@@ -4100,5 +4100,8 @@
   "rift.titan.lava_rain": "Pluie de lave !",
   "rift.titan.meteor_giant": "MÉTÉORE GÉANT ! Fuyez la zone !",
   "rift.titan.skill_ok": "Titan : attaque « {0} » lancée.",
-  "rift.titan.skill_fail": "Impossible de lancer « {0} » (pas de Titan actif, cinématique en cours ou charge déjà lancée)."
+  "rift.titan.skill_fail": "Impossible de lancer « {0} » (pas de Titan actif, cinématique en cours ou charge déjà lancée).",
+  "rift.engine.destroyed": "{0} a été détruite !",
+  "rift.engine.sheet.repair": "Réparer ({0} ◆)",
+  "ui.rift.mobs_hit_buildings": "Les monstres abîment bâtiments et engins"
 }

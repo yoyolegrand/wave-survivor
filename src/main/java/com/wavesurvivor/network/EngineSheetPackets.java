@@ -16,20 +16,23 @@ public final class EngineSheetPackets {
 
     /** S→C : état de l'engin (identifiant d'entité, type 0 catapulte / 1 baliste, niveau, variante, prix, monnaie disponible). */
     public static class Sheet {
-        public final int entity, kind, level, variant, upCost, varCost, have, ammo;
+        public final int entity, kind, level, variant, upCost, varCost, have, ammo, hp, maxHp, repairCost;
 
-        public Sheet(int entity, int kind, int level, int variant, int upCost, int varCost, int have, int ammo) {
+        public Sheet(int entity, int kind, int level, int variant, int upCost, int varCost, int have, int ammo, int hp, int maxHp, int repairCost) {
             this.entity = entity; this.kind = kind; this.level = level; this.variant = variant;
             this.upCost = upCost; this.varCost = varCost; this.have = have; this.ammo = ammo;
+            this.hp = hp; this.maxHp = maxHp; this.repairCost = repairCost;
         }
 
         public void encode(FriendlyByteBuf b) {
             b.writeVarInt(entity); b.writeVarInt(kind); b.writeVarInt(level); b.writeVarInt(variant);
             b.writeVarInt(upCost); b.writeVarInt(varCost); b.writeVarInt(have); b.writeVarInt(ammo);
+            b.writeVarInt(hp); b.writeVarInt(maxHp); b.writeVarInt(repairCost);
         }
 
         public static Sheet decode(FriendlyByteBuf b) {
-            return new Sheet(b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt());
+            return new Sheet(b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt(), b.readVarInt(),
+                    b.readVarInt(), b.readVarInt(), b.readVarInt());
         }
 
         public static void handle(Sheet pkt, Supplier<NetworkEvent.Context> ctx) {

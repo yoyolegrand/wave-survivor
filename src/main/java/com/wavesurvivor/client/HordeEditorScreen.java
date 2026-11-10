@@ -2070,6 +2070,8 @@ public class HordeEditorScreen extends Screen {
         fInt(22, HordeJson.num(r, "titanRockHits", 3), v -> r.addProperty("titanRockHits", Math.max(1, Math.min(30, v))));
         fl(t("ui.rift.stomp_dmg"));
         fInt(26, HordeJson.num(r, "titanStompDamage", 10), v -> r.addProperty("titanStompDamage", Math.max(1, Math.min(200, v))));
+        y += 26;
+        toggle(x, y - 2, 260, t("ui.rift.mobs_hit_buildings"), r, "monstersAttackBuildings", true);
     }
 
     /** Faille — page « Titan et engins de siège ». */

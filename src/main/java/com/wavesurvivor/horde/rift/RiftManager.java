@@ -584,6 +584,26 @@ public final class RiftManager {
         if (active) { RiftTitan.cineSkip(p); RiftFortress.cineSkip(p); }
     }
 
+    /** Un engin de siège tombe à 0 PV (appelé par l'entité). */
+    public static void engineDestroyed(com.wavesurvivor.entity.SiegeEngineEntity e) {
+        RiftEngines.destroyed(e);
+    }
+
+    /** Siège, Contre-offensive, Titan : tous les monstres abîment les bâtiments et engins qu'ils frôlent (réglable). */
+    public static boolean monstersHitBuildings() {
+        return active && (phase == Phase.SIEGE || phase == Phase.COUNTER || phase == Phase.TITAN) && settings().monstersAttackBuildings;
+    }
+
+    /** Coup d'un monstre au contact d'un engin de siège. */
+    public static boolean hitEngineNear(net.minecraft.world.entity.Mob m, double reach, float dmg) {
+        return active && m.level() instanceof ServerLevel l && l.dimension() == RIFT_DIM && RiftEngines.hitNear(l, m, reach, dmg);
+    }
+
+    /** Explosion d'un monstre : dégâts aux engins proches. */
+    public static void engineBlast(ServerLevel l, net.minecraft.world.phys.Vec3 c, double r, float dmg) {
+        if (active && l.dimension() == RIFT_DIM) RiftEngines.damageNear(l, c, r, dmg);
+    }
+
     /** Le pilote d'une baliste maintient le clic droit (paquet du client). */
     public static void engineFire(ServerPlayer p) {
         if (active && p.level().dimension() == RIFT_DIM) RiftEngines.fireFromSeat(p);

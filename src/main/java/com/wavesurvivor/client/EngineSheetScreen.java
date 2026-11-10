@@ -68,6 +68,11 @@ public class EngineSheetScreen extends Screen {
                 b.active = creative() || s.have >= s.varCost;
             }
         }
+        if (s.repairCost > 0) {   // engin abîmé : réparation complète, prix selon les PV manquants
+            Button r = addRenderableWidget(Button.builder(Component.literal(WSLang.t("rift.engine.sheet.repair", s.repairCost)), bt -> act("repair"))
+                    .bounds(left + 10, top + H - 26, 150, 18).build());
+            r.active = creative() || s.have >= s.repairCost;
+        }
         addRenderableWidget(Button.builder(Component.literal(WSLang.t("ui.fermer")), bt -> onClose()).bounds(left + W - 86, top + H - 26, 76, 18).build());
     }
 
@@ -87,6 +92,11 @@ public class EngineSheetScreen extends Screen {
         String name = WSLang.t("rift.engine.sheet.name." + id() + (s.level >= 2 ? ".l2" : ""));
         String stars = "§6" + "★".repeat(Math.max(1, s.level)) + "§8" + "★".repeat(Math.max(0, 3 - s.level));
         g.drawString(font, "§f§l" + name + " " + stars, left + 10, top + 8, 0xFFFFFFFF);
+        if (s.maxHp > 0) {
+            float f = s.hp / (float) s.maxHp;
+            String hp = (f > 0.6f ? "§a" : f > 0.3f ? "§e" : "§c") + "♥ " + s.hp + " §7/ " + s.maxHp;
+            g.drawString(font, hp, left + W - 10 - font.width(hp), top + 8, 0xFFFFFFFF);
+        }
         if (s.level >= 3 && s.variant >= 1) {
             g.drawString(font, "§b" + WSLang.t("rift.engine.sheet.variant." + id() + "." + (s.variant - 1)), left + 10, top + 20, 0xFFFFFFFF);
         }

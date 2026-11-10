@@ -526,6 +526,9 @@ public final class KingdomClaim {
         if (hp != null && level != null && level.getBlockEntity(p) instanceof DefenseBlockEntity be) be.setHp(hp[0], hp[1]);
     }
 
+    /** Nombre de blocs suivis (murs et défenses avec des PV). */
+    public static int trackedCount() { return PLACED.size(); }
+
     /** PV {actuels, max} d'un bloc suivi (mur ou défense), ou null. */
     static float[] hpOf(BlockPos p) {
         return PLACED.get(p);

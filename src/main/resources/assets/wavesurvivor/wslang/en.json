@@ -4861,5 +4861,8 @@
   "rift.titan.lava_rain": "Lava rain!",
   "rift.titan.meteor_giant": "GIANT METEOR! Get out of the zone!",
   "rift.titan.skill_ok": "Titan: \"{0}\" attack launched.",
-  "rift.titan.skill_fail": "Cannot launch \"{0}\" (no active Titan, cinematic playing or a charge already running)."
+  "rift.titan.skill_fail": "Cannot launch \"{0}\" (no active Titan, cinematic playing or a charge already running).",
+  "rift.engine.destroyed": "{0} was destroyed!",
+  "rift.engine.sheet.repair": "Repair ({0} ◆)",
+  "ui.rift.mobs_hit_buildings": "Monsters damage buildings and engines"
 }

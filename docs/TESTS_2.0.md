@@ -320,3 +320,10 @@ Test rapide : `/ws rift skill <meteors|tracking|lava|giant|stomp|rock|beam|roar|
 - [ ] Pluie de lave : 10+ petits météores sur toute l'île, flaques de magma 12 s
 - [ ] Météore géant : énorme cercle 5,5 s sur le groupe, impact massif + bâtiments écrasés + grand cratère
 - [ ] Éditeur Faille › Météores : « Île brisée par la charge », profondeur, coups du rocher, dégâts du piétinement
+
+## PV des engins, dégâts des monstres et du Titan sur les bâtiments
+- [ ] Engins : tour-catapulte 800 PV, baliste 400 (×1,3 niveau 2, ×1,6 niveau 3) ; « ♥ PV / max » au-dessus dès qu'ils sont abîmés ; PV dans la fiche (Maj + clic droit) avec un bouton « Réparer (N ◆) » ; à 0 PV l'engin vole en éclats (message dans le fil) ; les joueurs ne peuvent pas l'abîmer
+- [ ] Siège / Contre-offensive / Titan : tout monstre qui frôle une tour, un mur, un rempart ou un engin l'abîme (1 coup par seconde) ; explosions des monstres aussi ; option dans l'éditeur (page Météores)
+- [ ] Titan : poing sur bâtiment, piétinement, rocher, regard, météores (classiques, traqueurs, lave, géant), charge et effondrement abîment les bâtiments ET les engins ; les engins peuvent être visés comme les tours
+- [ ] Si les bâtiments ne perdent toujours rien : chercher « aucun bâtiment du royaume n'a de PV suivis » dans latest.log et me l'envoyer
+- [ ] Reprise d'une Faille sauvegardée : les engins reviennent avec leurs PV
