@@ -324,6 +324,18 @@ public class RelicEffects {
 
     // ─── R2 : combat ───
 
+    /**
+     * Bonus de dégâts d'un joueur contre un Catalyseur (Kingdom et Faille) : Prisme du Catalyseur (×2 / ×2,5 / ×3 / ×3,5 selon le niveau)
+     * et rôle d'Arcaniste (+50 % de base, valeur « catalystDamage » de vocations.json).
+     */
+    public static float catalystDamageMult(Player p) {
+        float m = 1f + scaled(p, ModItems.PRISME_CATALYSEUR.get(), 1.0f);
+        if (p instanceof net.minecraft.server.level.ServerPlayer sp && com.wavesurvivor.horde.kingdom.KingdomRoles.has(sp, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.ARCANIST)) {
+            m *= 1f + (float) com.wavesurvivor.horde.kingdom.vocation.Voc.base(com.wavesurvivor.horde.kingdom.KingdomRoles.Role.ARCANIST, "catalystDamage", 0.5);
+        }
+        return m;
+    }
+
     /** Coups portés par un joueur : Os Sacré (morts-vivants), Éclat de Brèche (Brèches), Marque du Chasseur (surbrillance). */
     @SubscribeEvent
     public void onHurtByPlayer(LivingHurtEvent event) {
@@ -336,9 +348,9 @@ public class RelicEffects {
         if (target instanceof com.wavesurvivor.entity.BrecheEntity) {
             event.setAmount(event.getAmount() * (1f + scaled(p, ModItems.ECLAT_BRECHE.get(), 1.0f)));
         }
-        // Prisme du Catalyseur : dégâts ×2 aux Catalyseurs (×2,5 / ×3 aux niveaux II / III)
+        // Prisme du Catalyseur : dégâts ×2 aux Catalyseurs (×2,5 / ×3 aux niveaux II / III) ; Arcaniste : +50 % (de base)
         if (target instanceof com.wavesurvivor.entity.BrecheEntity b && b.isCatalyst()) {
-            event.setAmount(event.getAmount() * (1f + scaled(p, ModItems.PRISME_CATALYSEUR.get(), 1.0f)));
+            event.setAmount(event.getAmount() * catalystDamageMult(p));
         }
         // Fragment de Porte : +25 % aux Portes
         if (target instanceof com.wavesurvivor.entity.BrecheEntity b2 && b2.isGreat() && !b2.isCatalyst()) {

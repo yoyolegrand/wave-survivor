@@ -606,6 +606,26 @@ public final class RiftManager {
         if (active && l.dimension() == RIFT_DIM) RiftEngines.damageNear(l, c, r, dmg);
     }
 
+    /**
+     * Un catalyseur de la Contre-offensive est détruit : il compte comme un Catalyseur fermé du Kingdom — XP de Maîtrise et talents de
+     * l'Arcaniste (bouclier, recul, foudre), set Abîme 2 du joueur qui l'a achevé (+1 Essence).
+     */
+    static void catalystClosed(ServerLevel l, ServerPlayer by) {
+        MinecraftServer server = l.getServer();
+        com.wavesurvivor.horde.kingdom.vocation.VocationXp.awardHolder(server, com.wavesurvivor.horde.kingdom.KingdomRoles.Role.ARCANIST, "catalyst_closed");
+        com.wavesurvivor.horde.kingdom.vocation.VocationFx.onCatalystClosed(server);
+        if (by != null) com.wavesurvivor.item.RelicSets.onCatalystClosed(by);
+    }
+
+    /** Un catalyseur (ou le cœur) de la Faille est-il ouvert à moins de {@code r} blocs ? (set Abîme 3) */
+    public static boolean riftCatalystNear(net.minecraft.world.entity.player.Player p, double r) {
+        if (!active || p.level().dimension() != RIFT_DIM) return false;
+        for (UUID id : RiftFortress.TARGETS.keySet()) {
+            if (p.level() instanceof ServerLevel l) { var t = l.getEntity(id); if (t != null && t.distanceToSqr(p) <= r * r) return true; }
+        }
+        return false;
+    }
+
     /** Le pilote d'une baliste maintient le clic droit (paquet du client). */
     public static void engineFire(ServerPlayer p) {
         if (active && p.level().dimension() == RIFT_DIM) RiftEngines.fireFromSeat(p);
@@ -1630,7 +1650,8 @@ public final class RiftManager {
         if (!active || !RiftFortress.isTarget(e.getTarget())) return;
         e.setCanceled(true);
         if (e.getEntity().level().isClientSide) return;
-        RiftFortress.damageTarget(e.getTarget(), (float) Math.max(2.0, e.getEntity().getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)));
+        RiftFortress.damageTarget(e.getTarget(), (float) Math.max(2.0, e.getEntity().getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)),
+                e.getEntity() instanceof ServerPlayer sp ? sp : null);
     }
 
     /** Flèche (baliste, arc) sur un catalyseur / le cœur. */
@@ -1639,7 +1660,7 @@ public final class RiftManager {
         if (!active || !(e.getRayTraceResult() instanceof net.minecraft.world.phys.EntityHitResult hit) || !RiftFortress.isTarget(hit.getEntity())) return;
         e.setCanceled(true);
         if (e.getProjectile().level().isClientSide) return;
-        RiftFortress.damageTarget(hit.getEntity(), 6f);
+        RiftFortress.damageTarget(hit.getEntity(), 6f, e.getProjectile().getOwner() instanceof ServerPlayer sp ? sp : null);
         e.getProjectile().discard();
     }
 

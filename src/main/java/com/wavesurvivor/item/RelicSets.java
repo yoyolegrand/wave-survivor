@@ -154,8 +154,21 @@ public class RelicSets {
     }
 
     private static boolean riftNear(Player p, double r) {
-        return !p.level().getEntitiesOfClass(com.wavesurvivor.entity.BrecheEntity.class, p.getBoundingBox().inflate(r),
+        return com.wavesurvivor.horde.rift.RiftManager.riftCatalystNear(p, r)   // catalyseurs de la Faille compris
+                || !p.level().getEntitiesOfClass(com.wavesurvivor.entity.BrecheEntity.class, p.getBoundingBox().inflate(r),
                 b -> b.isAlive() && !b.isGreat() && b.distanceToSqr(p) <= r * r).isEmpty();
+    }
+
+    /** Catalyseur de la Faille achevé par ce joueur : 🌀 Abîme 2, comme une Brèche ou un Catalyseur du Kingdom. */
+    public static void onCatalystClosed(ServerPlayer p) {
+        if (!has(p, Family.ABYSS, 2)) return;
+        if (com.wavesurvivor.horde.kingdom.KingdomTreasury.active()) {
+            com.wavesurvivor.horde.kingdom.KingdomTreasury.add(com.wavesurvivor.horde.kingdom.KingdomTreasury.Res.ESSENCE, 1);
+        } else {
+            ItemStack em = new ItemStack(Items.EMERALD, 3);
+            if (!p.getInventory().add(em)) p.drop(em, false);
+        }
+        p.displayClientMessage(WSLang.c("set.abyss.reward"), true);
     }
 
     // ─── Tick serveur : 🛡 Rempart (Monolithe) ───

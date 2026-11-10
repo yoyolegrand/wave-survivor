@@ -642,8 +642,22 @@ final class RiftFortress {
 
     /** Inflige des dégâts à une cible ; chaque tiers de PV perdu brise une chaîne du catalyseur ; détruite quand sa réserve est vide. */
     static void damageTarget(Entity e, float amount) {
+        damageTarget(e, amount, null);
+    }
+
+    static boolean isCatalyst(Entity e) {
+        return e != null && CHAINS.containsKey(e.getUUID());
+    }
+
+    /**
+     * Dégâts portés par un joueur {@code by} (peut être null) : sur un catalyseur, mêmes bonus que les Catalyseurs du Kingdom
+     * (Prisme du Catalyseur, Arcaniste) ; un catalyseur détruit compte comme un Catalyseur fermé (XP, talents, set Abîme).
+     */
+    static void damageTarget(Entity e, float amount, net.minecraft.server.level.ServerPlayer by) {
         float[] t = TARGETS.get(e.getUUID());
         if (t == null || !(e.level() instanceof ServerLevel l)) return;
+        boolean catalyst = CHAINS.containsKey(e.getUUID());
+        if (catalyst && by != null) amount *= com.wavesurvivor.item.RelicEffects.catalystDamageMult(by);
         t[0] -= amount;
         l.sendParticles(VIOLET, e.getX(), e.getY() + 1, e.getZ(), 12, 0.5, 0.5, 0.5, 0.05);
         l.playSound(null, e.blockPosition(), SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.HOSTILE, 1.5f, 0.7f);
@@ -666,6 +680,7 @@ final class RiftFortress {
             CHAINS.remove(e.getUUID());
             boolean titanCrystal = e.getPersistentData().getBoolean("ws_titan_crystal");
             e.discard();
+            if (catalyst) RiftManager.catalystClosed(l, by);
             if (titanCrystal) RiftManager.titanCrystalDown(l);   // point faible du Titan détruit
         } else {
             refreshName(e);

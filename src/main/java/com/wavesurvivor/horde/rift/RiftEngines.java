@@ -585,7 +585,7 @@ final class RiftEngines {
             boolean target = RiftFortress.isTarget(t);
             if (!(t instanceof LivingEntity) && !target) continue;
             if (t.getBoundingBox().inflate(0.3).clip(from, end).isEmpty()) continue;
-            if (target) RiftFortress.damageTarget(t, dmg);
+            if (target) RiftFortress.damageTarget(t, dmg, p);
             else {
                 ((LivingEntity) t).hurt(l.damageSources().playerAttack(p), dmg);
                 if (mark) t.getPersistentData().putLong("ws_rift_mark", l.getGameTime() + 160);
@@ -672,7 +672,7 @@ final class RiftEngines {
             if (fire && t instanceof LivingEntity) t.setSecondsOnFire(6);
             boolean big = target || RiftTitan.isTitan(t) || t.getPersistentData().getBoolean("ws_rift_avatar");
             if (big) dmg *= 1.5f;
-            if (target) RiftFortress.damageTarget(t, dmg);
+            if (target) RiftFortress.damageTarget(t, dmg, owner instanceof ServerPlayer sp ? sp : null);
             else ((LivingEntity) t).hurt(l.damageSources().explosion(null, owner), dmg);
         }
     }

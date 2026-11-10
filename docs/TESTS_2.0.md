@@ -364,3 +364,9 @@ Test rapide (dans la dimension de la Faille : `/ws rift open` puis `/ws rift ent
 - [ ] Pauses de la Horde et Calmes du Siège : 6 coffres roulette (les Reliquaires) en cercle autour du Monolithe de l'île ; ils disparaissent à la vague / l'Assaut suivant ; nombre réglable (0 = aucun)
 - [ ] Clés lâchées : Zombie / Rootling → Reliquaire des Trésors (3 %), Archer → Arcanique (3 %), Araignée → Abysses (3 %), Gardien → Nether (6 %), Brute de pierre → End (5 %), Néantide → End (6 %), boss → Reliquaire du Boss (100 %)
 - [ ] (Si « La Faille » a été enregistrée dans l'éditeur, ses monstres n'ont pas ces clés : rétablir la horde ↺ ou les ajouter à la main)
+
+## Catalyseurs de la Contre-offensive = Catalyseurs du Kingdom
+- [ ] Prisme du Catalyseur équipé : dégâts aux catalyseurs de la Faille ×2 (×2,5 / ×3 / ×3,5 aux niveaux II / III / IV), au corps à corps, à l'arc, à la baliste et à la catapulte
+- [ ] Arcaniste : +50 % de dégâts aux catalyseurs (Faille ET Kingdom) ; la fiche du rôle l'indique
+- [ ] Catalyseur de la Faille détruit : XP de Maîtrise de l'Arcaniste (« catalyseur fermé ») + ses talents (bouclier, recul, foudre) ; set Abîme 2 → +1 Essence au joueur qui l'achève
+- [ ] Set Abîme 3 (Sang de faille) actif près d'un catalyseur de la Faille
