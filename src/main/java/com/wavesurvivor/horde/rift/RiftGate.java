@@ -191,12 +191,12 @@ final class RiftGate {
         // 12 vrilles : elles partent du bord de l'ovale et s'éloignent en rampant sur la surface
         List<double[]> starts = new ArrayList<>();
         for (double[] r : rim) if (r[3] < 1.3 && surface.contains(key((int) r[0], (int) r[1], (int) r[2]))) starts.add(r);
-        for (int t = 0; t < 14 && !starts.isEmpty(); t++) {
+        for (int t = 0; t < 8 && !starts.isEmpty(); t++) {
             double[] s = starts.get(rnd.nextInt(starts.size()));
             int[] cur = rockMap.get(key((int) s[0], (int) s[1], (int) s[2]));
             List<int[]> path = new ArrayList<>();
             Set<Long> seen = new HashSet<>();
-            for (int step = 0; step < 26 && cur != null; step++) {
+            for (int step = 0; step < 18 && cur != null; step++) {
                 path.add(cur);
                 seen.add(key(cur[0], cur[1], cur[2]));
                 int[] next = null;
@@ -463,7 +463,11 @@ final class RiftGate {
             double[] r = rim.get(rimDone++);
             int lx = (int) r[0], y = (int) r[1], lz = (int) r[2];
             // Veines d'obsidienne pleureuse qui s'estompent en s'éloignant (le contour turquoise est fait de particules)
-            if (r[3] < 1.4 || ((lx + y * 3 + lz) & 1) == 0) set(lx, y, lz, Blocks.CRYING_OBSIDIAN.defaultBlockState());
+            if (r[3] < 1.4 || ((lx + y * 3 + lz) & 1) == 0) {
+                // Moins saturé : la moitié seulement du contour reste de l'obsidienne pleureuse, le reste est de l'obsidienne et de la pierre noire
+                int h = Math.floorMod(lx * 31 + y * 17 + lz * 13, 4);
+                set(lx, y, lz, h <= 1 ? Blocks.CRYING_OBSIDIAN.defaultBlockState() : h == 2 ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.BLACKSTONE.defaultBlockState());
+            }
         }
     }
 

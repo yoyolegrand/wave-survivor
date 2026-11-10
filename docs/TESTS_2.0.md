@@ -272,3 +272,7 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Éditeur : cinématique de la forteresse (activée, passable, durée, blocs/tick minimum, titre).
 - [ ] Reprise de partie au Siège : la forteresse se reforme **sans** cinématique.
 - [ ] Murs, barreaux et chaînes bien raccordés à la fin ; plus de bouclier visible avant la fin de la construction.
+
+## Retouches visuelles : portail plus sombre, icônes 32 × 32
+- [ ] Portail de la Faille : nébuleuse violet profond sombre qui ondule lentement, rares étoiles qui s'allument ; **moins saturé**, pas fluo. Contour de l'ovale : environ moitié moins d'obsidienne pleureuse (le reste obsidienne et pierre noire) ; veines de faille réduites à de fins filaments (8 vrilles courtes au lieu de 14). Voir de près et de loin.
+- [ ] Icônes de la boutique (tour-catapulte, baliste céleste) en 32 × 32 : nettes, sans flou, dans la boutique du Monolithe, la barre d'objets et l'inventaire.
