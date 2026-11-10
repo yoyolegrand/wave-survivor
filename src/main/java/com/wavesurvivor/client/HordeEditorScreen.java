@@ -2061,6 +2061,15 @@ public class HordeEditorScreen extends Screen {
         fInt(22, HordeJson.num(r, "emeraldMin", 1), v -> r.addProperty("emeraldMin", Math.max(0, Math.min(64, v))));
         fl(t("ui.rift.emerald_max"));
         fInt(22, HordeJson.num(r, "emeraldMax", 2), v -> r.addProperty("emeraldMax", Math.max(0, Math.min(64, v))));
+        y += 26;
+        toggle(x, y - 2, 130, t("ui.rift.island_break"), r, "titanIslandBreak", true);
+        flow(x + 136, y);
+        fl(t("ui.rift.break_depth"));
+        fInt(22, HordeJson.num(r, "titanBreakDepth", 7), v -> r.addProperty("titanBreakDepth", Math.max(2, Math.min(20, v))));
+        fl(t("ui.rift.rock_hits"));
+        fInt(22, HordeJson.num(r, "titanRockHits", 3), v -> r.addProperty("titanRockHits", Math.max(1, Math.min(30, v))));
+        fl(t("ui.rift.stomp_dmg"));
+        fInt(26, HordeJson.num(r, "titanStompDamage", 10), v -> r.addProperty("titanStompDamage", Math.max(1, Math.min(200, v))));
     }
 
     /** Faille — page « Titan et engins de siège ». */

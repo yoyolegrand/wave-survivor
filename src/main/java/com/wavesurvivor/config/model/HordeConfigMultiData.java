@@ -468,6 +468,11 @@ public class HordeConfigMultiData {
         @SerializedName("emeraldMin") public int emeraldMin = 1;
         @SerializedName("emeraldMax") public int emeraldMax = 2;
         @SerializedName("titanBuildDamage") public int titanBuildDamage = 300;
+        /** Compétences du Titan : chaque charge brise un secteur du bord de l'île (profondeur en blocs), coups pour abattre le rocher, dégâts du piétinement. */
+        @SerializedName("titanIslandBreak") public boolean titanIslandBreak = true;
+        @SerializedName("titanBreakDepth") public int titanBreakDepth = 7;
+        @SerializedName("titanRockHits") public int titanRockHits = 3;
+        @SerializedName("titanStompDamage") public int titanStompDamage = 10;
         @SerializedName("titanBuildRadius") public int titanBuildRadius = 6;
         /** Cinématique d'apparition : activée, passable (maintenir S'accroupir 1 s), durée (s), nom et sous-titre affichés, sons. */
         @SerializedName("titanCine") public boolean titanCine = true;

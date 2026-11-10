@@ -26,7 +26,22 @@ public final class RiftCommand {
                 .then(Commands.literal("status").executes(ctx -> status(ctx.getSource())))
                 .then(Commands.literal("enter").executes(ctx -> enter(ctx.getSource())))
                 .then(Commands.literal("leave").executes(ctx -> leave(ctx.getSource())))
-                .then(Commands.literal("stop").executes(ctx -> stop(ctx.getSource())));
+                .then(Commands.literal("stop").executes(ctx -> stop(ctx.getSource())))
+                .then(Commands.literal("skill").then(Commands.argument("name", com.mojang.brigadier.arguments.StringArgumentType.word())
+                        .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(RiftTitan.DEBUG_SKILLS, b))
+                        .executes(ctx -> skill(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "name")))));
+    }
+
+    /** Test : le Titan lance tout de suite l'attaque demandée (météores, traqueurs, lave, géant, piétinement, rocher, regard, rugissement, charge). */
+    private static int skill(CommandSourceStack src, String name) {
+        ServerPlayer p = src.getPlayer();
+        if (p == null) return 0;
+        if (!RiftManager.isActive() || !RiftTitan.debugSkill(p.serverLevel(), name)) {
+            src.sendFailure(Component.literal(WSLang.t("rift.titan.skill_fail", name)));
+            return 0;
+        }
+        src.sendSuccess(() -> Component.literal(WSLang.t("rift.titan.skill_ok", name)), false);
+        return 1;
     }
 
     private static int open(CommandSourceStack src) {

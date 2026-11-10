@@ -307,3 +307,16 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] Survivant 3 : réapparition plus rapide (-5 s) et 5 s d'invulnérabilité après une mort dans la Faille
 - [ ] Survivant 4 / 5 : réduction de dégâts après un coup, coup fatal évité (ne marchaient pas entre deux phases)
 - [ ] Marchand 1 / 3 : émeraudes et clés au début de la Horde ; Seigneur 1 : trésor de départ bonus au début du Siège
+
+## Compétences spectaculaires du Titan
+Test rapide : `/ws rift skill <meteors|tracking|lava|giant|stomp|rock|beam|roar|charge>` pendant le combat contre le Titan.
+- [ ] Répartition : phase 1 météores + piétinement ; phase 2 + rocher, météores traqueurs ; phase 3 + regard, pluie de lave ; phase 4 + rugissement, météore géant
+- [ ] Charge : fissures orange sur le bord visé pendant l'annonce, puis le secteur s'effondre du bord vers l'intérieur (blocs qui tombent dans l'abîme) ; 1re charge = sud, 2e = sud-ouest, 3e = sud-est ; un secteur ne se rebrise jamais ; le centre (Monolithe) est épargné
+- [ ] Piétinement : fissures qui rampent 3 s, puis 2 ondes en demi-cercle ; sauter = aucun dégât ; touché = dégâts + étourdi ; blocs du sol qui bondissent ; Titan à découvert après
+- [ ] Rocher : surgit de l'abîme à côté du Titan, monte, puis vol en cloche (3,5 s) vers le Monolithe / une tour / un joueur ; 3 coups pour l'abattre (boulet de catapulte = 3, rayon de baliste = 2, flèche = 1) ; cercle rouge sur la cible
+- [ ] Regard : yeux qui s'allument + ligne rouge, puis faisceau qui balaie une rangée de l'île ; abri derrière un bloc = rien ; sol en magma temporaire, bâtiments abîmés, joueurs enflammés
+- [ ] Rugissement : onde violette, poussée loin du Titan (accroupi = presque rien, derrière un mur = rien), Faiblesse, engins enrayés 6 s, renforts sur le pont, Titan à découvert
+- [ ] Météores traqueurs : cercle violet qui suit le joueur, devient rouge et se fige 1 s avant l'impact
+- [ ] Pluie de lave : 10+ petits météores sur toute l'île, flaques de magma 12 s
+- [ ] Météore géant : énorme cercle 5,5 s sur le groupe, impact massif + bâtiments écrasés + grand cratère
+- [ ] Éditeur Faille › Météores : « Île brisée par la charge », profondeur, coups du rocher, dégâts du piétinement

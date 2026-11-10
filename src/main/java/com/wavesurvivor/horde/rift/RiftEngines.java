@@ -56,6 +56,25 @@ final class RiftEngines {
     /** Joueur → engin dont il choisit la variante (boutons du chat). */
     private static final Map<UUID, UUID> choosing = new HashMap<>();
     private static final List<Boulder> BOULDERS = new ArrayList<>();
+
+    /** Engins enrayés par le rugissement du Titan jusqu'à ce tick de jeu. */
+    private static long jamUntil;
+
+    static void jam(ServerLevel l, int ticks) { jamUntil = l.getGameTime() + ticks; }
+
+    static boolean jammed(ServerLevel l) { return l.getGameTime() < jamUntil; }
+
+    /** Boulets de catapulte qui passent près de {@code c} (le rocher du Titan) : ils l'ont touché et disparaissent ; renvoie leur nombre. */
+    static int interceptBoulders(ServerLevel l, Vec3 c, double r) {
+        int n = 0;
+        for (Boulder b : new ArrayList<>(BOULDERS)) {
+            if (b.pos.distanceTo(c) > r) continue;
+            BOULDERS.remove(b);
+            n++;
+            l.sendParticles(ParticleTypes.EXPLOSION, b.pos.x, b.pos.y, b.pos.z, 1, 0, 0, 0, 0);
+        }
+        return n;
+    }
     /** Tours-catapultes posées (suivies à chaque tick pour viser et tirer toutes seules). */
     private static final List<UUID> TOWERS = new ArrayList<>();
     private static final Map<UUID, Long> msgGate = new HashMap<>();
@@ -205,6 +224,10 @@ final class RiftEngines {
     /** Chaque tick : la tour cherche une cible (le Titan, sinon l'ennemi le plus proche), tourne vers elle (30°/s) et tire dès que son rechargement est fini. */
     static void towerTick(ServerLevel l, SiegeEngineEntity e, long now) {
         if (e.isBallista() || e.isRemoved()) return;
+        if (jammed(l)) {   // rugissement du Titan : la tour est enrayée
+            if (now % 10 == 0) l.sendParticles(ParticleTypes.SMOKE, e.getX(), e.getY() + 5, e.getZ(), 4, 0.6, 0.3, 0.6, 0.01);
+            return;
+        }
         if (now >= e.nextAcquire) {
             e.nextAcquire = now + 10;
             e.targetId = null;
@@ -399,6 +422,10 @@ final class RiftEngines {
     }
 
     private static void useBallista(ServerPlayer p, ServerLevel l, SiegeEngineEntity e, long now) {
+        if (jammed(l)) {
+            say(p, "§c" + com.wavesurvivor.i18n.WSLang.t("rift.titan.ballista_jammed"), now);
+            return;
+        }
         // Elle suit le regard du dernier tireur (visée horizontale et verticale)
         e.setAim(p.getYRot(), Math.max(-60f, Math.min(40f, p.getXRot())));
         if (e.reloading) {
@@ -457,6 +484,7 @@ final class RiftEngines {
         net.minecraft.world.phys.BlockHitResult bh = l.clip(new net.minecraft.world.level.ClipContext(from, to,
                 net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, p));
         if (bh.getType() != net.minecraft.world.phys.HitResult.Type.MISS) to = bh.getLocation();
+        RiftTitan.rockBeam(from, to);   // un rocher du Titan en vol sur la trajectoire est touché
         double len = from.distanceTo(to);
         for (double d = 0; d < len; d += 1.0) {
             Vec3 q = from.add(dir.scale(d));

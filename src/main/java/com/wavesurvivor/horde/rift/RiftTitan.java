@@ -68,6 +68,8 @@ final class RiftTitan {
         String name;
         LongConsumer draw;
         Runnable fire;
+        /** Grosse attaque : le Titan est à découvert juste après (fenêtre de vulnérabilité). */
+        boolean window;
     }
 
     private static LivingEntity titan;
@@ -101,6 +103,10 @@ final class RiftTitan {
     private static float maxHp;
     private static HordeConfigMultiData.RiftSettings rs;
     private static int siegeRadius;
+    /** Charges déjà faites (choix du secteur visé), secteurs de l'île déjà effondrés, secteur et x visés par la charge en cours. */
+    private static int chargeCount, chargeSector;
+    private static final Set<Integer> brokenSectors = new HashSet<>();
+    private static double chargeX;
 
     private RiftTitan() {}
 
@@ -240,6 +246,8 @@ final class RiftTitan {
         strikes.clear();
         chargeDealt = 0f;
         stunBonus = 0;
+        chargeCount = 0;
+        brokenSectors.clear();
         nextWaveAt = Long.MAX_VALUE;
         nextChargeAt = cineStart + (long) (240 * cineF) + Math.max(10, settings.titanChargeInterval) * 20L;
         bar = new ServerBossEvent(Component.literal("§5§lTitan de la Faille"), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
@@ -311,7 +319,7 @@ final class RiftTitan {
                 pending.remove(p);
                 titan.setGlowingTag(false);
                 p.fire.run();
-                if (p.name.startsWith("Onde") || p.name.startsWith("Rugissement")) openWindow(l, now); // grosse attaque : le Titan est à découvert
+                if (p.window) openWindow(l, now); // grosse attaque : le Titan est à découvert
             } else if (now % 4 == 0) {
                 p.draw.accept(now);
                 if (now % 10 == 0) for (ServerPlayer pl : alive(l)) pl.displayClientMessage(Component.literal("§c⚠ " + p.name), true);
@@ -319,6 +327,7 @@ final class RiftTitan {
         }
         // Choix de la prochaine attaque
         waveTick(l, now);
+        rockTick(l, now);
         phaseFx(l, now);
         chargeTick(l, now);
         if (now >= nextSkillAt && pending.size() < 2 && charge == 0) {
@@ -338,25 +347,57 @@ final class RiftTitan {
         RiftManager.feed(l, msg);   // fil d'événements (étiquettes en haut à gauche), pas le chat
     }
 
+    /**
+     * Répartition par phase (PV) : phase 1 = météores + piétinement ; phase 2 = + rocher arraché, météores traqueurs ;
+     * phase 3 = + regard du Titan, pluie de lave ; phase 4 = + rugissement, météore géant. Chaque palier déclenche aussi une charge
+     * qui brise un nouveau secteur de l'île.
+     */
     private static void chooseSkill(ServerLevel l, long now, List<ServerPlayer> alive) {
         List<Integer> pool = new ArrayList<>();
-        pool.add(0); pool.add(0);                    // météores
-        if (phase >= 1) { pool.add(1); pool.add(1); } // onde de choc
-        if (phase >= 2) { pool.add(2); }             // rayon
-        if (phase >= 3) { pool.add(3); pool.add(2); } // rugissement
+        pool.add(0); pool.add(0); pool.add(1);                                 // météores, piétinement
+        if (phase >= 1) { pool.add(7); pool.add(7); pool.add(8); }             // rocher arraché, météores traqueurs
+        if (phase >= 2) { pool.add(2); pool.add(9); }                          // regard du Titan, pluie de lave
+        if (phase >= 3) { pool.add(3); pool.add(10); pool.add(2); }            // rugissement, météore géant
         if (phase >= 1 && !defensePositions().isEmpty()) { pool.add(6); if (phase >= 2) pool.add(6); } // attaque d'un bâtiment
         if (rs.titanMonolithDamage > 0 && AltarDefenseHook.alive()) { if (phase >= 1) pool.add(5); if (phase >= 3) pool.add(5); } // poing contre le Monolithe
         if (RNG.nextInt(6) == 0 && avatars.size() < 4) pool.add(4);
         switch (pool.get(RNG.nextInt(pool.size()))) {
             case 0 -> meteors(l, now, alive);
-            case 1 -> shockwave(l, now);
+            case 1 -> stomp(l, now);
             case 2 -> beam(l, now);
             case 3 -> roar(l, now);
             case 5 -> monolithFist(l, now);
             case 6 -> buildingStrike(l, now);
+            case 7 -> { if (ROCKS.isEmpty()) rockThrow(l, now); else meteors(l, now, alive); }
+            case 8 -> trackingMeteors(l, now, alive);
+            case 9 -> lavaRain(l, now, alive);
+            case 10 -> giantMeteor(l, now, alive);
             default -> summonAvatars(l);
         }
     }
+
+    /** Test (commande /ws rift skill) : lance une attaque tout de suite. */
+    static boolean debugSkill(ServerLevel l, String name) {
+        if (!active() || emerging || titan == null) return false;
+        long now = l.getServer().getTickCount();
+        List<ServerPlayer> al = alive(l);
+        if (al.isEmpty()) return false;
+        switch (name) {
+            case "meteors" -> meteors(l, now, al);
+            case "tracking" -> trackingMeteors(l, now, al);
+            case "lava" -> lavaRain(l, now, al);
+            case "giant" -> giantMeteor(l, now, al);
+            case "stomp" -> stomp(l, now);
+            case "rock" -> rockThrow(l, now);
+            case "beam" -> beam(l, now);
+            case "roar" -> roar(l, now);
+            case "charge" -> { if (charge != 0) return false; startCharge(l, now); }
+            default -> { return false; }
+        }
+        return true;
+    }
+
+    static final String[] DEBUG_SKILLS = {"meteors", "tracking", "lava", "giant", "stomp", "rock", "beam", "roar", "charge"};
 
     private static int groundY(ServerLevel l, int x, int z) {
         return l.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
@@ -369,7 +410,7 @@ final class RiftTitan {
         }
     }
 
-    private static void schedule(ServerLevel l, long now, int delay, String name, LongConsumer draw, Runnable fire) {
+    private static Pending schedule(ServerLevel l, long now, int delay, String name, LongConsumer draw, Runnable fire) {
         Pending p = new Pending();
         p.fireAt = now + delay;
         p.name = name;
@@ -378,6 +419,7 @@ final class RiftTitan {
         pending.add(p);
         titan.setGlowingTag(true);
         l.playSound(null, RiftManager.CENTER, SoundEvents.BEACON_POWER_SELECT, SoundSource.HOSTILE, 3f, 0.6f);
+        return p;
     }
 
     // ─── Compétences ───
@@ -407,6 +449,12 @@ final class RiftTitan {
 
     private static final class Meteor {
         double tx, ty, tz;
+        /** Rayon de la zone, dégâts, cratère (rayon, durée en ticks), dégâts aux bâtiments ; joueur suivi jusqu'à {@code lockAt}. */
+        double radius = 6, damage = 12;
+        int craterR, craterTicks = 200;
+        float buildDamage;
+        UUID follow;
+        long lockAt;
         Vector3f off;
         long spawnAt, impactAt, animAt;
         boolean spawned, animated;
@@ -535,17 +583,9 @@ final class RiftTitan {
         if (spots.isEmpty()) return;
         final long start = now, impact = now + delay;
         // Un météore par zone : visible dans le ciel côté Titan, ~1,2 s avant l'impact
+        int craterR = rs.meteorCrater ? (int) Math.max(1, Math.min(3, Math.round(radius / 3))) : 0;
         for (double[] s : spots) {
-            Meteor m = new Meteor();
-            m.tx = s[0]; m.ty = s[1]; m.tz = s[2];
-            m.k = (float) Math.max(0.3, rs.meteorSize / 3.0);
-            double dx = baseX - s[0], dz = baseZ - s[2], len = Math.max(1, Math.hypot(dx, dz));
-            m.off = new Vector3f((float) (dx / len * 28), 40f, (float) (dz / len * 28));
-            m.impactAt = impact;
-            m.spawnAt = impact - fall;
-            m.endRot = new Quaternionf().rotateAxis((float) Math.toRadians(150), 0.6f, 0.8f, 0.3f);
-            for (float[] p : CLUSTER) { m.layout.add(p); m.states.add(pickBlock(rs.meteorBlocks)); }
-            METEORS.add(m);
+            newMeteor(s[0], s[1], s[2], (float) Math.max(0.3, rs.meteorSize / 3.0), radius, rs.meteorDamage, craterR, 200, impact, fall, 1f, rs.meteorBlocks);
         }
         schedule(l, now, delay, "Pluie de météores !", t -> {
             // La zone se remplit du centre vers le bord, en plus du cercle
@@ -557,9 +597,120 @@ final class RiftTitan {
         }, () -> { });
     }
 
+    /** Prépare un météore (bloc d'affichage en amas) : point d'impact, taille, zone, dégâts, cratère, date d'impact et durée de chute. */
+    private static Meteor newMeteor(double x, double y, double z, float k, double radius, double dmg, int craterR, int craterTicks,
+                                    long impactAt, int fall, float offMul, String blocks) {
+        Meteor m = new Meteor();
+        m.tx = x; m.ty = y; m.tz = z;
+        m.k = k;
+        m.radius = radius;
+        m.damage = dmg;
+        m.craterR = craterR;
+        m.craterTicks = craterTicks;
+        double dx = baseX - x, dz = baseZ - z, len = Math.max(1, Math.hypot(dx, dz));
+        m.off = new Vector3f((float) (dx / len * 28 * offMul), 40f * offMul, (float) (dz / len * 28 * offMul));
+        m.impactAt = impactAt;
+        m.spawnAt = impactAt - fall;
+        m.endRot = new Quaternionf().rotateAxis((float) Math.toRadians(150), 0.6f, 0.8f, 0.3f);
+        for (float[] p : CLUSTER) { m.layout.add(p); m.states.add(pickBlock(blocks)); }
+        METEORS.add(m);
+        return m;
+    }
+
+    /** Météores traqueurs : la zone suit un joueur, puis se fige 1 s avant l'impact (on l'esquive au dernier moment). */
+    private static void trackingMeteors(ServerLevel l, long now, List<ServerPlayer> alive) {
+        List<ServerPlayer> pool = new ArrayList<>(alive);
+        java.util.Collections.shuffle(pool, RNG);
+        int n = Math.min(pool.size(), 1 + phase / 2);
+        final int delay = 70, fall = 20;
+        List<Meteor> mine = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            ServerPlayer t = pool.get(i);
+            int gy = groundY(l, t.getBlockX(), t.getBlockZ());
+            if (gy <= l.getMinBuildHeight() + 1) continue;
+            long imp = now + delay + i * 12L;
+            Meteor m = newMeteor(t.getX(), gy, t.getZ(), (float) Math.max(0.3, rs.meteorSize / 3.0) * 0.85f, Math.max(1.5, rs.meteorRadius) * 0.8,
+                    rs.meteorDamage * 1.2, 1, 160, imp, fall, 1f, rs.meteorBlocks);
+            m.follow = t.getUUID();
+            m.lockAt = imp - fall;
+            mine.add(m);
+        }
+        if (mine.isEmpty()) return;
+        schedule(l, now, delay + (mine.size() - 1) * 12, com.wavesurvivor.i18n.WSLang.t("rift.titan.meteor_track"), t -> {
+            for (Meteor m : mine) {
+                if (t >= m.impactAt) continue;
+                boolean locked = t >= m.lockAt;
+                ring(l, m.tx, m.ty, m.tz, m.radius, locked ? RED : VIOLET, (int) (m.radius * 7));
+                if (locked) ring(l, m.tx, m.ty, m.tz, m.radius * 0.5, RED, 14);
+            }
+        }, () -> { });
+    }
+
+    /** Pluie de lave : une nuée de petits météores en fusion sur toute l'île, chacun laisse une flaque de magma brûlante. */
+    private static void lavaRain(ServerLevel l, long now, List<ServerPlayer> alive) {
+        int n = 8 + 2 * alive.size();
+        int sr = Math.max(RiftManager.radius(), siegeRadius) - 2;
+        BlockPos c = RiftManager.CENTER;
+        List<Meteor> mine = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            double x, z;
+            if (i % 2 == 0) {   // la moitié autour des joueurs, le reste partout sur l'île
+                ServerPlayer t = alive.get(RNG.nextInt(alive.size()));
+                x = t.getX() + (RNG.nextDouble() - 0.5) * 8;
+                z = t.getZ() + (RNG.nextDouble() - 0.5) * 8;
+            } else {
+                double a = RNG.nextDouble() * Math.PI * 2, d = Math.sqrt(RNG.nextDouble()) * sr;
+                x = c.getX() + 0.5 + Math.cos(a) * d;
+                z = c.getZ() + 0.5 + Math.sin(a) * d;
+            }
+            int gy = groundY(l, (int) Math.floor(x), (int) Math.floor(z));
+            if (gy <= l.getMinBuildHeight() + 1) continue;
+            long imp = now + 50 + RNG.nextInt(50);
+            mine.add(newMeteor(x, gy, z, 0.45f, 2.0, Math.max(1, rs.meteorDamage * 0.5), 1, 240, imp, 16, 0.8f, "magma_block=4, blackstone=1"));
+        }
+        if (mine.isEmpty()) return;
+        long last = now;
+        for (Meteor m : mine) last = Math.max(last, m.impactAt);
+        schedule(l, now, (int) (last - now), com.wavesurvivor.i18n.WSLang.t("rift.titan.lava_rain"), t -> {
+            for (Meteor m : mine) if (t < m.impactAt) ring(l, m.tx, m.ty, m.tz, m.radius, RED, 14);
+        }, () -> { });
+    }
+
+    /** Météore géant : vise le groupe de joueurs le plus serré, longue annonce, énorme impact qui écrase aussi les bâtiments. */
+    private static void giantMeteor(ServerLevel l, long now, List<ServerPlayer> alive) {
+        ServerPlayer best = alive.get(0);
+        int bestN = -1;
+        for (ServerPlayer p : alive) {
+            int k = 0;
+            for (ServerPlayer q : alive) if (q.distanceToSqr(p) < 100) k++;
+            if (k > bestN) { bestN = k; best = p; }
+        }
+        final double x = best.getX(), z = best.getZ();
+        final int gy = groundY(l, best.getBlockX(), best.getBlockZ());
+        if (gy <= l.getMinBuildHeight() + 1) return;
+        final double radius = 9;
+        final int delay = 110;
+        Meteor m = newMeteor(x, gy, z, 2.3f, radius, Math.max(10, rs.meteorDamage * 2.5), 4, 400, now + delay, 45, 1.8f, rs.meteorBlocks);
+        m.buildDamage = Math.max(1, rs.titanBuildDamage);
+        final long start = now;
+        schedule(l, now, delay, com.wavesurvivor.i18n.WSLang.t("rift.titan.meteor_giant"), t -> {
+            double f = Math.max(0.05, Math.min(1.0, (t - start) / (double) delay));
+            ring(l, x, gy, z, radius, RED, 70);
+            for (double r = 1.5; r <= radius * f; r += 1.5) ring(l, x, gy, z, r, RED, Math.max(8, (int) (r * 5)));
+            if (t % 20 == 0) l.playSound(null, BlockPos.containing(x, gy, z), SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 4f, 0.5f);
+        }, () -> { });
+    }
+
     /** Animation des météores (chaque tick) : apparition, chute en diagonale en tournant, traînée, impact. */
     private static void tickMeteors(ServerLevel l, long now) {
         for (Meteor m : new ArrayList<>(METEORS)) {
+            // Météore traqueur : la zone suit son joueur jusqu'au verrouillage
+            if (m.follow != null && !m.spawned && now < m.lockAt) {
+                if (l.getEntity(m.follow) instanceof ServerPlayer fp && fp.isAlive() && !fp.isSpectator()) {
+                    int gy = groundY(l, fp.getBlockX(), fp.getBlockZ());
+                    if (gy > l.getMinBuildHeight() + 1) { m.tx = fp.getX(); m.ty = gy; m.tz = fp.getZ(); }
+                }
+            }
             if (!m.spawned && now >= m.spawnAt) {
                 m.spawned = true;
                 m.animAt = now + 2;   // 2 ticks : le client doit avoir reçu l'entité avant la nouvelle transformation
@@ -598,6 +749,13 @@ final class RiftTitan {
             }
         }
         if (DEBUG_METEORS && !METEORS.isEmpty() && now % 5 == 0) WaveSurvivorMod.LOGGER.info("[Météore] {} météore(s) en vol, {} bloc(s) d'affichage vivant(s).", METEORS.size(), METEOR_IDS.size());
+        if (!FX.isEmpty()) {
+            for (Fx f : new ArrayList<>(FX)) {
+                if (now < f.until) continue;
+                FX.remove(f);
+                dropMeteorPart(f.d, "effet");
+            }
+        }
         if (!RESTORES.isEmpty()) {
             for (Restore r : new ArrayList<>(RESTORES)) {
                 if (now < r.at) continue;
@@ -608,101 +766,425 @@ final class RiftTitan {
     }
 
     private static void impact(ServerLevel l, Meteor m, long now) {
-        double x = m.tx, y = m.ty, z = m.tz, radius = Math.max(1.5, rs.meteorRadius), hit = radius * (6.4 / 6.0);
+        double x = m.tx, y = m.ty, z = m.tz, radius = Math.max(1.5, m.radius), hit = radius * (6.4 / 6.0);
         BlockPos at = BlockPos.containing(x, y, z);
-        l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, x, y + 1, z, 2, 0.6, 0.4, 0.6, 0);
-        l.sendParticles(ParticleTypes.LAVA, x, y + 1, z, 20, radius * 0.4, 0.3, radius * 0.4, 0);
+        l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, x, y + 1, z, radius > 7 ? 5 : 2, 0.6 * m.k, 0.4, 0.6 * m.k, 0);
+        l.sendParticles(ParticleTypes.LAVA, x, y + 1, z, (int) (20 * Math.max(0.5, m.k)), radius * 0.4, 0.3, radius * 0.4, 0);
         for (BlockState st : m.states) {
             l.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, st), x, y + 1.2, z, 6, 1.2 * m.k, 0.6, 1.2 * m.k, 0.35);
         }
-        l.playSound(null, at, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 5f, 0.6f);
+        l.playSound(null, at, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, radius > 7 ? 9f : 5f, radius > 7 ? 0.4f : 0.6f);
         for (ServerPlayer p : l.players()) {
             double d = Math.hypot(p.getX() - x, p.getZ() - z);
-            if (d <= radius * 5) ShakePacket.send(p, 24, (float) Math.max(0.3, 1.2 - d / (radius * 5)));
+            if (d <= radius * 5) ShakePacket.send(p, radius > 7 ? 50 : 24, (float) Math.max(0.3, (radius > 7 ? 2.0 : 1.2) - d / (radius * 5)));
         }
         for (ServerPlayer p : alive(l)) {
-            if (Math.hypot(p.getX() - x, p.getZ() - z) <= hit && Math.abs(p.getY() - y) < 4) p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.meteorDamage));
+            if (Math.hypot(p.getX() - x, p.getZ() - z) <= hit && Math.abs(p.getY() - y) < 4) p.hurt(l.damageSources().explosion(null, titan), (float) Math.max(1, m.damage));
         }
         for (Display.BlockDisplay d : m.parts) dropMeteorPart(d, "impact");
-        // Petit cratère temporaire (magma et pierre noire fumants) : jamais sur les blocs posés par les joueurs
-        if (rs.meteorCrater) {
-            int r = (int) Math.max(1, Math.min(3, Math.round(radius / 3)));
-            for (int dx = -r; dx <= r; dx++) for (int dz = -r; dz <= r; dz++) {
-                if (dx * dx + dz * dz > r * r + 1 || RNG.nextInt(3) == 0) continue;
-                BlockPos p = new BlockPos(at.getX() + dx, groundY(l, at.getX() + dx, at.getZ() + dz) - 1, at.getZ() + dz);
-                BlockState cur = l.getBlockState(p);
-                if (cur.isAir() || !cur.getFluidState().isEmpty() || cur.is(Blocks.MAGMA_BLOCK) || com.wavesurvivor.horde.kingdom.KingdomClaim.isPlaced(p)) continue;
-                if (cur.getBlock() instanceof net.minecraft.world.level.block.EntityBlock) continue;
-                RESTORES.add(new Restore(p, cur, now + 200));
-                l.setBlock(p, (RNG.nextBoolean() ? Blocks.MAGMA_BLOCK : Blocks.BLACKSTONE).defaultBlockState(), 3);
-                l.sendParticles(ParticleTypes.SMOKE, p.getX() + 0.5, p.getY() + 1.1, p.getZ() + 0.5, 3, 0.2, 0.1, 0.2, 0.01);
-            }
+        if (m.buildDamage > 0) com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(at, (int) Math.ceil(radius), m.buildDamage);
+        if (m.craterR > 0) crater(l, at, m.craterR, now, m.craterTicks);
+    }
+
+    /** Petit cratère temporaire (magma et pierre noire fumants) : jamais sur les blocs posés par les joueurs ni sur les blocs à entité. */
+    private static void crater(ServerLevel l, BlockPos at, int r, long now, int ticks) {
+        for (int dx = -r; dx <= r; dx++) for (int dz = -r; dz <= r; dz++) {
+            if (dx * dx + dz * dz > r * r + 1 || RNG.nextInt(3) == 0) continue;
+            scorch(l, new BlockPos(at.getX() + dx, groundY(l, at.getX() + dx, at.getZ() + dz) - 1, at.getZ() + dz), now, ticks, RNG.nextBoolean());
         }
+    }
+
+    /** Un bloc du sol devient du magma (ou de la pierre noire) quelques secondes, puis redevient lui-même. */
+    private static void scorch(ServerLevel l, BlockPos p, long now, int ticks, boolean magma) {
+        BlockState cur = l.getBlockState(p);
+        if (cur.isAir() || !cur.getFluidState().isEmpty() || cur.is(Blocks.MAGMA_BLOCK) || cur.is(Blocks.BLACKSTONE)
+                || com.wavesurvivor.horde.kingdom.KingdomClaim.isPlaced(p)) return;
+        if (cur.getBlock() instanceof net.minecraft.world.level.block.EntityBlock) return;
+        for (Restore r : RESTORES) if (r.pos.equals(p)) return;
+        RESTORES.add(new Restore(p, cur, now + ticks));
+        l.setBlock(p, (magma ? Blocks.MAGMA_BLOCK : Blocks.BLACKSTONE).defaultBlockState(), 3);
+        l.sendParticles(ParticleTypes.SMOKE, p.getX() + 0.5, p.getY() + 1.1, p.getZ() + 0.5, 3, 0.2, 0.1, 0.2, 0.01);
+    }
+
+    // ─── Blocs d'affichage d'effet (blocs qui bondissent, rocher arraché) ───
+
+    private static final class Fx {
+        final Display.BlockDisplay d;
+        final long until;
+        Fx(Display.BlockDisplay d, long until) { this.d = d; this.until = until; }
+    }
+
+    private static final List<Fx> FX = new ArrayList<>();
+
+    /** Bloc d'affichage d'effet à {@code (x, y, z)}, retiré au tick {@code until} (étiqueté comme les météores : le nettoyage d'IceFx l'épargne). */
+    private static Display.BlockDisplay fxBlock(ServerLevel l, double x, double y, double z, BlockState st, CompoundTag tr, long until) {
+        Display.BlockDisplay d = EntityType.BLOCK_DISPLAY.create(l);
+        if (d == null) return null;
+        d.moveTo(x, y, z, 0f, 0f);
+        CompoundTag tag = d.saveWithoutId(new CompoundTag());
+        tag.put("block_state", NbtUtils.writeBlockState(st));
+        tag.put("transformation", tr);
+        tag.putFloat("view_range", 6.0f);
+        tag.putFloat("width", 0f);
+        tag.putFloat("height", 0f);
+        d.load(tag);
+        d.addTag("ws_meteor");
+        METEOR_IDS.add(d.getUUID());
+        if (!l.addFreshEntity(d)) {
+            METEOR_IDS.remove(d.getUUID());
+            return null;
+        }
+        FX.add(new Fx(d, until));
+        return d;
+    }
+
+    /** Nouvelle transformation d'un bloc d'affichage, atteinte en {@code dur} ticks (interpolation côté client). */
+    private static void fxMove(Display.BlockDisplay d, CompoundTag tr, int dur) {
+        if (d == null || d.isRemoved()) return;
+        CompoundTag tag = d.saveWithoutId(new CompoundTag());
+        tag.put("transformation", tr);
+        tag.putInt("interpolation_duration", Math.max(1, dur));
+        tag.putInt("start_interpolation", 0);
+        d.load(tag);
+    }
+
+    /** Un bloc du sol bondit puis retombe (onde du piétinement). */
+    private static void popBlock(ServerLevel l, BlockPos bp, BlockState st, long now) {
+        Quaternionf id = new Quaternionf();
+        CompoundTag flat = meteorTransform(new Vector3f(0.5f, 0.5f, 0.5f), id, 1.01f);
+        Display.BlockDisplay d = fxBlock(l, bp.getX(), bp.getY(), bp.getZ(), st, flat, now + 14);
+        if (d == null) return;
+        Vector3f axis = new Vector3f(RNG.nextFloat() - 0.5f, 0.001f, RNG.nextFloat() - 0.5f).normalize();
+        Quaternionf tilt = new Quaternionf().rotateAxis((float) Math.toRadians(8 + RNG.nextInt(14)), axis.x, axis.y, axis.z);
+        RiftManager.later(l.getServer(), 2, () -> fxMove(d, meteorTransform(new Vector3f(0.5f, 1.3f, 0.5f), tilt, 1.01f), 3));
+        RiftManager.later(l.getServer(), 6, () -> fxMove(d, flat, 4));
     }
 
     /** Retire les météores en vol et rend le terrain (fin du Titan ou de la Faille). */
     private static void clearMeteors(ServerLevel l) {
         for (Meteor m : METEORS) for (Display.BlockDisplay d : m.parts) dropMeteorPart(d, "nettoyage");
         METEORS.clear();
+        for (Fx f : FX) dropMeteorPart(f.d, "nettoyage");
+        FX.clear();
+        ROCKS.clear();
         METEOR_IDS.clear();
         for (Restore r : RESTORES) l.setBlock(r.pos, r.state, 3);
         RESTORES.clear();
     }
 
-    /** Onde de choc sur un quart de l'arène : on la fuit ou on saute. */
-    private static void shockwave(ServerLevel l, long now) {
-        int q = RNG.nextInt(4);
+    private static final DustParticleOptions ORANGE = new DustParticleOptions(new Vector3f(1.0f, 0.55f, 0.1f), 1.5f);
+
+    /** Point du bord sud de l'île (côté Titan) à l'abscisse {@code x}. */
+    private static double southEdgeZ(double x) {
         BlockPos c = RiftManager.CENTER;
-        double reach = Math.max(RiftManager.radius(), siegeRadius) + 4;
-        schedule(l, now, 60, "Onde de choc ! Quittez la zone ou sautez !", t -> {
-            for (double r = 2; r <= reach; r += 3) {
-                for (int i = 0; i < 6; i++) {
-                    double a = (q + (i + 0.5) / 6.0) * Math.PI / 2;
-                    l.sendParticles(RED, c.getX() + 0.5 + Math.cos(a) * r, c.getY() + 1.1, c.getZ() + 0.5 + Math.sin(a) * r, 1, 0, 0, 0, 0);
-                }
-            }
-        }, () -> {
-            l.playSound(null, c, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
-            for (double r = 1; r <= reach; r += 1.5) {
-                for (int i = 0; i < 10; i++) {
-                    double a = (q + (i + 0.5) / 10.0) * Math.PI / 2;
-                    l.sendParticles(ParticleTypes.CLOUD, c.getX() + 0.5 + Math.cos(a) * r, c.getY() + 1.2, c.getZ() + 0.5 + Math.sin(a) * r, 1, 0.1, 0.2, 0.1, 0.05);
-                }
-            }
-            for (ServerPlayer p : alive(l)) {
-                double dx = p.getX() - c.getX() - 0.5, dz = p.getZ() - c.getZ() - 0.5;
-                double ang = (Math.atan2(dz, dx) + Math.PI * 2) % (Math.PI * 2);
-                if ((int) Math.floor(ang / (Math.PI / 2)) != q) continue;
-                if (Math.hypot(dx, dz) > reach) continue;
-                if (!p.onGround()) continue; // en l'air : on a sauté par-dessus
-                p.hurt(l.damageSources().magic(), 14f);
-                p.setDeltaMovement(p.getDeltaMovement().add(0, 0.7, 0));
-                p.hurtMarked = true;
-            }
-        });
+        int sr = Math.max(RiftManager.radius(), siegeRadius);
+        double dx = x - c.getX() - 0.5;
+        return c.getZ() + 0.5 + Math.sqrt(Math.max(0, (double) sr * sr - dx * dx));
     }
 
-    /** Rayon qui balaie l'arène : on s'abrite derrière un mur. */
+    /**
+     * Piétinement sismique : le Titan frappe le bord de l'île. Des fissures lumineuses rampent vers le nord (3 s), puis deux ondes de choc
+     * traversent l'île : on saute par-dessus. Touché : dégâts, étourdi, projeté en l'air ; les bâtiments sur le passage sont abîmés.
+     */
+    private static void stomp(ServerLevel l, long now) {
+        BlockPos c = RiftManager.CENTER;
+        int sr = Math.max(RiftManager.radius(), siegeRadius);
+        final double ox = Math.max(c.getX() + 0.5 - sr * 0.6, Math.min(c.getX() + 0.5 + sr * 0.6, titan.getX()));
+        final double oz = southEdgeZ(ox);
+        final int gy = c.getY() + 1;
+        final double reach = sr * 2 + 4;
+        final long start = now;
+        final double[] angs = new double[7];
+        for (int i = 0; i < angs.length; i++) angs[i] = Math.PI + (i + 0.5) * Math.PI / angs.length + (RNG.nextDouble() - 0.5) * 0.25;
+        Pending pd = schedule(l, now, 60, com.wavesurvivor.i18n.WSLang.t("rift.titan.stomp"), t -> {
+            double f = Math.min(1, (t - start) / 50.0);
+            for (double a : angs) {
+                for (double d = 1; d <= reach * 0.6 * f; d += 1.5) {
+                    double px = ox + Math.cos(a) * d + (RNG.nextDouble() - 0.5) * 0.6, pz = oz + Math.sin(a) * d + (RNG.nextDouble() - 0.5) * 0.6;
+                    l.sendParticles(ORANGE, px, groundY(l, (int) Math.floor(px), (int) Math.floor(pz)) + 0.1, pz, 1, 0, 0, 0, 0);
+                }
+            }
+            if (t % 20 == 0) l.playSound(null, BlockPos.containing(ox, gy, oz), SoundEvents.DEEPSLATE_BREAK, SoundSource.HOSTILE, 4f, 0.4f);
+        }, () -> {
+            l.playSound(null, BlockPos.containing(ox, gy, oz), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 8f, 0.4f);
+            l.playSound(null, BlockPos.containing(ox, gy, oz), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.HOSTILE, 5f, 0.4f);
+            l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, ox, gy, oz, 3, 3, 0.5, 2, 0);
+            for (ServerPlayer p : l.players()) ShakePacket.send(p, 50, 1.6f);
+            stompRing(l, ox, gy, oz, reach, 0);
+            stompRing(l, ox, gy, oz, reach, 18);
+        });
+        pd.window = true;
+    }
+
+    /** Une onde de choc du piétinement : un demi-cercle qui grandit vers le nord à 0,9 bloc par tick. */
+    private static void stompRing(ServerLevel l, double ox, int gy, double oz, double reach, int delay) {
+        final Set<UUID> hit = new HashSet<>();
+        final Set<BlockPos> hitDef = new HashSet<>();
+        final List<BlockPos> defs = defensePositions();
+        final int dur = (int) Math.ceil(reach / 0.9);
+        final BlockPos c = RiftManager.CENTER;
+        final int sr = Math.max(RiftManager.radius(), siegeRadius) + 1;
+        for (int k = 0; k <= dur; k++) {
+            final int kk = k;
+            RiftManager.later(l.getServer(), delay + k, () -> {
+                if (!active()) return;
+                double r = kk * 0.9;
+                long nowT = l.getServer().getTickCount();
+                int pts = (int) Math.max(8, r * 3);
+                for (int i = 0; i < pts; i++) {
+                    double a = Math.PI + Math.PI * (i + 0.5) / pts;
+                    double px = ox + Math.cos(a) * r, pz = oz + Math.sin(a) * r;
+                    if (Math.hypot(px - c.getX() - 0.5, pz - c.getZ() - 0.5) > sr) continue;
+                    int top = groundY(l, (int) Math.floor(px), (int) Math.floor(pz));
+                    l.sendParticles(ParticleTypes.POOF, px, top + 0.2, pz, 1, 0.1, 0.05, 0.1, 0.02);
+                    if (kk % 2 == 0 && i % 4 == 0) {   // les blocs du sol bondissent au passage de l'onde
+                        BlockPos bp = new BlockPos((int) Math.floor(px), top - 1, (int) Math.floor(pz));
+                        BlockState st = l.getBlockState(bp);
+                        if (!st.isAir() && st.getRenderShape() == net.minecraft.world.level.block.RenderShape.MODEL) popBlock(l, bp, st, nowT);
+                    }
+                }
+                for (ServerPlayer p : alive(l)) {
+                    if (hit.contains(p.getUUID())) continue;
+                    double d = Math.hypot(p.getX() - ox, p.getZ() - oz);
+                    if (Math.abs(d - r) > 1.3 || p.getZ() > oz + 1 || Math.abs(p.getY() - gy) > 4) continue;
+                    hit.add(p.getUUID());
+                    if (!p.onGround()) continue;   // en l'air : on a sauté par-dessus
+                    p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.titanStompDamage));
+                    p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 4, false, true));
+                    p.setDeltaMovement(p.getDeltaMovement().add(0, 0.55, 0));
+                    p.hurtMarked = true;
+                }
+                for (BlockPos dp : defs) {
+                    if (hitDef.contains(dp) || Math.abs(Math.hypot(dp.getX() + 0.5 - ox, dp.getZ() + 0.5 - oz) - r) > 1.2) continue;
+                    hitDef.add(dp);
+                    com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(dp, 1, Math.max(1, rs.titanBuildDamage / 3f));
+                }
+                if (kk % 6 == 0) l.playSound(null, BlockPos.containing(ox, gy, oz - r), SoundEvents.DEEPSLATE_BREAK, SoundSource.HOSTILE, 3f, 0.5f);
+            });
+        }
+    }
+
+    // ─── Rocher arraché à l'abîme (on peut l'abattre en vol) ───
+
+    private static final class Rock {
+        Vec3 from, hand, to, cur;
+        long riseAt, throwAt, hitAt, nextSeg;
+        int hp, beamHits;
+        boolean animStarted, thrown, monolith;
+        BlockPos target;
+        float k = 1.3f;
+        Vector3f axis;
+        Pending pend;
+        final List<Display.BlockDisplay> parts = new ArrayList<>();
+        final List<float[]> layout = new ArrayList<>();
+        final List<BlockState> states = new ArrayList<>();
+    }
+
+    private static final List<Rock> ROCKS = new ArrayList<>();
+
+    /**
+     * Le Titan arrache un rocher flottant à l'abîme (jamais un morceau de l'île), le soulève, puis le lance en cloche sur le Monolithe, une tour
+     * ou un joueur. On peut l'abattre en vol : boulets de catapulte, carreaux et rayons de baliste, flèches.
+     */
+    private static void rockThrow(ServerLevel l, long now) {
+        List<BlockPos> defs = defensePositions();
+        List<ServerPlayer> al = alive(l);
+        BlockPos tgt;
+        boolean mono = false;
+        int roll = RNG.nextInt(3);
+        if (AltarDefenseHook.alive() && (roll == 0 || (defs.isEmpty() && roll == 1))) { tgt = RiftManager.MONOLITH; mono = true; }
+        else if (!defs.isEmpty() && roll != 2) tgt = defs.get(RNG.nextInt(defs.size()));
+        else {
+            if (al.isEmpty()) return;
+            ServerPlayer p = al.get(RNG.nextInt(al.size()));
+            tgt = new BlockPos(p.getBlockX(), groundY(l, p.getBlockX(), p.getBlockZ()), p.getBlockZ());
+        }
+        Rock r = new Rock();
+        double side = RNG.nextBoolean() ? 1 : -1, hw = halfWidth();
+        r.from = new Vec3(titan.getX() + side * hw * 0.9, baseY - 30, titan.getZ() - hw * 0.4);
+        r.hand = new Vec3(titan.getX() + side * hw * 0.7, baseY + titanHeight() * 0.7, titan.getZ() - hw * 0.6);
+        r.to = Vec3.atBottomCenterOf(tgt).add(0, 1.5, 0);
+        r.cur = r.from;
+        r.riseAt = now;
+        r.throwAt = now + 60;
+        r.hitAt = r.throwAt + 70;
+        r.hp = Math.max(1, rs.titanRockHits);
+        r.target = tgt;
+        r.monolith = mono;
+        r.axis = new Vector3f(RNG.nextFloat() - 0.5f, RNG.nextFloat() - 0.5f, RNG.nextFloat() - 0.5f).add(0.001f, 0.001f, 0.001f).normalize();
+        Quaternionf id = new Quaternionf();
+        for (float[] p : CLUSTER) {
+            BlockState st = pickBlock("blackstone=3, obsidian=2, crying_obsidian=1, magma_block=1");
+            r.layout.add(p);
+            r.states.add(st);
+            r.parts.add(fxBlock(l, r.from.x, r.from.y, r.from.z, st, meteorTransform(partCenter(p, r.k, id, new Vector3f()), id, p[3] * r.k), r.hitAt + 40));
+        }
+        ROCKS.add(r);
+        announce(l, "§6" + com.wavesurvivor.i18n.WSLang.t("rift.titan.rock_ripped"));
+        l.playSound(null, BlockPos.containing(r.hand), SoundEvents.WITHER_BREAK_BLOCK, SoundSource.HOSTILE, 6f, 0.4f);
+        final BlockPos ft = tgt;
+        r.pend = schedule(l, now, (int) (r.hitAt - now), com.wavesurvivor.i18n.WSLang.t("rift.titan.rock_incoming"), t -> {
+            if (ROCKS.contains(r) && t >= r.throwAt - 20) ring(l, ft.getX() + 0.5, ft.getY() + 0.2, ft.getZ() + 0.5, 5, RED, 30);
+        }, () -> { });
+    }
+
+    private static Vec3 rockPos(Rock r, long t) {
+        if (t <= r.throwAt) {
+            double f = Math.max(0, Math.min(1, (t - r.riseAt) / (double) Math.max(1, r.throwAt - r.riseAt)));
+            f = f * f * (3 - 2 * f);
+            return r.from.lerp(r.hand, f);
+        }
+        double f = Math.max(0, Math.min(1, (t - r.throwAt) / (double) Math.max(1, r.hitAt - r.throwAt)));
+        return r.hand.lerp(r.to, f).add(0, Math.sin(Math.PI * f) * 22, 0);
+    }
+
+    /** Amène le rocher à la position monde {@code at} (rotation du tick {@code t}) en {@code dur} ticks. */
+    private static void moveRock(Rock r, Vec3 at, long t, int dur) {
+        Quaternionf rot = new Quaternionf().rotateAxis((float) ((t - r.riseAt) * 0.09), r.axis.x, r.axis.y, r.axis.z);
+        Vector3f base = new Vector3f((float) (at.x - r.from.x), (float) (at.y - r.from.y), (float) (at.z - r.from.z));
+        for (int i = 0; i < r.parts.size(); i++) {
+            float[] p = r.layout.get(i);
+            fxMove(r.parts.get(i), meteorTransform(partCenter(p, r.k, rot, base), rot, p[3] * r.k), dur);
+        }
+    }
+
+    private static void dropRock(Rock r) {
+        ROCKS.remove(r);
+        for (Display.BlockDisplay d : r.parts) {
+            FX.removeIf(f -> f.d == d);
+            dropMeteorPart(d, "rocher");
+        }
+        if (r.pend != null) pending.remove(r.pend);
+    }
+
+    /** Un rayon de baliste passe près d'un rocher en vol : il compte comme deux coups. */
+    static void rockBeam(Vec3 from, Vec3 to) {
+        for (Rock r : ROCKS) {
+            if (!r.thrown || r.cur == null) continue;
+            Vec3 d = to.subtract(from);
+            double tt = d.lengthSqr() < 1e-6 ? 0 : Math.max(0, Math.min(1, r.cur.subtract(from).dot(d) / d.lengthSqr()));
+            if (r.cur.distanceTo(from.add(d.scale(tt))) <= 3.0 * r.k) r.beamHits += 2;
+        }
+    }
+
+    private static void rockTick(ServerLevel l, long now) {
+        if (ROCKS.isEmpty()) return;
+        for (Rock r : new ArrayList<>(ROCKS)) {
+            if (!r.animStarted && now >= r.riseAt + 2) {   // 2 ticks : le client a reçu les blocs avant leur premier mouvement
+                r.animStarted = true;
+                moveRock(r, r.hand, r.throwAt, (int) Math.max(1, r.throwAt - now));
+            }
+            Vec3 pos = rockPos(r, now);
+            r.cur = pos;
+            if (now < r.throwAt) {   // le rocher monte : des débris en tombent
+                if (now % 3 == 0) l.sendParticles(ParticleTypes.FALLING_OBSIDIAN_TEAR, pos.x, pos.y, pos.z, 4, 1.5, 1, 1.5, 0);
+                if (now % 4 == 0) l.sendParticles(ParticleTypes.LARGE_SMOKE, pos.x, pos.y - 1.5, pos.z, 3, 1.2, 0.5, 1.2, 0.01);
+                continue;
+            }
+            if (!r.thrown) {
+                r.thrown = true;
+                r.nextSeg = now;
+                l.playSound(null, BlockPos.containing(pos), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 6f, 0.5f);
+                l.playSound(null, BlockPos.containing(r.to), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 5f, 0.5f);
+            }
+            if (now >= r.nextSeg && now < r.hitAt) {   // trajectoire en cloche, découpée en segments de 5 ticks
+                long nt = Math.min(r.hitAt, now + 5);
+                moveRock(r, rockPos(r, nt), nt, (int) (nt - now));
+                r.nextSeg = nt;
+            }
+            l.sendParticles(ParticleTypes.LARGE_SMOKE, pos.x, pos.y, pos.z, 3, 0.8, 0.8, 0.8, 0.01);
+            l.sendParticles(ParticleTypes.FLAME, pos.x, pos.y, pos.z, 2, 0.8, 0.8, 0.8, 0.01);
+            // Interception : flèches, boulets de catapulte, rayons de baliste
+            int dmg = 0;
+            for (net.minecraft.world.entity.projectile.AbstractArrow a : l.getEntitiesOfClass(net.minecraft.world.entity.projectile.AbstractArrow.class,
+                    new net.minecraft.world.phys.AABB(pos, pos).inflate(2.6 * r.k))) {
+                a.discard();
+                dmg++;
+            }
+            dmg += 3 * RiftEngines.interceptBoulders(l, pos, 3.2 * r.k);
+            dmg += r.beamHits;
+            r.beamHits = 0;
+            if (dmg > 0) {
+                r.hp -= dmg;
+                l.playSound(null, BlockPos.containing(pos), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 3f, 0.5f);
+                l.sendParticles(ParticleTypes.EXPLOSION, pos.x, pos.y, pos.z, 2, 1, 1, 1, 0);
+                if (r.hp <= 0) { shatterRock(l, r, pos); continue; }
+            }
+            if (now >= r.hitAt) rockImpact(l, r, now);
+        }
+    }
+
+    private static void shatterRock(ServerLevel l, Rock r, Vec3 pos) {
+        dropRock(r);
+        l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, pos.x, pos.y, pos.z, 2, 1, 1, 1, 0);
+        for (BlockState st : r.states) {
+            l.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, st), pos.x, pos.y, pos.z, 10, 2, 2, 2, 0.4);
+        }
+        l.playSound(null, BlockPos.containing(pos), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.8f);
+        announce(l, "§a§l" + com.wavesurvivor.i18n.WSLang.t("rift.titan.rock_shattered"));
+    }
+
+    private static void rockImpact(ServerLevel l, Rock r, long now) {
+        Vec3 p = r.to;
+        dropRock(r);
+        l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, p.x, p.y, p.z, 3, 1, 0.5, 1, 0);
+        for (BlockState st : r.states) {
+            l.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, st), p.x, p.y, p.z, 8, 2, 1, 2, 0.4);
+        }
+        l.playSound(null, BlockPos.containing(p), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 8f, 0.5f);
+        for (ServerPlayer pl : l.players()) {
+            double d = pl.position().distanceTo(p);
+            if (d < 40) ShakePacket.send(pl, 35, (float) Math.max(0.4, 1.6 - d / 40));
+            if (!pl.isSpectator() && pl.isAlive() && d <= 5.5) {
+                pl.hurt(l.damageSources().explosion(null, titan), 14f);
+                double dx = pl.getX() - p.x, dz = pl.getZ() - p.z, len = Math.max(0.5, Math.hypot(dx, dz));
+                pl.setDeltaMovement(dx / len, 0.6, dz / len);
+                pl.hurtMarked = true;
+            }
+        }
+        com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(r.target, 4, Math.max(1, rs.titanBuildDamage * 1.5f));
+        if (r.monolith) com.wavesurvivor.altar.AltarDefense.externalHit(l, rs.titanMonolithDamage);
+        crater(l, r.target, 2, now, 300);
+        announce(l, "§c" + com.wavesurvivor.i18n.WSLang.t("rift.titan.rock_impact"));
+    }
+
+    /**
+     * Regard du Titan : ses yeux s'allument, une ligne rouge marque la rangée visée, puis un faisceau balaie l'île d'un bord à l'autre.
+     * On s'abrite derrière un bloc. Le sol brûle (magma), les bâtiments sur le passage sont abîmés, les joueurs touchés prennent feu.
+     */
     private static void beam(ServerLevel l, long now) {
         BlockPos c = RiftManager.CENTER;
-        double ex = baseX, ey = titan.getEyeY(), ez = baseZ;
-        double span = Math.max(RiftManager.radius(), siegeRadius) * 0.9;
-        boolean flip = RNG.nextBoolean();
-        schedule(l, now, 50, "Rayon du Titan ! Mettez-vous à couvert !", t -> {
-            double zz = (flip ? -span : span);
-            drawLine(l, ex, ey, ez, c.getX() + 0.5, c.getY() + 1.5, c.getZ() + 0.5 + zz, RED, 2.5);
+        final double ex = titan.getX(), ey = baseY + titanHeight() * 0.85, ez = titan.getZ() - halfWidth() * 0.5;
+        final double span = Math.max(RiftManager.radius(), siegeRadius) * 0.95;
+        final double zLine = c.getZ() + 0.5 + (RNG.nextDouble() - 0.6) * span;
+        final boolean flip = RNG.nextBoolean();
+        schedule(l, now, 60, com.wavesurvivor.i18n.WSLang.t("rift.titan.gaze"), t -> {
+            double xx = c.getX() + 0.5 + (flip ? span : -span);
+            drawLine(l, ex, ey, ez, xx, c.getY() + 1.2, zLine, RED, 2.5);
+            l.sendParticles(ParticleTypes.END_ROD, ex, ey, ez, 8, 2, 1, 2, 0.02);
+            for (double x = -span; x <= span; x += 3) l.sendParticles(RED, c.getX() + 0.5 + x, c.getY() + 1.1, zLine, 1, 0, 0, 0, 0);
         }, () -> {
-            final int dur = 80;
+            final int dur = 90;
+            l.playSound(null, c, SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 6f, 0.5f);
             for (int k = 0; k < dur; k++) {
                 final int kk = k;
                 RiftManager.later(l.getServer(), k, () -> {
                     if (!active()) return;
+                    long nowT = l.getServer().getTickCount();
                     double f = kk / (double) dur;
-                    double zz = (flip ? -span : span) * (1 - 2 * f);
-                    double px = c.getX() + 0.5, py = c.getY() + 1.5, pz = c.getZ() + 0.5 + zz;
-                    if (kk % 2 == 0) drawLine(l, ex, ey, ez, px, py, pz, VIOLET, 3.0);
-                    if (kk % 5 == 0) {
+                    double px = c.getX() + 0.5 + (flip ? span : -span) * (1 - 2 * f), pz = zLine;
+                    double py = groundY(l, (int) Math.floor(px), (int) Math.floor(pz)) + 0.2;
+                    if (kk % 2 == 0) {
+                        drawLine(l, ex, ey, ez, px, py, pz, VIOLET, 1.8);
+                        l.sendParticles(ParticleTypes.FLAME, px, py, pz, 6, 0.6, 0.2, 0.6, 0.02);
+                        l.sendParticles(ParticleTypes.LAVA, px, py, pz, 1, 0.4, 0.1, 0.4, 0);
+                    }
+                    if (kk % 3 == 0) scorch(l, BlockPos.containing(px, py - 1, pz), nowT, 160, true);
+                    if (kk % 10 == 0) {
+                        com.wavesurvivor.horde.kingdom.KingdomClaim.explosionDamage(BlockPos.containing(px, py, pz), 2, Math.max(1, rs.titanBuildDamage / 4f));
                         l.playSound(null, BlockPos.containing(px, py, pz), SoundEvents.BEACON_AMBIENT, SoundSource.HOSTILE, 4f, 0.5f);
+                    }
+                    if (kk % 5 == 0) {
                         Vec3 from = new Vec3(ex, ey, ez), to = new Vec3(px, py, pz);
                         for (ServerPlayer p : alive(l)) {
                             Vec3 pp = p.position().add(0, 1, 0);
@@ -712,6 +1194,7 @@ final class RiftTitan {
                             var hit = l.clip(new ClipContext(from, p.getEyePosition(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, titan));
                             if (hit.getType() != HitResult.Type.MISS && hit.getLocation().distanceTo(p.getEyePosition()) > 1.5) continue; // à couvert
                             p.hurt(l.damageSources().magic(), 9f);
+                            p.setSecondsOnFire(4);
                         }
                     }
                 });
@@ -730,16 +1213,46 @@ final class RiftTitan {
 
     private static double sq(double v) { return v * v; }
 
-    /** Rugissement : tout le monde est affaibli. */
+    /**
+     * Rugissement : une onde violette traverse l'île et repousse loin du Titan (s'accroupir réduit la poussée, un mur la bloque), affaiblit,
+     * enraye les engins de siège 6 s et fait surgir des renforts sur le pont. Le Titan est ensuite à découvert.
+     */
     private static void roar(ServerLevel l, long now) {
-        schedule(l, now, 40, "Rugissement du Titan !", t -> l.sendParticles(ParticleTypes.SONIC_BOOM, baseX - 15, baseY + 30, baseZ, 1, 0, 0, 0, 0), () -> {
+        final double mx = titan.getX(), my = baseY + titanHeight() * 0.8, mz = titan.getZ() - halfWidth() * 0.6;
+        Pending pd = schedule(l, now, 50, com.wavesurvivor.i18n.WSLang.t("rift.titan.roar"), t -> {
+            l.sendParticles(ParticleTypes.SONIC_BOOM, mx, my, mz, 1, 0, 0, 0, 0);
+            l.sendParticles(ParticleTypes.LARGE_SMOKE, mx, my, mz, 10, 3, 2, 3, 0.05);
+        }, () -> {
             l.playSound(null, RiftManager.CENTER, SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 10f, 0.4f);
-            for (ServerPlayer p : alive(l)) {
-                p.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 1));
-                p.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 200, 0));
-                ShakePacket.send(p, 50, 1.4f);
+            l.playSound(null, RiftManager.CENTER, SoundEvents.WARDEN_ROAR, SoundSource.HOSTILE, 8f, 0.5f);
+            final int gy = RiftManager.CENTER.getY() + 1;
+            for (int k = 0; k < 30; k++) {
+                final int kk = k;
+                RiftManager.later(l.getServer(), k, () -> {
+                    double r = 6 + kk * 2.4;
+                    int pts = (int) Math.max(12, r * 1.5);
+                    for (int i = 0; i < pts; i++) {
+                        double a = Math.PI + Math.PI * (i + 0.5) / pts;
+                        l.sendParticles(VIOLET, mx + Math.cos(a) * r, gy + 0.6, mz + Math.sin(a) * r, 1, 0, 0.3, 0, 0);
+                    }
+                });
             }
+            Vec3 mouth = new Vec3(mx, my, mz);
+            for (ServerPlayer p : alive(l)) {
+                ShakePacket.send(p, 50, 1.4f);
+                p.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 0));
+                var hit = l.clip(new ClipContext(mouth, p.getEyePosition(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, titan));
+                if (hit.getType() != HitResult.Type.MISS && hit.getLocation().distanceTo(p.getEyePosition()) > 1.5) continue;   // à l'abri
+                double dx = p.getX() - mx, dz = p.getZ() - mz, len = Math.max(0.1, Math.hypot(dx, dz));
+                double force = p.isShiftKeyDown() ? 0.35 : 1.7;
+                p.setDeltaMovement(p.getDeltaMovement().add(dx / len * force, p.isShiftKeyDown() ? 0.1 : 0.5, dz / len * force));
+                p.hurtMarked = true;
+            }
+            RiftEngines.jam(l, 120);
+            announce(l, "§5" + com.wavesurvivor.i18n.WSLang.t("rift.titan.jammed"));
+            RiftManager.titanWave(l, Math.max(2, rs.titanWaveBase));
         });
+        pd.window = true;
     }
 
     /** Invoque des avatars : mini-boss dont la mort retire un pourcentage des PV max du Titan. */
@@ -836,13 +1349,14 @@ final class RiftTitan {
                     }
                     if (now % 20 == 0) for (ServerPlayer p : alive(l)) p.displayClientMessage(Component.literal("§c⚠ Le Titan va charger l'île ! Quittez la zone rouge !"), true);
                 }
+                if (now % 8 == 0) crackTelegraph(l);
                 if (now >= chargeAt) { charge = 2; chargeAt = now + 20; }
             }
             case 2 -> {   // élan : le Titan avance vers l'île
                 double f = 1.0 - (chargeAt - now) / 20.0;
                 f = Math.max(0, Math.min(1, f));
                 double s = f * f * (3 - 2 * f);
-                titan.setPos(baseX, baseY, baseZ + (chargeTargetZ - baseZ) * s);
+                titan.setPos(baseX + (chargeX - baseX) * s, baseY, baseZ + (chargeTargetZ - baseZ) * s);
                 placeHitboxes(l);
                 if (now % 2 == 0) for (ServerPlayer p : l.players()) ShakePacket.send(p, 6, 0.8f);
                 if (now >= chargeAt) impact(l, now);
@@ -873,7 +1387,7 @@ final class RiftTitan {
                 double f = 1.0 - (chargeAt - now) / 60.0;
                 f = Math.max(0, Math.min(1, f));
                 double s = f * f * (3 - 2 * f);
-                titan.setPos(baseX, baseY, chargeTargetZ + (baseZ - chargeTargetZ) * s);
+                titan.setPos(chargeX + (baseX - chargeX) * s, baseY, chargeTargetZ + (baseZ - chargeTargetZ) * s);
                 placeHitboxes(l);
                 if (now >= chargeAt) {
                     titan.setPos(baseX, baseY, baseZ);
@@ -893,10 +1407,16 @@ final class RiftTitan {
         BlockPos c = RiftManager.CENTER;
         int sr = siegeRadius;
         double reach = Math.max(4, rs.titanChargeReach);
+        // Secteur visé : le centre du bord sud, puis le sud-ouest, puis le sud-est (ensuite au hasard, sans rien rebriser)
+        chargeSector = chargeCount < SECTOR_OFF.length ? chargeCount : RNG.nextInt(SECTOR_OFF.length);
+        chargeCount++;
+        double off = SECTOR_OFF[chargeSector] * sr;
+        chargeX = c.getX() + 0.5 + off;
+        double edge = Math.sqrt(Math.max(0, (double) sr * sr - off * off));
         // Le bord nord du Titan arrive à « reach » blocs à l'intérieur de l'île
-        chargeTargetZ = c.getZ() + 0.5 + sr - reach + halfWidth();
-        double hw = Math.min(halfWidth(), 14);   // zone d'impact réduite : seul le coin sud de l'île est touché
-        zone = new double[]{c.getX() + 0.5 - hw, c.getX() + 0.5 + hw, c.getZ() + 0.5 + sr - reach - 2, c.getZ() + 0.5 + sr + 4};
+        chargeTargetZ = c.getZ() + 0.5 + edge - reach + halfWidth();
+        double hw = Math.min(halfWidth(), 14);   // zone d'impact réduite : seul le bord visé de l'île est touché
+        zone = new double[]{chargeX - hw, chargeX + hw, c.getZ() + 0.5 + edge - reach - 2, c.getZ() + 0.5 + edge + 4};
         chargeDealt = 0f;
         stunBonus = 0;
         charge = 1;
@@ -928,6 +1448,7 @@ final class RiftTitan {
         }
         // Les bâtiments pris dans la zone sont écrasés
         com.wavesurvivor.horde.kingdom.KingdomClaim.damageRect(zone[0], zone[1], zone[2], zone[3], Math.max(1, rs.titanBuildDamage));
+        breakSector(l, now);
         charge = 3;
         chargeAt = now + Math.max(2, rs.titanChargeStun) * 20L + stunBonus;
         stunBonus = 0;
@@ -937,6 +1458,75 @@ final class RiftTitan {
         titan.setGlowingTag(true);
         if (bar != null) bar.setColor(BossEvent.BossBarColor.RED);
         announce(l, "§c§l⚔ Le Titan est à terre ! Frappez-le maintenant (" + rs.titanChargeStun + " s) !");
+    }
+
+    // ─── L'île se brise : chaque charge arrache un secteur du bord sud (une seule fois par secteur) ───
+
+    private static final double[] SECTOR_OFF = {0.0, -0.42, 0.42};
+
+    /** Pendant l'annonce de la charge : des fissures rampent sur le bord qui va s'effondrer. */
+    private static void crackTelegraph(ServerLevel l) {
+        if (!rs.titanIslandBreak || brokenSectors.contains(chargeSector) || zone == null) return;
+        BlockPos c = RiftManager.CENTER;
+        int sr = siegeRadius, depth = Math.max(2, rs.titanBreakDepth);
+        for (int i = 0; i < 16; i++) {
+            double x = zone[0] + RNG.nextDouble() * (zone[1] - zone[0]);
+            double dx = x - c.getX() - 0.5;
+            double z = c.getZ() + 0.5 + Math.sqrt(Math.max(0, (double) sr * sr - dx * dx)) - RNG.nextDouble() * depth;
+            int gy = groundY(l, (int) Math.floor(x), (int) Math.floor(z));
+            if (gy <= l.getMinBuildHeight() + 1) continue;
+            l.sendParticles(ORANGE, x, gy + 0.05, z, 2, 0.4, 0, 0.4, 0);
+            BlockState st = l.getBlockState(new BlockPos((int) Math.floor(x), gy - 1, (int) Math.floor(z)));
+            if (!st.isAir()) l.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, st), x, gy + 0.1, z, 3, 0.3, 0.1, 0.3, 0.05);
+        }
+        l.playSound(null, BlockPos.containing(chargeX, c.getY(), zone[3]), SoundEvents.DEEPSLATE_BREAK, SoundSource.HOSTILE, 3f, 0.5f);
+    }
+
+    /** La charge arrache le bord percuté : un arc du cercle s'effondre dans l'abîme, du bord vers l'intérieur (le centre est épargné). */
+    private static void breakSector(ServerLevel l, long now) {
+        if (!rs.titanIslandBreak || !brokenSectors.add(chargeSector)) return;
+        BlockPos c = RiftManager.CENTER;
+        int sr = siegeRadius, depth = Math.max(2, Math.min(sr / 2, rs.titanBreakDepth));
+        int x0 = (int) Math.floor(zone[0]), x1 = (int) Math.ceil(zone[1]);
+        List<int[]> cols = new ArrayList<>();
+        for (int x = x0; x <= x1; x++) {
+            for (int z = c.getZ(); z <= c.getZ() + sr + 3; z++) {
+                double d = Math.hypot(x - c.getX(), z - c.getZ());
+                if (d < sr - depth || d > sr + 3 || d < 12) continue;
+                cols.add(new int[]{x, z, (int) Math.round((sr + 3 - d) / (depth + 3.0) * 40)});
+            }
+        }
+        if (cols.isEmpty()) return;
+        announce(l, "§6§l" + com.wavesurvivor.i18n.WSLang.t("rift.titan.island_break"));
+        l.playSound(null, BlockPos.containing(chargeX, c.getY(), zone[3]), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 8f, 0.3f);
+        final int[] falling = {0};
+        for (int[] col : cols) RiftManager.later(l.getServer(), 4 + col[2] + RNG.nextInt(4), () -> collapseColumn(l, col[0], col[1], falling));
+        // Les bâtiments posés sur ce bord s'écroulent avec lui
+        com.wavesurvivor.horde.kingdom.KingdomClaim.damageRect(zone[0], zone[1], c.getZ() + sr - depth, c.getZ() + sr + 3, Math.max(1, rs.titanBuildDamage * 4f));
+    }
+
+    /** Une colonne de l'île tombe : les blocs du dessus chutent (blocs qui tombent), le reste disparaît dans l'abîme. */
+    private static void collapseColumn(ServerLevel l, int x, int z, int[] falling) {
+        BlockPos c = RiftManager.CENTER;
+        BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+        int seen = 0;
+        for (int y = c.getY() + 14; y >= c.getY() - 45; y--) {
+            m.set(x, y, z);
+            BlockState st = l.getBlockState(m);
+            if (st.isAir() || st.getBlock() instanceof net.minecraft.world.level.block.EntityBlock) continue;
+            if (st.getDestroySpeed(l, m) < 0) continue;   // incassable (bedrock, barrière)
+            if (seen < 2 && falling[0] < 220 && RNG.nextInt(2) == 0) {
+                net.minecraft.world.entity.item.FallingBlockEntity fb = net.minecraft.world.entity.item.FallingBlockEntity.fall(l, m.immutable(), st);
+                fb.disableDrop();
+                fb.dropItem = false;
+                falling[0]++;
+            } else {
+                l.setBlock(m, Blocks.AIR.defaultBlockState(), 2);
+            }
+            seen++;
+        }
+        if (RNG.nextInt(3) == 0) l.sendParticles(ParticleTypes.LARGE_SMOKE, x + 0.5, c.getY() + 1, z + 0.5, 2, 0.3, 0.3, 0.3, 0.02);
+        if (RNG.nextInt(8) == 0) l.playSound(null, new BlockPos(x, c.getY(), z), SoundEvents.DEEPSLATE_BREAK, SoundSource.BLOCKS, 2f, 0.5f);
     }
 
     private static void meleeTick(ServerLevel l, long now) {
