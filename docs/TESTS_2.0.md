@@ -374,3 +374,4 @@ Test rapide (dans la dimension de la Faille : `/ws rift open` puis `/ws rift ent
 ## Citadelle : entrée du donjon, portail intérieur
 - [ ] Citadelle : l'entrée du donjon (vers le cœur et le portail) se monte en survie, marche par marche (plus de rebord de 2 blocs)
 - [ ] Entrer dans le portail du fond de la forteresse (pendant la partie) ramène sur l'île près du Monolithe ; en fin de partie, le portail de sortie renvoie chez soi
+- [ ] Sortie de la Faille (portail de fin, victoire ou défaite, fermeture) : on arrive devant le Monolithe / l'autel qui a ouvert la Faille, sur le sol, quelle que soit sa position dans la dimension

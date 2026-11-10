@@ -359,7 +359,12 @@ public final class RiftManager {
         ServerLevel dest = server.overworld();
         BlockPos to = null;
         String tag = p.getPersistentData().getString(RETURN_TAG);
-        if (!tag.isEmpty()) {
+        if (home != null && world != null) {
+            // Toujours au Monolithe (autel) qui a ouvert cette Faille, devant lui, sur le sol — jamais aux coordonnées de la dimension
+            dest = world;
+            int x = home.getX(), z = home.getZ() + 3;
+            to = new BlockPos(x, dest.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1, z);
+        } else if (!tag.isEmpty()) {   // Faille déjà fermée (reconnexion) : là où le joueur était en entrant
             String[] a = tag.split("\\|");
             try {
                 ServerLevel l = server.getLevel(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(a[0])));
@@ -369,7 +374,7 @@ public final class RiftManager {
         }
         if (to == null) to = home != null && world != null ? home : dest.getSharedSpawnPos();
         // Le joueur est entré en touchant l'ovale du portail, qui se referme en pierre : on le ressort devant la façade, jamais dedans
-        if (gate != null && gate.gateLevel() == dest && to.distSqr(gate.origin) <= 20 * 20) to = gate.frontSpot();
+        if (home == null && gate != null && gate.gateLevel() == dest && to.distSqr(gate.origin) <= 20 * 20) to = gate.frontSpot();
         to = safeSpot(dest, to);
         p.getPersistentData().remove(RETURN_TAG);
         restoreMode(p);
