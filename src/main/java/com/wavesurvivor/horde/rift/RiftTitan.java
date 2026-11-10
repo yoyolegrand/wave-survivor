@@ -335,7 +335,7 @@ final class RiftTitan {
     }
 
     private static void announce(ServerLevel l, String msg) {
-        for (ServerPlayer p : l.players()) p.sendSystemMessage(Component.literal(msg));
+        RiftManager.feed(l, msg);   // fil d'événements (étiquettes en haut à gauche), pas le chat
     }
 
     private static void chooseSkill(ServerLevel l, long now, List<ServerPlayer> alive) {

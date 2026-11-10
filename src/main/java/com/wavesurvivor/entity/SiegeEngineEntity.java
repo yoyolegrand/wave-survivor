@@ -29,6 +29,7 @@ public class SiegeEngineEntity extends Entity {
 
     private static final EntityDataAccessor<Integer> KIND = SynchedEntityData.defineId(SiegeEngineEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> LEVEL = SynchedEntityData.defineId(SiegeEngineEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(SiegeEngineEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> AMMO = SynchedEntityData.defineId(SiegeEngineEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> RELOAD_TICKS = SynchedEntityData.defineId(SiegeEngineEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> FIRE_TICK = SynchedEntityData.defineId(SiegeEngineEntity.class, EntityDataSerializers.LONG);
@@ -40,7 +41,6 @@ public class SiegeEngineEntity extends Entity {
     private int kindCache = CATAPULT;
 
     /** État de jeu côté serveur : variante de niveau 3 (0 = aucune), prochain tir possible, fin de rechargement, rechargement en cours. */
-    public int variant = 0;
     public long readyAt = 0, nextShot = 0;
     public boolean reloading = false;
     /** Tour-catapulte : cible actuelle et prochaine recherche de cible (non sauvegardées). */
@@ -56,6 +56,7 @@ public class SiegeEngineEntity extends Entity {
     protected void defineSynchedData() {
         entityData.define(KIND, CATAPULT);
         entityData.define(LEVEL, 1);
+        entityData.define(VARIANT, 0);
         entityData.define(AMMO, 0);
         entityData.define(RELOAD_TICKS, 600);
         entityData.define(FIRE_TICK, -1_000_000L);
@@ -70,6 +71,9 @@ public class SiegeEngineEntity extends Entity {
     public boolean isBallista() { return kind() == BALLISTA; }
     public int engineLevel() { return entityData.get(LEVEL); }
     public int ammo() { return entityData.get(AMMO); }
+    /** Variante de niveau 3 (0 = aucune) : synchronisée, le client choisit le modèle d'après elle. */
+    public int variant() { return entityData.get(VARIANT); }
+    public void setVariant(int v) { entityData.set(VARIANT, v); }
     public int reloadTicks() { return entityData.get(RELOAD_TICKS); }
     public long fireTick() { return entityData.get(FIRE_TICK); }
     public long reloadStart() { return entityData.get(RELOAD_START); }
@@ -170,7 +174,7 @@ public class SiegeEngineEntity extends Entity {
         setKind(t.getInt("kind"));
         entityData.set(LEVEL, Math.max(1, t.getInt("level")));
         entityData.set(AMMO, t.getInt("ammo"));
-        variant = t.getInt("variant");
+        setVariant(t.getInt("variant"));
     }
 
     @Override
@@ -178,7 +182,7 @@ public class SiegeEngineEntity extends Entity {
         t.putInt("kind", kind());
         t.putInt("level", engineLevel());
         t.putInt("ammo", ammo());
-        t.putInt("variant", variant);
+        t.putInt("variant", variant());
     }
 
     @Override

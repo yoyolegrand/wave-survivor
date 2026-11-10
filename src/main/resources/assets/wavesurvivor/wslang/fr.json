@@ -4053,5 +4053,6 @@
   "ui.rift.cine_sounds": "Sons",
   "ui.rift.cine_seconds": "Durée (s)",
   "ui.rift.cine_name": "Nom",
-  "ui.rift.cine_sub": "Sous-titre"
+  "ui.rift.cine_sub": "Sous-titre",
+  "rift.exit_open": "§aUn portail de sortie s’est ouvert près du Monolithe : traversez-le pour rentrer."
 }

@@ -1,0 +1,1259 @@
+{
+ "name": "celestial_ballista_l2",
+ "size_px": [
+  48,
+  48,
+  48
+ ],
+ "atlas": "textures/entity/siege_engines.png",
+ "tile_uv": {
+  "wood": [
+   0,
+   0
+  ],
+  "log": [
+   16,
+   0
+  ],
+  "iron": [
+   32,
+   0
+  ],
+  "stone": [
+   48,
+   0
+  ],
+  "rope": [
+   0,
+   16
+  ],
+  "dark": [
+   16,
+   16
+  ],
+  "marble": [
+   32,
+   16
+  ],
+  "gold": [
+   48,
+   16
+  ],
+  "crystal": [
+   0,
+   32
+  ],
+  "birch": [
+   16,
+   32
+  ],
+  "feather": [
+   32,
+   32
+  ],
+  "cyan": [
+   48,
+   32
+  ],
+  "iron_plate": [
+   0,
+   48
+  ],
+  "gear": [
+   16,
+   48
+  ],
+  "stone_bound": [
+   32,
+   48
+  ],
+  "magma": [
+   48,
+   48
+  ]
+ },
+ "note": "Unit\u00e9s = pixels (16 = 1 bloc). Origine = coin nord-ouest au sol de l'emprise. L'engin regarde vers le SUD (+Z). Chaque face est remplie en r\u00e9p\u00e9tant la tuile 16x16 de sa texture. Rotations en degr\u00e9s, ordre X puis Y puis Z autour du pivot du groupe ; un groupe enfant h\u00e9rite de son parent. 'glow' = pleine luminosit\u00e9. CORDE : pas de cube ; tracer \u00e0 chaque image 2 segments (quads fins, largeur width_px, face \u00e0 la cam\u00e9ra ou en croix) entre les ancrages 'dynamic_strings', calcul\u00e9s en coordonn\u00e9es monde apr\u00e8s les transformations de leurs groupes : la corde suit toujours les ailes et l'encoche.",
+ "groups": {
+  "base": {
+   "pivot": [
+    24,
+    0,
+    24
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": null
+  },
+  "turret": {
+   "pivot": [
+    24,
+    12,
+    24
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": "base"
+  },
+  "weapon": {
+   "pivot": [
+    24,
+    23.5,
+    24
+   ],
+   "rotation": [
+    -18,
+    0,
+    0
+   ],
+   "parent": "turret"
+  },
+  "wing_r": {
+   "pivot": [
+    27,
+    24,
+    34
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": "weapon"
+  },
+  "wing_l": {
+   "pivot": [
+    21,
+    24,
+    34
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": "weapon"
+  },
+  "string": {
+   "pivot": [
+    24,
+    27.5,
+    14
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": "weapon",
+   "note": "Groupe sans cube : il ne porte que l'ancrage 'nock' (encoche). Au tir, translation Z de +20 px (vers les ailes) en 2 ticks, puis retour lent pendant le rechargement."
+  },
+  "bolt": {
+   "pivot": [
+    24,
+    27,
+    24
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": "weapon"
+  },
+  "halo": {
+   "pivot": [
+    24,
+    14,
+    24
+   ],
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "parent": "turret",
+   "note": "anneau autour de la tourelle ; tourne pendant le rechargement"
+  }
+ },
+ "parts": [
+  {
+   "group": "base",
+   "from": [
+    11,
+    0,
+    3
+   ],
+   "to": [
+    37,
+    7,
+    45
+   ],
+   "texture": "marble",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    3,
+    0,
+    11
+   ],
+   "to": [
+    45,
+    7,
+    37
+   ],
+   "texture": "marble",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    6,
+    0,
+    6
+   ],
+   "to": [
+    42,
+    7,
+    42
+   ],
+   "texture": "marble",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    10,
+    7,
+    10
+   ],
+   "to": [
+    38,
+    8,
+    38
+   ],
+   "texture": "marble",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    12,
+    8,
+    12
+   ],
+   "to": [
+    36,
+    11,
+    36
+   ],
+   "texture": "marble",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    9,
+    7,
+    9
+   ],
+   "to": [
+    39,
+    8,
+    10.5
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    9,
+    7,
+    37.5
+   ],
+   "to": [
+    39,
+    8,
+    39
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    9,
+    7,
+    10.5
+   ],
+   "to": [
+    10.5,
+    8,
+    37.5
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "base",
+   "from": [
+    37.5,
+    7,
+    10.5
+   ],
+   "to": [
+    39,
+    8,
+    37.5
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    15,
+    11.8,
+    15
+   ],
+   "to": [
+    33,
+    14,
+    33
+   ],
+   "texture": "marble",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    12,
+    14,
+    20
+   ],
+   "to": [
+    16,
+    27,
+    28
+   ],
+   "texture": "marble",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    11.4,
+    27,
+    19.4
+   ],
+   "to": [
+    16.6,
+    28.5,
+    28.6
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    32,
+    14,
+    20
+   ],
+   "to": [
+    36,
+    27,
+    28
+   ],
+   "texture": "marble",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    31.4,
+    27,
+    19.4
+   ],
+   "to": [
+    36.6,
+    28.5,
+    28.6
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "turret",
+   "from": [
+    11,
+    22,
+    22.5
+   ],
+   "to": [
+    37,
+    25,
+    25.5
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "weapon",
+   "from": [
+    21,
+    22,
+    4
+   ],
+   "to": [
+    27,
+    26,
+    44
+   ],
+   "texture": "marble",
+   "glow": false
+  },
+  {
+   "group": "weapon",
+   "from": [
+    22.5,
+    26,
+    6
+   ],
+   "to": [
+    25.5,
+    26.7,
+    42
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "weapon",
+   "from": [
+    20.5,
+    21.5,
+    8
+   ],
+   "to": [
+    27.5,
+    26.5,
+    10
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "weapon",
+   "from": [
+    20.5,
+    21.5,
+    18
+   ],
+   "to": [
+    27.5,
+    26.5,
+    20
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "weapon",
+   "from": [
+    20.5,
+    21.5,
+    28
+   ],
+   "to": [
+    27.5,
+    26.5,
+    30
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "weapon",
+   "from": [
+    20.5,
+    21.5,
+    38
+   ],
+   "to": [
+    27.5,
+    26.5,
+    40
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "weapon",
+   "from": [
+    21.5,
+    17,
+    30
+   ],
+   "to": [
+    26.5,
+    22,
+    35
+   ],
+   "texture": "crystal",
+   "glow": true
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    27.0,
+    23.5,
+    35.0
+   ],
+   "to": [
+    31.2,
+    25.7,
+    38.4
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    27.0,
+    18.0,
+    35.8
+   ],
+   "to": [
+    31.2,
+    23.5,
+    37.2
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    31.2,
+    24.6,
+    31.8
+   ],
+   "to": [
+    35.4,
+    26.8,
+    35.2
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    31.2,
+    19.1,
+    32.6
+   ],
+   "to": [
+    35.4,
+    24.6,
+    34.0
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    35.4,
+    25.7,
+    28.6
+   ],
+   "to": [
+    39.6,
+    27.9,
+    32.0
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    35.4,
+    20.2,
+    29.400000000000002
+   ],
+   "to": [
+    39.6,
+    25.7,
+    30.8
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    39.6,
+    26.8,
+    25.4
+   ],
+   "to": [
+    43.8,
+    29.0,
+    28.799999999999997
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    39.6,
+    21.3,
+    26.2
+   ],
+   "to": [
+    43.8,
+    26.8,
+    27.599999999999998
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    43.8,
+    27.9,
+    22.2
+   ],
+   "to": [
+    48.0,
+    30.099999999999998,
+    25.599999999999998
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    43.8,
+    22.4,
+    23.0
+   ],
+   "to": [
+    48.0,
+    27.9,
+    24.4
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_r",
+   "from": [
+    44.9,
+    26.5,
+    22.5
+   ],
+   "to": [
+    48.1,
+    29.5,
+    25.5
+   ],
+   "texture": "crystal",
+   "glow": true
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    16.8,
+    23.5,
+    35.0
+   ],
+   "to": [
+    21.0,
+    25.7,
+    38.4
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    16.8,
+    18.0,
+    35.8
+   ],
+   "to": [
+    21.0,
+    23.5,
+    37.2
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    12.600000000000001,
+    24.6,
+    31.8
+   ],
+   "to": [
+    16.8,
+    26.8,
+    35.2
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    12.600000000000001,
+    19.1,
+    32.6
+   ],
+   "to": [
+    16.8,
+    24.6,
+    34.0
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    8.399999999999999,
+    25.7,
+    28.6
+   ],
+   "to": [
+    12.600000000000001,
+    27.9,
+    32.0
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    8.399999999999999,
+    20.2,
+    29.400000000000002
+   ],
+   "to": [
+    12.600000000000001,
+    25.7,
+    30.8
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    4.200000000000003,
+    26.8,
+    25.4
+   ],
+   "to": [
+    8.399999999999999,
+    29.0,
+    28.799999999999997
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    4.200000000000003,
+    21.3,
+    26.2
+   ],
+   "to": [
+    8.399999999999999,
+    26.8,
+    27.599999999999998
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    0.0,
+    27.9,
+    22.2
+   ],
+   "to": [
+    4.200000000000003,
+    30.099999999999998,
+    25.599999999999998
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    0.0,
+    22.4,
+    23.0
+   ],
+   "to": [
+    4.200000000000003,
+    27.9,
+    24.4
+   ],
+   "texture": "feather",
+   "glow": false
+  },
+  {
+   "group": "wing_l",
+   "from": [
+    -0.10000000000000009,
+    26.5,
+    22.5
+   ],
+   "to": [
+    3.1,
+    29.5,
+    25.5
+   ],
+   "texture": "crystal",
+   "glow": true
+  },
+  {
+   "group": "bolt",
+   "from": [
+    23,
+    26.7,
+    8
+   ],
+   "to": [
+    25,
+    28.2,
+    44
+   ],
+   "texture": "gold",
+   "glow": false
+  },
+  {
+   "group": "bolt",
+   "from": [
+    22,
+    26.2,
+    44
+   ],
+   "to": [
+    26,
+    29.2,
+    48
+   ],
+   "texture": "crystal",
+   "glow": true
+  },
+  {
+   "group": "base",
+   "from": [
+    5.5,
+    7,
+    5.5
+   ],
+   "to": [
+    8.5,
+    11,
+    8.5
+   ],
+   "texture": "crystal",
+   "glow": true
+  },
+  {
+   "group": "base",
+   "from": [
+    39.5,
+    7,
+    5.5
+   ],
+   "to": [
+    42.5,
+    11,
+    8.5
+   ],
+   "texture": "crystal",
+   "glow": true
+  },
+  {
+   "group": "base",
+   "from": [
+    5.5,
+    7,
+    39.5
+   ],
+   "to": [
+    8.5,
+    11,
+    42.5
+   ],
+   "texture": "crystal",
+   "glow": true
+  },
+  {
+   "group": "base",
+   "from": [
+    39.5,
+    7,
+    39.5
+   ],
+   "to": [
+    42.5,
+    11,
+    42.5
+   ],
+   "texture": "crystal",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    34.8,
+    14.5,
+    22.8
+   ],
+   "to": [
+    37.2,
+    15.5,
+    25.2
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    33.88655439013544,
+    14.5,
+    27.392201188381076
+   ],
+   "to": [
+    36.28655439013544,
+    15.5,
+    29.792201188381075
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    31.28528137423857,
+    14.5,
+    31.28528137423857
+   ],
+   "to": [
+    33.68528137423857,
+    15.5,
+    33.68528137423857
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    27.39220118838108,
+    14.5,
+    33.88655439013544
+   ],
+   "to": [
+    29.79220118838108,
+    15.5,
+    36.28655439013544
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    22.8,
+    14.5,
+    34.8
+   ],
+   "to": [
+    25.2,
+    15.5,
+    37.2
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    18.207798811618925,
+    14.5,
+    33.88655439013544
+   ],
+   "to": [
+    20.607798811618924,
+    15.5,
+    36.28655439013544
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    14.314718625761431,
+    14.5,
+    31.28528137423857
+   ],
+   "to": [
+    16.71471862576143,
+    15.5,
+    33.68528137423857
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    11.71344560986456,
+    14.5,
+    27.39220118838108
+   ],
+   "to": [
+    14.11344560986456,
+    15.5,
+    29.79220118838108
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    10.8,
+    14.5,
+    22.8
+   ],
+   "to": [
+    13.2,
+    15.5,
+    25.2
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    11.713445609864559,
+    14.5,
+    18.207798811618925
+   ],
+   "to": [
+    14.113445609864558,
+    15.5,
+    20.607798811618924
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    14.31471862576143,
+    14.5,
+    14.314718625761431
+   ],
+   "to": [
+    16.714718625761428,
+    15.5,
+    16.71471862576143
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    18.207798811618918,
+    14.5,
+    11.713445609864563
+   ],
+   "to": [
+    20.607798811618917,
+    15.5,
+    14.113445609864561
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    22.799999999999997,
+    14.5,
+    10.8
+   ],
+   "to": [
+    25.199999999999996,
+    15.5,
+    13.2
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    27.39220118838108,
+    14.5,
+    11.71344560986456
+   ],
+   "to": [
+    29.79220118838108,
+    15.5,
+    14.11344560986456
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    31.28528137423857,
+    14.5,
+    14.31471862576143
+   ],
+   "to": [
+    33.68528137423857,
+    15.5,
+    16.714718625761428
+   ],
+   "texture": "gold",
+   "glow": true
+  },
+  {
+   "group": "halo",
+   "from": [
+    33.88655439013544,
+    14.5,
+    18.207798811618918
+   ],
+   "to": [
+    36.28655439013544,
+    15.5,
+    20.607798811618917
+   ],
+   "texture": "gold",
+   "glow": true
+  }
+ ],
+ "animations": {
+  "fire": {
+   "ticks": 10,
+   "string": "nock: translation z +20 px en 2 ticks",
+   "wing_r.rotation.y": [
+    0,
+    -12,
+    0
+   ],
+   "wing_l.rotation.y": [
+    0,
+    12,
+    0
+   ],
+   "bolt": "hidden_then_slide",
+   "crystal": "flash"
+  },
+  "reload": {
+   "ticks": 160,
+   "halo.rotation.y": "spin",
+   "wings": "fold_back_then_return",
+   "bolt": "materialize"
+  },
+  "magazine": 16,
+  "fire_interval_ticks": 8
+ },
+ "anchors": {
+  "wing_r_tip": {
+   "group": "wing_r",
+   "pos": [
+    46.5,
+    28.0,
+    24.0
+   ]
+  },
+  "wing_l_tip": {
+   "group": "wing_l",
+   "pos": [
+    1.5,
+    28.0,
+    24.0
+   ]
+  },
+  "nock": {
+   "group": "string",
+   "pos": [
+    24,
+    27.6,
+    13.8
+   ]
+  }
+ },
+ "dynamic_strings": [
+  {
+   "from": "wing_r_tip",
+   "to": "nock",
+   "width_px": 0.8,
+   "texture": "cyan",
+   "glow": true
+  },
+  {
+   "from": "wing_l_tip",
+   "to": "nock",
+   "width_px": 0.8,
+   "texture": "cyan",
+   "glow": true
+  }
+ ],
+ "pilot_hidden_groups": [
+  "halo"
+ ],
+ "sight_corridor": {
+  "x": [
+   16,
+   32
+  ],
+  "y_above": 27.5,
+  "z": [
+   0,
+   48
+  ],
+  "note": "Aucune pi\u00e8ce ne d\u00e9passe au-dessus du f\u00fbt dans ce couloir : la vue du pilote reste d\u00e9gag\u00e9e. Le renderer peut en plus masquer 'pilot_hidden_groups' pour le joueur qui pilote."
+ }
+}

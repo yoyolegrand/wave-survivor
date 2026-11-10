@@ -254,3 +254,8 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 - [ ] **Passer** : maintenir S'accroupir 1 s (individuel : à deux, l'un passe, l'autre continue) ; le combat commence à 240 pour tous.
 - [ ] Marche avec une autre entité Titan (aucune animation de modèle).
 - [ ] Éditeur, page Météores : cinématique activée / passable / sons, durée (s), nom, sous-titre.
+
+## Fin de Faille : portail de sortie, Titan retiré, annonces dans le fil d'événements, variante des engins
+- [ ] **Défaite ou victoire** : à l'ouverture de la pause de fin, le **Titan disparaît** (avec ses cristaux, boîtes de contact, avatars, météores et barre de vie), les monstres restants sont retirés, et un **portail de sortie** (cadre d'obsidienne pleureuse) s'ouvre au nord du Monolithe ; le traverser renvoie chez soi sans attendre la fin du chrono.
+- [ ] Les annonces du Titan (fureur, avatars, points faibles, Monolithe frappé, charge, stun…) et de la Faille (horde, siège, contre-offensive, défaite…) apparaissent dans le **fil d'événements** (étiquettes en haut à gauche) et non plus dans le chat.
+- [ ] **Engins** : après l'achat de la variante de niveau 3, l'engin affiche bien le **modèle de sa variante** (avant, la variante n'était pas transmise au client : il restait au modèle du niveau 2). `latest.log` : lignes « Modèle d'engin chargé : … » pour chaque niveau / variante rencontré.

@@ -4814,5 +4814,6 @@
   "ui.rift.cine_sounds": "Sounds",
   "ui.rift.cine_seconds": "Length (s)",
   "ui.rift.cine_name": "Name",
-  "ui.rift.cine_sub": "Subtitle"
+  "ui.rift.cine_sub": "Subtitle",
+  "rift.exit_open": "§aAn exit portal opened near the Monolith: walk through it to go home."
 }

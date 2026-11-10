@@ -74,7 +74,7 @@ final class RiftEngines {
             t.putDouble("z", e.getZ());
             t.putInt("kind", e.kind());
             t.putInt("level", e.engineLevel());
-            t.putInt("variant", e.variant);
+            t.putInt("variant", e.variant());
             out.add(t);
         }
         return out;
@@ -91,7 +91,7 @@ final class RiftEngines {
             e.moveTo(t.getDouble("x"), t.getDouble("y"), t.getDouble("z"), 0f, 0f);
             e.setKind(ballista ? SiegeEngineEntity.BALLISTA : SiegeEngineEntity.CATAPULT);
             e.setEngineLevel(Math.max(1, t.getInt("level")));
-            e.variant = t.getInt("variant");
+            e.setVariant(t.getInt("variant"));
             e.setAmmo(ballista ? 0 : 1);
             e.setReloadTicks(ballista ? ballistaReload(e) : catapultReload(e));
             e.setAim(0f, -18f);
@@ -112,7 +112,7 @@ final class RiftEngines {
         String base = b ? "Baliste céleste" : "Catapulte";
         int lv = e.engineLevel();
         if (lv == 2) return base + (b ? " consacrée" : " renforcée");
-        if (lv >= 3 && e.variant >= 1) return base + " " + VARIANTS[b ? 1 : 0][e.variant - 1];
+        if (lv >= 3 && e.variant() >= 1) return base + " " + VARIANTS[b ? 1 : 0][e.variant() - 1];
         return base;
     }
 
@@ -122,7 +122,7 @@ final class RiftEngines {
 
     /** Rechargement de la catapulte (ticks) : 30 s niveau 1, 24 s niveau 2 et variantes (le Trébuchet est plus lent). */
     private static int catapultReload(SiegeEngineEntity e) {
-        if (e.engineLevel() >= 3 && e.variant == 3) return 720;   // Trébuchet : 36 s
+        if (e.engineLevel() >= 3 && e.variant() == 3) return 720;   // Trébuchet : 36 s
         return Math.max(20, e.engineLevel() >= 2 ? rs().catapultReload2 : rs().catapultReload1);
     }
 
@@ -251,7 +251,7 @@ final class RiftEngines {
     private static void fireTower(ServerLevel l, SiegeEngineEntity e, Vec3 target, float yaw, long now) {
         double fx = -Math.sin(Math.toRadians(yaw)), fz = Math.cos(Math.toRadians(yaw));
         Vec3 muzzle = new Vec3(e.getX() + fx * 2.25, e.getY() + 5.1, e.getZ() + fz * 2.25);
-        boolean tre = e.engineLevel() >= 3 && e.variant == 3;
+        boolean tre = e.engineLevel() >= 3 && e.variant() == 3;
         double speed = 2.5 * (e.engineLevel() >= 2 ? 1.1 : 1.0) * (tre ? 1.25 : 1.0);
         double dist = Math.max(1, Math.hypot(target.x - muzzle.x, target.z - muzzle.z)), h = target.y - muzzle.y, g = 0.05;
         double disc = speed * speed * speed * speed - g * (g * dist * dist + 2 * h * speed * speed);
@@ -261,8 +261,8 @@ final class RiftEngines {
         b.vel = new Vec3(fx * Math.cos(ang), Math.sin(ang), fz * Math.cos(ang)).scale(speed);
         b.owner = NO_OWNER;
         b.mul = (e.engineLevel() >= 2 ? 1.25f : 1f) * (tre ? 1.6f : 1f);
-        b.fire = e.engineLevel() >= 3 && e.variant == 1;
-        b.frag = e.engineLevel() >= 3 && e.variant == 2;
+        b.fire = e.engineLevel() >= 3 && e.variant() == 1;
+        b.frag = e.engineLevel() >= 3 && e.variant() == 2;
         BOULDERS.add(b);
         int reload = catapultReload(e);
         e.readyAt = now + reload;
@@ -302,7 +302,7 @@ final class RiftEngines {
         if (e.engineLevel() != 2 || p.distanceToSqr(e) > 400) return;
         if (!com.wavesurvivor.altar.AltarDefense.trySpend(p, UP3[e.isBallista() ? 1 : 0])) return;
         e.setEngineLevel(3);
-        e.variant = i + 1;
+        e.setVariant(i + 1);
         e.setReloadTicks(e.isBallista() ? ballistaReload(e) : catapultReload(e));
         choosing.remove(p.getUUID());
         l.playSound(null, e.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1f, 1f);
@@ -319,7 +319,7 @@ final class RiftEngines {
     private static void openSheet(ServerPlayer p, SiegeEngineEntity e) {
         int k = e.isBallista() ? 1 : 0;
         com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
-                new com.wavesurvivor.network.EngineSheetPackets.Sheet(e.getId(), e.kind(), e.engineLevel(), e.engineLevel() >= 3 ? e.variant : 0,
+                new com.wavesurvivor.network.EngineSheetPackets.Sheet(e.getId(), e.kind(), e.engineLevel(), e.engineLevel() >= 3 ? e.variant() : 0,
                         UP2[k], UP3[k], coins(p), e.ammo()));
     }
 
@@ -333,7 +333,7 @@ final class RiftEngines {
             int i = action.charAt(7) - '0';
             if (i >= 0 && i <= 2 && e.engineLevel() == 2 && com.wavesurvivor.altar.AltarDefense.trySpend(p, UP3[e.isBallista() ? 1 : 0])) {
                 e.setEngineLevel(3);
-                e.variant = i + 1;
+                e.setVariant(i + 1);
                 e.setReloadTicks(e.isBallista() ? ballistaReload(e) : catapultReload(e));
                 l.playSound(null, e.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 1f, 1f);
                 p.displayClientMessage(Component.literal("§a" + nameOf(e) + " !"), true);
@@ -378,15 +378,15 @@ final class RiftEngines {
         }
         Vec3 look = p.getLookAngle();
         Vec3 dir = new Vec3(look.x, Math.max(look.y, 0.25), look.z).normalize();
-        boolean tre = e.engineLevel() >= 3 && e.variant == 3;
+        boolean tre = e.engineLevel() >= 3 && e.variant() == 3;
         Boulder b = new Boulder();
         b.pos = catapultMuzzle(e);
         double speed = 2.5 * (e.engineLevel() >= 2 ? 1.1 : 1.0) * (tre ? 1.25 : 1.0);   // la portée se règle avec l'inclinaison du regard
         b.vel = dir.scale(speed);
         b.owner = p.getUUID();
         b.mul = (e.engineLevel() >= 2 ? 1.25f : 1f) * (tre ? 1.6f : 1f);
-        b.fire = e.engineLevel() >= 3 && e.variant == 1;
-        b.frag = e.engineLevel() >= 3 && e.variant == 2;
+        b.fire = e.engineLevel() >= 3 && e.variant() == 1;
+        b.frag = e.engineLevel() >= 3 && e.variant() == 2;
         BOULDERS.add(b);
         int reload = catapultReload(e);
         e.readyAt = now + reload;
@@ -424,7 +424,7 @@ final class RiftEngines {
             return;
         }
         if (now < e.nextShot) return;
-        boolean solar = e.engineLevel() >= 3 && e.variant == 2, judge = e.engineLevel() >= 3 && e.variant == 3, seraph = e.engineLevel() >= 3 && e.variant == 1;
+        boolean solar = e.engineLevel() >= 3 && e.variant() == 2, judge = e.engineLevel() >= 3 && e.variant() == 3, seraph = e.engineLevel() >= 3 && e.variant() == 1;
         e.nextShot = now + ballistaInterval(e);
         Vec3 look = p.getLookAngle();
         Vec3 muzzle = new Vec3(e.getX(), e.getY() + 1.47, e.getZ()).add(look.scale(1.5));

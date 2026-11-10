@@ -33,6 +33,10 @@ public class RiftPortalBlock extends Block {
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (level.isClientSide || !(entity instanceof ServerPlayer p)) return;
         if (!RiftManager.isActive() || p.isSpectator() || !p.isAlive()) return;
+        if (p.level().dimension() == RiftManager.RIFT_DIM) {   // dans la Faille : c'est le portail de sortie de fin de partie
+            if (RiftManager.exitOpen()) RiftManager.sendHome(p);
+            return;
+        }
         RiftManager.enter(p);
     }
 }

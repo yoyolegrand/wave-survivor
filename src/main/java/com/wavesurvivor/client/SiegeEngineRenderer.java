@@ -251,7 +251,7 @@ public class SiegeEngineRenderer extends EntityRenderer<SiegeEngineEntity> {
 
     /** Un modèle par niveau et par variante (niveau 3 : la variante choisie). */
     private static String modelName(SiegeEngineEntity e) {
-        int lv = e.engineLevel(), v = e.variant;
+        int lv = e.engineLevel(), v = e.variant();
         if (e.isBallista()) {
             if (lv >= 3 && v >= 1) return "celestial_ballista_l3_" + new String[]{"seraphic", "solar", "judgement"}[Math.min(2, v - 1)];
             return "celestial_ballista_l" + (lv >= 2 ? 2 : 1);

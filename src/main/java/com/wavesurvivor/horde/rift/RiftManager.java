@@ -506,7 +506,21 @@ public final class RiftManager {
     }
 
     private static void tellAll(ServerLevel rd, String msg) {
-        for (ServerPlayer p : rd.players()) p.sendSystemMessage(Component.literal(msg));
+        feed(rd, msg);
+    }
+
+    /** Annonce de la Faille dans le fil d'événements (petites étiquettes en haut à gauche) plutôt que dans le chat. */
+    static void feed(ServerLevel rd, String msg) {
+        if (rd == null || msg == null) return;
+        String m = msg.startsWith("§") && msg.length() > 1 ? msg.substring(0, 2) : "";
+        int color = m.equals("§c") || m.equals("§4") ? com.wavesurvivor.network.EventFeedPacket.DANGER
+                : m.equals("§d") || m.equals("§5") ? com.wavesurvivor.network.EventFeedPacket.ARCANE
+                : m.equals("§a") ? com.wavesurvivor.network.EventFeedPacket.RESOURCE
+                : m.equals("§7") || m.equals("§8") ? com.wavesurvivor.network.EventFeedPacket.KINGDOM
+                : com.wavesurvivor.network.EventFeedPacket.HORDE;
+        String icon = color == com.wavesurvivor.network.EventFeedPacket.DANGER ? "minecraft:iron_sword"
+                : color == com.wavesurvivor.network.EventFeedPacket.ARCANE ? "minecraft:amethyst_shard" : "minecraft:nether_star";
+        com.wavesurvivor.network.EventFeedPacket.toAll(rd.getServer(), Component.literal(msg), icon, color, color == com.wavesurvivor.network.EventFeedPacket.DANGER);
     }
 
     private static void restoreSpawnRadius() {
@@ -612,6 +626,7 @@ public final class RiftManager {
                 long left = Math.max(0, (endAt - now + 19) / 20);
                 String clock = (left / 60) + ":" + String.format("%02d", left % 60);
                 for (ServerPlayer p : rd.players()) p.displayClientMessage(Component.literal(WSLang.t("rift.closing", clock)), true);
+                rd.sendParticles(net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL, EXIT_PORTAL.getX() + 0.5, EXIT_PORTAL.getY() + 1.5, EXIT_PORTAL.getZ() + 0.5, 20, 0.8, 1.2, 0.2, 0.1);
                 if (now >= endAt) stop(server);
             }
             default -> { }
@@ -1129,11 +1144,36 @@ public final class RiftManager {
         }
     }
 
+    /** Emplacement du portail de sortie : au nord du Monolithe (face à l'arrivée des joueurs, qui est au sud). */
+    private static final BlockPos EXIT_PORTAL = CENTER.offset(0, 1, -7);
+
+    /** Le portail de sortie est-il ouvert (pause de fin) ? Le toucher renvoie le joueur chez lui. */
+    public static boolean exitOpen() { return active && phase == Phase.ENDING; }
+
+    private static void placeExitPortal(ServerLevel rd) {
+        BlockState frame = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+        BlockState portal = com.wavesurvivor.registry.ModBlocks.RIFT_PORTAL.get().defaultBlockState();
+        for (int dx = -2; dx <= 2; dx++) for (int dy = -1; dy <= 4; dy++) {
+            BlockPos p = EXIT_PORTAL.offset(dx, dy, 0);
+            boolean edge = dx == -2 || dx == 2 || dy == -1 || dy == 4;
+            rd.setBlock(p, edge ? (dy == -1 && Math.abs(dx) < 2 ? Blocks.OBSIDIAN.defaultBlockState() : frame) : portal, 3);
+        }
+        rd.playSound(null, EXIT_PORTAL, SoundEvents.END_PORTAL_SPAWN, SoundSource.BLOCKS, 3f, 1.0f);
+        rd.sendParticles(net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL, EXIT_PORTAL.getX() + 0.5, EXIT_PORTAL.getY() + 1.5, EXIT_PORTAL.getZ() + 0.5, 80, 1.0, 1.5, 0.3, 0.2);
+    }
+
     private static void toEnding(MinecraftServer server, ServerLevel rd) {
         phase = Phase.ENDING;
         if (HordeManager.get().isRunning() && com.wavesurvivor.horde.kingdom.KingdomManager.isActive()) HordeManager.get().stopSilently(); // royaume en veille : boutique et défenses retirées avec la partie
         endAt = server.getTickCount() + Math.max(10, settings().endPauseSeconds) * 20L;
         restoreSpawnRadius();
+        // Le Titan et ses séquelles disparaissent ; un portail de sortie s'ouvre près du Monolithe (victoire comme défaite)
+        RiftTitan.clear(rd);
+        List<net.minecraft.world.entity.Entity> foes = new ArrayList<>();
+        for (net.minecraft.world.entity.Entity e : rd.getAllEntities()) if (e instanceof net.minecraft.world.entity.monster.Monster) foes.add(e);
+        for (net.minecraft.world.entity.Entity e : foes) e.discard();
+        placeExitPortal(rd);
+        feed(rd, "§a" + WSLang.t("rift.exit_open"));
         // Tout le monde est libéré : plus de spectateurs pendant la pause
         for (ServerPlayer p : new ArrayList<>(rd.players())) {
             boolean wasOut = p.isSpectator();
