@@ -79,6 +79,10 @@ public class NetworkHandler {
                 EngineSheetPackets.Action::encode, EngineSheetPackets.Action::decode, EngineSheetPackets.Action::handle);
         CHANNEL.registerMessage(id++, EngineFirePacket.class,
                 EngineFirePacket::encode, EngineFirePacket::decode, EngineFirePacket::handle);
+        CHANNEL.registerMessage(id++, TitanCinePackets.Cine.class,
+                TitanCinePackets.Cine::encode, TitanCinePackets.Cine::decode, TitanCinePackets.Cine::handle);
+        CHANNEL.registerMessage(id++, TitanCinePackets.Skip.class,
+                TitanCinePackets.Skip::encode, TitanCinePackets.Skip::decode, TitanCinePackets.Skip::handle);
         CHANNEL.registerMessage(id++, EventFeedPacket.class,
                 EventFeedPacket::encode, EventFeedPacket::decode, EventFeedPacket::handle);
         CHANNEL.registerMessage(id++, OpenAltarBindScreenPacket.class,

@@ -481,6 +481,11 @@ public final class RiftManager {
         return active && RiftTitan.active();
     }
 
+    /** Un joueur passe la cinématique du Titan (maintenir S'accroupir 1 s). */
+    public static void titanCineSkip(ServerPlayer p) {
+        if (active) RiftTitan.cineSkip(p);
+    }
+
     /** Le pilote d'une baliste maintient le clic droit (paquet du client). */
     public static void engineFire(ServerPlayer p) {
         if (active && p.level().dimension() == RIFT_DIM) RiftEngines.fireFromSeat(p);

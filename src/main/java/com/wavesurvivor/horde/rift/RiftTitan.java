@@ -79,6 +79,11 @@ final class RiftTitan {
     /** Charge sur l'île : 0 repos, 1 annonce, 2 élan, 3 stun, 4 corps à corps, 5 retour. */
     private static int charge;
     /** Points faibles (cristaux), leur décalage par rapport au Titan {dx, dy}, prochaine vague, dégâts subis pendant la charge, stun en plus (ticks). */
+    /** Cinématique d'apparition : date de début, échelle de durée (1 = 12 s), activée, joueurs qui l'ont passée, étapes déjà jouées. */
+    private static long cineStart;
+    private static double cineF = 1.0;
+    private static boolean cineOn, cineRise, cineNamed, cineRoar, cineAbyss, cineGrowl;
+    private static final Set<UUID> cineSkipped = new HashSet<>();
     private static final List<UUID> crystals = new ArrayList<>();
     private static final List<float[]> crystalOff = new ArrayList<>();
     private static long nextWaveAt;
@@ -217,11 +222,18 @@ final class RiftTitan {
         mob.moveTo(baseX, baseY - 90, baseZ, 180f, 0f);   // regarde vers le nord (l'île)
         mob.setYHeadRot(180f);
         mob.yBodyRot = 180f;
+        // Invisible sous l'abîme jusqu'à son surgissement (la cinématique le révèle)
+        mob.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 100000, 0, false, false));
         l.addFreshEntity(mob);
         titan = mob;
         titanId = mob.getUUID();
         emerging = true;
-        emergeUntil = l.getServer().getTickCount() + 220;
+        cineOn = settings.titanCine;
+        cineF = (cineOn ? Math.max(4, Math.min(40, settings.titanCineSeconds)) : 6) / 12.0;
+        cineStart = l.getServer().getTickCount();
+        emergeUntil = cineStart + (long) (240 * cineF);
+        cineRise = cineNamed = cineRoar = cineAbyss = cineGrowl = false;
+        cineSkipped.clear();
         charge = 0;
         chargeDue = false;
         stunning = false;
@@ -229,17 +241,20 @@ final class RiftTitan {
         chargeDealt = 0f;
         stunBonus = 0;
         nextWaveAt = Long.MAX_VALUE;
-        nextChargeAt = l.getServer().getTickCount() + 220 + Math.max(10, settings.titanChargeInterval) * 20L;
+        nextChargeAt = cineStart + (long) (240 * cineF) + Math.max(10, settings.titanChargeInterval) * 20L;
         bar = new ServerBossEvent(Component.literal("§5§lTitan de la Faille"), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
-        bar.setProgress(1f);
-        for (ServerPlayer p : l.players()) bar.addPlayer(p);
-        for (ServerPlayer p : l.players()) {
-            ShakePacket.send(p, 220, 1.3f);
-            p.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
-            p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§7Quelque chose monte de l'abîme…")));
-            p.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§5§lLE TITAN S'ÉVEILLE")));
+        bar.setProgress(1f);   // la barre n'apparaît qu'à l'étape du nom
+        if (cineOn) {   // joueurs figés et invulnérables, caméra et bandes noires côté client
+            int dur = (int) (240 * cineF);
+            for (ServerPlayer p : l.players()) {
+                if (p.isSpectator()) continue;
+                p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, dur + 20, 9, false, false));
+                p.addEffect(new MobEffectInstance(MobEffects.JUMP, dur + 20, 128, false, false));
+                p.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, dur + 20, 4, false, false));
+                com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                        new com.wavesurvivor.network.TitanCinePackets.Cine(true, dur, baseX, baseY + titanHeight() * 0.55, baseZ, settings.titanCineSkippable));
+            }
         }
-        l.playSound(null, RiftManager.CENTER, SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 8f, 0.4f);
         double real = PehkuiCompat.getScale(mob);
         WaveSurvivorMod.LOGGER.info("[Faille] Titan {} (demandé x{}, appliqué x{}, {} PV) en {}", settings.titanEntity, settings.titanScale, real, maxHp, mob.blockPosition());
         if (real > 0 && real < settings.titanScale * 0.9) {
@@ -259,22 +274,7 @@ final class RiftTitan {
         }
         tickMeteors(l, now);
         if (emerging) {
-            double y = Math.min(baseY, titan.getY() + 0.45);
-            titan.setPos(baseX, y, baseZ);
-            if (now % 20 == 0) {
-                l.sendParticles(ParticleTypes.LARGE_SMOKE, baseX, y + 2, baseZ, 30, 8, 3, 8, 0.05);
-                l.playSound(null, BlockPos.containing(baseX, RiftManager.CENTER.getY(), baseZ), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
-            }
-            if (now >= emergeUntil || y >= baseY) {
-                emerging = false;
-                titan.setInvulnerable(false);
-                titan.setPos(baseX, baseY, baseZ);
-                spawnHitboxes(l);
-                spawnCrystals(l);
-                nextSkillAt = now + 100;
-                announce(l, "§5§l⚔ Le Titan vous a vus !");
-                summonAvatars(l);
-            }
+            cineTick(l, now);
             return;
         }
         if (windowUntil > 0 && now >= windowUntil) {
@@ -968,6 +968,127 @@ final class RiftTitan {
                 }
             }
         }
+    }
+
+    // ─── Cinématique d'apparition (~12 s) : silence, l'abîme s'éveille, le Titan surgit, rugissement, son nom, fin ───
+
+    private static double titanHeight() {
+        EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(rs.titanEntity));
+        return (t != null ? t.getHeight() : 2.7) * rs.titanScale;
+    }
+
+    private static void sound(ServerLevel l, net.minecraft.sounds.SoundEvent ev, float vol, float pitch) {
+        if (rs.titanCineSounds) l.playSound(null, BlockPos.containing(baseX, RiftManager.CENTER.getY(), baseZ), ev, SoundSource.HOSTILE, vol, pitch);
+    }
+
+    private static void shakeAll(ServerLevel l, int ticks, float amp) {
+        for (ServerPlayer p : l.players()) ShakePacket.send(p, ticks, amp);
+    }
+
+    /** Aucune animation de modèle : seulement position, lumière, sons et particules (marche avec n'importe quelle entité Titan). */
+    private static void cineTick(ServerLevel l, long now) {
+        long t = now - cineStart;
+        double f = cineF;
+        long tAbyss = (long) (40 * f), tRise = (long) (80 * f), tRoar = (long) (160 * f), tName = (long) (200 * f), tEnd = (long) (240 * f);
+        double hw = halfWidth(), height = titanHeight();
+        BlockPos c = RiftManager.CENTER;
+        // 2. L'abîme s'éveille : lueur violette sous l'horizon, secousses qui montent
+        if (t >= tAbyss && t < tRise) {
+            double p = (t - tAbyss) / (double) Math.max(1, tRise - tAbyss);
+            if (!cineAbyss) {
+                cineAbyss = true;
+                sound(l, SoundEvents.WARDEN_EMERGE, 8f, 0.4f);
+            }
+            if (t == tAbyss + (tRise - tAbyss) / 2) sound(l, SoundEvents.AMBIENT_BASALT_DELTAS_MOOD.value(), 6f, 0.6f);
+            if (t % 2 == 0) {
+                for (int i = 0; i < 6 + (int) (14 * p); i++) {
+                    double x = baseX + (RNG.nextDouble() - 0.5) * (hw * 2 + 30), z = baseZ + (RNG.nextDouble() - 0.5) * (hw * 2 + 30);
+                    l.sendParticles(VIOLET, x, c.getY() - 3 + RNG.nextDouble() * 6, z, 1, 0, 0.2, 0, 0.02);
+                }
+            }
+            if (t % 8 == 0) shakeAll(l, 10, (float) (0.3 + 0.7 * p));
+        }
+        // 3. Le Titan surgit : il monte de très bas jusqu'à sa place, ralenti en fin de course
+        if (t >= tRise && t < tRoar) {
+            double p = (t - tRise) / (double) Math.max(1, tRoar - tRise);
+            if (!cineRise) {
+                cineRise = true;
+                titan.removeEffect(MobEffects.INVISIBILITY);
+                titan.setGlowingTag(true);   // tête et yeux mis en valeur (lueur universelle)
+                sound(l, SoundEvents.IRON_GOLEM_HURT, 10f, 0.3f);
+            }
+            if (!cineGrowl && p > 0.5) { cineGrowl = true; sound(l, SoundEvents.ENDER_DRAGON_GROWL, 10f, 0.4f); }
+            double e = 1 - Math.pow(1 - p, 3);
+            titan.setPos(baseX, (baseY - 90) + 90 * e, baseZ);
+            if (t % 3 == 0) {   // débris qui tombent de ses épaules, étincelles à la tête
+                double sy = titan.getY() + height * 0.8;
+                for (int i = 0; i < 8; i++) {
+                    double x = baseX + (RNG.nextDouble() - 0.5) * hw * 1.6;
+                    l.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, Blocks.IRON_BLOCK.defaultBlockState()),
+                            x, sy, baseZ - hw * 0.5, 3, 1.0, 0.3, 1.0, 0.05);
+                }
+                l.sendParticles(ParticleTypes.END_ROD, baseX, titan.getY() + height * 0.92, baseZ - hw * 0.4, 6, hw * 0.15, 0.5, 0.3, 0.02);
+            }
+            if (t % 5 == 0) shakeAll(l, 8, 1.1f);
+        }
+        if (t >= tRoar && cineRise && titan.getY() < baseY) titan.setPos(baseX, baseY, baseZ);
+        // 4. Le rugissement : onde de choc violette qui traverse l'île, secousse maximale
+        if (t >= tRoar && t < tName) {
+            if (!cineRoar) {
+                cineRoar = true;
+                sound(l, SoundEvents.RAVAGER_ROAR, 12f, 0.5f);
+                sound(l, SoundEvents.WITHER_SPAWN, 10f, 0.5f);
+                shakeAll(l, (int) (tName - tRoar), 1.8f);
+            }
+            if (t % 2 == 0) {
+                double reach = distance(rs, siegeRadius) + siegeRadius + 20, r = (t - tRoar) / (double) Math.max(1, tName - tRoar) * reach;
+                for (int i = 0; i < 140; i++) {
+                    double a = i * Math.PI * 2 / 140;
+                    l.sendParticles(VIOLET, baseX + Math.cos(a) * r, c.getY() + 1.2, baseZ + Math.sin(a) * r, 1, 0, 0, 0, 0);
+                }
+            }
+        }
+        // 5. Le nom : titre et sous-titre, puis la barre de vie
+        if (t >= tName && !cineNamed) {
+            cineNamed = true;
+            for (ServerPlayer p : l.players()) {
+                p.connection.send(new ClientboundSetTitlesAnimationPacket(10, Math.max(20, (int) ((tEnd - tName) - 20)), 10));
+                p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§7" + rs.titanCineSub)));
+                p.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§5§l" + rs.titanCineName)));
+                if (bar != null) bar.addPlayer(p);
+            }
+        }
+        // 6. Fin : bandes retirées, caméra rendue, contrôle rendu ; le Titan attend 5 s avant sa première attaque
+        if (t >= tEnd) {
+            emerging = false;
+            titan.setInvulnerable(false);
+            titan.setGlowingTag(false);
+            titan.setPos(baseX, baseY, baseZ);
+            for (ServerPlayer p : l.players()) {
+                p.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+                p.removeEffect(MobEffects.JUMP);
+                p.removeEffect(MobEffects.DAMAGE_RESISTANCE);
+                if (cineOn && !cineSkipped.contains(p.getUUID())) {
+                    com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                            new com.wavesurvivor.network.TitanCinePackets.Cine(false, 0, 0, 0, 0, false));
+                }
+            }
+            spawnHitboxes(l);
+            spawnCrystals(l);
+            nextSkillAt = now + 100;
+            announce(l, "§5§l⚔ Le Titan vous a vus !");
+            summonAvatars(l);
+        }
+    }
+
+    /** Un joueur passe la cinématique : il reprend le contrôle (le combat commence à la fin prévue pour tout le monde). */
+    static void cineSkip(ServerPlayer p) {
+        if (!emerging || !cineOn || !cineSkipped.add(p.getUUID())) return;
+        p.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+        p.removeEffect(MobEffects.JUMP);
+        p.removeEffect(MobEffects.DAMAGE_RESISTANCE);
+        com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                new com.wavesurvivor.network.TitanCinePackets.Cine(false, 0, 0, 0, 0, false));
     }
 
     // ─── Points faibles (cristaux sur le corps du Titan) ───

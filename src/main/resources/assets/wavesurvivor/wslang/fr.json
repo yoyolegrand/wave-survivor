@@ -4046,5 +4046,12 @@
   "ui.rift.build_damage": "Dégâts bâtiments",
   "ui.rift.build_radius": "Rayon",
   "rift.ruin.need": "§cRessources manquantes pour réparer : {0}",
-  "ui.rift.ruin_pct": "Ruines : % réparation"
+  "ui.rift.ruin_pct": "Ruines : % réparation",
+  "ui.rift.sec_cine": "Cinématique du Titan",
+  "ui.rift.cine_on": "Cinématique",
+  "ui.rift.cine_skip": "Passable",
+  "ui.rift.cine_sounds": "Sons",
+  "ui.rift.cine_seconds": "Durée (s)",
+  "ui.rift.cine_name": "Nom",
+  "ui.rift.cine_sub": "Sous-titre"
 }

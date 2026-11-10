@@ -243,3 +243,14 @@ Parcours complet conseillé : `/ws rift open` (ou autel) → entrer → Horde (5
 ## Correctif : les blocs 3D du météore n'apparaissaient pas
 - [ ] Les météores (amas de blocs) tombent bien en diagonale depuis le ciel côté Titan, ~1,2 s avant l'impact, de près et de loin, de jour et de nuit.
 - [ ] Journal de débogage facultatif : lancer le jeu avec `-Dwavesurvivor.debugMeteors=true` pour voir le nombre de météores et de blocs vivants dans `latest.log`.
+
+## Cinématique d'apparition du Titan (~12 s, §5 du design)
+- [ ] **0-40 (silence)** : musique et ambiance coupées, bandes noires qui glissent du haut et du bas, la caméra pivote en douceur vers le point d'apparition (sud) ; joueur figé (aucun déplacement, saut ni accroupissement) et invulnérable.
+- [ ] **40-80 (l'abîme s'éveille)** : lueur violette (particules) sous l'horizon, brouillard teinté de violet, secousses qui montent ; sons : warden emerge très grave, ambiance basalt deltas.
+- [ ] **80-160 (le Titan surgit)** : le Titan (invisible jusque-là) monte de très bas jusqu'à sa place, ralenti en fin de course ; contour lumineux, débris et étincelles à la tête / aux épaules, secousses fortes ; sons : iron golem hurt, ender dragon growl très graves.
+- [ ] **160-200 (rugissement)** : ravager roar (hauteur 0,5) + wither spawn, onde de choc violette qui traverse l'île, secousse maximale.
+- [ ] **200-240 (le nom)** : titre « LE COLOSSE » + sous-titre « Titan de la Faille », puis la barre de vie apparaît.
+- [ ] **240 (fin)** : bandes retirées, caméra rendue, contrôle rendu ; 5 s avant la première attaque.
+- [ ] **Passer** : maintenir S'accroupir 1 s (individuel : à deux, l'un passe, l'autre continue) ; le combat commence à 240 pour tous.
+- [ ] Marche avec une autre entité Titan (aucune animation de modèle).
+- [ ] Éditeur, page Météores : cinématique activée / passable / sons, durée (s), nom, sous-titre.

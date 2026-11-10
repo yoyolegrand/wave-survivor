@@ -442,6 +442,13 @@ public class HordeConfigMultiData {
         @SerializedName("ruinRepairPercent") public int ruinRepairPercent = 50;
         @SerializedName("titanBuildDamage") public int titanBuildDamage = 300;
         @SerializedName("titanBuildRadius") public int titanBuildRadius = 6;
+        /** Cinématique d'apparition : activée, passable (maintenir S'accroupir 1 s), durée (s), nom et sous-titre affichés, sons. */
+        @SerializedName("titanCine") public boolean titanCine = true;
+        @SerializedName("titanCineSkippable") public boolean titanCineSkippable = true;
+        @SerializedName("titanCineSeconds") public int titanCineSeconds = 12;
+        @SerializedName("titanCineName") public String titanCineName = "LE COLOSSE";
+        @SerializedName("titanCineSub") public String titanCineSub = "Titan de la Faille";
+        @SerializedName("titanCineSounds") public boolean titanCineSounds = true;
         @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
         @SerializedName("titanWindowCapPercent") public int titanWindowCapPercent = 8;
         /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */

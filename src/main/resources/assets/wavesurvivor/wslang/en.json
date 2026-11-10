@@ -4807,5 +4807,12 @@
   "ui.rift.build_damage": "Building damage",
   "ui.rift.build_radius": "Radius",
   "rift.ruin.need": "§cMissing resources to repair: {0}",
-  "ui.rift.ruin_pct": "Ruins: repair %"
+  "ui.rift.ruin_pct": "Ruins: repair %",
+  "ui.rift.sec_cine": "Titan cinematic",
+  "ui.rift.cine_on": "Cinematic",
+  "ui.rift.cine_skip": "Skippable",
+  "ui.rift.cine_sounds": "Sounds",
+  "ui.rift.cine_seconds": "Length (s)",
+  "ui.rift.cine_name": "Name",
+  "ui.rift.cine_sub": "Subtitle"
 }
