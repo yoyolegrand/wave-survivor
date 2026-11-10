@@ -176,9 +176,12 @@ final class RiftEngines {
     }
 
     /** Coût d'une réparation complète (◆) : proportionnel aux PV manquants. */
-    private static int repairCost(SiegeEngineEntity e) {
+    private static int repairCost(ServerPlayer p, SiegeEngineEntity e) {
         if (e.maxHp() <= 0 || e.hp() >= e.maxHp()) return 0;
-        return Math.max(1, (int) Math.ceil((1f - e.hp() / e.maxHp()) * REPAIR_FULL[e.isBallista() ? 1 : 0]));
+        double c = Math.ceil((1f - e.hp() / e.maxHp()) * REPAIR_FULL[e.isBallista() ? 1 : 0]);
+        // Héritage — Seigneur 8 : réparations −25 % (comme pour les tours du royaume)
+        if (com.wavesurvivor.horde.renaissance.Heritage.has(p, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 8)) c *= 0.75;
+        return Math.max(1, (int) Math.ceil(c));
     }
 
     /** Prix d'une réparation complète d'un engin détruit à 99 % (tour-catapulte, baliste). */
@@ -408,7 +411,7 @@ final class RiftEngines {
         int k = e.isBallista() ? 1 : 0;
         com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
                 new com.wavesurvivor.network.EngineSheetPackets.Sheet(e.getId(), e.kind(), e.engineLevel(), e.engineLevel() >= 3 ? e.variant() : 0,
-                        UP2[k], UP3[k], coins(p), e.ammo(), (int) Math.ceil(e.hp()), (int) e.maxHp(), repairCost(e)));
+                        UP2[k], UP3[k], coins(p), e.ammo(), (int) Math.ceil(e.hp()), (int) e.maxHp(), repairCost(p, e)));
     }
 
     /** Action de la fiche : « upgrade » (niveau 2) ou « variant0 » à « variant2 » (niveau 3, définitif). */
@@ -416,7 +419,7 @@ final class RiftEngines {
         if (!(p.level() instanceof ServerLevel l) || !(l.getEntity(entityId) instanceof SiegeEngineEntity e) || p.distanceToSqr(e) > 20 * 20) return;
         long now = l.getGameTime();
         if ("repair".equals(action)) {
-            int cost = repairCost(e);
+            int cost = repairCost(p, e);
             if (cost > 0 && (p.isCreative() || com.wavesurvivor.altar.AltarDefense.trySpend(p, cost))) {
                 e.repair();
                 l.playSound(null, e.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 1f, 1.1f);
@@ -597,7 +600,11 @@ final class RiftEngines {
         long now = l.getGameTime();
         if (!TOWERS.isEmpty()) {
             for (UUID id : new ArrayList<>(TOWERS)) {
-                if (l.getEntity(id) instanceof SiegeEngineEntity e && !e.isRemoved()) towerTick(l, e, now);
+                if (l.getEntity(id) instanceof SiegeEngineEntity e && !e.isRemoved()) {
+                    // Bonus de PV (Bâtisseur connecté ou non, Pierre de Fondation portée ou non) : PV max ajustés, même proportion
+                    if (now % 40 == 0 && Math.abs(e.baseMaxHp() - e.maxHp()) > 0.5f) e.applyMaxHp();
+                    towerTick(l, e, now);
+                }
                 else TOWERS.remove(id);
             }
         }

@@ -526,6 +526,14 @@ public final class KingdomClaim {
         if (hp != null && level != null && level.getBlockEntity(p) instanceof DefenseBlockEntity be) be.setHp(hp[0], hp[1]);
     }
 
+    /**
+     * Multiplicateur de PV de toutes les constructions : réglage « PV des murs » de la horde × bonus du Bâtisseur (rôle, talents)
+     * × Pierre de Fondation (relique). Les engins de siège de la Faille l'utilisent aussi.
+     */
+    public static double buildingHpMult() {
+        return level == null ? 1.0 : hpMult * bonusMult();
+    }
+
     /** Nombre de blocs suivis (murs et défenses avec des PV). */
     public static int trackedCount() { return PLACED.size(); }
 

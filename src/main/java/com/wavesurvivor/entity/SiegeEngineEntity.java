@@ -96,7 +96,9 @@ public class SiegeEngineEntity extends Entity {
     public float baseMaxHp() {
         float b = isBallista() ? 400f : 800f;
         int lv = engineLevel();
-        return b * (lv >= 3 ? 1.6f : lv == 2 ? 1.3f : 1f);
+        // mêmes bonus que les bâtiments du royaume : Bâtisseur, Pierre de Fondation, réglage de PV de la horde
+        float bonus = level().isClientSide ? 1f : (float) com.wavesurvivor.horde.kingdom.KingdomClaim.buildingHpMult();
+        return b * (lv >= 3 ? 1.6f : lv == 2 ? 1.3f : 1f) * bonus;
     }
 
     /** Recalcule les PV max (pose, amélioration) en gardant la même proportion de PV. */
