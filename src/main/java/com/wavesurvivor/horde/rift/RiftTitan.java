@@ -221,7 +221,7 @@ final class RiftTitan {
         if (mob.getAttribute(Attributes.MAX_HEALTH) != null) mob.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
         if (mob.getAttribute(Attributes.KNOCKBACK_RESISTANCE) != null) mob.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0);
         mob.setHealth(maxHp);
-        mob.setCustomName(Component.literal("§5§lTitan de la Faille"));
+        mob.setCustomName(Component.literal("§5§l" + com.wavesurvivor.i18n.WSLang.t("rift.t.name")));
         mob.setCustomNameVisible(false);
         mob.getPersistentData().putBoolean("ws_rift_titan", true);
         PehkuiCompat.setScale(mob, settings.titanScale);
@@ -250,7 +250,7 @@ final class RiftTitan {
         brokenSectors.clear();
         nextWaveAt = Long.MAX_VALUE;
         nextChargeAt = cineStart + (long) (240 * cineF) + Math.max(10, settings.titanChargeInterval) * 20L;
-        bar = new ServerBossEvent(Component.literal("§5§lTitan de la Faille"), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
+        bar = new ServerBossEvent(Component.literal("§5§l" + com.wavesurvivor.i18n.WSLang.t("rift.t.name")), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
         bar.setProgress(1f);   // la barre n'apparaît qu'à l'étape du nom
         if (cineOn) {   // joueurs figés et invulnérables, caméra et bandes noires côté client
             int dur = (int) (240 * cineF);
@@ -289,7 +289,7 @@ final class RiftTitan {
             windowUntil = 0;
             titan.setGlowingTag(false);
             if (bar != null) bar.setColor(BossEvent.BossBarColor.PURPLE);
-            announce(l, "§7La brèche dans sa garde se referme.");
+            announce(l, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.t.window_close"));
         }
         // Barre de vie
         if (now % 10 == 0 && bar != null) {
@@ -301,7 +301,7 @@ final class RiftTitan {
         int ph = frac > 0.75f ? 0 : frac > 0.5f ? 1 : frac > 0.25f ? 2 : 3;
         if (ph != phase) {
             phase = ph;
-            announce(l, "§5§l⚔ Le Titan entre en fureur ! (phase " + (phase + 1) + "/4)");
+            announce(l, "§5§l⚔ " + com.wavesurvivor.i18n.WSLang.t("rift.t.fury", phase + 1));
             for (ServerPlayer p : l.players()) ShakePacket.send(p, 60, 1.5f);
             l.playSound(null, RiftManager.CENTER, SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 8f, 0.5f);
             summonAvatars(l);
@@ -433,7 +433,7 @@ final class RiftTitan {
     /** Le Titan abat son poing sur le Monolithe : annoncé (cercle rouge sur le Monolithe), puis coup porté à son intégrité. */
     private static void monolithFist(ServerLevel l, long now) {
         BlockPos m = RiftManager.MONOLITH;
-        schedule(l, now, 70, "Le Titan vise le Monolithe !", t -> ring(l, m.getX() + 0.5, m.getY() + 0.2, m.getZ() + 0.5, 3.5, RED, 24), () -> {
+        schedule(l, now, 70, com.wavesurvivor.i18n.WSLang.t("rift.t.fist"), t -> ring(l, m.getX() + 0.5, m.getY() + 0.2, m.getZ() + 0.5, 3.5, RED, 24), () -> {
             l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, m.getX() + 0.5, m.getY() + 1, m.getZ() + 0.5, 2, 0.6, 0.6, 0.6, 0);
             l.playSound(null, m, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
             com.wavesurvivor.altar.AltarDefense.externalHit(l, rs.titanMonolithDamage);
@@ -441,7 +441,7 @@ final class RiftTitan {
                 if (Math.hypot(p.getX() - m.getX() - 0.5, p.getZ() - m.getZ() - 0.5) <= 3.5) p.hurt(l.damageSources().explosion(null, titan), 10f);
                 ShakePacket.send(p, 30, 1.0f);
             }
-            announce(l, "§c§l⚠ Le Monolithe est frappé ! Réparez-le au clic droit.");
+            announce(l, "§c§l⚠ " + com.wavesurvivor.i18n.WSLang.t("rift.t.fist_hit"));
         });
     }
 
@@ -588,7 +588,7 @@ final class RiftTitan {
             newMeteor(s[0], s[1], s[2], (float) Math.max(0.3, rs.meteorSize / 3.0), radius, rs.meteorDamage, craterR, 200, impact, fall, 1f, rs.meteorBlocks)
                     .buildDamage = Math.max(1, rs.titanBuildDamage / 3f);
         }
-        schedule(l, now, delay, "Pluie de météores !", t -> {
+        schedule(l, now, delay, com.wavesurvivor.i18n.WSLang.t("rift.t.meteors"), t -> {
             // La zone se remplit du centre vers le bord, en plus du cercle
             double f = Math.max(0.05, Math.min(1.0, (t - start) / (double) delay));
             for (double[] s : spots) {
@@ -1272,7 +1272,7 @@ final class RiftTitan {
             if (m.getAttribute(Attributes.MAX_HEALTH) != null) m.getAttribute(Attributes.MAX_HEALTH).setBaseValue(hp);
             if (m.getAttribute(Attributes.ATTACK_DAMAGE) != null) m.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(9);
             m.setHealth((float) hp);
-            m.setCustomName(Component.literal("§5§lAvatar du Titan"));
+            m.setCustomName(Component.literal("§5§l" + com.wavesurvivor.i18n.WSLang.t("rift.t.avatar")));
             m.setCustomNameVisible(true);
             m.setGlowingTag(true);
             m.setPersistenceRequired();
@@ -1281,7 +1281,7 @@ final class RiftTitan {
             avatars.add(m.getUUID());
             l.sendParticles(ParticleTypes.REVERSE_PORTAL, x, RiftManager.CENTER.getY() + 2, z, 30, 0.5, 1, 0.5, 0.2);
         }
-        if (n > 0) announce(l, "§5Le Titan invoque " + n + " avatar" + (n > 1 ? "s" : "") + " : les abattre l'affaiblit !");
+        if (n > 0) announce(l, "§5" + com.wavesurvivor.i18n.WSLang.t("rift.t.avatars", n));
     }
 
     // ─── Dégâts et mort ───
@@ -1314,7 +1314,7 @@ final class RiftTitan {
         windowDealt = 0f;
         titan.setGlowingTag(true);
         if (bar != null) bar.setColor(BossEvent.BossBarColor.RED);
-        announce(l, "§c§l⚔ Le Titan est à découvert ! Frappez maintenant (" + rs.titanWindowSeconds + " s) !");
+        announce(l, "§c§l⚔ " + com.wavesurvivor.i18n.WSLang.t("rift.t.window_open", rs.titanWindowSeconds));
     }
 
     static void onAvatarDeath(ServerLevel l, Entity avatar) {
@@ -1323,7 +1323,7 @@ final class RiftTitan {
         titan.setHealth(Math.max(1f, titan.getHealth() - cut));
         l.sendParticles(ParticleTypes.SONIC_BOOM, avatar.getX(), avatar.getY() + 1, avatar.getZ(), 1, 0, 0, 0, 0);
         l.playSound(null, avatar.blockPosition(), SoundEvents.WITHER_BREAK_BLOCK, SoundSource.HOSTILE, 3f, 1.2f);
-        announce(l, "§aUn avatar est tombé : le Titan perd " + rs.titanAvatarPercent + " % de ses PV max !");
+        announce(l, "§a" + com.wavesurvivor.i18n.WSLang.t("rift.t.avatar_down", rs.titanAvatarPercent));
     }
 
     // ─── La charge : le Titan fonce sur l'île, tremblement, stun, corps à corps, puis retourne à sa place ───
@@ -1351,7 +1351,7 @@ final class RiftTitan {
                     for (double z = zone[2]; z <= zone[2] + (zone[3] - zone[2]) * f; z += 2) {
                         for (double x = zone[0]; x <= zone[1]; x += 4) l.sendParticles(RED, x, c.getY() + 1.1, z, 1, 0.3, 0, 0.3, 0);
                     }
-                    if (now % 20 == 0) for (ServerPlayer p : alive(l)) p.displayClientMessage(Component.literal("§c⚠ Le Titan va charger l'île ! Quittez la zone rouge !"), true);
+                    if (now % 20 == 0) for (ServerPlayer p : alive(l)) p.displayClientMessage(Component.literal("§c⚠ " + com.wavesurvivor.i18n.WSLang.t("rift.t.charge_warn")), true);
                 }
                 if (now % 8 == 0) crackTelegraph(l);
                 if (now >= chargeAt) { charge = 2; chargeAt = now + 20; }
@@ -1371,7 +1371,7 @@ final class RiftTitan {
                     windowUntil = 0;
                     titan.setGlowingTag(false);
                     if (bar != null) bar.setColor(BossEvent.BossBarColor.PURPLE);
-                    announce(l, "§5§l⚔ Le Titan se réveille !");
+                    announce(l, "§5§l⚔ " + com.wavesurvivor.i18n.WSLang.t("rift.t.wakes"));
                     for (ServerPlayer p : l.players()) ShakePacket.send(p, 40, 1.2f);
                     charge = 4;
                     chargeAt = now + Math.max(2, rs.titanChargeMelee) * 20L;
@@ -1384,7 +1384,7 @@ final class RiftTitan {
                     strikes.clear();
                     charge = 5;
                     chargeAt = now + 60;
-                    announce(l, "§7Le Titan recule…");
+                    announce(l, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.t.backs"));
                 }
             }
             default -> {   // retour à sa place
@@ -1426,7 +1426,7 @@ final class RiftTitan {
         charge = 1;
         chargeAt = now + 60;
         titan.setGlowingTag(true);
-        announce(l, "§c§l⚠ Le Titan prend son élan !");
+        announce(l, "§c§l⚠ " + com.wavesurvivor.i18n.WSLang.t("rift.t.charge_start"));
         l.playSound(null, c, SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 8f, 0.4f);
         for (ServerPlayer p : l.players()) ShakePacket.send(p, 40, 0.8f);
     }
@@ -1461,7 +1461,7 @@ final class RiftTitan {
         windowDealt = 0f;
         titan.setGlowingTag(true);
         if (bar != null) bar.setColor(BossEvent.BossBarColor.RED);
-        announce(l, "§c§l⚔ Le Titan est à terre ! Frappez-le maintenant (" + rs.titanChargeStun + " s) !");
+        announce(l, "§c§l⚔ " + com.wavesurvivor.i18n.WSLang.t("rift.t.stunned", rs.titanChargeStun));
     }
 
     // ─── L'île se brise : chaque charge arrache un secteur du bord sud (une seule fois par secteur) ───
@@ -1647,8 +1647,8 @@ final class RiftTitan {
             cineNamed = true;
             for (ServerPlayer p : l.players()) {
                 p.connection.send(new ClientboundSetTitlesAnimationPacket(10, Math.max(20, (int) ((tEnd - tName) - 20)), 10));
-                p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§7" + rs.titanCineSub)));
-                p.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§5§l" + rs.titanCineName)));
+                p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§7" + (rs.titanCineSub == null || rs.titanCineSub.isBlank() ? com.wavesurvivor.i18n.WSLang.t("rift.t.cine_sub") : rs.titanCineSub))));
+                p.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§5§l" + (rs.titanCineName == null || rs.titanCineName.isBlank() ? com.wavesurvivor.i18n.WSLang.t("rift.t.cine_name") : rs.titanCineName))));
                 if (bar != null) bar.addPlayer(p);
             }
         }
@@ -1670,7 +1670,7 @@ final class RiftTitan {
             spawnHitboxes(l);
             spawnCrystals(l);
             nextSkillAt = now + 100;
-            announce(l, "§5§l⚔ Le Titan vous a vus !");
+            announce(l, "§5§l⚔ " + com.wavesurvivor.i18n.WSLang.t("rift.t.seen"));
             summonAvatars(l);
         }
     }
@@ -1703,11 +1703,11 @@ final class RiftTitan {
             boolean have = false;
             for (float[] o : crystalOff) if (Math.abs(o[0] - dx) < 0.01f) { have = true; break; }
             if (have) continue;
-            UUID id = RiftFortress.spawnTitanCrystal(l, titan.getX() + dx, titan.getY() + dy, titan.getZ() - hw - 1.5, Math.max(10, rs.titanCrystalHp), "§dPoint faible");
+            UUID id = RiftFortress.spawnTitanCrystal(l, titan.getX() + dx, titan.getY() + dy, titan.getZ() - hw - 1.5, Math.max(10, rs.titanCrystalHp), "§d" + com.wavesurvivor.i18n.WSLang.t("rift.t.weak_point"));
             crystals.add(id);
             crystalOff.add(new float[]{dx, dy});
         }
-        if (now0(l) % 1 == 0) announce(l, "§d§l✦ Des points faibles apparaissent sur le Titan ! Détruisez-les (−" + rs.titanCrystalPercent + " % de ses PV chacun).");
+        if (now0(l) % 1 == 0) announce(l, "§d§l✦ " + com.wavesurvivor.i18n.WSLang.t("rift.t.crystals", rs.titanCrystalPercent));
     }
 
     private static long now0(ServerLevel l) { return l.getServer().getTickCount(); }
@@ -1735,12 +1735,12 @@ final class RiftTitan {
         if (charge == 3) {            // stun en cours : prolongé
             chargeAt += bonus;
             windowUntil += bonus;
-            announce(l, "§d§l✦ Point faible détruit : −" + rs.titanCrystalPercent + " % de ses PV et stun prolongé de " + rs.titanCrystalStunBonus + " s !");
+            announce(l, "§d§l✦ " + com.wavesurvivor.i18n.WSLang.t("rift.t.crystal_stun", rs.titanCrystalPercent, rs.titanCrystalStunBonus));
         } else if (charge != 0 && charge < 3) {   // détruit pendant l'annonce ou l'élan : le stun suivant sera plus long
             stunBonus += bonus;
-            announce(l, "§d§l✦ Point faible détruit : −" + rs.titanCrystalPercent + " % de ses PV (stun plus long à l'impact) !");
+            announce(l, "§d§l✦ " + com.wavesurvivor.i18n.WSLang.t("rift.t.crystal_charge", rs.titanCrystalPercent));
         } else {
-            announce(l, "§d§l✦ Point faible détruit : −" + rs.titanCrystalPercent + " % de ses PV !");
+            announce(l, "§d§l✦ " + com.wavesurvivor.i18n.WSLang.t("rift.t.crystal_down", rs.titanCrystalPercent));
         }
     }
 
@@ -1789,7 +1789,7 @@ final class RiftTitan {
         if (list.isEmpty()) return;
         BlockPos t = list.get(RNG.nextInt(list.size()));
         final double r = Math.max(2, rs.titanBuildRadius);
-        schedule(l, now, 60, "Le Titan écrase un bâtiment !", x -> ring(l, t.getX() + 0.5, t.getY() + 0.2, t.getZ() + 0.5, r, RED, 28), () -> {
+        schedule(l, now, 60, com.wavesurvivor.i18n.WSLang.t("rift.t.building"), x -> ring(l, t.getX() + 0.5, t.getY() + 0.2, t.getZ() + 0.5, r, RED, 28), () -> {
             l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, t.getX() + 0.5, t.getY() + 1, t.getZ() + 0.5, 2, 0.8, 0.5, 0.8, 0);
             l.playSound(null, t, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
             hitBuildings(l, t, (int) Math.ceil(r), Math.max(1, rs.titanBuildDamage));
@@ -1803,8 +1803,8 @@ final class RiftTitan {
     // ─── Ambiance des phases (visuel) ───
 
     private static void phaseCinematic(ServerLevel l) {
-        String[] names = {"", "§e§lPHASE 2", "§6§lPHASE 3", "§c§lPHASE 4"};
-        String[] subs = {"", "§7L'invasion reprend…", "§7L'île commence à se fissurer…", "§7Le Titan est enragé !"};
+        String[] names = {"", "§e§l" + com.wavesurvivor.i18n.WSLang.t("rift.t.phase", 2), "§6§l" + com.wavesurvivor.i18n.WSLang.t("rift.t.phase", 3), "§c§l" + com.wavesurvivor.i18n.WSLang.t("rift.t.phase", 4)};
+        String[] subs = {"", "§7" + com.wavesurvivor.i18n.WSLang.t("rift.t.phase_sub2"), "§7" + com.wavesurvivor.i18n.WSLang.t("rift.t.phase_sub3"), "§7" + com.wavesurvivor.i18n.WSLang.t("rift.t.phase_sub4")};
         for (ServerPlayer p : l.players()) {
             p.connection.send(new ClientboundSetTitlesAnimationPacket(5, 40, 15));
             p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(subs[Math.min(3, phase)])));

@@ -327,3 +327,12 @@ Test rapide : `/ws rift skill <meteors|tracking|lava|giant|stomp|rock|beam|roar|
 - [ ] Titan : poing sur bâtiment, piétinement, rocher, regard, météores (classiques, traqueurs, lave, géant), charge et effondrement abîment les bâtiments ET les engins ; les engins peuvent être visés comme les tours
 - [ ] Si les bâtiments ne perdent toujours rien : chercher « aucun bâtiment du royaume n'a de PV suivis » dans latest.log et me l'envoyer
 - [ ] Reprise d'une Faille sauvegardée : les engins reviennent avec leurs PV
+
+## Textes anglais, Codex, catalyseurs, récompenses et accès
+- [ ] Jeu en anglais : toutes les annonces du Titan, des engins (fiche, pilotage, rechargement) et la cinématique sont en anglais
+- [ ] Codex : page « La Faille » (entre Invasions et Kingdom), en français et en anglais
+- [ ] Contre-offensive : chaque catalyseur et le cœur ont un faisceau vertical et un contour lumineux visible à travers les murs (pas les points faibles du Titan)
+- [ ] Victoire : message « +X PR de la Faille » (Horde : vagues, Siège : assauts, boss, Titan +30) ; 1 Reliquaire scellé par participant ; podium annoncé à tous (1er +30 PR +2 reliquaires, 2e +20 +1, 3e +10 +1) ; les éliminations de la Horde comptent aussi
+- [ ] Défaite : PR des phases acquises seulement, pas de reliquaire
+- [ ] Accès (en survie) : l'autel refuse la Faille tant qu'on n'a pas gagné une horde classique ET un Kingdom ; conditions visibles sur l'écran de l'autel ; invasion activable dans l'éditeur
+- [ ] Éditeur Faille › Départ : section « Récompenses et accès »

@@ -550,6 +550,9 @@ final class RiftFortress {
         TARGETS.put(e.getUUID(), new float[]{hp, hp});
         LABELS.put(e.getUUID(), label);
         if (catalyst) CHAINS.put(e.getUUID(), 0);
+        // Repérable de loin : faisceau vertical (rayon de cristal de l'End) et contour lumineux visible à travers les murs
+        e.setBeamTarget(BlockPos.containing(x, y + 70, z));
+        e.setGlowingTag(true);
         refreshName(e);
         l.addFreshEntity(e);
         l.sendParticles(ParticleTypes.REVERSE_PORTAL, x, y, z, 40, 0.6, 0.8, 0.6, 0.2);
@@ -562,6 +565,7 @@ final class RiftFortress {
         UUID id = spawnTarget(l, x, y, z, hp, label, false);
         Entity e = l.getEntity(id);
         if (e != null) e.getPersistentData().putBoolean("ws_titan_crystal", true);
+        if (e instanceof EndCrystal ec) ec.setBeamTarget(null);   // point faible du Titan : pas de faisceau
         return id;
     }
 

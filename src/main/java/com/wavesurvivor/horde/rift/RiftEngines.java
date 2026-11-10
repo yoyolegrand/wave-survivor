@@ -196,11 +196,11 @@ final class RiftEngines {
 
     private static String nameOf(SiegeEngineEntity e) {
         boolean b = e.isBallista();
-        String base = b ? "Baliste céleste" : "Catapulte";
+        String id = b ? "ballista" : "catapult";
         int lv = e.engineLevel();
-        if (lv == 2) return base + (b ? " consacrée" : " renforcée");
-        if (lv >= 3 && e.variant() >= 1) return base + " " + VARIANTS[b ? 1 : 0][e.variant() - 1];
-        return base;
+        if (lv == 2) return com.wavesurvivor.i18n.WSLang.t("rift.engine.sheet.name." + id + ".l2");
+        if (lv >= 3 && e.variant() >= 1) return com.wavesurvivor.i18n.WSLang.t("rift.engine.sheet.name." + id) + " — " + com.wavesurvivor.i18n.WSLang.t("rift.engine.sheet.variant." + id + "." + (e.variant() - 1));
+        return com.wavesurvivor.i18n.WSLang.t("rift.engine.sheet.name." + id);
     }
 
     // ─── Cadences (réglables) ───
@@ -270,12 +270,12 @@ final class RiftEngines {
         if (p.isShiftKeyDown()) { openSheet(p, e); return; }   // Maj + clic droit : fiche de l'engin, amélioration (clic droit seul : tir)
         if (e.isBallista()) {   // clic droit : on s'assoit aux commandes (clic droit maintenu : tir ; Maj : descendre)
             if (e.getPassengers().isEmpty()) {
-                if (p.startRiding(e)) say(p, "§bBaliste : vise à la souris, clic droit maintenu pour tirer, Maj pour descendre. Munitions : flèches.", now);
+                if (p.startRiding(e)) say(p, "§b" + com.wavesurvivor.i18n.WSLang.t("rift.e.pilot_help"), now);
             } else if (!e.hasPassenger(p)) {
-                say(p, "§7Quelqu'un pilote déjà cette baliste.", now);
+                say(p, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.e.taken"), now);
             }
         } else {
-            say(p, "§7" + nameOf(e) + " : elle vise et tire toute seule. Maj + clic droit : fiche.", now);
+            say(p, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.e.auto", nameOf(e)), now);
         }
     }
 
@@ -329,7 +329,7 @@ final class RiftEngines {
         if (!unlimited) {
             if (!com.wavesurvivor.horde.kingdom.KingdomTreasury.active() || !com.wavesurvivor.horde.kingdom.KingdomTreasury.has(stone, 1)) {
                 e.readyAt = now + 40;   // pas de pierre : on réessaie dans 2 s
-                if (now % 200 == 0) for (ServerPlayer pl : l.players()) if (pl.distanceToSqr(e) < 60 * 60) pl.displayClientMessage(Component.literal("§c" + nameOf(e) + " : plus de Pierre dans le trésor !"), true);
+                if (now % 200 == 0) for (ServerPlayer pl : l.players()) if (pl.distanceToSqr(e) < 60 * 60) pl.displayClientMessage(Component.literal("§c" + com.wavesurvivor.i18n.WSLang.t("rift.e.no_stone", nameOf(e))), true);
                 return;
             }
             com.wavesurvivor.horde.kingdom.KingdomTreasury.spend(stone, 1);
@@ -374,15 +374,15 @@ final class RiftEngines {
             say(p, "§a" + nameOf(e) + " !", now);
         } else if (e.engineLevel() == 2) {
             choosing.put(p.getUUID(), e.getUUID());
-            net.minecraft.network.chat.MutableComponent line = Component.literal("§6Variante (" + UP3[k] + " ◆) : ");
+            net.minecraft.network.chat.MutableComponent line = Component.literal("§6" + com.wavesurvivor.i18n.WSLang.t("rift.e.variant_pick", UP3[k]) + " ");
             for (int i = 0; i < 3; i++) {
                 final String cmd = "/wavesurvivor riftengine " + i;
-                line.append(Component.literal("§e§l[" + VARIANTS[k][i] + "]  ").withStyle(st -> st.withClickEvent(
+                line.append(Component.literal("§e§l[" + com.wavesurvivor.i18n.WSLang.t("rift.engine.sheet.variant." + (k == 1 ? "ballista" : "catapult") + "." + i) + "]  ").withStyle(st -> st.withClickEvent(
                         new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, cmd))));
             }
             p.sendSystemMessage(line);
         } else {
-            say(p, "§7" + nameOf(e) + " : niveau maximal.", now);
+            say(p, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.e.max", nameOf(e)), now);
         }
     }
 
@@ -467,11 +467,11 @@ final class RiftEngines {
 
     private static void useCatapult(ServerPlayer p, ServerLevel l, SiegeEngineEntity e, long now) {
         if (now < e.readyAt) {
-            say(p, "§7" + nameOf(e) + " en rechargement : §f" + ((e.readyAt - now + 19) / 20) + " s", now);
+            say(p, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.e.reloading", nameOf(e), (e.readyAt - now + 19) / 20), now);
             return;
         }
         if (!p.isCreative() && take(p, Items.COBBLESTONE, 1) < 1) {
-            say(p, "§cIl faut de la pierre taillée (cobblestone) pour charger la catapulte.", now);
+            say(p, "§c" + com.wavesurvivor.i18n.WSLang.t("rift.e.need_stone"), now);
             return;
         }
         Vec3 look = p.getLookAngle();
@@ -493,7 +493,7 @@ final class RiftEngines {
         e.setAmmo(0);
         l.playSound(null, BlockPos.containing(b.pos), SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 3f, 0.6f);
         l.playSound(null, BlockPos.containing(b.pos), SoundEvents.DISPENSER_LAUNCH, SoundSource.BLOCKS, 3f, 0.5f);
-        say(p, "§6" + nameOf(e) + " : tir ! Rechargement " + (reload / 20) + " s", now);
+        say(p, "§6" + com.wavesurvivor.i18n.WSLang.t("rift.e.fired", nameOf(e), reload / 20), now);
     }
 
     private static void useBallista(ServerPlayer p, ServerLevel l, SiegeEngineEntity e, long now) {
@@ -505,7 +505,7 @@ final class RiftEngines {
         e.setAim(p.getYRot(), Math.max(-60f, Math.min(40f, p.getXRot())));
         if (e.reloading) {
             if (now < e.readyAt) {
-                say(p, "§7Baliste en rechargement : §f" + ((e.readyAt - now + 19) / 20) + " s", now);
+                say(p, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.e.reloading", nameOf(e), (e.readyAt - now + 19) / 20), now);
                 return;
             }
             e.reloading = false;
@@ -513,7 +513,7 @@ final class RiftEngines {
         if (e.ammo() <= 0) {
             int n = p.isCreative() ? 16 : take(p, Items.ARROW, 16);
             if (n <= 0) {
-                say(p, "§cIl faut des flèches pour charger la baliste.", now);
+                say(p, "§c" + com.wavesurvivor.i18n.WSLang.t("rift.e.need_arrows"), now);
                 return;
             }
             int reload = ballistaReload(e);
@@ -522,7 +522,7 @@ final class RiftEngines {
             e.readyAt = now + reload;
             e.markReload(now, reload);
             l.playSound(null, e.blockPosition(), SoundEvents.CROSSBOW_LOADING_END, SoundSource.BLOCKS, 2f, 0.7f);
-            say(p, "§bBaliste : chargement de " + n + " flèches (" + (reload / 20) + " s)…", now);
+            say(p, "§b" + com.wavesurvivor.i18n.WSLang.t("rift.e.loading", n, reload / 20), now);
             return;
         }
         if (now < e.nextShot) return;
@@ -547,7 +547,7 @@ final class RiftEngines {
         l.playSound(null, BlockPos.containing(muzzle), SoundEvents.CROSSBOW_SHOOT, SoundSource.BLOCKS, 2.5f, 0.6f);
         l.sendParticles(ParticleTypes.END_ROD, muzzle.x, muzzle.y, muzzle.z, 3, 0.1, 0.1, 0.1, 0.02);
         if (e.ammo() <= 0) {
-            say(p, "§bBaliste vide : clic pour recharger", now);
+            say(p, "§b" + com.wavesurvivor.i18n.WSLang.t("rift.e.empty"), now);
         } else {
             p.displayClientMessage(Component.literal("§b" + nameOf(e) + " §f" + e.ammo() + " / 16"), true);
         }

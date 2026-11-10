@@ -1893,6 +1893,27 @@ public class HordeEditorScreen extends Screen {
         fl(t("ui.rift.end_pause"));
         fInt(40, HordeJson.num(r, "endPauseSeconds", 240), v -> r.addProperty("endPauseSeconds", Math.max(10, Math.min(1800, v))));
         y += 30;
+        label(x, y, "§6§l" + t("ui.rift.sec_rewards"));
+        y += 14;
+        flow(x, y);
+        fl(t("ui.rift.titan_pr"));
+        fInt(26, HordeJson.num(r, "titanPrBonus", 30), v -> r.addProperty("titanPrBonus", Math.max(0, Math.min(1000, v))));
+        fl(t("ui.rift.reliquaries"));
+        fInt(22, HordeJson.num(r, "rewardReliquaries", 1), v -> r.addProperty("rewardReliquaries", Math.max(0, Math.min(16, v))));
+        fl(t("ui.rift.top_pr"));
+        fInt(22, HordeJson.num(r, "topPr1", 30), v -> r.addProperty("topPr1", Math.max(0, Math.min(1000, v))));
+        fInt(22, HordeJson.num(r, "topPr2", 20), v -> r.addProperty("topPr2", Math.max(0, Math.min(1000, v))));
+        fInt(22, HordeJson.num(r, "topPr3", 10), v -> r.addProperty("topPr3", Math.max(0, Math.min(1000, v))));
+        fl(t("ui.rift.top_reliq"));
+        fInt(18, HordeJson.num(r, "topReliq1", 2), v -> r.addProperty("topReliq1", Math.max(0, Math.min(16, v))));
+        fInt(18, HordeJson.num(r, "topReliq2", 1), v -> r.addProperty("topReliq2", Math.max(0, Math.min(16, v))));
+        fInt(18, HordeJson.num(r, "topReliq3", 1), v -> r.addProperty("topReliq3", Math.max(0, Math.min(16, v))));
+        y += 24;
+        toggle(x + 60, y - 2, 110, t("ui.rift.req_horde"), r, "requireHordeWin", true);
+        toggle(x + 174, y - 2, 110, t("ui.rift.req_kingdom"), r, "requireKingdomWin", true);
+        toggle(x + 288, y - 2, 110, t("ui.rift.req_invasion"), r, "requireInvasionWin", false);
+        label(x, y + 3, t("ui.rift.access"));
+        y += 26;
         labelWrap(x, y, t("ui.rift.hint_phases"), W - 24);
     }
 
@@ -2024,9 +2045,9 @@ public class HordeEditorScreen extends Screen {
         fl(t("ui.rift.cine_seconds"));
         fInt(22, HordeJson.num(r, "titanCineSeconds", 12), v -> r.addProperty("titanCineSeconds", Math.max(4, Math.min(40, v))));
         fl(t("ui.rift.cine_name"));
-        fText(110, HordeJson.str(r, "titanCineName", "LE COLOSSE"), v -> r.addProperty("titanCineName", v));
+        fText(110, HordeJson.str(r, "titanCineName", ""), v -> r.addProperty("titanCineName", v));
         fl(t("ui.rift.cine_sub"));
-        fText(120, HordeJson.str(r, "titanCineSub", "Titan de la Faille"), v -> r.addProperty("titanCineSub", v));
+        fText(120, HordeJson.str(r, "titanCineSub", ""), v -> r.addProperty("titanCineSub", v));
         y += 30;
         label(x, y, "§6§l" + t("ui.rift.sec_titan_more"));
         y += 14;

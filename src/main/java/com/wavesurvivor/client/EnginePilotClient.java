@@ -60,6 +60,6 @@ public final class EnginePilotClient {
         g.fill(cx, cy, cx + 1, cy + 1, 0xFFFFFFFF);
         String txt = reloading ? "Rechargement…" : e.ammo() + " / 16";
         g.drawCenteredString(mc.font, txt, cx, cy + 28, col);
-        g.drawCenteredString(mc.font, "§7Maj : descendre", cx, cy + 40, 0xFFFFFFFF);
+        g.drawCenteredString(mc.font, "§7" + com.wavesurvivor.i18n.WSLang.t("rift.e.dismount"), cx, cy + 40, 0xFFFFFFFF);
     }
 }

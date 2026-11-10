@@ -69,7 +69,7 @@ public class RenaissanceRewards {
         return own >= 0 ? Math.min(100, own) : com.wavesurvivor.config.RulesConfig.consolationPercent();
     }
 
-    private static double difficultyMult() {
+    public static double difficultyMult() {
         var d = com.wavesurvivor.horde.difficulty.HordeDifficulty.active();
         if (d == null) return 1.0;
         return switch (d.id) {

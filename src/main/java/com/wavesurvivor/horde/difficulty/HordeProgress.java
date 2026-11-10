@@ -85,6 +85,15 @@ public class HordeProgress extends SavedData {
                 for (HordeConfigMultiData h : cfg.hordeConfigMulti) if (parent.equalsIgnoreCase(h.hordeName)) src = h;
             }
         }
+        // 2.0 — La Faille : réservée aux joueurs qui ont déjà gagné une horde classique, un Kingdom (et une invasion, si activé)
+        if (horde.configData != null && horde.configData.isRift()) {
+            var rs = horde.configData.rift();
+            HordeProgress pr = get(player.server);
+            if (rs.requireHordeWin) out.add(new Line(wonMode(player, pr, "waves"), WSLang.t("unlock.rift_horde")));
+            if (rs.requireKingdomWin) out.add(new Line(wonMode(player, pr, "kingdom"), WSLang.t("unlock.rift_kingdom")));
+            if (rs.requireInvasionWin) out.add(new Line(com.wavesurvivor.horde.stats.PlayerStats.snapshotOf(player).getOrDefault("invasions_won", 0L) > 0,
+                    WSLang.t("unlock.rift_invasion")));
+        }
         if (src.configData == null || src.configData.unlockRequires == null) return out;
         HordeProgress p = get(player.server);
         for (HordeConfigMultiData.ConfigDataInner.UnlockReq r : src.configData.unlockRequires) {
@@ -99,6 +108,18 @@ public class HordeProgress extends SavedData {
             out.add(new Line(ok, txt));
         }
         return out;
+    }
+
+    /** Le joueur a-t-il déjà gagné au moins une horde de ce mode (« waves », « kingdom ») ? */
+    private static boolean wonMode(ServerPlayer player, HordeProgress pr, String mode) {
+        var cfg = WaveSurvivorMod.getConfig();
+        if (cfg == null || cfg.hordeConfigMulti == null) return false;
+        for (HordeConfigMultiData h : cfg.hordeConfigMulti) {
+            if (h == null || h.configData == null || h.hordeName == null) continue;
+            String m = h.configData.mode == null ? "waves" : h.configData.mode.toLowerCase(java.util.Locale.ROOT);
+            if (m.equals(mode) && pr.best(player.getUUID(), h.hordeName) >= 0) return true;
+        }
+        return false;
     }
 
     /** Créatif : aucune condition de déblocage n'est exigée (tests, opérateurs). */

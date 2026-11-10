@@ -470,6 +470,19 @@ public class HordeConfigMultiData {
         @SerializedName("titanBuildDamage") public int titanBuildDamage = 300;
         /** Compétences du Titan : chaque charge brise un secteur du bord de l'île (profondeur en blocs), coups pour abattre le rocher, dégâts du piétinement. */
         @SerializedName("titanIslandBreak") public boolean titanIslandBreak = true;
+        /** Récompenses de fin : PR bonus si le Titan est tué, Reliquaires scellés pour chaque participant, bonus du podium (top 1 / 2 / 3, aux éliminations). */
+        @SerializedName("titanPrBonus") public int titanPrBonus = 30;
+        @SerializedName("rewardReliquaries") public int rewardReliquaries = 1;
+        @SerializedName("topPr1") public int topPr1 = 30;
+        @SerializedName("topPr2") public int topPr2 = 20;
+        @SerializedName("topPr3") public int topPr3 = 10;
+        @SerializedName("topReliq1") public int topReliq1 = 2;
+        @SerializedName("topReliq2") public int topReliq2 = 1;
+        @SerializedName("topReliq3") public int topReliq3 = 1;
+        /** Accès : avoir déjà gagné une horde classique, un Kingdom, une invasion de village (chaque condition activable). */
+        @SerializedName("requireHordeWin") public boolean requireHordeWin = true;
+        @SerializedName("requireKingdomWin") public boolean requireKingdomWin = true;
+        @SerializedName("requireInvasionWin") public boolean requireInvasionWin = false;
         /** Siège, Contre-offensive, Titan : tous les monstres abîment les bâtiments et engins qu'ils frôlent. */
         @SerializedName("monstersAttackBuildings") public boolean monstersAttackBuildings = true;
         @SerializedName("titanBreakDepth") public int titanBreakDepth = 7;
@@ -480,8 +493,8 @@ public class HordeConfigMultiData {
         @SerializedName("titanCine") public boolean titanCine = true;
         @SerializedName("titanCineSkippable") public boolean titanCineSkippable = true;
         @SerializedName("titanCineSeconds") public int titanCineSeconds = 12;
-        @SerializedName("titanCineName") public String titanCineName = "LE COLOSSE";
-        @SerializedName("titanCineSub") public String titanCineSub = "Titan de la Faille";
+        @SerializedName("titanCineName") public String titanCineName = "";   // vide = texte traduit
+        @SerializedName("titanCineSub") public String titanCineSub = "";
         @SerializedName("titanCineSounds") public boolean titanCineSounds = true;
         /** Cinématique de construction de la forteresse : activée, passable, durée (s), blocs posés par tick (minimum), titre (vide = nom de la forteresse). */
         @SerializedName("fortressCine") public boolean fortressCine = true;
