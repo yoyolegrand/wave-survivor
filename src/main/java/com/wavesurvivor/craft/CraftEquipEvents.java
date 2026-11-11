@@ -297,7 +297,7 @@ public class CraftEquipEvents {
     private static void reviveGrace(ServerPlayer p) {
         p.setHealth(1.0f);
         p.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
-        p.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
+        com.wavesurvivor.horde.benediction.AbsorptionLayers.give(p, com.wavesurvivor.horde.benediction.AbsorptionLayers.GRACE_TOTEM, 8f, 100);   // 4 cœurs, 5 s (couche d'absorption, plus l'effet vanilla)
         p.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 0));
         double r = CraftConfig.equipNum("grace_totem", "allyRadius", 6);
         float heal = (float) CraftConfig.equipNum("grace_totem", "allyHeal", 8);

@@ -1811,7 +1811,7 @@ public final class KingdomDefenses {
             boolean shield = level.getGameTime() % 200 < 20;                    // toutes les 10 s : 4 cœurs d'Absorption
             for (ServerPlayer p : level.getEntitiesOfClass(ServerPlayer.class, new AABB(d.pos).inflate(12))) {
                 p.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 1, false, true));
-                if (shield) p.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 1, false, true));
+                if (shield) com.wavesurvivor.horde.benediction.AbsorptionLayers.give(p, com.wavesurvivor.horde.benediction.AbsorptionLayers.SANCTUARY, 8f, 200);   // couche d'absorption (plus l'effet vanilla)
             }
         }
         if ("bulwark".equals(d.variant)) KingdomClaim.healArea(d.pos, 12, 4f);   // répare aussi les murs

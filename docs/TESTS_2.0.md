@@ -427,6 +427,7 @@ Commandes de test (opérateur) : `/ws rift chest` (mise en scène devant soi, co
 - [ ] Le bouclier ne s'accumule pas : vague suivante, le reste est retiré puis 10 % redonnés (jamais plus de 10 % + l'Aube)
 - [ ] Aussi au début de la Contre-offensive et à l'arrivée du Titan
 - [ ] Héritage Survivant 1 (4 cœurs, 30 s) : s'ajoute aussi à l'Aube et au Bouclier ; au bout de 30 s il ne retire que ce qui reste de SES cœurs (l'Aube et le Bouclier restent) ; pas de cumul d'une vague à l'autre ; plus d'icône d'effet Absorption
+- [ ] Même système pour le Totem de grâce (4 cœurs, 5 s), le Sanctuaire de vie du Kingdom (4 cœurs, 10 s) et la Résonance de l'Arcaniste (4 cœurs, 10 s, catalyseur fermé) : ils s'ajoutent aux autres cœurs d'absorption et, à leur fin, ne retirent que leur propre reste
 
 **Légendaires**
 - [ ] Destin : bouton « 🃏 2 cartes (n) » en haut à droite du menu de bénédictions ; mode activé → « Prendre en plus » sur une carte, le menu reste ouvert sans elle, puis choix normal ; 1 fois par horde (I-II), 2 fois (III-IV)

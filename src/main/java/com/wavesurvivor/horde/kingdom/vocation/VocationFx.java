@@ -28,7 +28,7 @@ public final class VocationFx {
         ServerPlayer a = Voc.holder(ARC);
         if (a == null || !(a.level() instanceof ServerLevel lvl)) return;
         if (Vocations.has(a, ARC, "arcanist.resonance.shield_on_close")) {
-            a.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 1)); // 2 cœurs d'absorption, 10 s
+            com.wavesurvivor.horde.benediction.AbsorptionLayers.give(a, com.wavesurvivor.horde.benediction.AbsorptionLayers.VOCATION, 8f, 200); // 4 cœurs d'absorption, 10 s (couche d'absorption, plus l'effet vanilla)
         }
         boolean knock = Vocations.has(a, ARC, "arcanist.offense.close_knockback");
         boolean bolt = Vocations.has(a, ARC, "arcanist.offense.close_lightning");

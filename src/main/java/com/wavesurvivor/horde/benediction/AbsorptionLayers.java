@@ -20,8 +20,14 @@ public final class AbsorptionLayers {
     public static final String RIFT_SHIELD = "rift_shield";
     /** Héritage Survivant 1 : 4 cœurs pendant 30 s au début de chaque vague. */
     public static final String HERITAGE = "heritage_s1";
+    /** Sanctuaire de vie (défense du Kingdom) : 4 cœurs pendant 10 s, toutes les 10 s. */
+    public static final String SANCTUARY = "sanctuary_life";
+    /** Arcaniste, Résonance : 4 cœurs pendant 10 s quand il ferme un Catalyseur. */
+    public static final String VOCATION = "arcanist_resonance";
+    /** Totem de grâce (artisanat) : 4 cœurs pendant 5 s après la résurrection. */
+    public static final String GRACE_TOTEM = "grace_totem";
     /** Ordre de consommation (le premier part en premier). */
-    private static final String[] PRIORITY = {RIFT_SHIELD, HERITAGE};
+    private static final String[] PRIORITY = {RIFT_SHIELD, HERITAGE, SANCTUARY, VOCATION, GRACE_TOTEM};
 
     private AbsorptionLayers() {}
 
