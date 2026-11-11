@@ -495,3 +495,4 @@ Test rapide : dans la Faille, `/ws rift sky <horde|siege|contre|titan|victoire>`
 
 ## Siège de la Faille : île accélérée ×2
 - [ ] Au début du Siège, l'île s'agrandit deux fois plus vite (départ 1 s, un anneau toutes les 4 ticks, pause finale 2 s) ; secousses et sons toujours présents ; la forteresse se construit ensuite normalement
+- [ ] Cinématique de construction de la forteresse ennemie deux fois plus rapide : 10 s au lieu de 20 (déchirure 3 s, socle, pont, murs, sommets, titre) ; toutes les étapes ont le temps de se jouer, la forteresse est complète à la fin ; le champ « durée » de l'éditeur affiche 10 par défaut

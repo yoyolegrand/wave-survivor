@@ -2226,7 +2226,7 @@ public class HordeEditorScreen extends Screen {
         fToggle(110, t("ui.rift.fcine_skip"), r, "fortressCineSkippable", true);
         flow(x, next());
         fl(t("ui.rift.fcine_seconds"));
-        fInt(24, HordeJson.num(r, "fortressCineSeconds", 20), v -> r.addProperty("fortressCineSeconds", Math.max(8, Math.min(60, v))));
+        fInt(24, HordeJson.num(r, "fortressCineSeconds", 10), v -> r.addProperty("fortressCineSeconds", Math.max(8, Math.min(60, v))));
         fl(t("ui.rift.fcine_speed"));
         fInt(30, HordeJson.num(r, "fortressCineSpeed", 150), v -> r.addProperty("fortressCineSpeed", Math.max(20, Math.min(2000, v))));
         fl(t("ui.rift.fcine_title"));

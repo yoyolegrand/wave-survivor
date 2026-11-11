@@ -522,7 +522,7 @@ public class HordeConfigMultiData {
         /** Cinématique de construction de la forteresse : activée, passable, durée (s), blocs posés par tick (minimum), titre (vide = nom de la forteresse). */
         @SerializedName("fortressCine") public boolean fortressCine = true;
         @SerializedName("fortressCineSkippable") public boolean fortressCineSkippable = true;
-        @SerializedName("fortressCineSeconds") public int fortressCineSeconds = 20;
+        @SerializedName("fortressCineSeconds") public int fortressCineSeconds = 10;   // 2.0 : 20 → 10 s (cinématique ×2 plus rapide)
         @SerializedName("fortressCineSpeed") public int fortressCineSpeed = 150;
         @SerializedName("fortressCineTitle") public String fortressCineTitle = "";
         @SerializedName("titanWindowSeconds") public int titanWindowSeconds = 8;
