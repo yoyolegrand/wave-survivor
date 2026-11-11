@@ -397,5 +397,111 @@
         "maxChests": 0
       }
     }
-  }
+  },
+  "skills": [
+    {
+      "skillName": "titan_meteors",
+      "skillType": "titan_meteors",
+      "description": "Pluie de météores sur les joueurs (cercles rouges, puis impacts)."
+    },
+    {
+      "skillName": "titan_tracking",
+      "skillType": "titan_tracking",
+      "description": "Météores qui suivent un joueur puis se figent 1 s avant l’impact."
+    },
+    {
+      "skillName": "titan_lava",
+      "skillType": "titan_lava",
+      "description": "Nuée de petits météores en fusion sur toute l’île, flaques de magma."
+    },
+    {
+      "skillName": "titan_giant",
+      "skillType": "titan_giant",
+      "description": "Un énorme météore sur le groupe le plus serré, écrase aussi les bâtiments."
+    },
+    {
+      "skillName": "titan_stomp",
+      "skillType": "titan_stomp",
+      "description": "Piétinement : onde de choc au sol à sauter."
+    },
+    {
+      "skillName": "titan_rock",
+      "skillType": "titan_rock",
+      "description": "Rocher arraché et lancé : à abattre en vol (engins, flèches)."
+    },
+    {
+      "skillName": "titan_beam",
+      "skillType": "titan_beam",
+      "description": "Regard du Titan qui balaie l’île : se cacher derrière un mur."
+    },
+    {
+      "skillName": "titan_roar",
+      "skillType": "titan_roar",
+      "description": "Rugissement qui repousse (s’accroupir pour tenir)."
+    },
+    {
+      "skillName": "titan_charge",
+      "skillType": "titan_charge",
+      "description": "Charge sur l’île (minuteur et paliers de PV), puis Titan étourdi à découvert."
+    },
+    {
+      "skillName": "titan_fist",
+      "skillType": "titan_fist",
+      "description": "Poing abattu sur le Monolithe."
+    },
+    {
+      "skillName": "titan_building",
+      "skillType": "titan_building",
+      "description": "Frappe un bâtiment ou un engin du royaume."
+    },
+    {
+      "skillName": "titan_avatars",
+      "skillType": "titan_avatars",
+      "description": "Invoque des champions : en tuer un retire un % des PV du Titan."
+    }
+  ],
+  "entities": [
+    {
+      "entityName": "titan_champion",
+      "displayName": "§5§lChampion du Titan",
+      "baseEntityType": "minecraft:wither_skeleton",
+      "stats": {
+        "maxHealth": 250,
+        "attackDamage": 9,
+        "movementSpeed": 0.27,
+        "followRange": 48,
+        "knockbackResistance": 0.6
+      },
+      "equipment": {
+        "mainhand": "minecraft:netherite_sword",
+        "offhand": "",
+        "head": "minecraft:netherite_helmet",
+        "chest": "minecraft:chainmail_chestplate",
+        "legs": "",
+        "feet": "minecraft:netherite_boots"
+      },
+      "lootTable": [
+        {
+          "lootType": "normal",
+          "item": "minecraft:emerald",
+          "minQty": 3,
+          "maxQty": 6,
+          "chance": 100
+        },
+        {
+          "lootType": "normal",
+          "item": "wavesurvivor:poussiere_faille",
+          "minQty": 1,
+          "maxQty": 2,
+          "chance": 35
+        }
+      ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": []
+    }
+  ]
 }

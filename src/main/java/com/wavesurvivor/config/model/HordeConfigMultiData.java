@@ -497,6 +497,19 @@ public class HordeConfigMultiData {
         @SerializedName("titanRockHits") public int titanRockHits = 3;
         @SerializedName("titanStompDamage") public int titanStompDamage = 10;
         @SerializedName("titanBuildRadius") public int titanBuildRadius = 6;
+        /** 2.0 — Compétences du Titan : dégâts propres des météores traqueurs, de la pluie de lave, du météore géant (et son rayon), du rocher et du regard. */
+        @SerializedName("titanTrackingDamage") public double titanTrackingDamage = 14.4;
+        @SerializedName("titanLavaDamage") public double titanLavaDamage = 6.0;
+        @SerializedName("titanGiantDamage") public double titanGiantDamage = 30.0;
+        @SerializedName("titanGiantRadius") public double titanGiantRadius = 9.0;
+        @SerializedName("titanRockDamage") public double titanRockDamage = 14.0;
+        @SerializedName("titanBeamDamage") public double titanBeamDamage = 9.0;
+        /** Champions invoqués : entité (entité du catalogue ou identifiant, ex. minecraft:wither_skeleton) et nombre maximal en même temps. */
+        @SerializedName("titanAvatarEntity") public String titanAvatarEntity = "titan_champion";
+        @SerializedName("titanAvatarMax") public int titanAvatarMax = 4;
+        /** Liste des compétences du Titan (null = liste par défaut, voir TitanSkills) et réglages propres à ce Titan par compétence. */
+        @SerializedName("titanSkills") public java.util.List<TitanSkillEntry> titanSkills;
+        @SerializedName("skillOverrides") public java.util.Map<String, com.google.gson.JsonObject> skillOverrides;
         /** Cinématique d'apparition : activée, passable (maintenir S'accroupir 1 s), durée (s), nom et sous-titre affichés, sons. */
         @SerializedName("titanCine") public boolean titanCine = true;
         @SerializedName("titanCineSkippable") public boolean titanCineSkippable = true;
@@ -514,6 +527,13 @@ public class HordeConfigMultiData {
         @SerializedName("titanWindowCapPercent") public int titanWindowCapPercent = 8;
         /** Engins de siège (catapultes, balistes) posés sur l'île au début du Siège. */
         @SerializedName("engines") public boolean engines = true;
+    }
+
+    /** 2.0 — Une compétence du Titan : nom dans le catalogue, poids du tirage, phase (1 à 4) à partir de laquelle elle est utilisée. */
+    public static class TitanSkillEntry {
+        @SerializedName("skill") public String skill = "";
+        @SerializedName("weight") public int weight = 1;
+        @SerializedName("phase") public int phase = 1;
     }
 
     /**

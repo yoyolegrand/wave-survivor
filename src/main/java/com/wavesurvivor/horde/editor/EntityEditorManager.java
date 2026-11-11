@@ -81,6 +81,19 @@ public final class EntityEditorManager {
         TYPE_PREFIXES.put("dust_devil", List.of("dustDevil"));
         TYPE_PREFIXES.put("tremor", List.of("tremor"));
         TYPE_PREFIXES.put("earthquake", List.of("earthquake"));
+        // 2.0 — Titan de la Faille (sous-onglet « Titan » du catalogue ; utilisables seulement par le Titan)
+        TYPE_PREFIXES.put("titan_meteors", List.of("tMeteors"));
+        TYPE_PREFIXES.put("titan_tracking", List.of("tTracking"));
+        TYPE_PREFIXES.put("titan_lava", List.of("tLava"));
+        TYPE_PREFIXES.put("titan_giant", List.of("tGiant"));
+        TYPE_PREFIXES.put("titan_stomp", List.of("tStomp"));
+        TYPE_PREFIXES.put("titan_rock", List.of("tRock"));
+        TYPE_PREFIXES.put("titan_beam", List.of("tBeam"));
+        TYPE_PREFIXES.put("titan_roar", List.of("tRoar"));
+        TYPE_PREFIXES.put("titan_charge", List.of("tCharge"));
+        TYPE_PREFIXES.put("titan_fist", List.of("tFist"));
+        TYPE_PREFIXES.put("titan_building", List.of("tBuilding"));
+        TYPE_PREFIXES.put("titan_avatars", List.of("tAvatars"));
     }
 
     private EntityEditorManager() {}

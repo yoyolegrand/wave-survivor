@@ -34,6 +34,7 @@ public class SkillFactory {
 
     public static BossSkill create(CustomSkillData config) {
         if (config == null || config.skillType == null) return null;
+        if (config.skillType.startsWith("titan_")) return null;   // 2.0 : compétences du Titan, jouées par RiftTitan seulement
         return switch (config.skillType.toLowerCase()) {
             case "mortar"            -> new SkillMortar(config);
             case "dash_charge"       -> new SkillDashCharge(config);

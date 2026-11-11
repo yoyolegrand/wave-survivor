@@ -55,7 +55,11 @@ public final class RiftCommand {
                                 .executes(ctx -> pose(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "pose"),
                                         com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "ticks"))))))
                 .then(Commands.literal("skill").then(Commands.argument("name", com.mojang.brigadier.arguments.StringArgumentType.word())
-                        .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(RiftTitan.DEBUG_SKILLS, b))
+                        .suggests((ctx, b) -> {   // 2.0 : attaques de test + compétences de la liste du Titan
+                            java.util.List<String> all = new java.util.ArrayList<>(java.util.List.of(RiftTitan.DEBUG_SKILLS));
+                            for (var en : TitanSkills.entries(RiftManager.settingsPublic())) if (en.skill != null && !all.contains(en.skill)) all.add(en.skill);
+                            return net.minecraft.commands.SharedSuggestionProvider.suggest(all, b);
+                        })
                         .executes(ctx -> skill(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "name")))));
     }
 

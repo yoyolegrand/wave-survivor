@@ -858,4 +858,45 @@ public class CustomSkillData {
     @SerializedName("earthquakeRubble")     public int earthquakeRubble = 5;
     @SerializedName("earthquakeShake")      public double earthquakeShake = 1.0;
     @SerializedName("earthquakeMessage")    public String earthquakeMessage = "";
+
+    // === 2.0 — Compétences du Titan de la Faille (types titan_*) : reprises par le Titan à son apparition (voir TitanSkills) ===
+    private static final HordeConfigMultiData.RiftSettings RD = new HordeConfigMultiData.RiftSettings();
+    // titan_meteors : nombre (base + par joueur), dégâts, rayon, taille, annonce et chute (ticks), blocs, traînée, cratère
+    @SerializedName("tMeteorsBase") public int tMeteorsBase = RD.meteorBase;
+    @SerializedName("tMeteorsPerPlayer") public int tMeteorsPerPlayer = RD.meteorPerPlayer;
+    @SerializedName("tMeteorsDamage") public int tMeteorsDamage = RD.meteorDamage;
+    @SerializedName("tMeteorsRadius") public double tMeteorsRadius = RD.meteorRadius;
+    @SerializedName("tMeteorsSize") public double tMeteorsSize = RD.meteorSize;
+    @SerializedName("tMeteorsDelay") public int tMeteorsDelay = RD.meteorDelay;
+    @SerializedName("tMeteorsFall") public int tMeteorsFall = RD.meteorFall;
+    @SerializedName("tMeteorsBlocks") public String tMeteorsBlocks = RD.meteorBlocks;
+    @SerializedName("tMeteorsTrail") public String tMeteorsTrail = RD.meteorTrail;
+    @SerializedName("tMeteorsCrater") public boolean tMeteorsCrater = RD.meteorCrater;
+    @SerializedName("tTrackingDamage") public double tTrackingDamage = RD.titanTrackingDamage;
+    @SerializedName("tLavaDamage") public double tLavaDamage = RD.titanLavaDamage;
+    @SerializedName("tGiantDamage") public double tGiantDamage = RD.titanGiantDamage;
+    @SerializedName("tGiantRadius") public double tGiantRadius = RD.titanGiantRadius;
+    @SerializedName("tStompDamage") public int tStompDamage = RD.titanStompDamage;
+    @SerializedName("tRockHits") public int tRockHits = RD.titanRockHits;
+    @SerializedName("tRockDamage") public double tRockDamage = RD.titanRockDamage;
+    @SerializedName("tBeamDamage") public double tBeamDamage = RD.titanBeamDamage;
+    // titan_charge : délai entre deux charges, étourdissement, corps à corps (s), dégâts de l'impact, empiétement, dégâts du corps à corps,
+    // plafond de dégâts pendant l'étourdissement (% PV max), île brisée et profondeur de la cassure
+    @SerializedName("tChargeInterval") public int tChargeInterval = RD.titanChargeInterval;
+    @SerializedName("tChargeStun") public int tChargeStun = RD.titanChargeStun;
+    @SerializedName("tChargeMelee") public int tChargeMelee = RD.titanChargeMelee;
+    @SerializedName("tChargeDamage") public int tChargeDamage = RD.titanChargeDamage;
+    @SerializedName("tChargeReach") public int tChargeReach = RD.titanChargeReach;
+    @SerializedName("tChargeMeleeDamage") public int tChargeMeleeDamage = RD.titanMeleeDamage;
+    @SerializedName("tChargeCapPercent") public int tChargeCapPercent = RD.titanChargeCapPercent;
+    @SerializedName("tChargeIslandBreak") public boolean tChargeIslandBreak = RD.titanIslandBreak;
+    @SerializedName("tChargeBreakDepth") public int tChargeBreakDepth = RD.titanBreakDepth;
+    @SerializedName("tFistDamage") public int tFistDamage = RD.titanMonolithDamage;
+    @SerializedName("tBuildingDamage") public int tBuildingDamage = RD.titanBuildDamage;
+    @SerializedName("tBuildingRadius") public int tBuildingRadius = RD.titanBuildRadius;
+    // titan_avatars : entité (du catalogue : équipement, butin et compétences s'y règlent), nombre max, PV (0 = ceux de l'entité), % de PV du Titan retirés
+    @SerializedName("tAvatarsEntity") public String tAvatarsEntity = RD.titanAvatarEntity;
+    @SerializedName("tAvatarsMax") public int tAvatarsMax = RD.titanAvatarMax;
+    @SerializedName("tAvatarsHp") public int tAvatarsHp = RD.titanAvatarHp;
+    @SerializedName("tAvatarsPercent") public int tAvatarsPercent = RD.titanAvatarPercent;
 }

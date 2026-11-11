@@ -225,7 +225,8 @@ final class RiftTitan {
     }
 
     static boolean spawn(ServerLevel l, HordeConfigMultiData.RiftSettings settings, int players, int sr) {
-        rs = settings;
+        rs = TitanSkills.effective(settings);   // 2.0 : réglages des compétences de sa liste (catalogue + réglages propres)
+        TitanSkills.reset();
         siegeRadius = sr;
         dead = false;
         phase = 0;
@@ -380,28 +381,91 @@ final class RiftTitan {
      * phase 3 = + regard du Titan, pluie de lave ; phase 4 = + rugissement, météore géant. Chaque palier déclenche aussi une charge
      * qui brise un nouveau secteur de l'île.
      */
+    /** 2.0 : l'attaque est tirée dans la liste des compétences du Titan (poids, phase), parmi celles utilisables maintenant. */
     private static void chooseSkill(ServerLevel l, long now, List<ServerPlayer> alive) {
-        List<Integer> pool = new ArrayList<>();
-        pool.add(0); pool.add(0); pool.add(1);                                 // météores, piétinement
-        if (phase >= 1) { pool.add(7); pool.add(7); pool.add(8); }             // rocher arraché, météores traqueurs
-        if (phase >= 2) { pool.add(2); pool.add(9); }                          // regard du Titan, pluie de lave
-        if (phase >= 3) { pool.add(3); pool.add(10); pool.add(2); }            // rugissement, météore géant
-        if (phase >= 1 && !defensePositions().isEmpty()) { pool.add(6); if (phase >= 2) pool.add(6); } // attaque d'un bâtiment
-        if (rs.titanMonolithDamage > 0 && AltarDefenseHook.alive()) { if (phase >= 1) pool.add(5); if (phase >= 3) pool.add(5); } // poing contre le Monolithe
-        if (RNG.nextInt(6) == 0 && avatars.size() < 4) pool.add(4);
-        switch (pool.get(RNG.nextInt(pool.size()))) {
-            case 0 -> meteors(l, now, alive);
-            case 1 -> stomp(l, now);
-            case 2 -> beam(l, now);
-            case 3 -> roar(l, now);
-            case 5 -> monolithFist(l, now);
-            case 6 -> buildingStrike(l, now);
-            case 7 -> { if (ROCKS.isEmpty()) rockThrow(l, now); else meteors(l, now, alive); }
-            case 8 -> trackingMeteors(l, now, alive);
-            case 9 -> lavaRain(l, now, alive);
-            case 10 -> giantMeteor(l, now, alive);
-            default -> summonAvatars(l);
+        HordeConfigMultiData.TitanSkillEntry en = TitanSkills.pick(rs, phase, RiftTitan::usable);
+        if (en == null) return;
+        cast(l, now, alive, en.skill);
+    }
+
+    /** Cette compétence peut-elle servir maintenant ? (bâtiment à viser, Monolithe debout, rocher déjà en vol, place pour un champion) */
+    private static boolean usable(String type) {
+        return switch (type) {
+            case TitanSkills.BUILDING -> !defensePositions().isEmpty();
+            case TitanSkills.FIST -> rs.titanMonolithDamage > 0 && AltarDefenseHook.alive();
+            case TitanSkills.ROCK -> ROCKS.isEmpty();
+            case TitanSkills.AVATARS -> avatars.size() < Math.max(0, rs.titanAvatarMax);
+            default -> true;
+        };
+    }
+
+    /** Lance une compétence de la liste (Titan ou ordinaire). @return faux si elle n'existe pas ou ne peut pas servir */
+    private static boolean cast(ServerLevel l, long now, List<ServerPlayer> alive, String name) {
+        String type = TitanSkills.typeOf(rs, name);
+        switch (type) {
+            case TitanSkills.METEORS -> meteors(l, now, alive);
+            case TitanSkills.TRACKING -> trackingMeteors(l, now, alive);
+            case TitanSkills.LAVA -> lavaRain(l, now, alive);
+            case TitanSkills.GIANT -> giantMeteor(l, now, alive);
+            case TitanSkills.STOMP -> stomp(l, now);
+            case TitanSkills.ROCK -> { if (ROCKS.isEmpty()) rockThrow(l, now); else meteors(l, now, alive); }
+            case TitanSkills.BEAM -> beam(l, now);
+            case TitanSkills.ROAR -> roar(l, now);
+            case TitanSkills.FIST -> { if (rs.titanMonolithDamage <= 0 || !AltarDefenseHook.alive()) return false; monolithFist(l, now); }
+            case TitanSkills.BUILDING -> { if (defensePositions().isEmpty()) return false; buildingStrike(l, now); }
+            case TitanSkills.AVATARS -> summonAvatars(l);
+            case TitanSkills.CHARGE -> { if (charge != 0) return false; startCharge(l, now); }
+            case "" -> { return false; }
+            default -> { return castRegular(l, alive, name); }
         }
+        return true;
+    }
+
+    // ─── 2.0 : compétences ordinaires (catalogue) lancées par le Titan ───
+
+    /** Lanceur invisible au bord de l'île, côté Titan : les compétences ordinaires partent de lui (le Titan est hors de portée). */
+    private static net.minecraft.world.entity.Mob caster;
+
+    private static boolean castRegular(ServerLevel l, List<ServerPlayer> alive, String name) {
+        com.wavesurvivor.horde.skill.BossSkill sk = TitanSkills.regular(rs, name);
+        if (sk == null || alive.isEmpty() || titan == null) return false;
+        ServerPlayer target = alive.get(RNG.nextInt(alive.size()));
+        net.minecraft.world.entity.Mob c = caster(l, target);
+        if (c == null) return false;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.THROW, 40);
+        announce(l, "§5" + com.wavesurvivor.i18n.WSLang.t(sk.getName()));
+        try {
+            sk.execute(c, target, l);
+        } catch (Exception ex) {
+            WaveSurvivorMod.LOGGER.warn("[Titan] Compétence '{}' : {}", name, ex.toString());
+            return false;
+        }
+        return true;
+    }
+
+    /** Le lanceur : créé au premier besoin, replacé au bord de l'île face à la cible, invisible, invulnérable, immobile. */
+    private static net.minecraft.world.entity.Mob caster(ServerLevel l, ServerPlayer target) {
+        if (caster == null || caster.isRemoved()) {
+            caster = EntityType.HUSK.create(l);
+            if (caster == null) return null;
+            caster.setNoAi(true);
+            caster.setInvisible(true);
+            caster.setInvulnerable(true);
+            caster.setSilent(true);
+            caster.setNoGravity(true);
+            caster.setPersistenceRequired();
+            caster.addTag("ws_titan_caster");
+            caster.getPersistentData().putBoolean("ws_rift_caster", true);
+            if (titan != null) caster.setCustomName(titan.getDisplayName());
+            for (net.minecraft.world.entity.EquipmentSlot s : net.minecraft.world.entity.EquipmentSlot.values()) caster.setDropChance(s, 0f);
+            caster.moveTo(RiftManager.CENTER.getX() + 0.5, RiftManager.CENTER.getY() + 2, RiftManager.CENTER.getZ() + siegeRadius - 2, 180f, 0f);
+            if (!l.addFreshEntity(caster)) { caster = null; return null; }
+        }
+        double x = Math.max(RiftManager.CENTER.getX() - siegeRadius + 3, Math.min(RiftManager.CENTER.getX() + siegeRadius - 3, target.getX()));
+        caster.teleportTo(x, RiftManager.CENTER.getY() + 2, RiftManager.CENTER.getZ() + siegeRadius - 2);
+        caster.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, target.getEyePosition());
+        caster.setTarget(target);
+        return caster;
     }
 
     /** Test (commande /ws rift skill) : lance une attaque tout de suite. */
@@ -420,7 +484,7 @@ final class RiftTitan {
             case "beam" -> beam(l, now);
             case "roar" -> roar(l, now);
             case "charge" -> { if (charge != 0) return false; startCharge(l, now); }
-            default -> { return false; }
+            default -> { return cast(l, now, al, name); }   // 2.0 : n'importe quelle compétence du catalogue (Titan ou ordinaire)
         }
         return true;
     }
@@ -668,7 +732,7 @@ final class RiftTitan {
             if (gy <= l.getMinBuildHeight() + 1) continue;
             long imp = now + delay + i * 12L;
             Meteor m = newMeteor(t.getX(), gy, t.getZ(), (float) Math.max(0.3, rs.meteorSize / 3.0) * 0.85f, Math.max(1.5, rs.meteorRadius) * 0.8,
-                    rs.meteorDamage * 1.2, 1, 160, imp, fall, 1f, rs.meteorBlocks);
+                    rs.titanTrackingDamage, 1, 160, imp, fall, 1f, rs.meteorBlocks);
             m.follow = t.getUUID();
             m.buildDamage = Math.max(1, rs.titanBuildDamage / 3f);
             m.lockAt = imp - fall;
@@ -706,7 +770,7 @@ final class RiftTitan {
             int gy = groundY(l, (int) Math.floor(x), (int) Math.floor(z));
             if (gy <= l.getMinBuildHeight() + 1) continue;
             long imp = now + 50 + RNG.nextInt(50);
-            Meteor lm = newMeteor(x, gy, z, 0.45f, 2.0, Math.max(1, rs.meteorDamage * 0.5), 1, 240, imp, 16, 0.8f, "magma_block=4, blackstone=1");
+            Meteor lm = newMeteor(x, gy, z, 0.45f, 2.0, Math.max(1, rs.titanLavaDamage), 1, 240, imp, 16, 0.8f, "magma_block=4, blackstone=1");
             lm.buildDamage = Math.max(1, rs.titanBuildDamage / 6f);
             mine.add(lm);
         }
@@ -731,9 +795,9 @@ final class RiftTitan {
         final double x = best.getX(), z = best.getZ();
         final int gy = groundY(l, best.getBlockX(), best.getBlockZ());
         if (gy <= l.getMinBuildHeight() + 1) return;
-        final double radius = 9;
+        final double radius = Math.max(2, rs.titanGiantRadius);
         final int delay = 110;
-        Meteor m = newMeteor(x, gy, z, 2.3f, radius, Math.max(10, rs.meteorDamage * 2.5), 4, 400, now + delay, 45, 1.8f, rs.meteorBlocks);
+        Meteor m = newMeteor(x, gy, z, 2.3f, radius, Math.max(1, rs.titanGiantDamage), 4, 400, now + delay, 45, 1.8f, rs.meteorBlocks);
         m.buildDamage = Math.max(1, rs.titanBuildDamage);
         final long start = now;
         pose(com.wavesurvivor.entity.TitanAnimated.Pose.THROW, delay);
@@ -1183,7 +1247,7 @@ final class RiftTitan {
             double d = pl.position().distanceTo(p);
             if (d < 40) ShakePacket.send(pl, 35, (float) Math.max(0.4, 1.6 - d / 40));
             if (!pl.isSpectator() && pl.isAlive() && d <= 5.5) {
-                pl.hurt(l.damageSources().explosion(null, titan), 14f);
+                pl.hurt(l.damageSources().explosion(null, titan), (float) Math.max(1, rs.titanRockDamage));
                 if (com.wavesurvivor.item.RiftRelics.shockImmune(pl)) continue;
                 double dx = pl.getX() - p.x, dz = pl.getZ() - p.z, len = Math.max(0.5, Math.hypot(dx, dz));
                 pl.setDeltaMovement(dx / len, 0.6, dz / len);
@@ -1242,7 +1306,7 @@ final class RiftTitan {
                             if (pp.distanceTo(from.add(d.scale(tt))) > 1.9) continue;
                             var hit = l.clip(new ClipContext(from, p.getEyePosition(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, titan));
                             if (hit.getType() != HitResult.Type.MISS && hit.getLocation().distanceTo(p.getEyePosition()) > 1.5) continue; // à couvert
-                            p.hurt(l.damageSources().magic(), 9f);
+                            p.hurt(l.damageSources().magic(), (float) Math.max(1, rs.titanBeamDamage));
                             p.setSecondsOnFire(4);
                         }
                     }
@@ -1310,22 +1374,40 @@ final class RiftTitan {
     private static void summonAvatars(ServerLevel l) {
         pose(com.wavesurvivor.entity.TitanAnimated.Pose.SUMMON, 50);
         List<ServerPlayer> alive = alive(l);
-        int n = Math.min(4, 1 + alive.size() / 2 + phase / 2);
+        int n = Math.min(Math.max(0, rs.titanAvatarMax - avatars.size()), 1 + alive.size() / 2 + phase / 2);
         double hp = rs.titanAvatarHp * (1.0 + 0.35 * Math.max(0, alive.size() - 1));
+        // 2.0 : le champion est une entité du catalogue (équipement, butin, compétences réglés dans Entités & Compétences) ou un identifiant
+        String who = rs.titanAvatarEntity == null || rs.titanAvatarEntity.isBlank() ? "minecraft:wither_skeleton" : rs.titanAvatarEntity.trim();
+        com.wavesurvivor.config.model.CustomEntityData ce = who.contains(":") ? null : com.wavesurvivor.horde.spawn.CustomEntityRegistry.get(who);
         for (int i = 0; i < n; i++) {
-            Entity e = EntityType.WITHER_SKELETON.create(l);
-            if (!(e instanceof Mob m)) continue;
             double x = RiftManager.CENTER.getX() + (RNG.nextDouble() - 0.5) * 14, z = RiftManager.CENTER.getZ() + siegeRadius - 4 + RNG.nextInt(3);
-            m.moveTo(x, RiftManager.CENTER.getY() + 1, z, 0f, 0f);
-            if (m.getAttribute(Attributes.MAX_HEALTH) != null) m.getAttribute(Attributes.MAX_HEALTH).setBaseValue(hp);
-            if (m.getAttribute(Attributes.ATTACK_DAMAGE) != null) m.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(9);
-            m.setHealth((float) hp);
-            m.setCustomName(Component.literal("§5§l" + com.wavesurvivor.i18n.WSLang.t("rift.t.avatar")));
+            BlockPos at = BlockPos.containing(x, RiftManager.CENTER.getY() + 1, z);
+            Mob m;
+            if (ce != null) {
+                LivingEntity le = com.wavesurvivor.horde.spawn.CustomEntitySpawner.spawnBoss(l, ce, at, 1, null);
+                if (!(le instanceof Mob cm)) continue;
+                m = cm;
+                if (ce.skills != null && !ce.skills.isEmpty()) com.wavesurvivor.horde.skill.SkillManager.register(m.getUUID(), ce);
+                if (rs.titanAvatarHp > 0 && m.getAttribute(Attributes.MAX_HEALTH) != null) {
+                    m.getAttribute(Attributes.MAX_HEALTH).setBaseValue(hp);
+                    m.setHealth((float) hp);
+                }
+            } else {
+                Entity e = EntityType.byString(who).orElse(EntityType.WITHER_SKELETON).create(l);
+                if (!(e instanceof Mob vm)) continue;
+                m = vm;
+                m.moveTo(x, RiftManager.CENTER.getY() + 1, z, 0f, 0f);
+                double h = rs.titanAvatarHp > 0 ? hp : m.getMaxHealth();
+                if (m.getAttribute(Attributes.MAX_HEALTH) != null) m.getAttribute(Attributes.MAX_HEALTH).setBaseValue(h);
+                if (m.getAttribute(Attributes.ATTACK_DAMAGE) != null) m.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(9);
+                m.setHealth((float) h);
+                m.setCustomName(Component.literal("§5§l" + com.wavesurvivor.i18n.WSLang.t("rift.t.avatar")));
+            }
             m.setCustomNameVisible(true);
             m.setGlowingTag(true);
             m.setPersistenceRequired();
             m.getPersistentData().putBoolean("ws_rift_avatar", true);
-            l.addFreshEntity(m);
+            if (ce == null) l.addFreshEntity(m);   // une entité du catalogue est déjà dans le monde
             avatars.add(m.getUUID());
             l.sendParticles(ParticleTypes.REVERSE_PORTAL, x, RiftManager.CENTER.getY() + 2, z, 30, 0.5, 1, 0.5, 0.2);
         }
@@ -1732,7 +1814,7 @@ final class RiftTitan {
             spawnCrystals(l);
             nextSkillAt = now + 100;
             announce(l, "§5§l⚔ " + com.wavesurvivor.i18n.WSLang.t("rift.t.seen"));
-            summonAvatars(l);
+            if (rs.titanAvatarMax > 0) summonAvatars(l);
         }
     }
 
@@ -1933,6 +2015,10 @@ final class RiftTitan {
 
     /** Retire le Titan, sa barre et ses avatars (fin de la Faille). */
     static void clear(ServerLevel l) {
+        if (caster != null && !caster.isRemoved()) caster.discard();   // lanceur des compétences ordinaires
+        caster = null;
+        for (Entity e : new ArrayList<>(l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
+                new net.minecraft.world.phys.AABB(RiftManager.CENTER).inflate(80), m -> m.getTags().contains("ws_titan_caster")))) e.discard();
         clearMeteors(l);
         clearHitboxes(l);
         charge = 0;
