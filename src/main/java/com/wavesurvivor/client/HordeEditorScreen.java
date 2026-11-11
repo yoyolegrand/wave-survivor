@@ -2111,13 +2111,13 @@ public class HordeEditorScreen extends Screen {
         // Titan : n'importe quelle entité — identifiant tapé, liste déroulante (avec recherche) ou œuf d'apparition pris dans l'inventaire
         flow(x + 130, y + 1);
         fl(t("ui.rift.titan_entity"));
-        fText(150, HordeJson.str(r, "titanEntity", "minecraft:iron_golem"), v -> r.addProperty("titanEntity", v.trim()));
+        fText(150, HordeJson.str(r, "titanEntity", "wavesurvivor:devoreur"), v -> r.addProperty("titanEntity", v.trim()));
         fBtn(16, "§e▼", () -> openEntityPicker(HordeJson.str(r, "titanEntity", ""), id -> r.addProperty("titanEntity", id)));
         fBtn(24, t("ui.egg.btn"), () -> openEggPicker(id -> r.addProperty("titanEntity", id), false));
         y += 26;
         flow(x, y);
         fl(t("ui.rift.titan_scale"));
-        fDbl(36, HordeJson.dbl(r, "titanScale", 27.0), v -> r.addProperty("titanScale", Math.max(2.0, Math.min(250.0, v))));
+        fDbl(36, HordeJson.dbl(r, "titanScale", 5.0), v -> r.addProperty("titanScale", Math.max(2.0, Math.min(250.0, v))));
         fl(t("ui.rift.titan_hp"));
         fInt(40, HordeJson.num(r, "titanHp", 3000), v -> r.addProperty("titanHp", Math.max(100, Math.min(200000, v))));
         fl(t("ui.rift.titan_cap"));

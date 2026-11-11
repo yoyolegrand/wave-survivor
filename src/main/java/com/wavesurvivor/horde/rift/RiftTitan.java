@@ -1662,7 +1662,8 @@ final class RiftTitan {
             for (ServerPlayer p : l.players()) {
                 p.connection.send(new ClientboundSetTitlesAnimationPacket(10, Math.max(20, (int) ((tEnd - tName) - 20)), 10));
                 p.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§7" + (rs.titanCineSub == null || rs.titanCineSub.isBlank() ? com.wavesurvivor.i18n.WSLang.t("rift.t.cine_sub") : rs.titanCineSub))));
-                p.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§5§l" + (rs.titanCineName == null || rs.titanCineName.isBlank() ? com.wavesurvivor.i18n.WSLang.t("rift.t.cine_name") : rs.titanCineName))));
+                p.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§5§l" + (rs.titanCineName == null || rs.titanCineName.isBlank()
+                        ? (titan != null ? titan.getType().getDescription().getString().toUpperCase(java.util.Locale.ROOT) : com.wavesurvivor.i18n.WSLang.t("rift.t.cine_name")) : rs.titanCineName))));
                 if (bar != null) bar.addPlayer(p);
             }
         }

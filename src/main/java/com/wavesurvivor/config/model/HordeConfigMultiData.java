@@ -403,8 +403,9 @@ public class HordeConfigMultiData {
         @SerializedName("reinforceSeconds") public int reinforceSeconds = 20;
         /** Phase 4 — Titan : entité, taille (Pehkui), PV, avatars (PV, % de PV max retirés à leur mort), plafond de dégâts par coup (% des PV max). */
         @SerializedName("titanEnabled") public boolean titanEnabled = true;
-        @SerializedName("titanEntity") public String titanEntity = "minecraft:iron_golem";
-        @SerializedName("titanScale") public double titanScale = 27.0;
+        /** 2.0 — Titan par défaut : le Dévoreur (~10 blocs × 5 ≈ 50 blocs de haut). Toute autre entité reste possible. */
+        @SerializedName("titanEntity") public String titanEntity = "wavesurvivor:devoreur";
+        @SerializedName("titanScale") public double titanScale = 5.0;
         @SerializedName("titanHp") public int titanHp = 3000;
         @SerializedName("titanAvatarPercent") public int titanAvatarPercent = 8;
         @SerializedName("titanAvatarHp") public int titanAvatarHp = 250;
