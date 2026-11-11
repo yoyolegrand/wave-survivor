@@ -50,6 +50,10 @@ public class CustomEntityEditorScreen extends Screen {
     private final Screen parent;
     private JsonObject data;
     private int tab = 0; // 0 = entités, 1 = compétences
+    /** 2.0 — Compétences : 0 = ordinaires, 1 = Titan de la Faille (types titan_*). */
+    private static int skillCat = 0;
+
+    private static boolean titanType(String type) { return type != null && type.startsWith("titan_"); }
     private int sel = -1, listScroll = 0, paramScroll = 0, lootScroll = 0;
     private JsonObject edit;          // copie de travail de l'élément sélectionné
     private String editOldName = "";  // "" = nouveau
@@ -96,8 +100,17 @@ public class CustomEntityEditorScreen extends Screen {
         super(Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.entites_competences")));
         this.parent = parent;
         this.data = data;
-        // Ouverture ciblée (bouton ✎ de l'éditeur de hordes) : sélectionne l'entité demandée
+        // Ouverture ciblée (bouton ✎ de l'éditeur de hordes) : sélectionne l'entité demandée (« skill:nom » = une compétence)
         String focus = HordeJson.str(data, "focus", "");
+        if (focus.startsWith("skill:")) {
+            tab = 1;
+            focus = focus.substring(6);
+            for (JsonElement el : HordeJson.arr(data, "skills")) {
+                if (el.isJsonObject() && HordeJson.str(el.getAsJsonObject(), "skillName", "").equalsIgnoreCase(focus)) {
+                    skillCat = titanType(HordeJson.str(el.getAsJsonObject(), "skillType", "")) ? 1 : 0;
+                }
+            }
+        }
         if (!focus.isEmpty()) {
             JsonArray a = items();
             for (int i = 0; i < a.size(); i++) {
@@ -138,7 +151,11 @@ public class CustomEntityEditorScreen extends Screen {
         return l;
     }
 
-    private List<String> skillTypes() { return new ArrayList<>(schema().keySet()); }
+    private List<String> skillTypes() {
+        List<String> out = new ArrayList<>();
+        for (String t : schema().keySet()) if (titanType(t) == (skillCat == 1)) out.add(t);   // types du sous-onglet affiché
+        return out;
+    }
 
     /** Réponse du serveur après enregistrement / suppression : données fraîches, sélection conservée par nom. */
     public void refresh(JsonObject fresh) {
@@ -213,6 +230,20 @@ public class CustomEntityEditorScreen extends Screen {
         button(left + W - 76, top + 5, 70, com.wavesurvivor.i18n.WSLang.t("ui.fermer"), this::onClose);
         button(left + 6, top + 24, 100, (tab == 0 ? "§e" : "§7") + com.wavesurvivor.i18n.WSLang.t("ui.entites"), () -> switchTab(0));
         button(left + 108, top + 24, 110, (tab == 1 ? "§e" : "§7") + com.wavesurvivor.i18n.WSLang.t("ui.competences_b0e8"), () -> switchTab(1));
+        if (tab == 1) {   // 2.0 : sous-onglets Ordinaires / Titan
+            for (int c = 0; c < 2; c++) {
+                final int k = c;
+                button(left + 224 + c * 92, top + 24, 88, (skillCat == c ? (c == 1 ? "§5§l" : "§e") : "§7") + com.wavesurvivor.i18n.WSLang.t(c == 0 ? "ui.skillcat.normal" : "ui.skillcat.titan"), () -> {
+                    if (skillCat == k) return;
+                    skillCat = k;
+                    sel = -1;
+                    edit = null;
+                    editOldName = "";
+                    listScroll = 0;
+                    init();
+                }).setTooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c(c == 0 ? "ui.skillcat.normal_tip" : "ui.skillcat.titan_tip")));
+            }
+        }
 
         int by = top + H - 22;
         button(left + 6, by, 22, "§a+", this::createNew);
@@ -297,6 +328,7 @@ public class CustomEntityEditorScreen extends Screen {
         String q = search.trim().toLowerCase(java.util.Locale.ROOT);
         for (int i = 0; i < a.size(); i++) {
             if (!a.get(i).isJsonObject()) continue;
+            if (tab == 1 && titanType(HordeJson.str(a.get(i).getAsJsonObject(), "skillType", "")) != (skillCat == 1)) continue;   // sous-onglet
             if (q.isEmpty()) { out.add(i); continue; }
             JsonObject o = a.get(i).getAsJsonObject();
             String hay = (nameOf(o) + " " + HordeJson.str(o, "displayName", "") + " " + HordeJson.str(o, "skillType", "") + " "
@@ -538,7 +570,7 @@ public class CustomEntityEditorScreen extends Screen {
             if (!el.isJsonObject()) continue;
             JsonObject o = el.getAsJsonObject();
             String n = HordeJson.str(o, "skillName", "");
-            if (n.isEmpty()) continue;
+            if (n.isEmpty() || titanType(HordeJson.str(o, "skillType", ""))) continue;   // compétences du Titan : réservées au Titan
             boolean has = false;
             for (JsonElement x : sk) if (x.getAsString().equalsIgnoreCase(n)) has = true;
             String type = typeLabel(HordeJson.str(o, "skillType", "")).replaceAll("§.", "");
@@ -747,11 +779,12 @@ public class CustomEntityEditorScreen extends Screen {
             o.add("bossConfig", new JsonObject());
             o.add("skills", new JsonArray());
         } else {
-            o.addProperty("skillName", uniqueName("nouvelle_competence"));
-            o.addProperty("skillType", "gatling");
+            String nt = skillCat == 1 ? "titan_meteors" : "gatling";
+            o.addProperty("skillName", uniqueName(skillCat == 1 ? "titan_competence" : "nouvelle_competence"));
+            o.addProperty("skillType", nt);
             o.addProperty("description", "");
-            o.addProperty("cooldown", 5);
-            fillDefaults(o, "gatling");
+            if (skillCat != 1) o.addProperty("cooldown", 5);
+            fillDefaults(o, nt);
         }
         edit = o;
         editOldName = "";

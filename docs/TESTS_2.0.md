@@ -447,3 +447,24 @@ Commandes de test (opérateur) : `/ws rift chest` (mise en scène devant soi, co
 - [ ] Tourbillon dans le ciel et faisceau turquoise sur l'emplacement du coffre (près du Monolithe)
 - [ ] Le coffre descend lentement (~4 s) en tournant, spirale de portail
 - [ ] Atterrissage : onde de choc, son grave et cristallin, petite secousse, titre « Le Titan est vaincu » / « The Titan is defeated », 1 Clé du Titan par joueur présent
+
+## Éditeur de la Faille et compétences du Titan
+**Mise en page (éditeur de horde › Faille)**
+- [ ] 6 sous-onglets de même largeur (Départ, Siège, Titan, Compétences, Combat, Cinématiques), aucun texte coupé ou qui dépasse
+- [ ] Chaque page tient dans le panneau (rien sous le bord, le message « enregistrée » ne chevauche plus rien) ; les lignes trop longues passent à la ligne
+- [ ] Coffres roulette du Siège : ils disparaissent à l'arrivée du Titan
+
+**Catalogue (Entités & Compétences › Compétences)**
+- [ ] Sous-onglets « Ordinaires » / « ⚔ Titan » ; Titan = les 12 compétences (Météores, Traqueurs, Lave, Géant, Piétinement, Rocher, Regard, Rugissement, Charge, Poing, Frappe de bâtiment, Champions) avec leurs réglages
+- [ ] « + » dans le sous-onglet Titan crée une compétence Titan (liste des types limitée aux types Titan) ; les compétences Titan n'apparaissent pas dans les choix d'une entité ni d'une unité de horde
+- [ ] Entité « titan_champion » : squelette wither, équipement netherite, butin (émeraudes, Poussière de Faille) ; modifiable comme toute entité
+
+**Liste du Titan (éditeur de horde › Faille › Compétences)**
+- [ ] Liste par défaut affichée (marquée « liste par défaut ») ; modifier un poids ou une phase l'enregistre pour cette horde ; « ↺ Liste par défaut » la remet
+- [ ] « ＋ Ajouter » : compétences Titan en tête, puis toutes les compétences ordinaires ; ✖ retire
+- [ ] Clic sur le nom : réglages propres à ce Titan (nom en jaune quand modifié) ; 📖 ouvre la fiche dans le catalogue (enregistrer la horde avant)
+- [ ] En combat : seules les compétences débloquées à la phase en cours sortent, au poids ; retirer Charge / Poing / Champions les désactive
+- [ ] Compétence ordinaire (ex. Éruption, Gatling) : elle part du bord de l'île côté Titan, vers un joueur ; le Titan joue sa pose de lancer
+- [ ] `/ws rift skill <nom>` lance aussi une compétence de la liste (suggestions)
+- [ ] Champions : entité réglée dans « Titan — Champions » (titan_champion par défaut) ; ils portent l'équipement et lâchent le butin de la fiche ; nombre max respecté
+- [ ] Ancienne horde « La Faille » sans liste : même comportement qu'avant (la charge suit encore l'ancien réglage)

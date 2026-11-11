@@ -1871,7 +1871,7 @@ public class HordeEditorScreen extends Screen {
         flowWrap = true;   // les lignes trop longues passent à la ligne au lieu de déborder du panneau
         JsonObject r = HordeJson.obj(cd(), "rift");
         // 5 sous-onglets de même largeur, sur toute la largeur du panneau
-        String[] subs = {"ui.rift.sub_start", "ui.rift.sub_siege", "ui.rift.sub_titan", "ui.rift.sub_battle", "ui.rift.sub_meteors"};
+        String[] subs = {"ui.rift.sub_start", "ui.rift.sub_siege", "ui.rift.sub_titan", "ui.rift.sub_skills", "ui.rift.sub_battle", "ui.rift.sub_meteors"};
         int bw = (W - 20 - 4 * (subs.length - 1)) / subs.length;
         for (int i = 0; i < subs.length; i++) {
             final int k = i;
@@ -1882,8 +1882,9 @@ public class HordeEditorScreen extends Screen {
         switch (riftSub) {
             case 1 -> buildRiftSiege(r, x, y);
             case 2 -> buildRiftTitan(r, x, y);
-            case 3 -> buildRiftBattle(r, x, y);
-            case 4 -> buildRiftMeteors(r, x, y);
+            case 3 -> buildRiftSkills(r, x, y);
+            case 4 -> buildRiftBattle(r, x, y);
+            case 5 -> buildRiftMeteors(r, x, y);
             default -> buildRiftStart(r, x, y);
         }
     }
@@ -2061,33 +2062,10 @@ public class HordeEditorScreen extends Screen {
         fl(t("ui.rift.titan_gap"));
         fInt(26, HordeJson.num(r, "titanGap", 12), v -> r.addProperty("titanGap", Math.max(4, Math.min(120, v))));
         flow(x, next());
-        fToggle(120, t("ui.rift.charge_on"), r, "titanCharge", true);
-        fl(t("ui.rift.charge_interval"));
-        fInt(26, HordeJson.num(r, "titanChargeInterval", 60), v -> r.addProperty("titanChargeInterval", Math.max(10, Math.min(600, v))));
-        fl(t("ui.rift.charge_stun"));
-        fInt(22, HordeJson.num(r, "titanChargeStun", 6), v -> r.addProperty("titanChargeStun", Math.max(2, Math.min(60, v))));
-        fl(t("ui.rift.charge_melee"));
-        fInt(22, HordeJson.num(r, "titanChargeMelee", 10), v -> r.addProperty("titanChargeMelee", Math.max(2, Math.min(60, v))));
-        flow(x, next());
-        fl(t("ui.rift.charge_damage"));
-        fInt(26, HordeJson.num(r, "titanChargeDamage", 24), v -> r.addProperty("titanChargeDamage", Math.max(1, Math.min(500, v))));
-        fl(t("ui.rift.charge_reach"));
-        fInt(22, HordeJson.num(r, "titanChargeReach", 14), v -> r.addProperty("titanChargeReach", Math.max(4, Math.min(40, v))));
-        fl(t("ui.rift.melee_damage"));
-        fInt(26, HordeJson.num(r, "titanMeleeDamage", 18), v -> r.addProperty("titanMeleeDamage", Math.max(1, Math.min(500, v))));
-        fl(t("ui.rift.charge_cap"));
-        fInt(22, HordeJson.num(r, "titanChargeCapPercent", 15), v -> r.addProperty("titanChargeCapPercent", Math.max(1, Math.min(100, v))));
-        flow(x, next());
-        fl(t("ui.rift.monolith_hit"));
-        fInt(30, HordeJson.num(r, "titanMonolithDamage", 60), v -> r.addProperty("titanMonolithDamage", Math.max(0, Math.min(5000, v))));
         fl(t("ui.rift.window_s"));
         fInt(26, HordeJson.num(r, "titanWindowSeconds", 8), v -> r.addProperty("titanWindowSeconds", Math.max(0, Math.min(60, v))));
         fl(t("ui.rift.window_cap"));
         fInt(26, HordeJson.num(r, "titanWindowCapPercent", 8), v -> r.addProperty("titanWindowCapPercent", Math.max(1, Math.min(50, v))));
-        fl(t("ui.rift.avatar_pct"));
-        fInt(26, HordeJson.num(r, "titanAvatarPercent", 8), v -> r.addProperty("titanAvatarPercent", Math.max(1, Math.min(50, v))));
-        fl(t("ui.rift.avatar_hp"));
-        fInt(36, HordeJson.num(r, "titanAvatarHp", 250), v -> r.addProperty("titanAvatarHp", Math.max(10, Math.min(20000, v))));
         y = sec(x, next() + 2, "ui.rift.sec_engines");
         flow(x, y);
         fToggle(150, t("ui.rift.engines_on"), r, "engines", true);
@@ -2103,6 +2081,108 @@ public class HordeEditorScreen extends Screen {
         fInt(30, HordeJson.num(r, "ballistaReload1", 200), v -> r.addProperty("ballistaReload1", Math.max(20, Math.min(3000, v))));
         fInt(30, HordeJson.num(r, "ballistaReload2", 160), v -> r.addProperty("ballistaReload2", Math.max(20, Math.min(3000, v))));
         hint(x, next() + 2, t("ui.rift.hint_titan"));
+    }
+
+    /** Faille — compétences du Titan : défilement de la liste. */
+    private static int riftSkillScroll = 0;
+
+    /** Liste des compétences du Titan de cette horde (la liste par défaut si aucune n'est enregistrée). */
+    private JsonArray titanSkillList(JsonObject r, boolean materialize) {
+        if (r.has("titanSkills") && r.get("titanSkills").isJsonArray()) return r.getAsJsonArray("titanSkills");
+        JsonArray def = new com.google.gson.Gson().toJsonTree(com.wavesurvivor.horde.rift.TitanSkills.defaults()).getAsJsonArray();
+        if (materialize) r.add("titanSkills", def);
+        return def;
+    }
+
+    /** Faille — page « Compétences du Titan » : liste pondérée (poids, phase de déblocage), réglages propres (✎), fiche du catalogue (📖). */
+    private void buildRiftSkills(JsonObject r, int x, int y) {
+        boolean byDefault = !(r.has("titanSkills") && r.get("titanSkills").isJsonArray());
+        label(x, y, "§6§l" + t("ui.rift.sec_skills") + (byDefault ? "  §7" + t("ui.rift.skills_default") : ""));
+        y += 14;
+        int nameW = Math.min(200, W - 200);
+        int cx = x + nameW + 4;
+        label(cx + 26, y, "§7" + t("ui.rift.skills_weight"));
+        label(cx + 66, y, "§7" + t("ui.rift.skills_phase"));
+        y += 12;
+        JsonArray list = titanSkillList(r, false);
+        int rows = Math.max(3, (top + H - 46 - y) / 18);
+        riftSkillScroll = Math.max(0, Math.min(riftSkillScroll, Math.max(0, list.size() - rows)));
+        JsonObject ovAll = r.has("skillOverrides") && r.get("skillOverrides").isJsonObject() ? r.getAsJsonObject("skillOverrides") : new JsonObject();
+        for (int i = riftSkillScroll; i < Math.min(list.size(), riftSkillScroll + rows); i++) {
+            final int idx = i;
+            JsonObject en = list.get(i).isJsonObject() ? list.get(i).getAsJsonObject() : new JsonObject();
+            String name = HordeJson.str(en, "skill", "");
+            JsonObject def = skillDef(name);
+            String type = def == null ? "" : HordeJson.str(def, "skillType", "");
+            String shown = (def == null ? "§c⚠ " : ovAll.has(name) ? "§e✎ " : type.startsWith("titan_") ? "§d✎ " : "§b✎ ") + t(name);
+            if (font.width(shown) > nameW - 8) shown = font.plainSubstrByWidth(shown, nameW - 14) + "…";
+            Button nb = button(x, y - 1, nameW, shown, () -> { if (def != null) openTitanSkillOverrides(r, name); });
+            nb.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(def == null ? "§c" + com.wavesurvivor.i18n.WSLang.t("ui.rift.skills_missing", name)
+                    : unitSkillTip(name) + "\n§8" + t("ui.rift.skills_edit_tip"))));
+            button(cx, y - 1, 20, "📖", () -> {
+                if (dirty) { status = t("ui.rift.skills_save_first"); return; }
+                NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.EntityEditorPackets.Open("skill:" + name));
+            }).setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(t("ui.rift.skills_catalog_tip"))));
+            intBox(cx + 26, y, 30, HordeJson.num(en, "weight", 1), v -> titanSkillList(r, true).get(idx).getAsJsonObject().addProperty("weight", Math.max(0, Math.min(100, v))));
+            intBox(cx + 66, y, 22, HordeJson.num(en, "phase", 1), v -> titanSkillList(r, true).get(idx).getAsJsonObject().addProperty("phase", Math.max(1, Math.min(4, v))));
+            button(cx + 94, y - 1, 16, "§c✖", () -> {
+                titanSkillList(r, true).remove(idx);
+                changed();
+                init();
+            });
+            if (TITAN_CHARGE.equals(type)) label(cx + 116, y + 3, "§8" + t("ui.rift.skills_charge_note"));
+            y += 18;
+        }
+        if (list.size() > rows) {
+            button(x + W - 40, top + 106, 16, "▲", () -> { riftSkillScroll = Math.max(0, riftSkillScroll - rows); init(); }).active = riftSkillScroll > 0;
+            button(x + W - 40, top + 106 + 18 * (rows - 1), 16, "▼", () -> { riftSkillScroll += rows; init(); }).active = riftSkillScroll + rows < list.size();
+            label(x + W - 64, top + 106 + 9 * rows, "§7" + (riftSkillScroll / rows + 1) + "/" + ((list.size() + rows - 1) / rows));
+        }
+        int by = top + H - 40;
+        button(x, by, 150, t("ui.rift.skills_add"), () -> openTitanSkillPicker(r));
+        button(x + 156, by, 150, t("ui.rift.skills_reset"), () -> {
+            r.remove("titanSkills");
+            riftSkillScroll = 0;
+            changed();
+            init();
+        }).active = !byDefault;
+        labelWrap(x, by + 20, t("ui.rift.hint_skills"), W - 24);
+    }
+
+    private static final String TITAN_CHARGE = "titan_charge";
+
+    /** Ajouter une compétence au Titan : celles du Titan d'abord, puis toutes les compétences ordinaires du catalogue. */
+    private void openTitanSkillPicker(JsonObject r) {
+        List<String[]> entries = new ArrayList<>();
+        for (JsonElement el : skillDefs()) {
+            if (!el.isJsonObject()) continue;
+            String n = HordeJson.str(el.getAsJsonObject(), "skillName", "");
+            if (n.isEmpty()) continue;
+            String type = HordeJson.str(el.getAsJsonObject(), "skillType", "");
+            boolean titan = type.startsWith("titan_");
+            entries.add(new String[]{n, (titan ? "§5" : "§d") + t(n), (titan ? "0" : "1") + CustomEntityEditorScreen.typeLabel(type).replaceAll("§.", "")});
+        }
+        entries.sort((a, b) -> a[2].charAt(0) != b[2].charAt(0) ? Character.compare(a[2].charAt(0), b[2].charAt(0)) : a[1].compareToIgnoreCase(b[1]));
+        for (String[] e : entries) e[2] = e[2].substring(1);
+        minecraft.setScreen(new ListPickerScreen(this, t("ui.rift.skills_pick_title"), entries, "", n -> {
+            JsonObject en = new JsonObject();
+            en.addProperty("skill", n);
+            en.addProperty("weight", 1);
+            en.addProperty("phase", 1);
+            titanSkillList(r, true).add(en);
+            changed();
+        }, true, this::unitSkillTip));
+    }
+
+    /** Réglages de la compétence POUR CE TITAN seulement (même fenêtre que pour les unités) : stockés dans « skillOverrides » de la Faille. */
+    private void openTitanSkillOverrides(JsonObject r, String name) {
+        JsonObject def = skillDef(name);
+        if (def == null) return;
+        JsonObject cat = parent != null ? parent.skillCatalog : null;
+        JsonObject schema = cat != null && cat.has("schema") && cat.get("schema").isJsonObject() ? cat.getAsJsonObject("schema") : new JsonObject();
+        String type = HordeJson.str(def, "skillType", "");
+        JsonArray fields = schema.has(type) && schema.get(type).isJsonArray() ? schema.getAsJsonArray(type) : new JsonArray();
+        minecraft.setScreen(new SkillOverrideScreen(this, r, name, def, fields, this::changed));
     }
 
     /** Faille — page « Combat du Titan » : points faibles, vagues, bâtiments, île, émeraudes. */
@@ -2126,23 +2206,10 @@ public class HordeEditorScreen extends Screen {
         fInt(26, HordeJson.num(r, "titanWaveCap", 60), v -> r.addProperty("titanWaveCap", Math.max(5, Math.min(300, v))));
         y = sec(x, next() + 2, "ui.rift.sec_buildings");
         flow(x, y);
-        fl(t("ui.rift.build_damage"));
-        fInt(30, HordeJson.num(r, "titanBuildDamage", 300), v -> r.addProperty("titanBuildDamage", Math.max(1, Math.min(5000, v))));
-        fl(t("ui.rift.build_radius"));
-        fInt(22, HordeJson.num(r, "titanBuildRadius", 6), v -> r.addProperty("titanBuildRadius", Math.max(2, Math.min(20, v))));
         fl(t("ui.rift.ruin_pct"));
         fInt(26, HordeJson.num(r, "ruinRepairPercent", 50), v -> r.addProperty("ruinRepairPercent", Math.max(0, Math.min(200, v))));
         flow(x, next());
         fToggle(260, t("ui.rift.mobs_hit_buildings"), r, "monstersAttackBuildings", true);
-        y = sec(x, next() + 2, "ui.rift.sec_island_break");
-        flow(x, y);
-        fToggle(130, t("ui.rift.island_break"), r, "titanIslandBreak", true);
-        fl(t("ui.rift.break_depth"));
-        fInt(22, HordeJson.num(r, "titanBreakDepth", 7), v -> r.addProperty("titanBreakDepth", Math.max(2, Math.min(20, v))));
-        fl(t("ui.rift.rock_hits"));
-        fInt(22, HordeJson.num(r, "titanRockHits", 3), v -> r.addProperty("titanRockHits", Math.max(1, Math.min(30, v))));
-        fl(t("ui.rift.stomp_dmg"));
-        fInt(26, HordeJson.num(r, "titanStompDamage", 10), v -> r.addProperty("titanStompDamage", Math.max(1, Math.min(200, v))));
         y = sec(x, next() + 2, "ui.rift.sec_loot");
         flow(x, y);
         fl(t("ui.rift.emerald_min"));
@@ -2151,39 +2218,9 @@ public class HordeEditorScreen extends Screen {
         fInt(22, HordeJson.num(r, "emeraldMax", 2), v -> r.addProperty("emeraldMax", Math.max(0, Math.min(64, v))));
     }
 
-    /** Faille — page « Météores et cinématiques ». */
+    /** Faille — page « Cinématiques » (les météores sont maintenant une compétence du Titan, dans le catalogue). */
     private void buildRiftMeteors(JsonObject r, int x, int y) {
-        y = sec(x, y, "ui.rift.sec_meteors");
-        flow(x, y);
-        fl(t("ui.rift.meteor_blocks"));
-        fText(restW(), HordeJson.str(r, "meteorBlocks", "magma_block=3, blackstone=3, obsidian=2, crying_obsidian=1"), v -> r.addProperty("meteorBlocks", v));
-        flow(x, next());
-        fl(t("ui.rift.meteor_size"));
-        fDbl(30, HordeJson.dbl(r, "meteorSize", 3.0), v -> r.addProperty("meteorSize", Math.max(1.0, Math.min(12.0, v))));
-        fl(t("ui.rift.meteor_radius"));
-        fDbl(30, HordeJson.dbl(r, "meteorRadius", 6.0), v -> r.addProperty("meteorRadius", Math.max(2.0, Math.min(20.0, v))));
-        fl(t("ui.rift.meteor_damage"));
-        fInt(30, HordeJson.num(r, "meteorDamage", 12), v -> r.addProperty("meteorDamage", Math.max(1, Math.min(200, v))));
-        fl(t("ui.rift.meteor_base"));
-        fInt(26, HordeJson.num(r, "meteorBase", 3), v -> r.addProperty("meteorBase", Math.max(1, Math.min(30, v))));
-        fl(t("ui.rift.meteor_per_player"));
-        fInt(26, HordeJson.num(r, "meteorPerPlayer", 1), v -> r.addProperty("meteorPerPlayer", Math.max(0, Math.min(10, v))));
-        flow(x, next());
-        fl(t("ui.rift.meteor_delay"));
-        fInt(30, HordeJson.num(r, "meteorDelay", 50), v -> r.addProperty("meteorDelay", Math.max(10, Math.min(200, v))));
-        fl(t("ui.rift.meteor_fall"));
-        fInt(30, HordeJson.num(r, "meteorFall", 24), v -> r.addProperty("meteorFall", Math.max(8, Math.min(100, v))));
-        String tr = HordeJson.str(r, "meteorTrail", "flame");
-        fBtn(130, t("ui.rift.meteor_trail") + t("ui.rift.trail_" + tr), () -> {
-            String[] k = {"flame", "soul", "smoke"};
-            int i = 0;
-            for (int q = 0; q < k.length; q++) if (k[q].equals(tr)) i = q;
-            r.addProperty("meteorTrail", k[(i + 1) % k.length]);
-            changed();
-            init();
-        });
-        fToggle(140, t("ui.rift.meteor_crater"), r, "meteorCrater", true);
-        y = sec(x, next() + 2, "ui.rift.sec_fcine");
+        y = sec(x, y, "ui.rift.sec_fcine");
         flow(x, y);
         fToggle(150, t("ui.rift.fcine_on"), r, "fortressCine", true);
         fToggle(110, t("ui.rift.fcine_skip"), r, "fortressCineSkippable", true);
@@ -2206,7 +2243,6 @@ public class HordeEditorScreen extends Screen {
         fText(110, HordeJson.str(r, "titanCineName", ""), v -> r.addProperty("titanCineName", v));
         fl(t("ui.rift.cine_sub"));
         fText(Math.min(130, restW()), HordeJson.str(r, "titanCineSub", ""), v -> r.addProperty("titanCineSub", v));
-        hint(x, next() + 2, t("ui.rift.hint_meteors"));
     }
 
     private void buildInvasionSettings() {
@@ -2661,7 +2697,7 @@ public class HordeEditorScreen extends Screen {
         for (JsonElement el : skillDefs()) {
             if (!el.isJsonObject()) continue;
             String n = HordeJson.str(el.getAsJsonObject(), "skillName", "");
-            if (n.isEmpty()) continue;
+            if (n.isEmpty() || HordeJson.str(el.getAsJsonObject(), "skillType", "").startsWith("titan_")) continue;   // réservées au Titan
             boolean has = false;
             for (JsonElement h : have) if (h.getAsString().equalsIgnoreCase(n)) has = true;
             String type = CustomEntityEditorScreen.typeLabel(HordeJson.str(el.getAsJsonObject(), "skillType", "")).replaceAll("§.", "");
