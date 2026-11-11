@@ -195,6 +195,15 @@ public class ModEntities {
                     .clientTrackingRange(10)
                     .build("stone_brute"));
 
+    /** 2.0 — Le Dévoreur, Titan de la première Faille (modèle de Claude chat). Encombrement au repos ~3 × 10 blocs (avant agrandissement). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Devoreur>> DEVOREUR = ENTITIES.register("devoreur",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Devoreur>of(com.wavesurvivor.entity.Devoreur::new, MobCategory.MONSTER)
+                    .sized(3.0f, 10.0f)
+                    .fireImmune()
+                    .clientTrackingRange(32)
+                    .updateInterval(2)
+                    .build("devoreur"));
+
     /** Néantide : créature du néant insectoïde (modèle sur mesure, haute résolution). */
     public static final RegistryObject<EntityType<com.wavesurvivor.entity.Neantide>> NEANTIDE = ENTITIES.register("neantide",
             () -> EntityType.Builder.<com.wavesurvivor.entity.Neantide>of(com.wavesurvivor.entity.Neantide::new, MobCategory.MONSTER)
@@ -228,5 +237,6 @@ public class ModEntities {
         event.put(ROOTLING.get(), com.wavesurvivor.entity.Rootling.createAttributes().build());
         event.put(STONE_BRUTE.get(), com.wavesurvivor.entity.StoneBrute.createAttributes().build());
         event.put(NEANTIDE.get(), com.wavesurvivor.entity.Neantide.createAttributes().build());
+        event.put(DEVOREUR.get(), com.wavesurvivor.entity.Devoreur.createAttributes().build());
     }
 }
