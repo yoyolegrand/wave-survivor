@@ -303,7 +303,8 @@ public class Heritage {
         if (s == null) return;
         for (ServerPlayer p : s.getPlayerList().getPlayers()) {
             if (has(p, Branch.SURVIVOR, 1)) { // 4 cœurs d'Absorption pendant 30 s
-                p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.ABSORPTION, 600, 1, false, true));
+                // 2.0 : couche d'absorption ajoutée (plus l'effet vanilla, qui à sa fin retirait aussi l'Aube ou le Bouclier de Faille)
+                com.wavesurvivor.horde.benediction.AbsorptionLayers.give(p, com.wavesurvivor.horde.benediction.AbsorptionLayers.HERITAGE, 8f, 600);
             }
             if (has(p, Branch.SURVIVOR, 2)) {
                 p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION, 200, 1, false, true));

@@ -269,7 +269,7 @@ public class RiftRelics {
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !(e.player instanceof ServerPlayer p)) return;
-        trackShield(p);
+        com.wavesurvivor.horde.benediction.AbsorptionLayers.tick(p);   // couches d'absorption (Bouclier de Faille, Héritage Survivant 1)
         if (p.tickCount % 20 != 0) return;
         // 💜 Cœur : +% de PV max (le modificateur est remplacé quand le niveau change)
         double hp = heartHp(heart(p));
@@ -307,30 +307,12 @@ public class RiftRelics {
     }
 
     // ─── 🌌 Ensemble 4 pièces : Bouclier de Faille ───
-    // S'AJOUTE aux cœurs d'absorption de la bénédiction de l'Aube (jamais par l'effet ABSORPTION vanilla, qui remplace la valeur et la retire à
-    // sa fin). On mémorise ce qu'il en reste : il est consommé en premier ; au début de la vague suivante, le reste est retiré avant d'en redonner.
+    // Une couche d'absorption (voir AbsorptionLayers) : elle S'AJOUTE à l'Aube et à l'Héritage, est consommée en premier, et son reste est
+    // retiré au début de la vague suivante avant d'en redonner (jamais l'effet ABSORPTION vanilla).
 
-    /** Joueur → [reste du bouclier, absorption vue au dernier tick]. */
-    private static final Map<UUID, float[]> SHIELDS = new ConcurrentHashMap<>();
-
-    private static void trackShield(ServerPlayer p) {
-        float[] s = SHIELDS.get(p.getUUID());
-        if (s == null) return;
-        float cur = p.getAbsorptionAmount();
-        if (cur < s[1]) s[0] = Math.max(0f, s[0] - (s[1] - cur));   // absorption perdue : le bouclier part en premier
-        s[1] = cur;
-        if (s[0] <= 0f) SHIELDS.remove(p.getUUID());
-    }
-
-    /** Début de vague, AVANT la bénédiction de l'Aube : on retire ce qui reste du bouclier précédent (pas de cumul). */
+    /** Début de vague, AVANT la bénédiction de l'Aube : les couches de la vague précédente (Bouclier, Héritage) sont retirées (pas de cumul). */
     public static void shieldBeforeWave(MinecraftServer srv) {
-        if (srv == null) return;
-        for (ServerPlayer p : srv.getPlayerList().getPlayers()) {
-            float[] s = SHIELDS.remove(p.getUUID());
-            if (s == null) continue;
-            float cur = p.getAbsorptionAmount();
-            p.setAbsorptionAmount(Math.max(0f, cur - Math.min(s[0], cur)));
-        }
+        com.wavesurvivor.horde.benediction.AbsorptionLayers.clearWaveLayers(srv);
     }
 
     /** Début de vague, APRÈS la bénédiction de l'Aube : nouveau bouclier de 10 % des PV max, ajouté à l'absorption actuelle. */
@@ -340,9 +322,7 @@ public class RiftRelics {
             if (!p.isAlive() || p.isSpectator() || !RelicSets.has(p, RelicSets.Family.RIFT, 4)) continue;
             float add = p.getMaxHealth() * SHIELD;
             if (add <= 0f) continue;
-            float now = p.getAbsorptionAmount() + add;
-            p.setAbsorptionAmount(now);
-            SHIELDS.put(p.getUUID(), new float[]{add, now});
+            com.wavesurvivor.horde.benediction.AbsorptionLayers.give(p, com.wavesurvivor.horde.benediction.AbsorptionLayers.RIFT_SHIELD, add, -1);
             p.serverLevel().sendParticles(ParticleTypes.REVERSE_PORTAL, p.getX(), p.getY() + 1.0, p.getZ(), 30, 0.5, 0.8, 0.5, 0.05);
             p.displayClientMessage(Component.literal(WSLang.t("set.rift.shield_up", num(add / 2.0))), true);
         }
@@ -371,6 +351,6 @@ public class RiftRelics {
     @SubscribeEvent
     public void onLogout(net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent e) {
         HEART.remove(e.getEntity().getUUID());
-        SHIELDS.remove(e.getEntity().getUUID());
+        com.wavesurvivor.horde.benediction.AbsorptionLayers.forget(e.getEntity().getUUID());
     }
 }

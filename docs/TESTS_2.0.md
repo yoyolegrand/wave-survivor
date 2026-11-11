@@ -426,7 +426,7 @@ Commandes de test (opérateur) : `/ws rift chest` (mise en scène devant soi, co
 - [ ] 4 pièces, Bouclier de Faille : au début de chaque vague, +10 % des PV max en absorption, AJOUTÉ à la bénédiction de l'Aube (les deux s'additionnent)
 - [ ] Le bouclier ne s'accumule pas : vague suivante, le reste est retiré puis 10 % redonnés (jamais plus de 10 % + l'Aube)
 - [ ] Aussi au début de la Contre-offensive et à l'arrivée du Titan
-- [ ] À noter : l'Héritage Survivant 1 donne de l'Absorption par l'effet vanilla ; à sa fin il retire son montant et peut mordre sur ce qui reste du bouclier (signalé, pas corrigé)
+- [ ] Héritage Survivant 1 (4 cœurs, 30 s) : s'ajoute aussi à l'Aube et au Bouclier ; au bout de 30 s il ne retire que ce qui reste de SES cœurs (l'Aube et le Bouclier restent) ; pas de cumul d'une vague à l'autre ; plus d'icône d'effet Absorption
 
 **Légendaires**
 - [ ] Destin : bouton « 🃏 2 cartes (n) » en haut à droite du menu de bénédictions ; mode activé → « Prendre en plus » sur une carte, le menu reste ouvert sans elle, puis choix normal ; 1 fois par horde (I-II), 2 fois (III-IV)

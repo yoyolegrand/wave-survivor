@@ -1214,8 +1214,8 @@ public final class RiftManager {
     private static void startCounter(MinecraftServer server, ServerLevel rd, long now) {
         HordeConfigMultiData.RiftSettings rs = settings();
         phase = Phase.COUNTER;
+        com.wavesurvivor.item.RiftRelics.onWaveStart(server);              // Bouclier de Faille (ensemble 4 pièces), avant l'Héritage
         com.wavesurvivor.horde.renaissance.Heritage.onWaveStart(server);   // Survivant 1 / 2 au début de la Contre-offensive
-        com.wavesurvivor.item.RiftRelics.onWaveStart(server);              // Bouclier de Faille (ensemble 4 pièces)
         coreSpawned = false;
         captureSession(server, true);   // point de reprise : la Contre-offensive recommence avec tous ses catalyseurs
         BlockPos c = RiftFortress.center(siegeFinal);
@@ -1336,8 +1336,8 @@ public final class RiftManager {
         for (Entity e : gone) e.discard();
         phase = Phase.TITAN;
         titanWaveN = 0;
+        com.wavesurvivor.item.RiftRelics.onWaveStart(server);              // Bouclier de Faille (ensemble 4 pièces), avant l'Héritage
         com.wavesurvivor.horde.renaissance.Heritage.onWaveStart(server);   // Survivant 1 / 2 à l'arrivée du Titan
-        com.wavesurvivor.item.RiftRelics.onWaveStart(server);              // Bouclier de Faille (ensemble 4 pièces)
         RiftTitan.spawn(rd, settings(), playerCount(rd), siegeFinal);
     }
 
