@@ -90,7 +90,7 @@ public class RelicEffects {
 
     /** Ceinture de Plomb : à utiliser par les compétences qui poussent / attirent les joueurs. */
     public static boolean immovable(LivingEntity e) {
-        return hasRelic(e, ModItems.CEINTURE_PLOMB.get());
+        return hasRelic(e, ModItems.CEINTURE_PLOMB.get()) || hasDirect(e, ModItems.COURONNE_TITAN.get());   // 2.0 : Couronne du Titan, aucun recul
     }
 
     /** Relique qui immunise contre cet effet, ou null. */

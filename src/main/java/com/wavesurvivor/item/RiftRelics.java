@@ -82,6 +82,20 @@ public class RiftRelics {
     /** Cœur : bonus du coup renforcé (fixe). */
     public static final float HEART_BONUS = 0.25f;
 
+    /** Destin de la Faille : choix de bénédictions où l'on prend 2 cartes, par horde (1 aux niveaux I-II, 2 aux niveaux III-IV). */
+    public static int destinyUses(int lvl) { return lvl <= 0 ? 0 : lvl >= 3 ? 2 : 1; }
+
+    /** Couronne du Titan (fixe) : taille, portée d'attaque en plus. */
+    public static final double CROWN_SCALE = 1.25, CROWN_REACH = 1.5;
+
+    /** Couronne du Titan — Frappe de géant : part des dégâts infligée aux monstres à 2 blocs de la cible (20 / 30 / 40 / 50 %). */
+    public static double giantPart(int lvl) { return lvl <= 0 ? 0 : 0.20 * RelicEffects.mult(lvl); }
+
+    public static final double GIANT_RADIUS = 2.0;
+
+    public static int destiny(Player p) { return RelicEffects.uLevel(p, ModItems.DESTIN_FAILLE.get()); }
+    public static int crown(Player p) { return RelicEffects.uLevel(p, ModItems.COURONNE_TITAN.get()); }
+
     /** Ensemble 3 pièces : dégâts en plus contre les boss et les Titans. */
     public static final float SET3_BOSS = 0.15f;
 
@@ -136,7 +150,7 @@ public class RiftRelics {
         return e != null && (com.wavesurvivor.horde.boss.BossManager.isBoss(e.getUUID()) || e.getPersistentData().getBoolean("ws_rift_titan"));
     }
 
-    /** Aucun recul des ondes de choc (compétences de boss et du Titan) : Ceinture de Plomb, ensemble Faille 3 pièces, Couronne du Titan. */
+    /** Aucun recul des ondes de choc (compétences de boss et du Titan) : Ceinture de Plomb, Couronne du Titan (via immovable), ensemble Faille 3 pièces. */
     public static boolean shockImmune(LivingEntity e) {
         return RelicEffects.immovable(e) || (e instanceof Player p && RelicSets.has(p, RelicSets.Family.RIFT, 3));
     }
@@ -224,12 +238,33 @@ public class RiftRelics {
             }
         }
         if (mult != 1f) e.setAmount(e.getAmount() * mult);
+        // 👑 Couronne du Titan — Frappe de géant : un coup au corps à corps touche aussi les monstres à 2 blocs de la cible
+        int cl = crown(p);
+        if (cl > 0 && !giant && e.getSource().getDirectEntity() == p && p.level() instanceof ServerLevel sl) {
+            float part = (float) (e.getAmount() * giantPart(cl));
+            if (part > 0.05f) {
+                giant = true;
+                try {
+                    for (LivingEntity m : sl.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(GIANT_RADIUS),
+                            m -> m != target && m != p && m.isAlive() && m instanceof net.minecraft.world.entity.monster.Enemy)) {
+                        m.hurt(p.damageSources().playerAttack(p), part);
+                    }
+                    sl.sendParticles(ParticleTypes.SWEEP_ATTACK, target.getX(), target.getY() + target.getBbHeight() * 0.5, target.getZ(), 3, 0.8, 0.2, 0.8, 0);
+                } finally {
+                    giant = false;
+                }
+            }
+        }
     }
+
+    /** Frappe de géant en cours (les coups qu'elle porte ne la relancent pas). */
+    private static boolean giant = false;
 
     // ─── Bonus permanents (PV du Cœur, Chance de l'ensemble) et suivi du Bouclier ───
 
     private static final UUID HEART_HP_ID = UUID.fromString("5e2a7c31-0b4d-4f6e-9a18-3c7d2e8f1a01");
     private static final UUID SET_LUCK_ID = UUID.fromString("5e2a7c31-0b4d-4f6e-9a18-3c7d2e8f1a02");
+    private static final UUID CROWN_REACH_ID = UUID.fromString("5e2a7c31-0b4d-4f6e-9a18-3c7d2e8f1a03");
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent e) {
@@ -244,6 +279,22 @@ public class RiftRelics {
             if (cur != null && (hp <= 0 || Math.abs(cur.getAmount() - hp) > 1e-6)) mh.removeModifier(HEART_HP_ID);
             if (hp > 0 && mh.getModifier(HEART_HP_ID) == null) mh.addTransientModifier(new AttributeModifier(HEART_HP_ID, "ws_titan_heart", hp, AttributeModifier.Operation.MULTIPLY_TOTAL));
             if (p.getHealth() > p.getMaxHealth()) p.setHealth(p.getMaxHealth());
+        }
+        // 👑 Couronne du Titan : +1,5 bloc de portée d'attaque, taille +25 % (Pehkui, si installé), fixes à tous les niveaux
+        boolean crowned = crown(p) > 0;
+        AttributeInstance reach = p.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_REACH.get());
+        if (reach != null) {
+            boolean has = reach.getModifier(CROWN_REACH_ID) != null;
+            if (crowned && !has) reach.addTransientModifier(new AttributeModifier(CROWN_REACH_ID, "ws_titan_crown_reach", CROWN_REACH, AttributeModifier.Operation.ADDITION));
+            else if (!crowned && has) reach.removeModifier(CROWN_REACH_ID);
+        }
+        CompoundTag pd = persisted(p);
+        if (crowned && !pd.getBoolean("ws_crown_scaled")) {
+            com.wavesurvivor.compat.PehkuiCompat.setScale(p, CROWN_SCALE);
+            pd.putBoolean("ws_crown_scaled", true);
+        } else if (!crowned && pd.getBoolean("ws_crown_scaled")) {
+            com.wavesurvivor.compat.PehkuiCompat.setScale(p, 1.0);   // on ne remet que la taille donnée par la Couronne
+            pd.remove("ws_crown_scaled");
         }
         // 🌌 Ensemble 2 pièces : +1 Chance
         AttributeInstance luck = p.getAttribute(Attributes.LUCK);

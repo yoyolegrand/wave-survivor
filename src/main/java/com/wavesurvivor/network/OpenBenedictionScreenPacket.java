@@ -24,8 +24,15 @@ public class OpenBenedictionScreenPacket {
     private final int rerolls, bans;
     /** Bénédictions déjà obtenues (identifiant → niveau) : le menu peut afficher les bonus cumulés. */
     private final java.util.Map<String, Integer> owned;
+    /** 2.0 — Destin de la Faille : cartes « en plus » encore possibles cette horde. */
+    private final int extra;
 
     public OpenBenedictionScreenPacket(List<String> ids, int currentWave, float mult, int rerolls, int bans, java.util.Map<String, Integer> owned) {
+        this(ids, currentWave, mult, rerolls, bans, owned, 0);
+    }
+
+    public OpenBenedictionScreenPacket(List<String> ids, int currentWave, float mult, int rerolls, int bans, java.util.Map<String, Integer> owned, int extra) {
+        this.extra = extra;
         this.ids = ids;
         this.currentWave = currentWave;
         this.mult = mult;
@@ -44,6 +51,7 @@ public class OpenBenedictionScreenPacket {
         buf.writeVarInt(rerolls);
         buf.writeVarInt(bans);
         BlessingSummaryPacket.writeMap(buf, owned);
+        buf.writeVarInt(extra);
     }
 
     public static OpenBenedictionScreenPacket decode(FriendlyByteBuf buf) {
@@ -53,13 +61,17 @@ public class OpenBenedictionScreenPacket {
         int wave = buf.readInt();
         float mult = buf.readFloat();
         int rerolls = buf.readVarInt(), bans = buf.readVarInt();
-        return new OpenBenedictionScreenPacket(ids, wave, mult, rerolls, bans, BlessingSummaryPacket.readMap(buf));
+        java.util.Map<String, Integer> owned = BlessingSummaryPacket.readMap(buf);
+        return new OpenBenedictionScreenPacket(ids, wave, mult, rerolls, bans, owned, buf.readVarInt());
     }
 
     public static void handle(OpenBenedictionScreenPacket pkt, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                    () -> () -> ClientPacketHandler.openBenedictionScreen(pkt.ids, pkt.currentWave, pkt.mult, pkt.rerolls, pkt.bans, pkt.owned));
+                    () -> () -> {
+                        com.wavesurvivor.client.BenedictionClient.extra = pkt.extra;
+                        ClientPacketHandler.openBenedictionScreen(pkt.ids, pkt.currentWave, pkt.mult, pkt.rerolls, pkt.bans, pkt.owned);
+                    });
         });
         ctx.get().setPacketHandled(true);
     }

@@ -288,7 +288,7 @@ public class RogueUpgradeManager {
         PENDING.put(p.getUUID(), new Pending(new ArrayList<>(ids), wave));
         NetworkHandler.CHANNEL.send(
                 PacketDistributor.PLAYER.with(() -> p),
-                new OpenBenedictionScreenPacket(ids, wave, (float) difficultyMult(), rerollsLeft(p), bansLeft(p), levels(p)));
+                new OpenBenedictionScreenPacket(ids, wave, (float) difficultyMult(), rerollsLeft(p), bansLeft(p), levels(p), extraLeft(p)));
         // Multijoueur : le jeu ne se met pas en pause, le joueur est donc protégé pendant son choix (solo : pause côté client)
         if (BenedictionProtection.needed(p.getServer())) BenedictionProtection.protect(p);
     }
@@ -366,6 +366,31 @@ public class RogueUpgradeManager {
         BlessingDraw.maybeCurse(p, choices, free, pe.wave());
         sendMenu(p, choices, pe.wave());
         p.playNotifySound(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.6f, 1.2f);
+    }
+
+    /** 2.0 — Destin de la Faille : cartes « en plus » encore possibles pour cette horde. */
+    public static int extraLeft(ServerPlayer p) {
+        int uses = com.wavesurvivor.item.RiftRelics.destinyUses(com.wavesurvivor.item.RiftRelics.destiny(p));
+        if (uses <= 0) return 0;
+        return Math.max(0, uses - blessState(p, com.wavesurvivor.horde.HordeManager.get().getCurrentWave()).getInt("destinyUsed"));
+    }
+
+    /** 2.0 — Destin de la Faille : le joueur prend cette carte EN PLUS ; le menu reste ouvert avec les autres cartes, pour son choix normal. */
+    public static void takeExtra(ServerPlayer p, String id) {
+        Pending pe = PENDING.get(p.getUUID());
+        if (pe == null || id == null || !pe.ids().contains(id) || pe.ids().size() < 2) return;
+        RogueUpgrade u = RogueUpgradeRegistry.get(id);
+        if (u == null || extraLeft(p) <= 0) return;
+        CompoundTag st = blessState(p, pe.wave());
+        st.putInt("destinyUsed", st.getInt("destinyUsed") + 1);
+        addUpgrade(p, id);
+        com.wavesurvivor.horde.stats.PlayerStats.add(p, "blessings_picked", 1);
+        com.wavesurvivor.network.EventFeedPacket.toPlayer(p, Component.literal(com.wavesurvivor.i18n.WSLang.t("relic.destin_faille.taken", u.name())),
+                "wavesurvivor:destin_faille", com.wavesurvivor.network.EventFeedPacket.BLESSING, false);
+        List<String> rest = new ArrayList<>(pe.ids());
+        rest.remove(id);
+        sendMenu(p, rest, pe.wave());
+        p.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1f, 1.2f);
     }
 
     /** Bannissement : la catégorie de la carte ne sera plus proposée à ce joueur pendant la partie ; la carte est remplacée. */

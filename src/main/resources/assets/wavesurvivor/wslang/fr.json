@@ -4244,5 +4244,16 @@
   "set.rift.2": "+1 Chance",
   "set.rift.3": "+15 % de dégâts contre les boss et les Titans, aucun recul des ondes de choc",
   "set.rift.4": "Bouclier de Faille : au début de chaque vague, absorption de 10 % de tes PV max (s’ajoute à l’Aube)",
-  "set.rift.shield_up": "§b🌌 Bouclier de Faille : +{0} ❤ d’absorption"
+  "set.rift.shield_up": "§b🌌 Bouclier de Faille : +{0} ❤ d’absorption",
+  "relic.destin_faille.quote": "Deux chemins, et la Faille te laisse prendre les deux.",
+  "relic.destin_faille.parents": "Effets du Dé de la Faille et du Sceau du Titan (niv. {P})",
+  "relic.destin_faille.unique": "Unique : dans un choix de bénédictions, prends 2 cartes au lieu d’une ({U} fois par horde)",
+  "relic.destin_faille.btn": "2 cartes ({0})",
+  "relic.destin_faille.btn_tip": "Destin de la Faille : active ce mode, puis clique « Prendre en plus » sur une carte. Le menu reste ouvert pour ton choix habituel.",
+  "relic.destin_faille.take": "Prendre en plus",
+  "relic.destin_faille.taken": "🃏 Destin de la Faille : {0} prise en plus !",
+  "relic.couronne_titan.quote": "Porte-la, et le champ de bataille te paraîtra plus petit.",
+  "relic.couronne_titan.parents": "Effets du Trophée du Titan et du Cœur du Titan (niv. {P})",
+  "relic.couronne_titan.unique": "Unique : taille +25 % (Pehkui), +1,5 bloc de portée d’attaque, aucun recul",
+  "relic.couronne_titan.giant": "Frappe de géant : tes coups au corps à corps touchent aussi les monstres à 2 blocs de la cible ({20} % des dégâts)"
 }

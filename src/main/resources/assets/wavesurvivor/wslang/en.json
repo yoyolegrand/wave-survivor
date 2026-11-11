@@ -5005,5 +5005,16 @@
   "set.rift.2": "+1 Luck",
   "set.rift.3": "+15% damage against bosses and Titans, no knockback from shockwaves",
   "set.rift.4": "Rift Shield: at the start of each wave, absorption equal to 10% of your max health (stacks with Dawn)",
-  "set.rift.shield_up": "§b🌌 Rift Shield: +{0} ❤ absorption"
+  "set.rift.shield_up": "§b🌌 Rift Shield: +{0} ❤ absorption",
+  "relic.destin_faille.quote": "Two paths, and the Rift lets you walk both.",
+  "relic.destin_faille.parents": "Effects of the Rift Die and the Titan's Seal (lvl {P})",
+  "relic.destin_faille.unique": "Unique: in a blessing choice, take 2 cards instead of one ({U} time(s) per horde)",
+  "relic.destin_faille.btn": "2 cards ({0})",
+  "relic.destin_faille.btn_tip": "Rift Destiny: turn this mode on, then click \"Take extra\" on a card. The menu stays open for your usual pick.",
+  "relic.destin_faille.take": "Take extra",
+  "relic.destin_faille.taken": "🃏 Rift Destiny: {0} taken as an extra!",
+  "relic.couronne_titan.quote": "Wear it, and the battlefield will seem smaller.",
+  "relic.couronne_titan.parents": "Effects of the Titan Trophy and the Titan's Heart (lvl {P})",
+  "relic.couronne_titan.unique": "Unique: size +25% (Pehkui), +1.5 blocks of attack reach, no knockback",
+  "relic.couronne_titan.giant": "Giant Strike: your melee hits also strike monsters within 2 blocks of the target ({20}% of the damage)"
 }

@@ -8,6 +8,8 @@ public final class BenedictionClient {
 
     /** 1 = valeurs de base (Facile, Normal, hors horde). */
     public static volatile double mult = 1.0;
+    /** 2.0 — Destin de la Faille : cartes « en plus » encore possibles (reçu avec le menu). */
+    public static volatile int extra = 0;
 
     /** Statistiques du monde (1.8) : identifiant → [proposée, choisie, bannie, parties, victoires], reçues à l'ouverture du catalogue. */
     public static volatile java.util.Map<String, int[]> stats = new java.util.HashMap<>();

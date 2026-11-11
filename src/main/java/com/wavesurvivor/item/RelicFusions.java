@@ -39,7 +39,7 @@ public final class RelicFusions {
 
     private static List<Fusion> ALL;
 
-    /** Les 12 recettes (2 par famille). */
+    /** Les 14 recettes (2 par famille). */
     public static List<Fusion> all() {
         if (ALL == null) {
             ALL = List.of(
@@ -54,7 +54,10 @@ public final class RelicFusions {
                     new Fusion("ancre_colosse", ModItems.ANNEAU_ANCRAGE, ModItems.CEINTURE_PLOMB, ModItems.ANCRE_COLOSSE),
                     new Fusion("regard_veilleur", ModItems.OEIL_VEILLEUR, ModItems.TALISMAN_SOUFFLE, ModItems.REGARD_VEILLEUR),
                     new Fusion("sceau_marchand_roi", ModItems.LANGUE_ARGENT, ModItems.BOURSE_COLPORTEUR, ModItems.SCEAU_MARCHAND_ROI),
-                    new Fusion("trousseau_pilleur", ModItems.CLE_GARDIEN, ModItems.ANNEAU_PROSPECTEUR, ModItems.TROUSSEAU_PILLEUR));
+                    new Fusion("trousseau_pilleur", ModItems.CLE_GARDIEN, ModItems.ANNEAU_PROSPECTEUR, ModItems.TROUSSEAU_PILLEUR),
+                    // 2.0 — famille Faille
+                    new Fusion("destin_faille", ModItems.DE_FAILLE, ModItems.SCEAU_TITAN, ModItems.DESTIN_FAILLE),
+                    new Fusion("couronne_titan", ModItems.TROPHEE_TITAN, ModItems.COEUR_TITAN, ModItems.COURONNE_TITAN));
         }
         return ALL;
     }

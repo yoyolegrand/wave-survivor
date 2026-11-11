@@ -37,6 +37,8 @@ public class BenedictionSelectionScreen extends Screen {
     private final java.util.Map<String, Integer> owned;
     /** Famille choisie pour la prochaine relance : -1 = au hasard (gardée d'un menu à l'autre). */
     private static int familyIdx = -1;
+    /** 2.0 — Destin de la Faille : mode « prendre une carte en plus » activé. */
+    private static boolean EXTRA_MODE = false;
     /** Cartes gardées lors de la relance (1.8). Vidé à chaque nouvelle vague / choix. */
     private static final java.util.Set<String> LOCKED = new java.util.HashSet<>();
     private static int lockWave = -1;
@@ -93,9 +95,17 @@ public class BenedictionSelectionScreen extends Screen {
         for (int i = 0; i < n; i++) {
             RogueUpgrade upg = choices.get(i);
             int x = startX + i * (CARD_WIDTH + CARD_SPACING);
+            boolean extraPick = EXTRA_MODE && BenedictionClient.extra > 0 && n >= 2;
             Button b = Button.builder(
-                    Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.choisir")).withStyle(upg.color(), ChatFormatting.BOLD),
+                    extraPick ? Component.literal("§d🃏 " + com.wavesurvivor.i18n.WSLang.t("relic.destin_faille.take"))
+                            : Component.literal(com.wavesurvivor.i18n.WSLang.t("ui.choisir")).withStyle(upg.color(), ChatFormatting.BOLD),
                     btn -> {
+                        if (extraPick) {   // 2.0 — Destin de la Faille : carte prise en plus, le serveur renvoie le menu sans elle
+                            EXTRA_MODE = false;
+                            NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.BenedictionActionPacket(
+                                    com.wavesurvivor.network.BenedictionActionPacket.EXTRA, upg.id()));
+                            return;
+                        }
                         NetworkHandler.CHANNEL.sendToServer(new ChooseBenedictionPacket(upg.id()));
                         LOCKED.clear();
                         this.onClose();
@@ -128,6 +138,15 @@ public class BenedictionSelectionScreen extends Screen {
             lock.active = rerolls > 0 && n > 1 && (locked || LOCKED.size() < n - 1);
             addRenderableWidget(lock);
         }
+
+        // 2.0 — Destin de la Faille : bouton « 2 cartes » (en haut à droite) ; les boutons Choisir deviennent « Prendre en plus »
+        if (BenedictionClient.extra > 0 && n >= 2) {
+            addRenderableWidget(Button.builder(Component.literal((EXTRA_MODE ? "§d✔ " : "§d🃏 ") + com.wavesurvivor.i18n.WSLang.t("relic.destin_faille.btn", BenedictionClient.extra)),
+                            btn -> { EXTRA_MODE = !EXTRA_MODE; this.rebuildWidgets(); })
+                    .bounds(width - 168, 8, 160, 20)
+                    .tooltip(net.minecraft.client.gui.components.Tooltip.create(com.wavesurvivor.i18n.WSLang.c("relic.destin_faille.btn_tip")))
+                    .build());
+        } else EXTRA_MODE = false;
 
         // Rangée du bas : famille de la relance, relance, fermer
         int by = height - 30;

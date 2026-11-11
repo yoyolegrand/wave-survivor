@@ -406,6 +406,13 @@ public class ModItems {
             () -> new com.wavesurvivor.item.RiftRelicItem("trophee_titan", "Ceinture"));
     public static final RegistryObject<Item> COEUR_TITAN = ITEMS.register("coeur_titan",
             () -> new com.wavesurvivor.item.RiftRelicItem("coeur_titan", "Collier"));
+    /** 2.0 — Légendaires de la Faille (fusion à la Forge) : Destin de la Faille (Dé + Sceau), Couronne du Titan (Trophée + Cœur). */
+    public static final RegistryObject<Item> DESTIN_FAILLE = ITEMS.register("destin_faille",
+            () -> new com.wavesurvivor.item.RiftLegendaryItem("Charme", "relic.destin_faille.quote",
+                    "relic.destin_faille.parents", "relic.destin_faille.unique"));
+    public static final RegistryObject<Item> COURONNE_TITAN = ITEMS.register("couronne_titan",
+            () -> new com.wavesurvivor.item.RiftLegendaryItem("Tête", "relic.couronne_titan.quote",
+                    "relic.couronne_titan.parents", "relic.couronne_titan.unique", "relic.couronne_titan.giant"));
     /** 2.0 — Poussière de Faille (Coffre du Titan) : 48 → 1 Éclat de Faille à la Forge. */
     public static final RegistryObject<Item> POUSSIERE_FAILLE = ITEMS.register("poussiere_faille",
             () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)) {
@@ -477,6 +484,8 @@ public class ModItems {
                         output.accept(SCEAU_TITAN.get());
                         output.accept(TROPHEE_TITAN.get());
                         output.accept(COEUR_TITAN.get());
+                        output.accept(DESTIN_FAILLE.get());
+                        output.accept(COURONNE_TITAN.get());
                         output.accept(POUSSIERE_FAILLE.get());
                         // Mode Kingdom : défenses, remparts et pièges
                         output.accept(KINGDOM_ARCHER_TOWER_ITEM.get());
