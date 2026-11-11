@@ -4971,6 +4971,9 @@
   "ui.rift.chests": "Roulette chests",
   "rift.test.devoreur_ok": "Test: a still Devourer appears in front of you (/ws rift pose <pose> to animate it, /kill @e[type=wavesurvivor:devoreur] to remove it).",
   "rift.test.pose_unknown": "Unknown pose: {0} (idle, roar, beam, slam, throw, summon, hurt, charge, stunned).",
-  "rift.test.pose_none": "No Devourer within 200 blocks (and no active animated Titan).",
-  "rift.test.pose_ok": "Pose {0} ({1} ticks) played by {2} Devourer(s)."
+  "rift.test.pose_none": "No animated Titan (Devourer, Colossus) within 200 blocks.",
+  "rift.test.pose_ok": "Pose {0} ({1} ticks) played by {2} Titan(s).",
+  "ui.rift.titan_devoreur": "Devourer",
+  "ui.rift.titan_colosse": "Colossus",
+  "rift.test.colosse_ok": "Test: a still Rift Colossus appears in front of you (/ws rift pose <pose> to animate it, /kill @e[type=wavesurvivor:colosse] to remove it)."
 }

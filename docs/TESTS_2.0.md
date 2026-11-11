@@ -385,3 +385,12 @@ Test rapide : `/ws rift devoreur` (taille normale, ~10 blocs) ou `/ws rift devor
 - [ ] Visible de très loin (depuis le bout de l'île et le pont), pas de disparition en tournant la tête
 - [ ] Boîtes de contact : on touche le corps ET le haut (cou / tête qui avance vers l'île) ; cristaux de point faible collés à l'avant du corps
 - [ ] Éditeur : Titan par défaut « wavesurvivor:devoreur », échelle 5 ; une autre entité reste possible (vérifier l'échelle si la horde avait été enregistrée avec 27)
+
+## Le Colosse de la Faille (Titan)
+Test rapide : `/ws rift colosse` (~10 blocs) ou `/ws rift colosse 5` (~50 blocs) devant soi, puis `/ws rift pose <roar|beam|slam|throw|summon|hurt|charge|stunned|idle> [ticks]`. Retirer : `/kill @e[type=wavesurvivor:colosse]`. Comme Titan : éditeur Faille › Titan, bouton « Colosse » (entité + échelle 5).
+- [ ] Apparition (cinématique), nom « LE COLOSSE DE LA FAILLE » / « THE RIFT COLOSSUS »
+- [ ] Repos : respiration, bras qui se balancent, regard qui erre ; lueurs (veines, cœur, yeux, cristaux)
+- [ ] Chaque pose : ROAR (poings levés), BEAM (rayon depuis le cœur), SLAM (frappe à ~55 %), THROW (lance à ~86 %), SUMMON (bras en V), HURT (recule), CHARGE (fonce en courant à partir de 50 %), STUNNED (à genoux) ; genoux et poings ne s'enfoncent pas de plus d'un bloc dans le sol
+- [ ] En combat : mêmes poses que le Dévoreur pour chaque compétence ; pendant la charge, les jambes courent (pose CHARGE)
+- [ ] Visible de très loin ; boîtes de contact et cristaux sur l'avant du corps
+- [ ] Le Dévoreur reste le Titan par défaut ; le bouton « Dévoreur » de l'éditeur le remet (échelle 5)

@@ -204,6 +204,15 @@ public class ModEntities {
                     .updateInterval(2)
                     .build("devoreur"));
 
+    /** 2.0 — Le Colosse de la Faille, Titan (modèle de Claude chat). Encombrement au repos ~9 × 10,5 blocs (avant agrandissement). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Colosse>> COLOSSE = ENTITIES.register("colosse",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Colosse>of(com.wavesurvivor.entity.Colosse::new, MobCategory.MONSTER)
+                    .sized(9.0f, 10.5f)
+                    .fireImmune()
+                    .clientTrackingRange(32)
+                    .updateInterval(2)
+                    .build("colosse"));
+
     /** Néantide : créature du néant insectoïde (modèle sur mesure, haute résolution). */
     public static final RegistryObject<EntityType<com.wavesurvivor.entity.Neantide>> NEANTIDE = ENTITIES.register("neantide",
             () -> EntityType.Builder.<com.wavesurvivor.entity.Neantide>of(com.wavesurvivor.entity.Neantide::new, MobCategory.MONSTER)
@@ -237,6 +246,7 @@ public class ModEntities {
         event.put(ROOTLING.get(), com.wavesurvivor.entity.Rootling.createAttributes().build());
         event.put(STONE_BRUTE.get(), com.wavesurvivor.entity.StoneBrute.createAttributes().build());
         event.put(NEANTIDE.get(), com.wavesurvivor.entity.Neantide.createAttributes().build());
-        event.put(DEVOREUR.get(), com.wavesurvivor.entity.Devoreur.createAttributes().build());
+        event.put(DEVOREUR.get(), com.wavesurvivor.entity.RiftTitanEntity.createAttributes().build());
+        event.put(COLOSSE.get(), com.wavesurvivor.entity.RiftTitanEntity.createAttributes().build());
     }
 }

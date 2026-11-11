@@ -114,7 +114,7 @@ final class RiftTitan {
 
     /** Pose de compétence (purement visuelle) si le Titan a un modèle animé (le Dévoreur) ; sans effet sinon. */
     private static void pose(com.wavesurvivor.entity.TitanAnimated.Pose p, int ticks) {
-        if (titan instanceof com.wavesurvivor.entity.Devoreur d) d.playPose(p, ticks);
+        if (titan instanceof com.wavesurvivor.entity.RiftTitanEntity d) d.playPose(p, ticks);   // Dévoreur, Colosse…
     }
 
     /**
@@ -427,7 +427,7 @@ final class RiftTitan {
 
     /** Test : pose jouée par le Titan actif (s'il est animé). @return faux s'il n'y en a pas */
     static boolean debugPose(com.wavesurvivor.entity.TitanAnimated.Pose p, int ticks) {
-        if (!(titan instanceof com.wavesurvivor.entity.Devoreur d) || dead) return false;
+        if (!(titan instanceof com.wavesurvivor.entity.RiftTitanEntity d) || dead) return false;
         d.playPose(p, ticks);
         return true;
     }
