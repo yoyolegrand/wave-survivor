@@ -132,6 +132,21 @@ public class HordeCommand {
                 // La Faille (2.0, opérateurs)
                 .then(com.wavesurvivor.horde.rift.RiftCommand.build())
                 .then(com.wavesurvivor.horde.skill.SkillTestCommand.build())
+                // 2.0 — test du Lancer de rocher du Stone Brute (opérateurs)
+                .then(Commands.literal("brute").requires(src -> src.hasPermission(2))
+                        .then(Commands.literal("throw").executes(ctx -> {
+                            net.minecraft.server.level.ServerPlayer p = ctx.getSource().getPlayerOrException();
+                            var list = p.serverLevel().getEntitiesOfClass(com.wavesurvivor.entity.StoneBrute.class, p.getBoundingBox().inflate(32));
+                            list.sort(java.util.Comparator.comparingDouble(b -> b.distanceToSqr(p)));
+                            for (var b : list) {
+                                if (b.startThrow(p)) {
+                                    ctx.getSource().sendSuccess(() -> net.minecraft.network.chat.Component.literal(com.wavesurvivor.i18n.WSLang.t("brute.test.throw")), false);
+                                    return 1;
+                                }
+                            }
+                            ctx.getSource().sendFailure(net.minecraft.network.chat.Component.literal(com.wavesurvivor.i18n.WSLang.t("brute.test.none")));
+                            return 0;
+                        })))
                 // Mesure de la performance pendant les vagues (opérateurs)
                 .then(com.wavesurvivor.horde.HordePerf.build())
                 // Arènes toutes faites : pose de test (opérateurs)

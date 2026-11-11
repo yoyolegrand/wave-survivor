@@ -468,3 +468,14 @@ Commandes de test (opérateur) : `/ws rift chest` (mise en scène devant soi, co
 - [ ] `/ws rift skill <nom>` lance aussi une compétence de la liste (suggestions)
 - [ ] Champions : entité réglée dans « Titan — Champions » (titan_champion par défaut) ; ils portent l'équipement et lâchent le butin de la fiche ; nombre max respecté
 - [ ] Ancienne horde « La Faille » sans liste : même comportement qu'avant (la charge suit encore l'ancien réglage)
+
+## Stone Brute : refonte visuelle (Claude chat) et Lancer de rocher
+Test rapide : faire apparaître un Stone Brute (œuf), s'éloigner de 7 à 20 blocs en restant visible, ou `/ws brute throw` (le Stone Brute le plus proche, à 32 blocs, lance tout de suite sur vous).
+- [ ] Nouveau modèle : tête basse, arcade unique, long nez, grand poitrail, taille étroite, longs bras, lianes (pixels transparents bien transparents), cristaux de souillure (épaule gauche), fleur fanée qui oscille (épaule droite), mousse ; cœur et fissures roses lumineux dans le noir
+- [ ] Marche lourde, respiration, tête qui suit la cible ; Frappe écrasante inchangée (poing levé, projette en l'air) ; boîte de collision et ombre correctes
+- [ ] Lancer : il s'arrête, se baisse et arrache le rocher (terre et pierre moussue à ses pieds, son de pierre qui se brise), le soulève au-dessus de sa tête, le lâche à ~70 % de l'animation
+- [ ] Rocher de pierre moussue en parabole qui tourne sur lui-même, traînée de pierre ; il éclate à l'impact (aucun bloc posé)
+- [ ] Impact : 8 dégâts sur 2,5 blocs (×1,25 Difficile, ×1,5 Cauchemar), Lenteur II 3 s, éclats de pierre et poussière rose
+- [ ] Déclenchement : seulement entre 7 et 20 blocs avec la cible en vue, au plus toutes les 12 s, jamais pendant une Frappe écrasante ; pas de lancer sur un joueur en créatif
+- [ ] Peau de pierre toujours active (gros coups amortis)
+- [ ] Codex (page du Sanctuaire) : section « Le Stone Brute » FR / EN
