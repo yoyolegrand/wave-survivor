@@ -4348,5 +4348,8 @@
   "Charme ou Bague": "Charme ou Bague",
   "brute.skill.boulder_toss": "Lancer de rocher : arrache un rocher et le lance sur les ennemis éloignés (dégâts de zone, Lenteur).",
   "brute.test.throw": "Test : le Stone Brute le plus proche lance son rocher sur vous.",
-  "brute.test.none": "Aucun Stone Brute disponible à moins de 32 blocs (ou il lance déjà)."
+  "brute.test.none": "Aucun Stone Brute disponible à moins de 32 blocs (ou il lance déjà).",
+  "rift.test.sky_now": "Ciel de la Faille : phase « {0} ».",
+  "rift.test.sky_set": "Test : ciel de la Faille réglé sur « {0} » (fondu de 5 s). « /ws rift sky auto » revient à la phase réelle.",
+  "rift.test.sky_bad": "Phase inconnue : horde, siege, contre, titan, victoire ou auto."
 }

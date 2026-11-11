@@ -69,6 +69,10 @@ public final class RiftManager {
     // ─── Déroulement (jalon 2 : phase Horde) ───
     private enum Phase { NONE, PORTAL, LOBBY, HORDE, INTERLUDE, SIEGE, COUNTER, TITAN, ENDING }
     private static Phase phase = Phase.NONE;
+    /** 2.0 — Ciel de la Faille : phase envoyée aux clients (horde, siege, contre, titan, victoire), victoire obtenue, forçage de test. */
+    private static String sky = "horde";
+    private static boolean skyWon = false;
+    private static String skyForced = null;
     private static long startAt = -1, endAt = -1;
     private static int lastWave;
     /** Joueurs inscrits au départ de la Horde (les autres, arrivés en cours de route, attendent la vague suivante). */
@@ -320,6 +324,9 @@ public final class RiftManager {
         RiftSession.discard(server);   // fin de la Faille : plus rien à reprendre (sauf à la fermeture du serveur)
         resuming = null;
         phase = Phase.NONE;
+        sky = "horde";
+        skyWon = false;
+        skyForced = null;
         if (HordeManager.get().isRunning()) HordeManager.get().stopSilently(); // Horde, Siège, ou royaume en veille (Contre-offensive, Titan)
         com.wavesurvivor.altar.AltarDefense.onHordeEnd(server, false);
         com.wavesurvivor.horde.benediction.RogueUpgradeManager.clearAllPlayers(server); // fin de la Faille : les bénédictions se dissipent
@@ -1513,6 +1520,7 @@ public final class RiftManager {
 
     private static void toEnding(MinecraftServer server, ServerLevel rd, boolean victory) {
         phase = Phase.ENDING;
+        if (victory) skyWon = true;   // ciel : la Faille se referme
         // XP de Maîtrise des rôles du Kingdom (Siège, Contre-offensive, Titan) : versée ici, avant que le royaume en veille soit retiré
         com.wavesurvivor.horde.kingdom.vocation.VocationXp.finish(server, victory);
         if (HordeManager.get().isRunning() && com.wavesurvivor.horde.kingdom.KingdomManager.isActive()) HordeManager.get().stopSilently(); // royaume en veille : boutique et défenses retirées avec la partie
@@ -1616,6 +1624,7 @@ public final class RiftManager {
         MinecraftServer server = e.getServer();
         long now = server.getTickCount();
         flow(server, now);
+        syncSky(server);
         for (int i = DUE_KEYS.size() - 1; i >= 0; i--) {
             if (now >= DUE_KEYS.get(i)[0]) {
                 Runnable r = DUE_TASKS.remove(i);
@@ -1732,7 +1741,57 @@ public final class RiftManager {
     public void onLogin(PlayerEvent.PlayerLoggedInEvent e) {
         if (!(e.getEntity() instanceof ServerPlayer p) || p.getServer() == null) return;
         if (p.level().dimension() == RIFT_DIM && !active) sendHome(p);
+        else if (p.level().dimension() == RIFT_DIM) sendSky(p, true);   // ciel de la phase en cours, sans fondu
     }
+
+    /** Arrivée dans la Faille : le ciel de la phase en cours tout de suite, sans fondu. */
+    @SubscribeEvent
+    public void onChangeDim(PlayerEvent.PlayerChangedDimensionEvent e) {
+        if (e.getEntity() instanceof ServerPlayer p && e.getTo() == RIFT_DIM) sendSky(p, true);
+    }
+
+    // ─── 2.0 : ciel de la Faille ───
+
+    /** Phase du ciel voulue pour la phase de la Faille (entracte et fin sans victoire : on garde le ciel en place). */
+    private static String skyWanted() {
+        return switch (phase) {
+            case SIEGE -> "siege";
+            case COUNTER -> "contre";
+            case TITAN -> "titan";
+            case ENDING -> skyWon ? "victoire" : sky;
+            case INTERLUDE -> sky;
+            default -> "horde";
+        };
+    }
+
+    /** Appelé à chaque tick : envoie la nouvelle phase du ciel (avec fondu) aux joueurs de la Faille quand elle change. */
+    private static void syncSky(MinecraftServer server) {
+        String w = skyWanted();
+        if (w.equals(sky)) return;
+        sky = w;
+        if (skyForced != null) return;   // test en cours : /ws rift sky auto rend la main
+        ServerLevel rd = server.getLevel(RIFT_DIM);
+        if (rd != null) for (ServerPlayer p : rd.players()) sendSky(p, false);
+    }
+
+    /** Envoie la phase du ciel à un joueur (instant = sans fondu, à l'arrivée). */
+    public static void sendSky(ServerPlayer p, boolean instant) {
+        com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                new com.wavesurvivor.network.RiftSkyPacket(skyNow(), instant, (float) settings().skyRiftYaw));
+    }
+
+    /** Test (/ws rift sky) : force une phase du ciel (null = revenir à la phase réelle), avec fondu, pour les joueurs de la Faille et {@code extra}. */
+    public static void forceSky(MinecraftServer server, String ph, ServerPlayer extra) {
+        skyForced = ph;
+        ServerLevel rd = server.getLevel(RIFT_DIM);
+        java.util.Set<ServerPlayer> to = new java.util.LinkedHashSet<>();
+        if (rd != null) to.addAll(rd.players());
+        if (extra != null) to.add(extra);
+        for (ServerPlayer p : to) sendSky(p, false);
+    }
+
+    /** Phase du ciel affichée (forcée en test, sinon réelle). */
+    public static String skyNow() { return skyForced != null ? skyForced : sky; }
 
     /** Après une mort, le vanilla le fait réapparaître ailleurs : on oublie le retour mémorisé. */
     @SubscribeEvent

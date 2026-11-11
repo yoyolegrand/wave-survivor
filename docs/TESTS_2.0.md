@@ -479,3 +479,16 @@ Test rapide : faire apparaître un Stone Brute (œuf), s'éloigner de 7 à 20 bl
 - [ ] Déclenchement : seulement entre 7 et 20 blocs avec la cible en vue, au plus toutes les 12 s, jamais pendant une Frappe écrasante ; pas de lancer sur un joueur en créatif
 - [ ] Peau de pierre toujours active (gros coups amortis)
 - [ ] Codex (page du Sanctuaire) : section « Le Stone Brute » FR / EN
+## Ciel de la Faille (textures de Claude chat)
+Test rapide : dans la Faille, `/ws rift sky <horde|siege|contre|titan|victoire>` force une phase (fondu de 5 s), `/ws rift sky auto` revient à la phase réelle, `/ws rift sky` affiche la phase.
+- [ ] Plus de ciel de l'End : fond en cube (nébuleuse, étoiles, îles lointaines, vide en bas), aucune couture visible entre les faces, rien de déformé en regardant en haut / en bas
+- [ ] Aurores : anneau entre ~18° et 50° au-dessus de l'horizon, couleur de la phase, qui défile doucement (plus vite en Contre-offensive)
+- [ ] La Faille : fixe dans le ciel côté Titan (au sud), ne suit pas le regard, pulse lentement ; elle tombe bien sur la lueur du fond
+- [ ] Les 5 phases : horde (turquoise), siege (violet), contre (turquoise vif), titan (rouge rosé), victoire (Faille presque fermée, ciel plus clair)
+- [ ] Fondu de 5 s entre deux phases (fond, aurores, Faille et brouillard) ; pas de saut brusque
+- [ ] Partie réelle : le ciel suit Horde → Siège → Contre-offensive → Titan → Victoire (mort du Titan) ; l'entracte garde le ciel de la phase précédente
+- [ ] Un joueur qui arrive (portail, reconnexion) voit tout de suite le bon ciel, sans fondu
+- [ ] Brouillard (horizon, au loin) teinté selon la phase
+- [ ] Biome « Faille » : poussière de portail dans l'air, ambiance de grotte de temps en temps
+- [ ] Option : `config/wavesurvivor/client_options.json` › `{"riftSky": false}` = fond Horde seul, sans aurores ni Faille ni fondu (relu en changeant de monde)
+- [ ] Performances correctes (FPS) ; distance de rendu minimale (2 chunks) : le ciel ne se coupe pas

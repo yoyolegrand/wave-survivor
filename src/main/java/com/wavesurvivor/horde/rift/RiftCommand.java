@@ -36,6 +36,11 @@ public final class RiftCommand {
                 .then(Commands.literal("chest").executes(ctx -> chest(ctx.getSource(), false))
                         .then(Commands.literal("place").executes(ctx -> chest(ctx.getSource(), true))))
                 .then(Commands.literal("relics").executes(ctx -> relics(ctx.getSource())))
+                .then(Commands.literal("sky").executes(ctx -> sky(ctx.getSource(), null))
+                        .then(Commands.argument("phase", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(
+                                        java.util.List.of("horde", "siege", "contre", "titan", "victoire", "auto"), b))
+                                .executes(ctx -> sky(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "phase")))))
                 .then(Commands.literal("gauge").then(Commands.argument("value", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0, 100))
                         .executes(ctx -> gauge(ctx.getSource(), com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "value")))))
                 .then(Commands.literal("devoreur").executes(ctx -> titan(ctx.getSource(), 1.0, "devoreur"))
@@ -121,6 +126,24 @@ public final class RiftCommand {
         }
         net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.POUSSIERE_FAILLE.get(), 48));
         src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.relics_given")), false);
+        return 1;
+    }
+
+    /** Test (2.0) : force une phase du ciel de la Faille (« auto » = phase réelle ; sans argument : affiche la phase). */
+    private static int sky(CommandSourceStack src, String ph) {
+        if (ph == null) {
+            src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.sky_now", RiftManager.skyNow())), false);
+            return 1;
+        }
+        String k = ph.toLowerCase(java.util.Locale.ROOT);
+        if (!java.util.List.of("horde", "siege", "contre", "titan", "victoire", "auto").contains(k)) {
+            src.sendFailure(Component.literal(WSLang.t("rift.test.sky_bad")));
+            return 0;
+        }
+        RiftManager.forceSky(src.getServer(), k.equals("auto") ? null : k,
+                src.getEntity() instanceof net.minecraft.server.level.ServerPlayer sp ? sp : null);
+        String shown = RiftManager.skyNow();
+        src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.sky_set", shown)), false);
         return 1;
     }
 

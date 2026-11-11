@@ -246,6 +246,10 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, ReadyPromptPacket.class,
                 ReadyPromptPacket::encode, ReadyPromptPacket::decode, ReadyPromptPacket::handle);
 
+        // Ciel de la Faille (2.0) : serveur → client
+        CHANNEL.registerMessage(id++, RiftSkyPacket.class,
+                RiftSkyPacket::encode, RiftSkyPacket::decode, RiftSkyPacket::handle);
+
         WaveSurvivorMod.LOGGER.info("[Network] Channel 'main' enregistré (protocol v{}, {} packets)",
                 PROTOCOL_VERSION, id);
     }

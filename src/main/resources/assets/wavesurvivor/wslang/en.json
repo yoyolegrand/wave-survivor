@@ -5109,5 +5109,8 @@
   "Charme ou Bague": "Charm or Ring",
   "brute.skill.boulder_toss": "Boulder Toss: rips a boulder from the ground and hurls it at distant enemies (area damage, Slowness).",
   "brute.test.throw": "Test: the nearest Stone Brute hurls its boulder at you.",
-  "brute.test.none": "No available Stone Brute within 32 blocks (or it is already throwing)."
+  "brute.test.none": "No available Stone Brute within 32 blocks (or it is already throwing).",
+  "rift.test.sky_now": "Rift sky: phase \"{0}\".",
+  "rift.test.sky_set": "Test: Rift sky set to \"{0}\" (5 s fade). \"/ws rift sky auto\" goes back to the real phase.",
+  "rift.test.sky_bad": "Unknown phase: horde, siege, contre, titan, victoire or auto."
 }

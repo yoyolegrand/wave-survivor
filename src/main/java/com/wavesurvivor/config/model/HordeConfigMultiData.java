@@ -507,6 +507,8 @@ public class HordeConfigMultiData {
         /** Champions invoqués : entité (entité du catalogue ou identifiant, ex. minecraft:wither_skeleton) et nombre maximal en même temps. */
         @SerializedName("titanAvatarEntity") public String titanAvatarEntity = "titan_champion";
         @SerializedName("titanAvatarMax") public int titanAvatarMax = 4;
+        /** 2.0 — Ciel : lacet de la Faille dans le ciel, en degrés (0 = sud, côté du Titan ; 90 = est). */
+        @SerializedName("skyRiftYaw") public double skyRiftYaw = 0.0;
         /** Liste des compétences du Titan (null = liste par défaut, voir TitanSkills) et réglages propres à ce Titan par compétence. */
         @SerializedName("titanSkills") public java.util.List<TitanSkillEntry> titanSkills;
         @SerializedName("skillOverrides") public java.util.Map<String, com.google.gson.JsonObject> skillOverrides;
