@@ -267,6 +267,22 @@ public class TitanChest {
         }
     }
 
+    /** Test (/ws rift chest) : la mise en scène complète devant le joueur, hors de la Faille (le « Titan » est 20 blocs plus loin). */
+    public static void testVictory(ServerPlayer p) {
+        var look = p.getLookAngle().multiply(1, 0, 1).normalize();
+        BlockPos at = BlockPos.containing(p.getX() + look.x * 5, p.getY(), p.getZ() + look.z * 5);
+        Cinematic.start(p.serverLevel(), new double[]{p.getX() + look.x * 20, p.getY(), p.getZ() + look.z * 20, 30}, at);
+    }
+
+    /** Test (/ws rift chest place) : le Coffre du Titan posé tout de suite devant le joueur, avec une clé. */
+    public static boolean testPlace(ServerPlayer p) {
+        var look = p.getLookAngle().multiply(1, 0, 1).normalize();
+        BlockPos at = BlockPos.containing(p.getX() + look.x * 4, p.getY(), p.getZ() + look.z * 4);
+        if (!place(p.serverLevel(), at, p.getDirection().getOpposite())) return false;
+        giveKeys(List.of(p));
+        return true;
+    }
+
     /** Lance la mise en scène de la victoire (Titan vaincu) : le coffre descend de la Faille près du centre de l'île. */
     public static void startVictory(ServerLevel rd, double[] titan) {
         Cinematic.start(rd, titan);
@@ -288,15 +304,23 @@ public class TitanChest {
         static BlockPos at;
         static net.minecraft.world.entity.Display.ItemDisplay disp;
 
+        /** Test (commande) : la mise en scène se joue hors de la Faille, à l'emplacement donné. */
+        static boolean test = false;
+
         static void start(ServerLevel rd, double[] titan) {
+            start(rd, titan, null);
+        }
+
+        static void start(ServerLevel rd, double[] titan, BlockPos forced) {
             cancel();
+            test = forced != null;
             l = rd;
             t0 = rd.getServer().getTickCount();
             tx = titan[0];
             ty = titan[1];
             tz = titan[2];
             th = Math.max(10, titan[3]);
-            at = spot(rd);
+            at = forced != null ? forced : spot(rd);
         }
 
         /** Emplacement du coffre : près du Monolithe (centre de l'île), sur un sol encore debout. */
@@ -319,7 +343,7 @@ public class TitanChest {
 
         static void tick(MinecraftServer server, long now) {
             if (t0 < 0 || l == null || at == null) return;
-            if (!RiftManager.isActive()) { cancel(); return; }
+            if (!test && !RiftManager.isActive()) { cancel(); return; }
             long t = now - t0;
             double cx = at.getX() + 0.5, cz = at.getZ() + 0.5, gy = at.getY();
             double s = scale();

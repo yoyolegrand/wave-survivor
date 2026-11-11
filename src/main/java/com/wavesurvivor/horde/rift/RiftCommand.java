@@ -32,6 +32,12 @@ public final class RiftCommand {
                         .executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), true))
                         .then(Commands.literal("fast").executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), false)))))
                 .then(Commands.literal("catalysts").executes(ctx -> catalysts(ctx.getSource())))
+                // 2.0 — Récompenses du Titan : mise en scène + coffre, coffre seul, reliques de la Faille, Jauge
+                .then(Commands.literal("chest").executes(ctx -> chest(ctx.getSource(), false))
+                        .then(Commands.literal("place").executes(ctx -> chest(ctx.getSource(), true))))
+                .then(Commands.literal("relics").executes(ctx -> relics(ctx.getSource())))
+                .then(Commands.literal("gauge").then(Commands.argument("value", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0, 100))
+                        .executes(ctx -> gauge(ctx.getSource(), com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "value")))))
                 .then(Commands.literal("devoreur").executes(ctx -> titan(ctx.getSource(), 1.0, "devoreur"))
                         .then(Commands.argument("scale", com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0.2, 20))
                                 .executes(ctx -> titan(ctx.getSource(), com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx, "scale"), "devoreur"))))
@@ -86,6 +92,43 @@ public final class RiftCommand {
     }
 
     /** Test : un Dévoreur immobile à 12 blocs devant le joueur (agrandi par Pehkui si l'échelle n'est pas 1). */
+    /** Test : la mise en scène de la victoire et le Coffre du Titan ({@code direct} = coffre posé tout de suite, avec une clé). */
+    private static int chest(CommandSourceStack src, boolean direct) {
+        ServerPlayer p = src.getPlayer();
+        if (p == null) return 0;
+        if (direct) {
+            if (!TitanChest.testPlace(p)) { src.sendFailure(Component.literal(WSLang.t("rift.test.chest_missing"))); return 0; }
+            src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.chest_placed")), false);
+        } else {
+            TitanChest.testVictory(p);
+            src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.chest_scene")), false);
+        }
+        return 1;
+    }
+
+    /** Test : les 6 reliques de la Faille (niveau I) et 48 Poussières de Faille. */
+    private static int relics(CommandSourceStack src) {
+        ServerPlayer p = src.getPlayer();
+        if (p == null) return 0;
+        for (net.minecraft.world.item.Item it : java.util.List.of(com.wavesurvivor.registry.ModItems.DE_FAILLE.get(), com.wavesurvivor.registry.ModItems.SCEAU_TITAN.get(),
+                com.wavesurvivor.registry.ModItems.TROPHEE_TITAN.get(), com.wavesurvivor.registry.ModItems.COEUR_TITAN.get(),
+                com.wavesurvivor.registry.ModItems.DESTIN_FAILLE.get(), com.wavesurvivor.registry.ModItems.COURONNE_TITAN.get())) {
+            net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(it));
+        }
+        net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.POUSSIERE_FAILLE.get(), 48));
+        src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.relics_given")), false);
+        return 1;
+    }
+
+    /** Test : règle la Jauge de la Faille du joueur. */
+    private static int gauge(CommandSourceStack src, int v) {
+        ServerPlayer p = src.getPlayer();
+        if (p == null) return 0;
+        com.wavesurvivor.item.RiftRelics.setGauge(p, v);
+        src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.gauge_set", v)), false);
+        return 1;
+    }
+
     /** Test : un Titan animé immobile devant le joueur ({@code id} = devoreur, colosse, archonte). */
     private static int titan(CommandSourceStack src, double scale, String id) {
         ServerPlayer p = src.getPlayer();

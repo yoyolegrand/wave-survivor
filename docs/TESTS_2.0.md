@@ -403,3 +403,46 @@ Test rapide : `/ws rift archonte` (~10 blocs) ou `/ws rift archonte 5` (~50 bloc
 - [ ] Lueurs : auréole, liserés, yeux, côtes, cornes, cristaux
 - [ ] Chaque pose : ROAR (auréole qui s'emballe), BEAM (mains jointes, balayage), SLAM (abat les mains à ~55 %), THROW (lance à ~72 %, rochers qui accélèrent), SUMMON (auréole agrandie), HURT, CHARGE (fond en avant à ~60 %), STUNNED (s'affaisse, auréole qui penche)
 - [ ] En combat : mêmes poses que les autres Titans ; visible de très loin ; boîtes de contact et cristaux sur l'avant du corps
+
+## Récompenses du Titan : Coffre du Titan, famille « Faille », Poussière de Faille
+Commandes de test (opérateur) : `/ws rift chest` (mise en scène devant soi, coffre à 5 blocs, 1 Clé du Titan à l'atterrissage), `/ws rift chest place` (coffre posé tout de suite + 1 clé), `/ws rift relics` (les 6 reliques niveau I + 48 Poussières), `/ws rift gauge <0-100>` (Jauge de la Faille). Clés en plus : `/ws roulettechest key custom_coffre_du_titan`.
+
+**Objets et Forge**
+- [ ] Icônes, noms FR / EN : Dé de la Faille, Sceau du Titan, Trophée du Titan, Cœur du Titan, Destin de la Faille, Couronne du Titan, Poussière de Faille
+- [ ] Les 6 reliques s'équipent dans l'emplacement Curios « Relique » (ou l'autel sans Curios) ; infobulles avec les vrais chiffres aux niveaux I, II, III (et IV pour les légendaires)
+- [ ] Famille « 🌌 Faille » 4 pièces dans l'infobulle et au Codex (page des reliques) ; jamais dans le Reliquaire scellé
+- [ ] Forge › Améliorer : bouton « ✦ Éclat de Faille (n/48) » actif avec 48 Poussières → 1 Éclat de Faille
+- [ ] Fusions : Dé + Sceau (niveau II) + 50 PR → Destin de la Faille ; Trophée + Cœur → Couronne du Titan
+
+**Reliques**
+- [ ] Dé : +1 / +2 / +2 relances (+1 bannissement au III) au début d'une horde (message au 1er choix de bénédictions)
+- [ ] Sceau : 1er choix avec une carte Épique (I), 2 premiers choix (II), 1er choix Légendaire (III) ; une seule fois par horde
+- [ ] Trophée : chaque boss / Titan tué donne une marque (message), +3 / 4,5 / 6 % de dégâts par marque (5 max) ; +5 / 7 / 10 PR par boss en fin de horde (message à part)
+- [ ] Cœur : +5 / 7,5 / 10 % de PV max ; après un coup reçu, message « attaque renforcée », le coup suivant fait +25 % ; recharge 30 / 22 / 15 s
+
+**Bonus d'ensemble**
+- [ ] 2 pièces : +1 Chance (visible sur les tirages de roulette / bénédictions)
+- [ ] 3 pièces : +15 % contre boss et Titans ; aucun recul des ondes de choc du Titan (piétinement, poing, rugissement, charge, météore) et des boss (Cavalier, Xaltor, Éruption)
+- [ ] 4 pièces, Bouclier de Faille : au début de chaque vague, +10 % des PV max en absorption, AJOUTÉ à la bénédiction de l'Aube (les deux s'additionnent)
+- [ ] Le bouclier ne s'accumule pas : vague suivante, le reste est retiré puis 10 % redonnés (jamais plus de 10 % + l'Aube)
+- [ ] Aussi au début de la Contre-offensive et à l'arrivée du Titan
+- [ ] À noter : l'Héritage Survivant 1 donne de l'Absorption par l'effet vanilla ; à sa fin il retire son montant et peut mordre sur ce qui reste du bouclier (signalé, pas corrigé)
+
+**Légendaires**
+- [ ] Destin : bouton « 🃏 2 cartes (n) » en haut à droite du menu de bénédictions ; mode activé → « Prendre en plus » sur une carte, le menu reste ouvert sans elle, puis choix normal ; 1 fois par horde (I-II), 2 fois (III-IV)
+- [ ] Couronne : taille +25 % avec Pehkui (retour à la normale quand on l'enlève), +1,5 bloc de portée d'attaque, aucun recul ; Frappe de géant 20 / 30 / 40 / 50 % aux monstres à 2 blocs de la cible
+- [ ] Sans Pehkui : la Couronne garde tout sauf l'agrandissement
+
+**Coffre du Titan**
+- [ ] Coffre deux fois plus grand, couleurs violet / turquoise, médaillons (faille, cœur, couronne, veines), clé couronne / escalier
+- [ ] Zone cliquable sur tout le coffre agrandi : clic droit avec la Clé du Titan = tirage, clic gauche = aperçu du butin
+- [ ] Contenu et chances (aperçu) : Commune 63 %, Rare 28 %, Épique 7 %, Légendaire 2 % (relique Faille niveau I)
+- [ ] Jauge de la Faille : +1 % par tirage sans relique (message), revient à 0 quand une relique sort ; valeur rappelée à la remise de la clé ; conservée après déconnexion / mort
+- [ ] Le coffre implose (éclat turquoise) une fois toutes les clés utilisées, ou à la fermeture de la Faille ; une clé gardée ouvre un prochain Coffre du Titan
+- [ ] Le coffre reste dans l'éditeur de coffres (modifiable, taille gardée) ; les anciens coffres gardent leur taille normale
+
+**Mise en scène de la victoire (Faille)**
+- [ ] Mort du Titan : il se dissout en particules violettes / turquoise qui tombent dans l'abîme, secousse
+- [ ] Tourbillon dans le ciel et faisceau turquoise sur l'emplacement du coffre (près du Monolithe)
+- [ ] Le coffre descend lentement (~4 s) en tournant, spirale de portail
+- [ ] Atterrissage : onde de choc, son grave et cristallin, petite secousse, titre « Le Titan est vaincu » / « The Titan is defeated », 1 Clé du Titan par joueur présent
