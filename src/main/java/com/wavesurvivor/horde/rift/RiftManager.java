@@ -1334,6 +1334,7 @@ public final class RiftManager {
         List<Entity> gone = new ArrayList<>();
         for (Entity e : rd.getAllEntities()) if (e instanceof net.minecraft.world.entity.monster.Enemy && !(e instanceof ServerPlayer)) gone.add(e);
         for (Entity e : gone) e.discard();
+        com.wavesurvivor.horde.roulette.RouletteChestSpawner.despawnAll(server);   // les coffres roulette du Siège disparaissent à l'arrivée du Titan
         phase = Phase.TITAN;
         titanWaveN = 0;
         com.wavesurvivor.item.RiftRelics.onWaveStart(server);              // Bouclier de Faille (ensemble 4 pièces), avant l'Héritage
