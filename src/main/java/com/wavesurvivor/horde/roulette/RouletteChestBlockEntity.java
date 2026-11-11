@@ -92,6 +92,14 @@ public class RouletteChestBlockEntity extends BaseContainerBlockEntity {
         return parsed;
     }
 
+    /** 2.0 : un coffre agrandi (Coffre du Titan) et son faisceau de révélation restent visibles quand le bloc sort de l'écran. */
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox() {
+        double s = style().scale;
+        if (s <= 1.0) return super.getRenderBoundingBox();
+        return new net.minecraft.world.phys.AABB(worldPosition).inflate(s, 0, s).expandTowards(0, 8 * s, 0);
+    }
+
     /** Appelé par le serveur (config du coffre) ; synchronisé au client seulement si elle change. */
     public void setColor(int rgb) {
         if (rgb == color) return;

@@ -329,6 +329,7 @@ public class RouletteChestManager {
         // Ajuste les rewards par vague en cours
         int currentWave = HordeManager.get().getCurrentWave();
         List<RouletteReward> adjusted = com.wavesurvivor.horde.benediction.BlessingLuck.adjustRoulette(getAdjustedRewards(config, currentWave), player); // Chance
+        adjusted = com.wavesurvivor.horde.rift.TitanChest.adjust(config, adjusted, player);   // 2.0 : Jauge de la Faille (Coffre du Titan)
 
         // Un tirage pondéré par clé
         List<RouletteReward> rolled = new java.util.ArrayList<>();
@@ -340,6 +341,7 @@ public class RouletteChestManager {
             player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("srv.erreur_aucune_recompense_disponible")), true);
             return true;
         }
+        com.wavesurvivor.horde.rift.TitanChest.onDraw(player, config, rolled, keys, pos.immutable());   // 2.0 : Jauge, clés du Coffre du Titan
 
         if (busy) {
             java.util.ArrayDeque<Queued> q = QUEUE.computeIfAbsent(pos.immutable(), k -> new java.util.ArrayDeque<>());
@@ -828,4 +830,10 @@ public class RouletteChestManager {
         }
     }
     public static int activeCount() { return ACTIVE.size(); }
+
+    /** Une roulette tourne (ou attend) sur ce coffre. */
+    public static boolean isBusy(BlockPos pos) {
+        BlockPos p = pos.immutable();
+        return ACTIVE.containsKey(p) || (QUEUE.containsKey(p) && !QUEUE.get(p).isEmpty());
+    }
 }

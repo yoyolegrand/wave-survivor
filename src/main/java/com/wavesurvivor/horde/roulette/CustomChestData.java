@@ -78,6 +78,10 @@ public class CustomChestData {
     @SerializedName("keyColor")
     public String keyColor;
 
+    /** 2.0 — Taille du coffre posé (1 = normale, 2 = deux fois plus grand ; agrandi depuis le bas du bloc, centré). Absent = 1. */
+    @SerializedName("scale")
+    public Double scale;
+
     /** Une couche de médaillon. */
     public static class Medallion {
         /** Identifiant de la bibliothèque (dot, star, skull…) ou « custom:<nom> ». */
@@ -163,6 +167,7 @@ public class CustomChestData {
         keyHead = o.keyHead;
         keyBit = o.keyBit;
         keyColor = o.keyColor;
+        scale = o.scale;
         if (o.particles != null && o.particles.hasEffects()) particles = o.particles;
     }
 

@@ -60,6 +60,8 @@ public class RouletteChestRenderer implements BlockEntityRenderer<RouletteChestB
         float spin = anim ? RouletteAnim.spinAngle(tl, t) : 0f;
         ps.pushPose();
         ps.translate(0.5, 0, 0.5);
+        float sc = (float) be.style().scale;   // 2.0 : coffre agrandi depuis le bas du bloc, centré (Coffre du Titan)
+        if (sc != 1f) ps.scale(sc, sc, sc);
         ps.mulPose(Axis.YP.rotationDegrees(yaw));
         ps.translate(-0.5, 0, -0.5);
         renderChest(be.style(), ps, buf, light, overlay, lid, time, spin);
@@ -68,7 +70,7 @@ public class RouletteChestRenderer implements BlockEntityRenderer<RouletteChestB
     }
 
     @Override
-    public boolean shouldRenderOffScreen(RouletteChestBlockEntity be) { return false; }
+    public boolean shouldRenderOffScreen(RouletteChestBlockEntity be) { return be.style().scale > 1.0; }
 
     /** Faisceau à la couleur de la rareté du gain, et objet qui s'élève dedans avant d'être donné (aussi utilisé par l'aperçu de l'éditeur, avec level = null). */
     public static void renderReveal(int c, net.minecraft.world.item.ItemStack shown, net.minecraft.world.level.Level level, long seed,

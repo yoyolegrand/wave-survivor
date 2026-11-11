@@ -36,6 +36,8 @@ public final class RouletteStyle {
     public String keyHead = "ring", keyBit = "simple";
     /** Couleur de la clé : -1 = couleur de sa matière. */
     public int keyColor = -1;
+    /** 2.0 — Taille du coffre posé (1 = normale). L'objet (inventaire) garde toujours la taille normale. */
+    public double scale = 1.0;
     /** Effets de particules : « idle », « spin », « reveal » (absent = aucun effet propre). */
     public Map<String, CustomChestData.Effect> fx = new LinkedHashMap<>();
 
@@ -94,6 +96,7 @@ public final class RouletteStyle {
         if (d.keyBit != null && !d.keyBit.isBlank()) s.keyBit = d.keyBit.trim().toLowerCase(Locale.ROOT);
         s.keyColor = RouletteColors.isHex(d.keyColor) ? RouletteColors.parseHex(d.keyColor, -1) : -1;
         if (d.particles != null && d.particles.fx != null) s.fx.putAll(d.particles.fx);
+        if (d.scale != null && d.scale > 0 && Double.isFinite(d.scale)) s.scale = Math.max(0.25, Math.min(4.0, d.scale));
         return s;
     }
 

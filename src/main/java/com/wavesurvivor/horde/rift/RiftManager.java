@@ -327,6 +327,7 @@ public final class RiftManager {
         ServerLevel rd = server.getLevel(RIFT_DIM);
         if (rd != null) {
             for (ServerPlayer p : new ArrayList<>(rd.players())) sendHome(p);
+            TitanChest.clear(rd);   // le Coffre du Titan implose (les clés non utilisées restent valables)
             RiftTitan.clear(rd);
             RiftFortress.clearTargets(rd);
             RiftFortress.reset();

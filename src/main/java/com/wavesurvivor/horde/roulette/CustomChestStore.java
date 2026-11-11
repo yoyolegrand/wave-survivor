@@ -241,7 +241,8 @@ public class CustomChestStore {
         String slug = slugify(d.name);
         String configKey = "custom_" + slug;
         String chestName = d.name;
-        String keyName = "Clé " + d.name;
+        // 2.0 : le Coffre du Titan s'ouvre avec une « Clé du Titan »
+        String keyName = com.wavesurvivor.horde.rift.TitanChest.NAME.equals(d.name) ? com.wavesurvivor.horde.rift.TitanChest.KEY : "Clé " + d.name;
 
         List<RouletteReward> rewards = new ArrayList<>();
         if (d.rewards != null) {

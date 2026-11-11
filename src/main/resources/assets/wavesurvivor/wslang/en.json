@@ -5020,5 +5020,11 @@
   "forge.dust_btn": "✦ Rift Shard ({1}/{0})",
   "forge.dust_tip": "Forge 1 Rift Shard from {0} Rift Dust (Titan's Chest).",
   "forge.dust_missing": "§cYou need {0} Rift Dust (you have {1}).",
-  "forge.dust_done": "§d✦ {0} Rift Dust forged into 1 Rift Shard."
+  "forge.dust_done": "§d✦ {0} Rift Dust forged into 1 Rift Shard.",
+  "Coffre du Titan": "Titan's Chest",
+  "Clé du Titan": "Titan's Key",
+  "titan_chest.key_received": "§b🗝 You receive a Titan's Key: open the Titan's Chest before the Rift closes.",
+  "titan_chest.gauge": "§d(Rift Gauge: +{0}%)",
+  "titan_chest.gauge_up": "§d🌌 Rift Gauge: +{0}% Legendary chance at the next Titan's Chest.",
+  "titan_chest.gauge_reset": "§d🌌 Rift relic obtained: the Rift Gauge resets to 0."
 }

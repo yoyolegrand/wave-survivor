@@ -955,6 +955,254 @@
       },
       "keyHead": "ring",
       "keyBit": "hook"
+    },
+    {
+      "name": "Coffre du Titan",
+      "scale": 2.0,
+      "particles": {
+        "idle": {
+          "a": "portal",
+          "b": "dust",
+          "pattern": "spiral_up",
+          "density": 5,
+          "radius": 1.6,
+          "height": 2.0,
+          "speed": 3,
+          "color": "#46E6DC"
+        },
+        "spin": {
+          "a": "soul_fire_flame",
+          "pattern": "vortex_down",
+          "density": 7,
+          "radius": 1.6,
+          "height": 2.0,
+          "speed": 6
+        },
+        "reveal": {
+          "a": "end_rod",
+          "pattern": "beam",
+          "density": 8,
+          "radius": 0.6,
+          "height": 4.0,
+          "speed": 5
+        }
+      },
+      "pattern": "spiral_up",
+      "color": "cyan",
+      "keyMaterial": "netherite",
+      "tierMessages": {
+        "COMMON": "§7{player} a trouvé §f{qty}× {item}",
+        "UNCOMMON": "§a{player} a trouvé §f{qty}× {item}",
+        "RARE": "§9[RARE] §f{player} a trouvé §f{qty}× {item}",
+        "EPIC": "§5[ÉPIQUE] §f{player} a trouvé §f{qty}× {item}",
+        "LEGENDARY": "§6[LÉGENDAIRE] §e{player} a trouvé §6{qty}× {item} §e!"
+      },
+      "rewards": [
+        {
+          "item": "minecraft:diamond",
+          "minQty": 4,
+          "maxQty": 8,
+          "chance": 12.6,
+          "tier": "COMMON"
+        },
+        {
+          "item": "minecraft:netherite_ingot",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 12.6,
+          "tier": "COMMON"
+        },
+        {
+          "item": "wavesurvivor:grace_fragment",
+          "minQty": 3,
+          "maxQty": 3,
+          "chance": 12.6,
+          "tier": "COMMON"
+        },
+        {
+          "item": "wavesurvivor:taint_fragment",
+          "minQty": 3,
+          "maxQty": 3,
+          "chance": 12.6,
+          "tier": "COMMON"
+        },
+        {
+          "item": "wavesurvivor:poussiere_faille",
+          "minQty": 3,
+          "maxQty": 5,
+          "chance": 12.6,
+          "tier": "COMMON"
+        },
+        {
+          "item": "wavesurvivor:roulette_key{rouletteKey:1,rouletteKeyName:\"Clé scellée\",rouletteChestName:\"Reliquaire scellé\",rouletteKeyHead:\"winged\",rouletteKeyBit:\"hook\",rouletteKeyMaterial:\"or\",rouletteKeyColor:16777215,sealedKey:1b}",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 7.0,
+          "tier": "RARE"
+        },
+        {
+          "item": "wavesurvivor:grace_heart",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 7.0,
+          "tier": "RARE"
+        },
+        {
+          "item": "wavesurvivor:taint_heart",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 7.0,
+          "tier": "RARE"
+        },
+        {
+          "item": "wavesurvivor:poussiere_faille",
+          "minQty": 8,
+          "maxQty": 8,
+          "chance": 7.0,
+          "tier": "RARE"
+        },
+        {
+          "item": "wavesurvivor:reliquaire_scelle",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 3.5,
+          "tier": "EPIC"
+        },
+        {
+          "item": "wavesurvivor:rift_shard",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 3.5,
+          "tier": "EPIC"
+        },
+        {
+          "item": "wavesurvivor:de_faille",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 0.5,
+          "tier": "LEGENDARY"
+        },
+        {
+          "item": "wavesurvivor:sceau_titan",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 0.5,
+          "tier": "LEGENDARY"
+        },
+        {
+          "item": "wavesurvivor:trophee_titan",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 0.5,
+          "tier": "LEGENDARY"
+        },
+        {
+          "item": "wavesurvivor:coeur_titan",
+          "minQty": 1,
+          "maxQty": 1,
+          "chance": 0.5,
+          "tier": "LEGENDARY"
+        }
+      ],
+      "accentColor": "#46E6DC",
+      "woodColor": "#3E2A58",
+      "ironColor": "#A890D8",
+      "gemColor": "#B070FF",
+      "medallions": {
+        "front": [
+          {
+            "symbol": "custom:faille",
+            "size": "large",
+            "color": "#B070FF"
+          },
+          {
+            "symbol": "custom:faille_coeur",
+            "size": "small",
+            "color": "#46E6DC"
+          }
+        ],
+        "top": [
+          {
+            "symbol": "custom:couronne_titan",
+            "size": "large",
+            "color": "#B070FF"
+          }
+        ],
+        "left": [
+          {
+            "symbol": "custom:veine",
+            "size": "large",
+            "color": "#46E6DC"
+          }
+        ],
+        "right": [
+          {
+            "symbol": "custom:veine",
+            "size": "large",
+            "color": "#46E6DC"
+          }
+        ],
+        "back": [
+          {
+            "symbol": "custom:faille",
+            "size": "large",
+            "color": "#B070FF"
+          }
+        ]
+      },
+      "customSymbols": {
+        "faille": [
+          "...####...",
+          "..##..##..",
+          ".##....##.",
+          ".#..##..#.",
+          ".#.#..#.#.",
+          ".#.#..#.#.",
+          ".#..##..#.",
+          ".##....##.",
+          "..##..##..",
+          "...####..."
+        ],
+        "faille_coeur": [
+          "..........",
+          "..........",
+          "..........",
+          "....##....",
+          "...####...",
+          "...####...",
+          "....##....",
+          "..........",
+          "..........",
+          ".........."
+        ],
+        "couronne_titan": [
+          "#...##...#",
+          "##..##..##",
+          "##.####.##",
+          "##########",
+          ".########.",
+          ".#.####.#.",
+          "..........",
+          ".########.",
+          ".########.",
+          ".........."
+        ],
+        "veine": [
+          "....#.....",
+          "....##....",
+          ".....#....",
+          "....##....",
+          "...##.....",
+          "...#......",
+          "...##.....",
+          "....##....",
+          ".....#....",
+          ".....##..."
+        ]
+      },
+      "keyHead": "crown",
+      "keyBit": "stairs",
+      "keyColor": "#A890D8"
     }
   ]
 }

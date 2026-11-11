@@ -4259,5 +4259,11 @@
   "forge.dust_btn": "✦ Éclat de Faille ({1}/{0})",
   "forge.dust_tip": "Forger 1 Éclat de Faille avec {0} Poussières de Faille (Coffre du Titan).",
   "forge.dust_missing": "§cIl faut {0} Poussières de Faille (tu en as {1}).",
-  "forge.dust_done": "§d✦ {0} Poussières de Faille forgées en 1 Éclat de Faille."
+  "forge.dust_done": "§d✦ {0} Poussières de Faille forgées en 1 Éclat de Faille.",
+  "Coffre du Titan": "Coffre du Titan",
+  "Clé du Titan": "Clé du Titan",
+  "titan_chest.key_received": "§b🗝 Tu reçois une Clé du Titan : ouvre le Coffre du Titan avant la fermeture de la Faille.",
+  "titan_chest.gauge": "§d(Jauge de la Faille : +{0} %)",
+  "titan_chest.gauge_up": "§d🌌 Jauge de la Faille : +{0} % de chance Légendaire au prochain Coffre du Titan.",
+  "titan_chest.gauge_reset": "§d🌌 Relique de la Faille obtenue : la Jauge de la Faille revient à 0."
 }
