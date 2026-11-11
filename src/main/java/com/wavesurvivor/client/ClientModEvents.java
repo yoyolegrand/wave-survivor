@@ -85,6 +85,7 @@ public class ClientModEvents {
         event.registerLayerDefinition(NeantideModel.MODEL_LAYER, NeantideModel::createBodyLayer); // Néantide (haute résolution)
         event.registerLayerDefinition(DevoreurModel.MODEL_LAYER, DevoreurModel::createBodyLayer); // 2.0 : le Dévoreur (Titan de la Faille)
         event.registerLayerDefinition(ColosseModel.MODEL_LAYER, ColosseModel::createBodyLayer);   // 2.0 : le Colosse de la Faille
+        event.registerLayerDefinition(ArchonteModel.MODEL_LAYER, ArchonteModel::createBodyLayer); // 2.0 : l'Archonte du Néant
         event.registerLayerDefinition(SeraphShrineModel.MODEL_LAYER, SeraphShrineModel::createBodyLayer); // Sanctuaire du Séraphin (bloc, HD)
     }
 
@@ -122,6 +123,7 @@ public class ClientModEvents {
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.NEANTIDE.get(), NeantideRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DEVOREUR.get(), DevoreurRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.COLOSSE.get(), ColosseRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ARCHONTE.get(), ArchonteRenderer::new);
         event.registerBlockEntityRenderer(com.wavesurvivor.registry.ModBlockEntities.ROULETTE_CHEST.get(), com.wavesurvivor.client.roulette.RouletteChestRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.XALTOR_CRYSTAL.get(),
                 net.minecraft.client.renderer.entity.EndCrystalRenderer::new);

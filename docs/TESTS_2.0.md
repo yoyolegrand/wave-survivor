@@ -394,3 +394,12 @@ Test rapide : `/ws rift colosse` (~10 blocs) ou `/ws rift colosse 5` (~50 blocs)
 - [ ] En combat : mêmes poses que le Dévoreur pour chaque compétence ; pendant la charge, les jambes courent (pose CHARGE)
 - [ ] Visible de très loin ; boîtes de contact et cristaux sur l'avant du corps
 - [ ] Le Dévoreur reste le Titan par défaut ; le bouton « Dévoreur » de l'éditeur le remet (échelle 5)
+
+## L'Archonte du Néant (Titan)
+Test rapide : `/ws rift archonte` (~10 blocs) ou `/ws rift archonte 5` (~50 blocs) devant soi, puis `/ws rift pose <roar|beam|slam|throw|summon|hurt|charge|stunned|idle> [ticks]`. Retirer : `/kill @e[type=wavesurvivor:archonte]`. Comme Titan : éditeur Faille › Titan, bouton « Archonte » (entité + échelle 5).
+- [ ] Apparition (cinématique), nom « L'ARCHONTE DU NÉANT » / « THE VOID ARCHON »
+- [ ] Flottement, robe et lambeaux qui ondulent, auréole qui tourne, 6 rochers en orbite
+- [ ] Ourlet et lambeaux : les pixels transparents sont bien transparents (pas de carrés noirs ou blancs)
+- [ ] Lueurs : auréole, liserés, yeux, côtes, cornes, cristaux
+- [ ] Chaque pose : ROAR (auréole qui s'emballe), BEAM (mains jointes, balayage), SLAM (abat les mains à ~55 %), THROW (lance à ~72 %, rochers qui accélèrent), SUMMON (auréole agrandie), HURT, CHARGE (fond en avant à ~60 %), STUNNED (s'affaisse, auréole qui penche)
+- [ ] En combat : mêmes poses que les autres Titans ; visible de très loin ; boîtes de contact et cristaux sur l'avant du corps

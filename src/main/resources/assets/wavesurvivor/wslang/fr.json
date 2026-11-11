@@ -4210,9 +4210,11 @@
   "ui.rift.chests": "Coffres roulette",
   "rift.test.devoreur_ok": "Test : un Dévoreur immobile apparaît devant vous (/ws rift pose <pose> pour l’animer, /kill @e[type=wavesurvivor:devoreur] pour le retirer).",
   "rift.test.pose_unknown": "Pose inconnue : {0} (idle, roar, beam, slam, throw, summon, hurt, charge, stunned).",
-  "rift.test.pose_none": "Aucun Titan animé (Dévoreur, Colosse) à moins de 200 blocs.",
+  "rift.test.pose_none": "Aucun Titan animé (Dévoreur, Colosse, Archonte) à moins de 200 blocs.",
   "rift.test.pose_ok": "Pose {0} ({1} ticks) jouée par {2} Titan(s).",
   "ui.rift.titan_devoreur": "Dévoreur",
   "ui.rift.titan_colosse": "Colosse",
-  "rift.test.colosse_ok": "Test : un Colosse de la Faille immobile apparaît devant vous (/ws rift pose <pose> pour l’animer, /kill @e[type=wavesurvivor:colosse] pour le retirer)."
+  "rift.test.colosse_ok": "Test : un Colosse de la Faille immobile apparaît devant vous (/ws rift pose <pose> pour l’animer, /kill @e[type=wavesurvivor:colosse] pour le retirer).",
+  "ui.rift.titan_archonte": "Archonte",
+  "rift.test.archonte_ok": "Test : un Archonte du Néant immobile apparaît devant vous (/ws rift pose <pose> pour l’animer, /kill @e[type=wavesurvivor:archonte] pour le retirer)."
 }

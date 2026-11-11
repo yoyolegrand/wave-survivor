@@ -213,6 +213,15 @@ public class ModEntities {
                     .updateInterval(2)
                     .build("colosse"));
 
+    /** 2.0 — L'Archonte du Néant, Titan (modèle de Claude chat). Encombrement du corps ~3,6 × 10,5 blocs (avant agrandissement). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Archonte>> ARCHONTE = ENTITIES.register("archonte",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Archonte>of(com.wavesurvivor.entity.Archonte::new, MobCategory.MONSTER)
+                    .sized(3.6f, 10.5f)
+                    .fireImmune()
+                    .clientTrackingRange(32)
+                    .updateInterval(2)
+                    .build("archonte"));
+
     /** Néantide : créature du néant insectoïde (modèle sur mesure, haute résolution). */
     public static final RegistryObject<EntityType<com.wavesurvivor.entity.Neantide>> NEANTIDE = ENTITIES.register("neantide",
             () -> EntityType.Builder.<com.wavesurvivor.entity.Neantide>of(com.wavesurvivor.entity.Neantide::new, MobCategory.MONSTER)
@@ -248,5 +257,6 @@ public class ModEntities {
         event.put(NEANTIDE.get(), com.wavesurvivor.entity.Neantide.createAttributes().build());
         event.put(DEVOREUR.get(), com.wavesurvivor.entity.RiftTitanEntity.createAttributes().build());
         event.put(COLOSSE.get(), com.wavesurvivor.entity.RiftTitanEntity.createAttributes().build());
+        event.put(ARCHONTE.get(), com.wavesurvivor.entity.RiftTitanEntity.createAttributes().build());
     }
 }

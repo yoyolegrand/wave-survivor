@@ -2117,6 +2117,7 @@ public class HordeEditorScreen extends Screen {
         // Titans sur mesure : un clic règle l'entité et l'échelle (~50 blocs)
         fBtn(60, t("ui.rift.titan_devoreur"), () -> { r.addProperty("titanEntity", "wavesurvivor:devoreur"); r.addProperty("titanScale", 5.0); changed(); init(); });
         fBtn(60, t("ui.rift.titan_colosse"), () -> { r.addProperty("titanEntity", "wavesurvivor:colosse"); r.addProperty("titanScale", 5.0); changed(); init(); });
+        fBtn(60, t("ui.rift.titan_archonte"), () -> { r.addProperty("titanEntity", "wavesurvivor:archonte"); r.addProperty("titanScale", 5.0); changed(); init(); });
         y += 26;
         flow(x, y);
         fl(t("ui.rift.titan_scale"));

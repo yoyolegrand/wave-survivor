@@ -32,12 +32,15 @@ public final class RiftCommand {
                         .executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), true))
                         .then(Commands.literal("fast").executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), false)))))
                 .then(Commands.literal("catalysts").executes(ctx -> catalysts(ctx.getSource())))
-                .then(Commands.literal("devoreur").executes(ctx -> devoreur(ctx.getSource(), 1.0, false))
+                .then(Commands.literal("devoreur").executes(ctx -> titan(ctx.getSource(), 1.0, "devoreur"))
                         .then(Commands.argument("scale", com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0.2, 20))
-                                .executes(ctx -> devoreur(ctx.getSource(), com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx, "scale"), false))))
-                .then(Commands.literal("colosse").executes(ctx -> devoreur(ctx.getSource(), 1.0, true))
+                                .executes(ctx -> titan(ctx.getSource(), com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx, "scale"), "devoreur"))))
+                .then(Commands.literal("colosse").executes(ctx -> titan(ctx.getSource(), 1.0, "colosse"))
                         .then(Commands.argument("scale", com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0.2, 20))
-                                .executes(ctx -> devoreur(ctx.getSource(), com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx, "scale"), true))))
+                                .executes(ctx -> titan(ctx.getSource(), com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx, "scale"), "colosse"))))
+                .then(Commands.literal("archonte").executes(ctx -> titan(ctx.getSource(), 1.0, "archonte"))
+                        .then(Commands.argument("scale", com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0.2, 20))
+                                .executes(ctx -> titan(ctx.getSource(), com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx, "scale"), "archonte"))))
                 .then(Commands.literal("pose").then(Commands.argument("pose", com.mojang.brigadier.arguments.StringArgumentType.word())
                         .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(
                                 java.util.Arrays.stream(com.wavesurvivor.entity.TitanAnimated.Pose.values()).map(p -> p.name().toLowerCase()), b))
@@ -83,11 +86,16 @@ public final class RiftCommand {
     }
 
     /** Test : un Dévoreur immobile à 12 blocs devant le joueur (agrandi par Pehkui si l'échelle n'est pas 1). */
-    private static int devoreur(CommandSourceStack src, double scale, boolean colosse) {
+    /** Test : un Titan animé immobile devant le joueur ({@code id} = devoreur, colosse, archonte). */
+    private static int titan(CommandSourceStack src, double scale, String id) {
         ServerPlayer p = src.getPlayer();
         if (p == null) return 0;
-        com.wavesurvivor.entity.RiftTitanEntity d = colosse ? com.wavesurvivor.registry.ModEntities.COLOSSE.get().create(p.serverLevel())
-                : com.wavesurvivor.registry.ModEntities.DEVOREUR.get().create(p.serverLevel());
+        boolean colosse = id.equals("colosse");
+        com.wavesurvivor.entity.RiftTitanEntity d = switch (id) {
+            case "colosse" -> com.wavesurvivor.registry.ModEntities.COLOSSE.get().create(p.serverLevel());
+            case "archonte" -> com.wavesurvivor.registry.ModEntities.ARCHONTE.get().create(p.serverLevel());
+            default -> com.wavesurvivor.registry.ModEntities.DEVOREUR.get().create(p.serverLevel());
+        };
         if (d == null) return 0;
         net.minecraft.world.phys.Vec3 look = p.getLookAngle().multiply(1, 0, 1).normalize();
         double dist = colosse ? 16 : 12;
@@ -100,7 +108,7 @@ public final class RiftCommand {
         d.getPersistentData().putBoolean("ws_test_titan", true);
         p.serverLevel().addFreshEntity(d);
         if (scale != 1.0) com.wavesurvivor.compat.PehkuiCompat.setScale(d, scale);
-        src.sendSuccess(() -> Component.literal(WSLang.t(colosse ? "rift.test.colosse_ok" : "rift.test.devoreur_ok")), false);
+        src.sendSuccess(() -> Component.literal(WSLang.t("rift.test." + id + "_ok")), false);
         return 1;
     }
 

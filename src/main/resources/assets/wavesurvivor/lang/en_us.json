@@ -215,5 +215,6 @@
   "item.wavesurvivor.siege_ballista": "Celestial Siege Ballista",
   "item.wavesurvivor.rift_shard": "Rift Shard",
   "entity.wavesurvivor.devoreur": "The Devourer",
-  "entity.wavesurvivor.colosse": "The Rift Colossus"
+  "entity.wavesurvivor.colosse": "The Rift Colossus",
+  "entity.wavesurvivor.archonte": "The Void Archon"
 }
