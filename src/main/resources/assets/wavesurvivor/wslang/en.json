@@ -5016,5 +5016,9 @@
   "relic.couronne_titan.quote": "Wear it, and the battlefield will seem smaller.",
   "relic.couronne_titan.parents": "Effects of the Titan Trophy and the Titan's Heart (lvl {P})",
   "relic.couronne_titan.unique": "Unique: size +25% (Pehkui), +1.5 blocks of attack reach, no knockback",
-  "relic.couronne_titan.giant": "Giant Strike: your melee hits also strike monsters within 2 blocks of the target ({20}% of the damage)"
+  "relic.couronne_titan.giant": "Giant Strike: your melee hits also strike monsters within 2 blocks of the target ({20}% of the damage)",
+  "forge.dust_btn": "✦ Rift Shard ({1}/{0})",
+  "forge.dust_tip": "Forge 1 Rift Shard from {0} Rift Dust (Titan's Chest).",
+  "forge.dust_missing": "§cYou need {0} Rift Dust (you have {1}).",
+  "forge.dust_done": "§d✦ {0} Rift Dust forged into 1 Rift Shard."
 }

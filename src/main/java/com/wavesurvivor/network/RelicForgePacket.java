@@ -39,6 +39,7 @@ public class RelicForgePacket {
             switch (pkt.action) {
                 case "upgrade" -> RenaissanceManager.forgeUpgrade(p, pkt.id);
                 case "fuse" -> RenaissanceManager.forgeFuse(p, pkt.id);
+                case "dust" -> com.wavesurvivor.item.RelicForge.forgeShard(p);   // 2.0 : 48 Poussières de Faille → 1 Éclat
                 // Sans Curios : équiper (id = case de l'inventaire) / retirer (id = rang dans l'équipement)
                 case "equip" -> { try { com.wavesurvivor.item.RelicEquip.equip(p, Integer.parseInt(pkt.id)); } catch (NumberFormatException ignored) {} }
                 case "unequip" -> { try { com.wavesurvivor.item.RelicEquip.unequip(p, Integer.parseInt(pkt.id)); } catch (NumberFormatException ignored) {} }

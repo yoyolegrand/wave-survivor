@@ -34,6 +34,42 @@ public final class RelicForge {
         return n;
     }
 
+    /** 2.0 — Poussières de Faille pour forger 1 Éclat de Faille (voie lente : l'Éclat doit rester rare). */
+    public static final int DUST_PER_SHARD = 48;
+
+    /** Poussières de Faille dans l'inventaire principal. */
+    public static int dustIn(List<ItemStack> inv) {
+        int n = 0;
+        for (int i = 0; i < Math.min(36, inv.size()); i++) if (inv.get(i).is(com.wavesurvivor.registry.ModItems.POUSSIERE_FAILLE.get())) n += inv.get(i).getCount();
+        return n;
+    }
+
+    /** Forge (serveur) : 48 Poussières de Faille → 1 Éclat de Faille. */
+    public static void forgeShard(net.minecraft.server.level.ServerPlayer p) {
+        var inv = p.getInventory().items;
+        if (dustIn(inv) < DUST_PER_SHARD) {
+            p.displayClientMessage(net.minecraft.network.chat.Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.dust_missing", DUST_PER_SHARD, dustIn(inv))), true);
+            return;
+        }
+        int left = DUST_PER_SHARD;
+        for (int i = 0; i < Math.min(36, inv.size()) && left > 0; i++) {
+            ItemStack st = inv.get(i);
+            if (!st.is(com.wavesurvivor.registry.ModItems.POUSSIERE_FAILLE.get())) continue;
+            int take = Math.min(left, st.getCount());
+            st.shrink(take);
+            left -= take;
+        }
+        net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new ItemStack(com.wavesurvivor.registry.ModItems.RIFT_SHARD.get()));
+        p.getInventory().setChanged();
+        p.inventoryMenu.broadcastChanges();
+        p.sendSystemMessage(net.minecraft.network.chat.Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.dust_done", DUST_PER_SHARD)));
+        if (p.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL, p.getX(), p.getY() + 1.2, p.getZ(), 60, 0.5, 0.7, 0.5, 0.08);
+            sl.playSound(null, p.blockPosition(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_RESONATE, net.minecraft.sounds.SoundSource.PLAYERS, 1f, 0.7f);
+            sl.playSound(null, p.blockPosition(), net.minecraft.sounds.SoundEvents.ANVIL_USE, net.minecraft.sounds.SoundSource.PLAYERS, 0.5f, 1.4f);
+        }
+    }
+
     /** Plan d'amélioration : emplacement qui monte, emplacement consommé, niveau de départ, coût en PR, Éclats de Faille demandés. */
     public record Plan(int targetSlot, int consumeSlot, int fromLevel, int cost, int shards) {}
 

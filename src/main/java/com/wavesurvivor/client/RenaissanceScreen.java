@@ -360,7 +360,8 @@ public class RenaissanceScreen extends Screen {
         var mcp = Minecraft.getInstance().player;
         if (mcp == null) return;
         var inv = mcp.getInventory().items;
-        forgeSig = com.wavesurvivor.item.RelicForge.relicsIn(inv).toString() + com.wavesurvivor.item.RelicEquip.CLIENT.size();
+        forgeSig = com.wavesurvivor.item.RelicForge.relicsIn(inv).toString() + com.wavesurvivor.item.RelicEquip.CLIENT.size()
+                + "|" + com.wavesurvivor.item.RelicForge.dustIn(inv);
         // Sous-vues : Améliorer / Fusionner (/ Équipement sans Curios)
         boolean noCurios = !com.wavesurvivor.item.RelicEffects.curiosAvailable();
         int sw = noCurios ? 80 : 120;
@@ -377,6 +378,14 @@ public class RenaissanceScreen extends Screen {
             if (forgeSub == 2) { buildEquipWidgets(inv); return; }
         } else if (forgeSub == 2) forgeSub = 0;
         if (forgeSub == 1) { buildFusionWidgets(inv); return; }
+        // 2.0 — 48 Poussières de Faille → 1 Éclat de Faille
+        int dust = com.wavesurvivor.item.RelicForge.dustIn(inv);
+        Button db = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.dust_btn", com.wavesurvivor.item.RelicForge.DUST_PER_SHARD, dust)),
+                        bt -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.RelicForgePacket("dust", "")))
+                .bounds(left + PANEL_W - 176, top + 42, 168, 14)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.dust_tip", com.wavesurvivor.item.RelicForge.DUST_PER_SHARD))))
+                .build());
+        db.active = dust >= com.wavesurvivor.item.RelicForge.DUST_PER_SHARD;
         forgeRows.addAll(com.wavesurvivor.item.RelicForge.relicsIn(inv).keySet());
         scroll = Math.max(0, Math.min(scroll, Math.max(0, forgeRows.size() - VISIBLE_ROWS)));
         int y = top + 62;
@@ -405,7 +414,7 @@ public class RenaissanceScreen extends Screen {
         if (tab != 2) return;
         var mcp = Minecraft.getInstance().player;
         if (mcp != null && !(com.wavesurvivor.item.RelicForge.relicsIn(mcp.getInventory().items).toString()
-                + com.wavesurvivor.item.RelicEquip.CLIENT.size()).equals(forgeSig)) rebuild();
+                + com.wavesurvivor.item.RelicEquip.CLIENT.size() + "|" + com.wavesurvivor.item.RelicForge.dustIn(mcp.getInventory().items)).equals(forgeSig)) rebuild();
     }
 
     /** Forge : 0 = améliorer, 1 = fusionner, 2 = équipement (sans Curios). */

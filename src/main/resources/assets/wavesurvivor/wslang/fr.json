@@ -4255,5 +4255,9 @@
   "relic.couronne_titan.quote": "Porte-la, et le champ de bataille te paraîtra plus petit.",
   "relic.couronne_titan.parents": "Effets du Trophée du Titan et du Cœur du Titan (niv. {P})",
   "relic.couronne_titan.unique": "Unique : taille +25 % (Pehkui), +1,5 bloc de portée d’attaque, aucun recul",
-  "relic.couronne_titan.giant": "Frappe de géant : tes coups au corps à corps touchent aussi les monstres à 2 blocs de la cible ({20} % des dégâts)"
+  "relic.couronne_titan.giant": "Frappe de géant : tes coups au corps à corps touchent aussi les monstres à 2 blocs de la cible ({20} % des dégâts)",
+  "forge.dust_btn": "✦ Éclat de Faille ({1}/{0})",
+  "forge.dust_tip": "Forger 1 Éclat de Faille avec {0} Poussières de Faille (Coffre du Titan).",
+  "forge.dust_missing": "§cIl faut {0} Poussières de Faille (tu en as {1}).",
+  "forge.dust_done": "§d✦ {0} Poussières de Faille forgées en 1 Éclat de Faille."
 }
