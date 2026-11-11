@@ -397,6 +397,25 @@ public class ModItems {
             "Une clé pour chaque trésor.", "Effets de la Clé du Gardien et de l'Anneau du Prospecteur (niv. {P})",
             "Unique : un gisement détruit lâche une clé de Reliquaire ({25} %)");
 
+    // ─── 2.0 — Famille « Faille » (Coffre du Titan uniquement) : effets dans RiftRelics ───
+    public static final RegistryObject<Item> DE_FAILLE = ITEMS.register("de_faille",
+            () -> new com.wavesurvivor.item.RiftRelicItem("de_faille", "Charme"));
+    public static final RegistryObject<Item> SCEAU_TITAN = ITEMS.register("sceau_titan",
+            () -> new com.wavesurvivor.item.RiftRelicItem("sceau_titan", "Bague"));
+    public static final RegistryObject<Item> TROPHEE_TITAN = ITEMS.register("trophee_titan",
+            () -> new com.wavesurvivor.item.RiftRelicItem("trophee_titan", "Ceinture"));
+    public static final RegistryObject<Item> COEUR_TITAN = ITEMS.register("coeur_titan",
+            () -> new com.wavesurvivor.item.RiftRelicItem("coeur_titan", "Collier"));
+    /** 2.0 — Poussière de Faille (Coffre du Titan) : 48 → 1 Éclat de Faille à la Forge. */
+    public static final RegistryObject<Item> POUSSIERE_FAILLE = ITEMS.register("poussiere_faille",
+            () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)) {
+                @Override
+                public void appendHoverText(ItemStack st, @org.jetbrains.annotations.Nullable net.minecraft.world.level.Level lvl,
+                                            java.util.List<Component> tip, net.minecraft.world.item.TooltipFlag flag) {
+                    tip.add(Component.literal(com.wavesurvivor.i18n.WSLang.t("item.poussiere_faille.tip")).withStyle(net.minecraft.ChatFormatting.GRAY));
+                }
+            });
+
     /** Onglet créatif dédié. */
     public static final RegistryObject<CreativeModeTab> WAVE_SURVIVOR_TAB = TABS.register("wave_survivor",
             () -> CreativeModeTab.builder()
@@ -454,6 +473,11 @@ public class ModItems {
                         output.accept(REGARD_VEILLEUR.get());
                         output.accept(SCEAU_MARCHAND_ROI.get());
                         output.accept(TROUSSEAU_PILLEUR.get());
+                        output.accept(DE_FAILLE.get());
+                        output.accept(SCEAU_TITAN.get());
+                        output.accept(TROPHEE_TITAN.get());
+                        output.accept(COEUR_TITAN.get());
+                        output.accept(POUSSIERE_FAILLE.get());
                         // Mode Kingdom : défenses, remparts et pièges
                         output.accept(KINGDOM_ARCHER_TOWER_ITEM.get());
                         output.accept(KINGDOM_MAGE_TOWER_ITEM.get());

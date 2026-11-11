@@ -219,6 +219,13 @@ public class RogueUpgradeManager {
             st.putBoolean("init", true);
             st.putInt("rerolls", Math.max(0, cfgInt("rerolls", "start", 2)) + (com.wavesurvivor.horde.renaissance.Heritage.has(p, com.wavesurvivor.horde.renaissance.Heritage.Branch.SURVIVOR, 8) ? 1 : 0)); // Survivant 8 : +1 relance
             st.putInt("bans", Math.max(0, cfgInt("bans", "start", 1)));
+            // 2.0 — Dé de la Faille : relances (et bannissement au niveau III) en plus au début de la horde
+            int dr = com.wavesurvivor.item.RiftRelics.bonusRerolls(p), db = com.wavesurvivor.item.RiftRelics.bonusBans(p);
+            if (dr > 0 || db > 0) {
+                st.putInt("rerolls", st.getInt("rerolls") + dr);
+                st.putInt("bans", st.getInt("bans") + db);
+                p.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("relic.de_faille.granted", dr, db)), false);
+            }
             // pas de cadeau rétroactif si le joueur arrive en cours de partie
             st.putInt("rerollStep", wave / Math.max(1, cfgInt("rerolls", "every", 5)));
             st.putInt("banStep", wave / Math.max(1, cfgInt("bans", "every", 5)));
@@ -298,6 +305,14 @@ public class RogueUpgradeManager {
         List<Integer> all = new ArrayList<>();
         for (int i = 0; i < choices.size(); i++) all.add(i);
         BlessingDraw.maybeCurse(p, choices, all, wave);
+        // 2.0 — Sceau du Titan : carte Épique / Légendaire garantie dans les premiers choix de la horde
+        CompoundTag st = blessState(p, wave);
+        int menuN = st.getInt("menuN");
+        st.putInt("menuN", menuN + 1);
+        int sealed = com.wavesurvivor.item.RiftRelics.sealRarity(com.wavesurvivor.item.RiftRelics.seal(p), menuN);
+        if (sealed >= 0 && BlessingDraw.guarantee(p, choices, sealed, wave)) {
+            p.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("relic.sceau_titan.used", com.wavesurvivor.i18n.WSLang.t(sealed >= 3 ? "relic.rarity.legendary" : "relic.rarity.epic"))), false);
+        }
         sendMenu(p, choices, wave);
         // Petit son pour attirer l'attention
         p.playNotifySound(SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0f, 1.0f);

@@ -120,6 +120,57 @@ public final class BlessingDraw {
         if (id != null) ids.set(replaceable.get(RNG.nextInt(replaceable.size())), id);
     }
 
+    /**
+     * 2.0 — Sceau du Titan : le menu contient au moins une carte de rareté {@code rarity} (2 = Épique, 3 = Légendaire) ou mieux. Sinon, une carte
+     * est remplacée : par la même catégorie à cette rareté si elle existe, sinon par une autre catégorie disponible à cette rareté.
+     * @return vrai si une carte a été changée
+     */
+    public static boolean guarantee(ServerPlayer p, List<String> ids, int rarity, int wave) {
+        if (ids.isEmpty()) return false;
+        for (String id : ids) {
+            RogueUpgrade u = RogueUpgradeRegistry.get(id);
+            if (u != null && u.rarity() >= rarity && !CURSE.equals(u.family())) return false;
+        }
+        Set<String> banned = RogueUpgradeManager.banned(p);
+        Map<String, List<RogueUpgrade>> byCat = new LinkedHashMap<>();
+        for (RogueUpgrade u : RogueUpgradeRegistry.all()) {
+            if (u.rarity() != rarity || CURSE.equals(u.family()) || banned.contains(u.category())) continue;
+            if (u.maxLevel() > 0 && RogueUpgradeManager.getLevel(p, u.id()) >= u.maxLevel()) continue;
+            byCat.computeIfAbsent(u.category(), k -> new ArrayList<>()).add(u);
+        }
+        if (byCat.isEmpty()) return false;
+        // Une carte du menu dont la catégorie existe à cette rareté : on la monte (malédictions remplacées en priorité)
+        List<Integer> order = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) order.add(i);
+        Collections.shuffle(order, RNG);
+        order.sort((a, b) -> Boolean.compare(!isCurse(ids.get(a)), !isCurse(ids.get(b))));
+        for (int i : order) {
+            RogueUpgrade u = RogueUpgradeRegistry.get(ids.get(i));
+            if (u != null && byCat.containsKey(u.category())) {
+                List<RogueUpgrade> c = byCat.get(u.category());
+                ids.set(i, c.get(RNG.nextInt(c.size())).id());
+                return true;
+            }
+        }
+        // Sinon : une autre catégorie (absente du menu) à cette rareté remplace une carte au hasard
+        Set<String> present = new java.util.HashSet<>();
+        for (String id : ids) {
+            RogueUpgrade u = RogueUpgradeRegistry.get(id);
+            if (u != null) present.add(u.category());
+        }
+        List<String> cats = new ArrayList<>();
+        for (String c : byCat.keySet()) if (!present.contains(c)) cats.add(c);
+        if (cats.isEmpty()) return false;
+        List<RogueUpgrade> c = byCat.get(cats.get(RNG.nextInt(cats.size())));
+        ids.set(order.get(0), c.get(RNG.nextInt(c.size())).id());
+        return true;
+    }
+
+    private static boolean isCurse(String id) {
+        RogueUpgrade u = RogueUpgradeRegistry.get(id);
+        return u != null && CURSE.equals(u.family());
+    }
+
     /** Choisit un niveau de rareté de cette catégorie, au poids. */
     private static String pickTier(List<RogueUpgrade> tiers, double[] w) {
         double total = 0;

@@ -38,6 +38,8 @@ public class RenaissanceRewards {
         bosses = 0;
         kingdom = isKingdom;
         defeat = false;
+        // 2.0 — marques du Trophée du Titan : nouvelle partie (la Faille garde les siennes d'une phase à l'autre)
+        if (!com.wavesurvivor.horde.rift.RiftManager.isActive()) com.wavesurvivor.item.RiftRelics.resetRun();
     }
 
     /** Vague terminée (horde classique) ou Assaut survécu (Kingdom). */
@@ -131,6 +133,12 @@ public class RenaissanceRewards {
                     + (consolation > 0 ? WSLang.t("pr.consolation", consolation) : "")
                     + (cashScale < 1.0 ? WSLang.t("pr.cashed", (int) Math.round(cashScale * 100)) : "")));
             p.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1f, 1.4f);
+            // 2.0 — Trophée du Titan : PR par boss vaincu, versés à part
+            int trophy = com.wavesurvivor.item.RiftRelics.trophyPrFor(p, bosses);
+            if (trophy > 0) {
+                RenaissanceStore.addPoints(p, trophy);
+                p.sendSystemMessage(Component.literal(WSLang.t("relic.trophee_titan.paid", trophy, bosses)));
+            }
             WaveSurvivorMod.LOGGER.info("[PR] {} +{} PR ({} vagues, {} boss, victoire={})", p.getGameProfile().getName(), total, waves, bosses, victory);
         }
         waves = 0;

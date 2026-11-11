@@ -92,7 +92,7 @@ public class SkillEruption extends BossSkill {
             p.hurt(boss.isAlive() ? level.damageSources().mobAttack(boss) : level.damageSources().inFire(),
                     (float) Math.max(0, config.eruptionDamage));
             p.setSecondsOnFire(Math.max(0, config.eruptionFireSeconds));
-            if (com.wavesurvivor.item.RelicEffects.immovable(p)) continue;
+            if (com.wavesurvivor.item.RiftRelics.shockImmune(p)) continue;
             Vec3 v = p.getDeltaMovement();
             p.setDeltaMovement(v.x, Math.max(v.y, config.eruptionKnockup), v.z);
             p.hurtMarked = true;

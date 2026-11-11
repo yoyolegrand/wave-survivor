@@ -216,5 +216,10 @@
   "item.wavesurvivor.rift_shard": "Éclat de Faille",
   "entity.wavesurvivor.devoreur": "Le Dévoreur",
   "entity.wavesurvivor.colosse": "Le Colosse de la Faille",
-  "entity.wavesurvivor.archonte": "L’Archonte du Néant"
+  "entity.wavesurvivor.archonte": "L’Archonte du Néant",
+  "item.wavesurvivor.de_faille": "Dé de la Faille",
+  "item.wavesurvivor.sceau_titan": "Sceau du Titan",
+  "item.wavesurvivor.trophee_titan": "Trophée du Titan",
+  "item.wavesurvivor.coeur_titan": "Cœur du Titan",
+  "item.wavesurvivor.poussiere_faille": "Poussière de Faille"
 }

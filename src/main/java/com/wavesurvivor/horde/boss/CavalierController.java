@@ -122,7 +122,7 @@ public class CavalierController {
                     pl -> pl.isAlive() && !pl.isCreative() && !pl.isSpectator())) {
                 if (!s.hitThisCharge.add(p.getUUID())) continue;
                 p.hurt(level.damageSources().mobAttack(mount), 8f);
-                if (!com.wavesurvivor.item.RelicEffects.immovable(p)) {
+                if (!com.wavesurvivor.item.RiftRelics.shockImmune(p)) {
                     Vec3 k = s.chargeDir.normalize().scale(1.4);
                     p.setDeltaMovement(k.x, 0.55, k.z);
                     p.hurtMarked = true;
@@ -258,7 +258,7 @@ public class CavalierController {
                     pl -> pl.isAlive() && !pl.isCreative() && !pl.isSpectator())) {
                 p.hurt(rider.isAlive() ? level.damageSources().mobAttack(rider) : level.damageSources().inFire(), 7f);
                 p.setSecondsOnFire(4);
-                if (com.wavesurvivor.item.RelicEffects.immovable(p)) continue;
+                if (com.wavesurvivor.item.RiftRelics.shockImmune(p)) continue;
                 Vec3 k = p.position().subtract(spot).normalize().scale(0.8);
                 p.setDeltaMovement(k.x, 0.6, k.z);
                 p.hurtMarked = true;

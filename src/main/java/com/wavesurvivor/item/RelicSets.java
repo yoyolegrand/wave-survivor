@@ -38,6 +38,7 @@ import java.util.function.Supplier;
  *  🔥 Éléments    2 : −20 % de dégâts magiques · 3 : aura élémentaire (20 % : feu / poison / lenteur sur l'attaquant)
  *  🪨 Inébranlable 2 : +2 robustesse · 3 : sous 30 % PV +4 armure et Résistance I · 4 : pas de chute, Talisman ×2
  *  💰 Fortune     2 : −10 % de plus chez les marchands · 3 : +10 % de PR en fin de horde · 4 : Jackpot (roulette)
+ *  🌌 Faille (2.0) 2 : +1 Chance · 3 : +15 % contre boss et Titans, aucun recul des ondes de choc · 4 : Bouclier de Faille (voir RiftRelics)
  */
 public class RelicSets {
 
@@ -47,7 +48,9 @@ public class RelicSets {
         ABYSS("abyss", 3, ModItems.ECLAT_BRECHE, ModItems.PRISME_CATALYSEUR, ModItems.FRAGMENT_PORTE),
         ELEMENTS("elements", 4, ModItems.AMULETTE_BRASIER, ModItems.CHARME_PHYLACTERE, ModItems.CRISTAL_GIVRE, ModItems.VOILE_DESERT),
         STEADFAST("steadfast", 4, ModItems.ANNEAU_ANCRAGE, ModItems.CEINTURE_PLOMB, ModItems.OEIL_VEILLEUR, ModItems.TALISMAN_SOUFFLE),
-        FORTUNE("fortune", 4, ModItems.LANGUE_ARGENT, ModItems.CLE_GARDIEN, ModItems.ANNEAU_PROSPECTEUR, ModItems.BOURSE_COLPORTEUR);
+        FORTUNE("fortune", 4, ModItems.LANGUE_ARGENT, ModItems.CLE_GARDIEN, ModItems.ANNEAU_PROSPECTEUR, ModItems.BOURSE_COLPORTEUR),
+        /** 2.0 : reliques du Coffre du Titan (jamais dans le Reliquaire scellé). */
+        RIFT("rift", 4, ModItems.DE_FAILLE, ModItems.SCEAU_TITAN, ModItems.TROPHEE_TITAN, ModItems.COEUR_TITAN);
 
         public final String id;
         public final int max;

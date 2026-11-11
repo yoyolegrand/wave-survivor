@@ -122,6 +122,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RelicEffects());
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.DesertRelicEvents()); // 1.7 : Voile du Désert (vitesse)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RelicSets()); // 1.5 : bonus de set des reliques
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RiftRelics()); // 2.0 : famille de reliques « Faille »
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.item.RelicEquip()); // 1.5 : reliques équipées (sans Curios)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.renaissance.Heritage()); // 1.5 : Héritage et Renaissance
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.bossrush.BossRush()); // 1.6 : Boss Rush (vies, barre d'action)

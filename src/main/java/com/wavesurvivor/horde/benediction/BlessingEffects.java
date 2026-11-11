@@ -217,6 +217,15 @@ public class BlessingEffects {
 
     public static void onWaveStart(MinecraftServer srv) {
         if (srv == null) return;
+        com.wavesurvivor.item.RiftRelics.shieldBeforeWave(srv);   // 2.0 : le reste du Bouclier de Faille précédent est retiré d'abord
+        try {
+            dawn(srv);
+        } finally {
+            com.wavesurvivor.item.RiftRelics.shieldAfterWave(srv);   // puis le nouveau bouclier S'AJOUTE à l'absorption de l'Aube
+        }
+    }
+
+    private static void dawn(MinecraftServer srv) {
         for (ServerPlayer p : srv.getPlayerList().getPlayers()) {
             if (!p.isAlive() || p.isSpectator()) continue;
             double a = sum(owned(p, "dawn_shield"), "absorption");

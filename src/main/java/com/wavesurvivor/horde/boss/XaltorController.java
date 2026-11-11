@@ -195,7 +195,7 @@ public class XaltorController {
         if (now >= s.nextPull) {
             s.nextPull = now + 80;
             for (ServerPlayer p : players(level, boss.blockPosition(), 16)) {
-                if (com.wavesurvivor.item.RelicEffects.immovable(p)) continue;
+                if (com.wavesurvivor.item.RiftRelics.shockImmune(p)) continue;
                 Vec3 to = boss.position().subtract(p.position());
                 double d = to.length();
                 if (d < 3) continue;

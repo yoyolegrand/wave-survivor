@@ -316,6 +316,7 @@ public final class RiftManager {
     public static void stop(MinecraftServer server) {
         riftBosses = 0;
         com.wavesurvivor.horde.renaissance.RiftLegacy.resetRun();
+        com.wavesurvivor.item.RiftRelics.resetRun();   // marques du Trophée du Titan
         RiftSession.discard(server);   // fin de la Faille : plus rien à reprendre (sauf à la fermeture du serveur)
         resuming = null;
         phase = Phase.NONE;
@@ -1213,6 +1214,7 @@ public final class RiftManager {
         HordeConfigMultiData.RiftSettings rs = settings();
         phase = Phase.COUNTER;
         com.wavesurvivor.horde.renaissance.Heritage.onWaveStart(server);   // Survivant 1 / 2 au début de la Contre-offensive
+        com.wavesurvivor.item.RiftRelics.onWaveStart(server);              // Bouclier de Faille (ensemble 4 pièces)
         coreSpawned = false;
         captureSession(server, true);   // point de reprise : la Contre-offensive recommence avec tous ses catalyseurs
         BlockPos c = RiftFortress.center(siegeFinal);
@@ -1334,6 +1336,7 @@ public final class RiftManager {
         phase = Phase.TITAN;
         titanWaveN = 0;
         com.wavesurvivor.horde.renaissance.Heritage.onWaveStart(server);   // Survivant 1 / 2 à l'arrivée du Titan
+        com.wavesurvivor.item.RiftRelics.onWaveStart(server);              // Bouclier de Faille (ensemble 4 pièces)
         RiftTitan.spawn(rd, settings(), playerCount(rd), siegeFinal);
     }
 
@@ -1369,6 +1372,14 @@ public final class RiftManager {
                 p.sendSystemMessage(Component.literal(WSLang.t("rift.loot")));
             }
         }
+    }
+
+    /** 2.0 — Trophée du Titan : PR par boss vaincu (Titan compris), versés à part. */
+    private static void trophyPayout(ServerPlayer p, int bosses) {
+        int pr = com.wavesurvivor.item.RiftRelics.trophyPrFor(p, bosses);
+        if (pr <= 0) return;
+        com.wavesurvivor.horde.renaissance.RenaissanceStore.addPoints(p, pr);
+        p.sendSystemMessage(Component.literal(WSLang.t("relic.trophee_titan.paid", pr, bosses)));
     }
 
     /** Boss tués pendant la Faille (PR). */
@@ -1432,6 +1443,7 @@ public final class RiftManager {
             p.sendSystemMessage(Component.literal(WSLang.t("rift.pr.earned", total, hordeWaves, assaults, riftBosses, titan ? rs.titanPrBonus : 0,
                     String.format("%.2f", diff * muta * personal)) + (firstWin ? WSLang.t("pr.first", 15) : "")));
             p.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1f, 1.4f);
+            trophyPayout(p, riftBosses + (titan ? 1 : 0));
             WaveSurvivorMod.LOGGER.info("[Faille] {} +{} PR ({} vagues, {} assauts, {} boss, Titan={}, victoire={})", p.getGameProfile().getName(), total, hordeWaves, assaults, riftBosses, titan, victory);
         }
         if (!victory) return;

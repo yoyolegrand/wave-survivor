@@ -34,6 +34,10 @@
     "wavesurvivor:ancre_colosse",
     "wavesurvivor:regard_veilleur",
     "wavesurvivor:sceau_marchand_roi",
-    "wavesurvivor:trousseau_pilleur"
+    "wavesurvivor:trousseau_pilleur",
+    "wavesurvivor:de_faille",
+    "wavesurvivor:sceau_titan",
+    "wavesurvivor:trophee_titan",
+    "wavesurvivor:coeur_titan"
   ]
 }

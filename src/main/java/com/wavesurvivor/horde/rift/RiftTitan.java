@@ -996,6 +996,7 @@ final class RiftTitan {
                     if (!p.onGround()) continue;   // en l'air : on a sauté par-dessus
                     p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.titanStompDamage));
                     p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 4, false, true));
+                    if (com.wavesurvivor.item.RiftRelics.shockImmune(p)) continue;   // aucun recul (Faille 3 pièces, Ceinture de Plomb…)
                     p.setDeltaMovement(p.getDeltaMovement().add(0, 0.55, 0));
                     p.hurtMarked = true;
                 }
@@ -1183,6 +1184,7 @@ final class RiftTitan {
             if (d < 40) ShakePacket.send(pl, 35, (float) Math.max(0.4, 1.6 - d / 40));
             if (!pl.isSpectator() && pl.isAlive() && d <= 5.5) {
                 pl.hurt(l.damageSources().explosion(null, titan), 14f);
+                if (com.wavesurvivor.item.RiftRelics.shockImmune(pl)) continue;
                 double dx = pl.getX() - p.x, dz = pl.getZ() - p.z, len = Math.max(0.5, Math.hypot(dx, dz));
                 pl.setDeltaMovement(dx / len, 0.6, dz / len);
                 pl.hurtMarked = true;
@@ -1292,6 +1294,7 @@ final class RiftTitan {
                 var hit = l.clip(new ClipContext(mouth, p.getEyePosition(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, titan));
                 if (hit.getType() != HitResult.Type.MISS && hit.getLocation().distanceTo(p.getEyePosition()) > 1.5) continue;   // à l'abri
                 double dx = p.getX() - mx, dz = p.getZ() - mz, len = Math.max(0.1, Math.hypot(dx, dz));
+                if (com.wavesurvivor.item.RiftRelics.shockImmune(p)) continue;
                 double force = p.isShiftKeyDown() ? 0.35 : 1.7;
                 p.setDeltaMovement(p.getDeltaMovement().add(dx / len * force, p.isShiftKeyDown() ? 0.1 : 0.5, dz / len * force));
                 p.hurtMarked = true;
@@ -1603,6 +1606,7 @@ final class RiftTitan {
                     if (d < 40) ShakePacket.send(p, 20, 1.0f);
                     if (!p.isSpectator() && p.isAlive() && d <= 5.2 && Math.abs(p.getY() - c.getY()) < 5) {
                         p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.titanMeleeDamage));
+                        if (com.wavesurvivor.item.RiftRelics.shockImmune(p)) continue;
                         double dx = p.getX() - s[0], dz = p.getZ() - s[1], len = Math.max(0.5, Math.hypot(dx, dz));
                         p.setDeltaMovement(dx / len * 1.0, 0.6, dz / len * 1.0);
                         p.hurtMarked = true;
@@ -1898,6 +1902,7 @@ final class RiftTitan {
     }
 
     private static void onTitanDeath(ServerLevel l) {
+        if (titanId != null) com.wavesurvivor.item.RiftRelics.onBossDefeated(l.getServer(), titanId);   // marque du Trophée du Titan
         charge = 0;
         stunning = false;
         strikes.clear();

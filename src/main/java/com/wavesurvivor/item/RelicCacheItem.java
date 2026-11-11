@@ -34,7 +34,7 @@ public class RelicCacheItem extends Item {
         ItemStack st = player.getItemInHand(hand);
         if (level.isClientSide) return InteractionResultHolder.success(st);
         List<Item> pool = new ArrayList<>();
-        for (RelicSets.Family f : RelicSets.Family.values()) pool.addAll(f.items());
+        for (RelicSets.Family f : RelicSets.Family.values()) if (f != RelicSets.Family.RIFT) pool.addAll(f.items()); // Faille : Coffre du Titan seulement
         if (pool.isEmpty()) return InteractionResultHolder.fail(st);
         ItemStack relic = new ItemStack(pool.get(level.random.nextInt(pool.size())));
         String name = relic.getHoverName().getString(); // avant l'ajout : l'inventaire vide la pile d'origine
