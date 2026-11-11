@@ -492,3 +492,6 @@ Test rapide : dans la Faille, `/ws rift sky <horde|siege|contre|titan|victoire>`
 - [ ] Biome « Faille » : poussière de portail dans l'air, ambiance de grotte de temps en temps
 - [ ] Option : `config/wavesurvivor/client_options.json` › `{"riftSky": false}` = fond Horde seul, sans aurores ni Faille ni fondu (relu en changeant de monde)
 - [ ] Performances correctes (FPS) ; distance de rendu minimale (2 chunks) : le ciel ne se coupe pas
+
+## Siège de la Faille : île accélérée ×2
+- [ ] Au début du Siège, l'île s'agrandit deux fois plus vite (départ 1 s, un anneau toutes les 4 ticks, pause finale 2 s) ; secousses et sons toujours présents ; la forteresse se construit ensuite normalement

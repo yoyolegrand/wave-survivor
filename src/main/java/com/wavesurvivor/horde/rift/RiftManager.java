@@ -778,7 +778,7 @@ public final class RiftManager {
                         if (!RiftIsland.ring(rd, growCur, to, growTarget)) RiftFortress.islandRing(rd, growCur, to);
                         growCur = to;
                         radius = to;
-                        growNextAt = now + 8;
+                        growNextAt = now + 4;   // 2.0 : île deux fois plus rapide (anneau toutes les 4 ticks)
                         for (ServerPlayer p : rd.players()) com.wavesurvivor.network.ShakePacket.send(p, 10, 0.5f);
                         rd.playSound(null, CENTER, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 3f, 0.5f);
                     }
@@ -941,8 +941,8 @@ public final class RiftManager {
         phase = Phase.SIEGE;
         growCur = radius;
         growTarget = siegeFinal;
-        growNextAt = now + 40;
-        siegeStartAt = now + 40 + ((growTarget - growCur + 1) / 2) * 8L + 80;
+        growNextAt = now + 20;   // 2.0 : cinématique de l'île accélérée ×2 (départ, anneaux, pause finale)
+        siegeStartAt = now + 20 + ((growTarget - growCur + 1) / 2) * 4L + 40;
         siegeHordeOn = false;
         RiftFortress.startBuild(siegeFinal, true);   // cinématique de construction une fois l'île agrandie
         RiftEngines.clear(); // les engins ne sont plus pré-posés : on les achète à la boutique du Monolithe
