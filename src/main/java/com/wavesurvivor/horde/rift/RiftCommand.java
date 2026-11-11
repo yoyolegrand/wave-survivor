@@ -32,6 +32,16 @@ public final class RiftCommand {
                         .executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), true))
                         .then(Commands.literal("fast").executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), false)))))
                 .then(Commands.literal("catalysts").executes(ctx -> catalysts(ctx.getSource())))
+                .then(Commands.literal("devoreur").executes(ctx -> devoreur(ctx.getSource(), 1.0))
+                        .then(Commands.argument("scale", com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0.2, 20))
+                                .executes(ctx -> devoreur(ctx.getSource(), com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx, "scale")))))
+                .then(Commands.literal("pose").then(Commands.argument("pose", com.mojang.brigadier.arguments.StringArgumentType.word())
+                        .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(
+                                java.util.Arrays.stream(com.wavesurvivor.entity.TitanAnimated.Pose.values()).map(p -> p.name().toLowerCase()), b))
+                        .executes(ctx -> pose(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "pose"), 60))
+                        .then(Commands.argument("ticks", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 1200))
+                                .executes(ctx -> pose(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "pose"),
+                                        com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "ticks"))))))
                 .then(Commands.literal("skill").then(Commands.argument("name", com.mojang.brigadier.arguments.StringArgumentType.word())
                         .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(RiftTitan.DEBUG_SKILLS, b))
                         .executes(ctx -> skill(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "name")))));
@@ -66,6 +76,45 @@ public final class RiftCommand {
         }
         int n = RiftFortress.testCatalysts(p.serverLevel(), RiftManager.testRadius(), 300f);
         src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.catalysts_ok", n)), false);
+        return 1;
+    }
+
+    /** Test : un Dévoreur immobile à 12 blocs devant le joueur (agrandi par Pehkui si l'échelle n'est pas 1). */
+    private static int devoreur(CommandSourceStack src, double scale) {
+        ServerPlayer p = src.getPlayer();
+        if (p == null) return 0;
+        com.wavesurvivor.entity.Devoreur d = com.wavesurvivor.registry.ModEntities.DEVOREUR.get().create(p.serverLevel());
+        if (d == null) return 0;
+        net.minecraft.world.phys.Vec3 look = p.getLookAngle().multiply(1, 0, 1).normalize();
+        d.moveTo(p.getX() + look.x * 12, p.getY(), p.getZ() + look.z * 12, p.getYRot() + 180f, 0f);
+        d.setYHeadRot(p.getYRot() + 180f);
+        d.yBodyRot = p.getYRot() + 180f;
+        d.setNoAi(true);
+        d.setNoGravity(true);
+        d.setPersistenceRequired();
+        d.getPersistentData().putBoolean("ws_test_titan", true);
+        p.serverLevel().addFreshEntity(d);
+        if (scale != 1.0) com.wavesurvivor.compat.PehkuiCompat.setScale(d, scale);
+        src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.devoreur_ok")), false);
+        return 1;
+    }
+
+    /** Test : pose jouée par le Titan de la Faille, sinon par les Dévoreurs à moins de 200 blocs. */
+    private static int pose(CommandSourceStack src, String name, int ticks) {
+        com.wavesurvivor.entity.TitanAnimated.Pose pose;
+        try { pose = com.wavesurvivor.entity.TitanAnimated.Pose.valueOf(name.toUpperCase(java.util.Locale.ROOT)); }
+        catch (IllegalArgumentException ex) { src.sendFailure(Component.literal(WSLang.t("rift.test.pose_unknown", name))); return 0; }
+        int n = RiftTitan.debugPose(pose, ticks) ? 1 : 0;
+        ServerPlayer p = src.getPlayer();
+        if (p != null) {
+            for (com.wavesurvivor.entity.Devoreur d : p.serverLevel().getEntitiesOfClass(com.wavesurvivor.entity.Devoreur.class, p.getBoundingBox().inflate(200))) {
+                d.playPose(pose, ticks);
+                n++;
+            }
+        }
+        final int count = n;
+        if (count == 0) { src.sendFailure(Component.literal(WSLang.t("rift.test.pose_none"))); return 0; }
+        src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.pose_ok", pose.name(), ticks, count)), false);
         return 1;
     }
 

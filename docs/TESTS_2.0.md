@@ -375,3 +375,13 @@ Test rapide (dans la dimension de la Faille : `/ws rift open` puis `/ws rift ent
 - [ ] Citadelle : l'entrée du donjon (vers le cœur et le portail) se monte en survie, marche par marche (plus de rebord de 2 blocs)
 - [ ] Entrer dans le portail du fond de la forteresse (pendant la partie) ramène sur l'île près du Monolithe ; en fin de partie, le portail de sortie renvoie chez soi
 - [ ] Sortie de la Faille (portail de fin, victoire ou défaite, fermeture) : on arrive devant le Monolithe / l'autel qui a ouvert la Faille, sur le sol, quelle que soit sa position dans la dimension
+
+## Le Dévoreur (Titan de la première Faille)
+Test rapide : `/ws rift devoreur` (taille normale, ~10 blocs) ou `/ws rift devoreur 5` (taille du Titan, ~50 blocs, Pehkui) devant soi, puis `/ws rift pose <roar|beam|slam|throw|summon|hurt|charge|stunned|idle> [ticks]` (60 ticks par défaut ; agit aussi sur le Titan d'une Faille en cours). Retirer : `/kill @e[type=wavesurvivor:devoreur]`. Combat complet : `/ws rift skill <…>` pendant le Titan.
+- [ ] Apparition (cinématique) : il surgit de l'abîme tête en avant, queue qui pend dans le vide ; rugissement (pose ROAR) à l'étape du cri ; nom « LE DÉVOREUR » / « THE DEVOURER »
+- [ ] Ondulation permanente du corps, mâchoire qui respire ; lueurs (anneaux, yeux, cristaux, gueule) visibles dans le noir
+- [ ] Chaque pose : ROAR, BEAM (balaie de gauche à droite), SLAM (frappe à mi-durée), THROW (crache à 60 %), SUMMON, HURT, CHARGE (se ramasse puis se jette), STUNNED (s'affaisse)
+- [ ] En combat : météores / traqueurs / lave / géant / rocher → THROW ; piétinement, poing, bâtiment → SLAM ; regard → BEAM ; rugissement → ROAR ; charge → CHARGE (le jeté tombe à l'impact) puis STUNNED pendant l'étourdissement ; avatars → SUMMON ; point faible détruit → HURT
+- [ ] Visible de très loin (depuis le bout de l'île et le pont), pas de disparition en tournant la tête
+- [ ] Boîtes de contact : on touche le corps ET le haut (cou / tête qui avance vers l'île) ; cristaux de point faible collés à l'avant du corps
+- [ ] Éditeur : Titan par défaut « wavesurvivor:devoreur », échelle 5 ; une autre entité reste possible (vérifier l'échelle si la horde avait été enregistrée avec 27)

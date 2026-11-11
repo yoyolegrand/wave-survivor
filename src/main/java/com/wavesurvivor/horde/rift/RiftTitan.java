@@ -112,6 +112,21 @@ final class RiftTitan {
 
     static boolean active() { return titan != null && !dead; }
 
+    /** Pose de compétence (purement visuelle) si le Titan a un modèle animé (le Dévoreur) ; sans effet sinon. */
+    private static void pose(com.wavesurvivor.entity.TitanAnimated.Pose p, int ticks) {
+        if (titan instanceof com.wavesurvivor.entity.Devoreur d) d.playPose(p, ticks);
+    }
+
+    /**
+     * Le Dévoreur avance la tête bien au-delà de sa boîte (tête en avant, queue dans le vide) : décalage vers l'île (blocs) des boîtes de
+     * contact et des cristaux à la hauteur {@code dy} au-dessus du sol de l'entité (0 en bas, ~2,8 blocs × échelle au niveau de la tête).
+     */
+    private static double forward(double dy) {
+        if (!(titan instanceof com.wavesurvivor.entity.Devoreur)) return 0;
+        double h = Math.max(1, titanHeight());
+        return Math.max(0, Math.min(1, dy / h)) * 2.8 * rs.titanScale;
+    }
+
     /**
      * Type d'entité du Titan : identifiant du jeu (vanilla ou moddé, ex. « minecraft:warden ») ou nom d'une entité personnalisée de
      * l'éditeur (son type de base est utilisé). Identifiant inconnu : golem de fer.
@@ -161,7 +176,7 @@ final class RiftTitan {
             if (h == null) continue;
             double x = titan.getX() - hw + 4 + col * Math.min(8.0, (2 * hw - 8) / Math.max(1, cols - 1));
             if (cols == 1) x = titan.getX();
-            h.setPos(x, titan.getY() + row * 8.0, front + 4);
+            h.setPos(x, titan.getY() + row * 8.0, front + 4 - forward(row * 8.0 + 4));
         }
         placeCrystals(l);
     }
@@ -410,6 +425,13 @@ final class RiftTitan {
         return true;
     }
 
+    /** Test : pose jouée par le Titan actif (s'il est animé). @return faux s'il n'y en a pas */
+    static boolean debugPose(com.wavesurvivor.entity.TitanAnimated.Pose p, int ticks) {
+        if (!(titan instanceof com.wavesurvivor.entity.Devoreur d) || dead) return false;
+        d.playPose(p, ticks);
+        return true;
+    }
+
     static final String[] DEBUG_SKILLS = {"meteors", "tracking", "lava", "giant", "stomp", "rock", "beam", "roar", "charge"};
 
     private static int groundY(ServerLevel l, int x, int z) {
@@ -446,6 +468,7 @@ final class RiftTitan {
     /** Le Titan abat son poing sur le Monolithe : annoncé (cercle rouge sur le Monolithe), puis coup porté à son intégrité. */
     private static void monolithFist(ServerLevel l, long now) {
         BlockPos m = RiftManager.MONOLITH;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.SLAM, 140);   // frappe à mi-durée = coup
         schedule(l, now, 70, com.wavesurvivor.i18n.WSLang.t("rift.t.fist"), t -> ring(l, m.getX() + 0.5, m.getY() + 0.2, m.getZ() + 0.5, 3.5, RED, 24), () -> {
             l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, m.getX() + 0.5, m.getY() + 1, m.getZ() + 0.5, 2, 0.6, 0.6, 0.6, 0);
             l.playSound(null, m, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
@@ -601,6 +624,7 @@ final class RiftTitan {
             newMeteor(s[0], s[1], s[2], (float) Math.max(0.3, rs.meteorSize / 3.0), radius, rs.meteorDamage, craterR, 200, impact, fall, 1f, rs.meteorBlocks)
                     .buildDamage = Math.max(1, rs.titanBuildDamage / 3f);
         }
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.THROW, delay);
         schedule(l, now, delay, com.wavesurvivor.i18n.WSLang.t("rift.t.meteors"), t -> {
             // La zone se remplit du centre vers le bord, en plus du cercle
             double f = Math.max(0.05, Math.min(1.0, (t - start) / (double) delay));
@@ -651,6 +675,7 @@ final class RiftTitan {
             mine.add(m);
         }
         if (mine.isEmpty()) return;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.THROW, delay);
         schedule(l, now, delay + (mine.size() - 1) * 12, com.wavesurvivor.i18n.WSLang.t("rift.titan.meteor_track"), t -> {
             for (Meteor m : mine) {
                 if (t >= m.impactAt) continue;
@@ -688,6 +713,7 @@ final class RiftTitan {
         if (mine.isEmpty()) return;
         long last = now;
         for (Meteor m : mine) last = Math.max(last, m.impactAt);
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.THROW, 50);
         schedule(l, now, (int) (last - now), com.wavesurvivor.i18n.WSLang.t("rift.titan.lava_rain"), t -> {
             for (Meteor m : mine) if (t < m.impactAt) ring(l, m.tx, m.ty, m.tz, m.radius, RED, 14);
         }, () -> { });
@@ -710,6 +736,7 @@ final class RiftTitan {
         Meteor m = newMeteor(x, gy, z, 2.3f, radius, Math.max(10, rs.meteorDamage * 2.5), 4, 400, now + delay, 45, 1.8f, rs.meteorBlocks);
         m.buildDamage = Math.max(1, rs.titanBuildDamage);
         final long start = now;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.THROW, delay);
         schedule(l, now, delay, com.wavesurvivor.i18n.WSLang.t("rift.titan.meteor_giant"), t -> {
             double f = Math.max(0.05, Math.min(1.0, (t - start) / (double) delay));
             ring(l, x, gy, z, radius, RED, 70);
@@ -913,6 +940,7 @@ final class RiftTitan {
         final long start = now;
         final double[] angs = new double[7];
         for (int i = 0; i < angs.length; i++) angs[i] = Math.PI + (i + 0.5) * Math.PI / angs.length + (RNG.nextDouble() - 0.5) * 0.25;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.SLAM, 120);   // frappe à mi-durée = impact
         Pending pd = schedule(l, now, 60, com.wavesurvivor.i18n.WSLang.t("rift.titan.stomp"), t -> {
             double f = Math.min(1, (t - start) / 50.0);
             for (double a : angs) {
@@ -1040,6 +1068,7 @@ final class RiftTitan {
         announce(l, "§6" + com.wavesurvivor.i18n.WSLang.t("rift.titan.rock_ripped"));
         l.playSound(null, BlockPos.containing(r.hand), SoundEvents.WITHER_BREAK_BLOCK, SoundSource.HOSTILE, 6f, 0.4f);
         final BlockPos ft = tgt;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.THROW, (int) Math.max(1, (r.throwAt - now) / 0.6));   // le crachat (60 %) tombe au lancer
         r.pend = schedule(l, now, (int) (r.hitAt - now), com.wavesurvivor.i18n.WSLang.t("rift.titan.rock_incoming"), t -> {
             if (ROCKS.contains(r) && t >= r.throwAt - 20) ring(l, ft.getX() + 0.5, ft.getY() + 0.2, ft.getZ() + 0.5, 5, RED, 30);
         }, () -> { });
@@ -1175,6 +1204,7 @@ final class RiftTitan {
         final double span = Math.max(RiftManager.radius(), siegeRadius) * 0.95;
         final double zLine = c.getZ() + 0.5 + (RNG.nextDouble() - 0.6) * span;
         final boolean flip = RNG.nextBoolean();
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.BEAM, 150);   // annonce (60) + balayage (90)
         schedule(l, now, 60, com.wavesurvivor.i18n.WSLang.t("rift.titan.gaze"), t -> {
             double xx = c.getX() + 0.5 + (flip ? span : -span);
             drawLine(l, ex, ey, ez, xx, c.getY() + 1.2, zLine, RED, 2.5);
@@ -1236,6 +1266,7 @@ final class RiftTitan {
      */
     private static void roar(ServerLevel l, long now) {
         final double mx = titan.getX(), my = baseY + titanHeight() * 0.8, mz = titan.getZ() - halfWidth() * 0.6;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.ROAR, 80);
         Pending pd = schedule(l, now, 50, com.wavesurvivor.i18n.WSLang.t("rift.titan.roar"), t -> {
             l.sendParticles(ParticleTypes.SONIC_BOOM, mx, my, mz, 1, 0, 0, 0, 0);
             l.sendParticles(ParticleTypes.LARGE_SMOKE, mx, my, mz, 10, 3, 2, 3, 0.05);
@@ -1274,6 +1305,7 @@ final class RiftTitan {
 
     /** Invoque des avatars : mini-boss dont la mort retire un pourcentage des PV max du Titan. */
     private static void summonAvatars(ServerLevel l) {
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.SUMMON, 50);
         List<ServerPlayer> alive = alive(l);
         int n = Math.min(4, 1 + alive.size() / 2 + phase / 2);
         double hp = rs.titanAvatarHp * (1.0 + 0.35 * Math.max(0, alive.size() - 1));
@@ -1439,6 +1471,7 @@ final class RiftTitan {
         stunBonus = 0;
         charge = 1;
         chargeAt = now + 60;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.CHARGE, 133);   // annonce 60 + course 20 = impact à 80 ticks : le « jeté » (60 % de la pose) tombe à l'impact
         titan.setGlowingTag(true);
         announce(l, "§c§l⚠ " + com.wavesurvivor.i18n.WSLang.t("rift.t.charge_start"));
         l.playSound(null, c, SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 8f, 0.4f);
@@ -1471,6 +1504,7 @@ final class RiftTitan {
         chargeAt = now + Math.max(2, rs.titanChargeStun) * 20L + stunBonus;
         stunBonus = 0;
         stunning = true;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.STUNNED, (int) Math.max(20, chargeAt - now));
         windowUntil = chargeAt;
         windowDealt = 0f;
         titan.setGlowingTag(true);
@@ -1644,6 +1678,7 @@ final class RiftTitan {
         if (t >= tRoar && t < tName) {
             if (!cineRoar) {
                 cineRoar = true;
+                pose(com.wavesurvivor.entity.TitanAnimated.Pose.ROAR, 70);
                 sound(l, SoundEvents.RAVAGER_ROAR, 12f, 0.5f);
                 sound(l, SoundEvents.WITHER_SPAWN, 10f, 0.5f);
                 shakeAll(l, (int) (tName - tRoar), 1.8f);
@@ -1718,7 +1753,7 @@ final class RiftTitan {
             boolean have = false;
             for (float[] o : crystalOff) if (Math.abs(o[0] - dx) < 0.01f) { have = true; break; }
             if (have) continue;
-            UUID id = RiftFortress.spawnTitanCrystal(l, titan.getX() + dx, titan.getY() + dy, titan.getZ() - hw - 1.5, Math.max(10, rs.titanCrystalHp), "§d" + com.wavesurvivor.i18n.WSLang.t("rift.t.weak_point"));
+            UUID id = RiftFortress.spawnTitanCrystal(l, titan.getX() + dx, titan.getY() + dy, titan.getZ() - hw - 1.5 - forward(dy), Math.max(10, rs.titanCrystalHp), "§d" + com.wavesurvivor.i18n.WSLang.t("rift.t.weak_point"));
             crystals.add(id);
             crystalOff.add(new float[]{dx, dy});
         }
@@ -1734,13 +1769,14 @@ final class RiftTitan {
             Entity e = l.getEntity(crystals.get(i));
             if (e == null) continue;
             float[] o = crystalOff.get(i);
-            e.setPos(titan.getX() + o[0], titan.getY() + o[1], titan.getZ() - hw - 1.5);
+            e.setPos(titan.getX() + o[0], titan.getY() + o[1], titan.getZ() - hw - 1.5 - forward(o[1]));
         }
     }
 
     /** Un point faible est détruit : −5 % des PV max du Titan, et le stun est prolongé de 2 s si la charge est en cours. */
     static void crystalDown(ServerLevel l) {
         if (titan == null || dead || !titan.isAlive()) return;
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.HURT, 10);
         float cut = (float) (maxHp * Math.max(0, rs.titanCrystalPercent) / 100.0);
         titan.setHealth(Math.max(1f, titan.getHealth() - cut));
         chargeDealt += charge != 0 ? cut : 0f;
@@ -1804,6 +1840,7 @@ final class RiftTitan {
         if (list.isEmpty()) return;
         BlockPos t = list.get(RNG.nextInt(list.size()));
         final double r = Math.max(2, rs.titanBuildRadius);
+        pose(com.wavesurvivor.entity.TitanAnimated.Pose.SLAM, 120);
         schedule(l, now, 60, com.wavesurvivor.i18n.WSLang.t("rift.t.building"), x -> ring(l, t.getX() + 0.5, t.getY() + 0.2, t.getZ() + 0.5, r, RED, 28), () -> {
             l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, t.getX() + 0.5, t.getY() + 1, t.getZ() + 0.5, 2, 0.8, 0.5, 0.8, 0);
             l.playSound(null, t, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);

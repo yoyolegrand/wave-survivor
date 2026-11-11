@@ -4968,5 +4968,9 @@
   "rift.test.fortress_fail": "Unknown form or unreadable plan: {0} (citadelle, ruche, bastion, ziggurat).",
   "rift.test.fortress_ok": "Test: {0} is being built.",
   "rift.test.catalysts_ok": "Test: {0} catalyst(s) placed at the markers.",
-  "ui.rift.chests": "Roulette chests"
+  "ui.rift.chests": "Roulette chests",
+  "rift.test.devoreur_ok": "Test: a still Devourer appears in front of you (/ws rift pose <pose> to animate it, /kill @e[type=wavesurvivor:devoreur] to remove it).",
+  "rift.test.pose_unknown": "Unknown pose: {0} (idle, roar, beam, slam, throw, summon, hurt, charge, stunned).",
+  "rift.test.pose_none": "No Devourer within 200 blocks (and no active animated Titan).",
+  "rift.test.pose_ok": "Pose {0} ({1} ticks) played by {2} Devourer(s)."
 }
