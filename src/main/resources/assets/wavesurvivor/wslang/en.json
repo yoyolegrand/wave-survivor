@@ -4684,9 +4684,9 @@
   "rift.core_appears": "§5The catalysts are destroyed: §dthe fortress core is exposed!",
   "rift.core_down": "§a§lThe fortress core collapses!",
   "rift.loot": "§6Rift loot received.",
-  "ui.rift.sub_start": "Start and Horde",
-  "ui.rift.sub_siege": "Siege and Counter-offensive",
-  "ui.rift.sub_titan": "Titan and engines",
+  "ui.rift.sub_start": "Start & Horde",
+  "ui.rift.sub_siege": "Siege & Counter",
+  "ui.rift.sub_titan": "Titan & engines",
   "ui.rift.sec_siege": "The Siege",
   "ui.rift.siege_on": "Siege enabled",
   "ui.rift.assaults": "Assaults",
@@ -4741,7 +4741,7 @@
   "rift.session.none": "§cNo Rift to resume.",
   "rift.session.abandoned": "§7Saved Rift abandoned.",
   "rift.session.rebuilding": "§7The fortress is reforming...",
-  "ui.rift.sub_meteors": "Meteors",
+  "ui.rift.sub_meteors": "Meteors & cine",
   "ui.rift.sec_meteors": "Meteor shower (Titan)",
   "ui.rift.meteor_blocks": "Blocks",
   "ui.rift.meteor_size": "Size",
@@ -5033,5 +5033,10 @@
   "rift.test.chest_placed": "Test: Titan's Chest placed in front of you, with 1 Titan's Key.",
   "rift.test.chest_missing": "The Titan's Chest is missing from the roulette chests (deleted in the editor?).",
   "rift.test.relics_given": "Test: the 6 Rift relics (level I) and 48 Rift Dust.",
-  "rift.test.gauge_set": "Test: Rift Gauge set to +{0}%."
+  "rift.test.gauge_set": "Test: Rift Gauge set to +{0}%.",
+  "ui.rift.sub_battle": "Titan battle",
+  "ui.rift.sec_buildings": "Buildings",
+  "ui.rift.sec_island_break": "Island break and stomp",
+  "ui.rift.sec_loot": "Monster loot",
+  "ui.rift.titan_quick": "Custom Titans:"
 }

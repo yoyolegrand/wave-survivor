@@ -3923,9 +3923,9 @@
   "rift.core_appears": "§5Les catalyseurs sont détruits : §dle cœur de la forteresse est à nu !",
   "rift.core_down": "§a§lLe cœur de la forteresse s'effondre !",
   "rift.loot": "§6Butin de la Faille reçu.",
-  "ui.rift.sub_start": "Départ et Horde",
-  "ui.rift.sub_siege": "Siège et Contre-offensive",
-  "ui.rift.sub_titan": "Titan et engins",
+  "ui.rift.sub_start": "Départ & Horde",
+  "ui.rift.sub_siege": "Siège & Contre",
+  "ui.rift.sub_titan": "Titan & engins",
   "ui.rift.sec_siege": "Le Siège",
   "ui.rift.siege_on": "Siège activé",
   "ui.rift.assaults": "Assauts",
@@ -3980,7 +3980,7 @@
   "rift.session.none": "§cAucune Faille à reprendre.",
   "rift.session.abandoned": "§7Faille sauvegardée abandonnée.",
   "rift.session.rebuilding": "§7La forteresse se reforme…",
-  "ui.rift.sub_meteors": "Météores",
+  "ui.rift.sub_meteors": "Météores & ciné",
   "ui.rift.sec_meteors": "Pluie de météores (Titan)",
   "ui.rift.meteor_blocks": "Blocs",
   "ui.rift.meteor_size": "Taille",
@@ -4272,5 +4272,10 @@
   "rift.test.chest_placed": "Test : Coffre du Titan posé devant vous, avec 1 Clé du Titan.",
   "rift.test.chest_missing": "Le Coffre du Titan est introuvable dans les coffres roulette (supprimé dans l’éditeur ?).",
   "rift.test.relics_given": "Test : les 6 reliques de la Faille (niveau I) et 48 Poussières de Faille.",
-  "rift.test.gauge_set": "Test : Jauge de la Faille réglée à +{0} %."
+  "rift.test.gauge_set": "Test : Jauge de la Faille réglée à +{0} %.",
+  "ui.rift.sub_battle": "Combat du Titan",
+  "ui.rift.sec_buildings": "Bâtiments",
+  "ui.rift.sec_island_break": "Île brisée et piétinement",
+  "ui.rift.sec_loot": "Butin des monstres",
+  "ui.rift.titan_quick": "Titans sur mesure :"
 }

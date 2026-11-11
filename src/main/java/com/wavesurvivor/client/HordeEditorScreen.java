@@ -279,6 +279,7 @@ public class HordeEditorScreen extends Screen {
         formOwner = null;
         W = Math.min(width - 8, 520);
         H = Math.min(height - 8, 320);
+        flowWrap = false;
         left = (width - W) / 2;
         top = (height - H) / 2;
 
@@ -1139,9 +1140,19 @@ public class HordeEditorScreen extends Screen {
 
     private int fx, fy;
 
-    private void flow(int x, int y) { fx = x; fy = y; }
+    /** Début du flux (retour à la ligne) ; retour à la ligne automatique activé (pages de la Faille). */
+    private int flowX0;
+    private boolean flowWrap;
+
+    private void flow(int x, int y) { fx = x; fy = y; flowX0 = x; }
+
+    /** Passe à la ligne si {@code w} pixels ne tiennent plus avant le bord droit du panneau (seulement si flowWrap). */
+    private void wrap(int w) {
+        if (flowWrap && fx > flowX0 && fx + w > left + W - 8) { fx = flowX0; fy += 20; }
+    }
 
     private void fl(String t) {
+        wrap(font.width(t) + 4 + 48);   // le libellé et (à peu près) son champ restent ensemble
         label(fx, fy + 3, t);
         fx += font.width(t) + 4;
     }
@@ -1153,6 +1164,7 @@ public class HordeEditorScreen extends Screen {
     private void fText(int w, String v, Consumer<String> c) { text(fx, fy, w, v, c); fx += w + 8; }
 
     private Button fBtn(int w, String t, Runnable r) {
+        wrap(w);
         Button b = button(fx, fy - 1, w, t, r);
         fx += w + 4;
         return b;
@@ -1856,35 +1868,74 @@ public class HordeEditorScreen extends Screen {
             labelWrap(x, y, t("ui.rift.need_pehkui"), W - 24);
             return;
         }
+        flowWrap = true;   // les lignes trop longues passent à la ligne au lieu de déborder du panneau
         JsonObject r = HordeJson.obj(cd(), "rift");
-        button(x, y - 2, 98, (riftSub == 0 ? "§e§l" : "§7") + t("ui.rift.sub_start"), () -> { riftSub = 0; init(); });
-        button(x + 102, y - 2, 98, (riftSub == 1 ? "§e§l" : "§7") + t("ui.rift.sub_siege"), () -> { riftSub = 1; init(); });
-        button(x + 204, y - 2, 98, (riftSub == 2 ? "§e§l" : "§7") + t("ui.rift.sub_titan"), () -> { riftSub = 2; init(); });
-        button(x + 306, y - 2, 98, (riftSub == 3 ? "§e§l" : "§7") + t("ui.rift.sub_meteors"), () -> { riftSub = 3; init(); });
-        y += 26;
-        if (riftSub == 1) { buildRiftSiege(r, x, y); return; }
-        if (riftSub == 2) { buildRiftTitan(r, x, y); return; }
-        if (riftSub == 3) { buildRiftMeteors(r, x, y); return; }
-        label(x, y, "§6§l" + t("ui.rift.sec_opening"));
-        y += 14;
+        // 5 sous-onglets de même largeur, sur toute la largeur du panneau
+        String[] subs = {"ui.rift.sub_start", "ui.rift.sub_siege", "ui.rift.sub_titan", "ui.rift.sub_battle", "ui.rift.sub_meteors"};
+        int bw = (W - 20 - 4 * (subs.length - 1)) / subs.length;
+        for (int i = 0; i < subs.length; i++) {
+            final int k = i;
+            String lbl = fitText(t(subs[i]), bw - 8);
+            button(x + i * (bw + 4), y - 2, bw, (riftSub == i ? "§e§l" : "§7") + lbl, () -> { riftSub = k; init(); });
+        }
+        y += 22;
+        switch (riftSub) {
+            case 1 -> buildRiftSiege(r, x, y);
+            case 2 -> buildRiftTitan(r, x, y);
+            case 3 -> buildRiftBattle(r, x, y);
+            case 4 -> buildRiftMeteors(r, x, y);
+            default -> buildRiftStart(r, x, y);
+        }
+    }
+
+    private static int riftSub = 0;
+
+    /** Coupe un texte trop long pour un bouton (« … » à la fin). */
+    private String fitText(String s, int w) {
+        if (font.width(s) <= w) return s;
+        while (s.length() > 1 && font.width(s + "…") > w) s = s.substring(0, s.length() - 1);
+        return s.trim() + "…";
+    }
+
+    /** Titre de section ; renvoie la hauteur où commence son contenu. */
+    private int sec(int x, int y, String key) {
+        label(x, y, "§6§l" + t(key));
+        return y + 13;
+    }
+
+    /** Ligne suivante après un flux (tient compte des retours à la ligne). */
+    private int next() { return fy + 22; }
+
+    /** Bouton oui / non dans le flux. */
+    private void fToggle(int w, String lbl, JsonObject o, String key, boolean def) {
+        wrap(w);
+        toggle(fx, fy - 1, w, lbl, o, key, def);
+        fx += w + 4;
+    }
+
+    /** Aide en bas de page : seulement si elle tient dans le panneau. */
+    private void hint(int x, int y, String text) {
+        int lines = Math.max(1, (font.width(text) + W - 25) / (W - 24) + 1);
+        if (y + lines * 10 <= top + H - 4) labelWrap(x, y, text, W - 24);
+    }
+
+    /** Faille — page « Départ et Horde ». */
+    private void buildRiftStart(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_opening");
         flow(x, y);
         fl(t("ui.rift.speed"));
         fDbl(40, HordeJson.dbl(r, "openingSpeed", 1.0), v -> r.addProperty("openingSpeed", Math.max(0.2, Math.min(3.0, v))));
         fl(t("ui.rift.shake"));
         fDbl(40, HordeJson.dbl(r, "shakeIntensity", 1.0), v -> r.addProperty("shakeIntensity", Math.max(0.0, Math.min(3.0, v))));
-        toggle(x + 290, y, 120, t("ui.rift.title"), r, "showTitle", true);
-        y += 30;
-        label(x, y, "§6§l" + t("ui.rift.sec_island"));
-        y += 14;
+        fToggle(120, t("ui.rift.title"), r, "showTitle", true);
+        y = sec(x, next() + 2, "ui.rift.sec_island");
         flow(x, y);
         fl(t("ui.rift.radius"));
         fInt(36, HordeJson.num(r, "islandRadius", 16), v -> r.addProperty("islandRadius", Math.max(8, Math.min(48, v))));
         fl(t("ui.rift.waves"));
         JsonObject cdo = cd();
         fInt(36, HordeJson.num(cdo, "totalWaves", 5), v -> cdo.addProperty("totalWaves", Math.max(1, Math.min(60, v))));
-        y += 30;
-        label(x, y, "§6§l" + t("ui.rift.sec_flow"));
-        y += 14;
+        y = sec(x, next() + 2, "ui.rift.sec_flow");
         flow(x, y);
         fl(t("ui.rift.start_delay"));
         fInt(36, HordeJson.num(r, "startDelaySeconds", 20), v -> r.addProperty("startDelaySeconds", Math.max(0, Math.min(300, v))));
@@ -1892,53 +1943,45 @@ public class HordeEditorScreen extends Screen {
         fInt(36, HordeJson.num(r, "reviveSeconds", 15), v -> r.addProperty("reviveSeconds", Math.max(3, Math.min(300, v))));
         fl(t("ui.rift.end_pause"));
         fInt(40, HordeJson.num(r, "endPauseSeconds", 240), v -> r.addProperty("endPauseSeconds", Math.max(10, Math.min(1800, v))));
-        y += 30;
-        label(x, y, "§6§l" + t("ui.rift.sec_rewards"));
-        y += 14;
+        y = sec(x, next() + 2, "ui.rift.sec_rewards");
         flow(x, y);
         fl(t("ui.rift.titan_pr"));
-        fInt(26, HordeJson.num(r, "titanPrBonus", 30), v -> r.addProperty("titanPrBonus", Math.max(0, Math.min(1000, v))));
+        fInt(30, HordeJson.num(r, "titanPrBonus", 30), v -> r.addProperty("titanPrBonus", Math.max(0, Math.min(1000, v))));
         fl(t("ui.rift.reliquaries"));
-        fInt(22, HordeJson.num(r, "rewardReliquaries", 1), v -> r.addProperty("rewardReliquaries", Math.max(0, Math.min(16, v))));
-        fl(t("ui.rift.top_pr"));
-        fInt(22, HordeJson.num(r, "topPr1", 30), v -> r.addProperty("topPr1", Math.max(0, Math.min(1000, v))));
-        fInt(22, HordeJson.num(r, "topPr2", 20), v -> r.addProperty("topPr2", Math.max(0, Math.min(1000, v))));
-        fInt(22, HordeJson.num(r, "topPr3", 10), v -> r.addProperty("topPr3", Math.max(0, Math.min(1000, v))));
-        fl(t("ui.rift.top_reliq"));
-        fInt(18, HordeJson.num(r, "topReliq1", 2), v -> r.addProperty("topReliq1", Math.max(0, Math.min(16, v))));
-        fInt(18, HordeJson.num(r, "topReliq2", 1), v -> r.addProperty("topReliq2", Math.max(0, Math.min(16, v))));
-        fInt(18, HordeJson.num(r, "topReliq3", 1), v -> r.addProperty("topReliq3", Math.max(0, Math.min(16, v))));
-        y += 22;
-        flow(x, y);
+        fInt(24, HordeJson.num(r, "rewardReliquaries", 1), v -> r.addProperty("rewardReliquaries", Math.max(0, Math.min(16, v))));
         fl(t("ui.rift.shards"));
-        fInt(22, HordeJson.num(r, "shardsPerPlayer", 2), v -> r.addProperty("shardsPerPlayer", Math.max(0, Math.min(16, v))));
+        fInt(24, HordeJson.num(r, "shardsPerPlayer", 2), v -> r.addProperty("shardsPerPlayer", Math.max(0, Math.min(16, v))));
+        flow(x, next());
+        fl(t("ui.rift.top_pr"));
+        fInt(26, HordeJson.num(r, "topPr1", 30), v -> r.addProperty("topPr1", Math.max(0, Math.min(1000, v))));
+        fInt(26, HordeJson.num(r, "topPr2", 20), v -> r.addProperty("topPr2", Math.max(0, Math.min(1000, v))));
+        fInt(26, HordeJson.num(r, "topPr3", 10), v -> r.addProperty("topPr3", Math.max(0, Math.min(1000, v))));
+        fl(t("ui.rift.top_reliq"));
+        fInt(20, HordeJson.num(r, "topReliq1", 2), v -> r.addProperty("topReliq1", Math.max(0, Math.min(16, v))));
+        fInt(20, HordeJson.num(r, "topReliq2", 1), v -> r.addProperty("topReliq2", Math.max(0, Math.min(16, v))));
+        fInt(20, HordeJson.num(r, "topReliq3", 1), v -> r.addProperty("topReliq3", Math.max(0, Math.min(16, v))));
         fl(t("ui.rift.top_shards"));
-        fInt(18, HordeJson.num(r, "topShards1", 2), v -> r.addProperty("topShards1", Math.max(0, Math.min(16, v))));
-        fInt(18, HordeJson.num(r, "topShards2", 1), v -> r.addProperty("topShards2", Math.max(0, Math.min(16, v))));
-        fInt(18, HordeJson.num(r, "topShards3", 1), v -> r.addProperty("topShards3", Math.max(0, Math.min(16, v))));
-        y += 24;
-        toggle(x + 60, y - 2, 110, t("ui.rift.req_horde"), r, "requireHordeWin", true);
-        toggle(x + 174, y - 2, 110, t("ui.rift.req_kingdom"), r, "requireKingdomWin", true);
-        toggle(x + 288, y - 2, 110, t("ui.rift.req_invasion"), r, "requireInvasionWin", false);
-        label(x, y + 3, t("ui.rift.access"));
-        y += 26;
-        labelWrap(x, y, t("ui.rift.hint_phases"), W - 24);
+        fInt(20, HordeJson.num(r, "topShards1", 2), v -> r.addProperty("topShards1", Math.max(0, Math.min(16, v))));
+        fInt(20, HordeJson.num(r, "topShards2", 1), v -> r.addProperty("topShards2", Math.max(0, Math.min(16, v))));
+        fInt(20, HordeJson.num(r, "topShards3", 1), v -> r.addProperty("topShards3", Math.max(0, Math.min(16, v))));
+        flow(x, next());
+        fl(t("ui.rift.access"));
+        fToggle(104, t("ui.rift.req_horde"), r, "requireHordeWin", true);
+        fToggle(110, t("ui.rift.req_kingdom"), r, "requireKingdomWin", true);
+        fToggle(110, t("ui.rift.req_invasion"), r, "requireInvasionWin", false);
+        hint(x, next() + 2, t("ui.rift.hint_phases"));
     }
-
-    private static int riftSub = 0;
 
     /** Faille — page « Siège et Contre-offensive ». */
     private void buildRiftSiege(JsonObject r, int x, int y) {
-        label(x, y, "§6§l" + t("ui.rift.sec_siege"));
-        y += 14;
-        toggle(x, y, 120, t("ui.rift.siege_on"), r, "siegeEnabled", true);
-        flow(x + 130, y);
+        y = sec(x, y, "ui.rift.sec_siege");
+        flow(x, y);
+        fToggle(120, t("ui.rift.siege_on"), r, "siegeEnabled", true);
         fl(t("ui.rift.assaults"));
         fInt(30, HordeJson.num(r, "siegeAssaults", 4), v -> r.addProperty("siegeAssaults", Math.max(1, Math.min(30, v))));
         fl(t("ui.rift.final_radius"));
         fInt(30, HordeJson.num(r, "siegeRadius", 32), v -> r.addProperty("siegeRadius", Math.max(16, Math.min(48, v))));
-        y += 26;
-        flow(x, y);
+        flow(x, next());
         fl(t("ui.rift.interlude"));
         fInt(30, HordeJson.num(r, "interludeSeconds", 10), v -> r.addProperty("interludeSeconds", Math.max(3, Math.min(120, v))));
         fl(t("ui.rift.siege_budget"));
@@ -1949,11 +1992,7 @@ public class HordeEditorScreen extends Screen {
         fInt(30, HordeJson.num(r, "siegeCalmSeconds", 180), v -> r.addProperty("siegeCalmSeconds", Math.max(15, Math.min(900, v))));
         fl(t("ui.rift.chests"));
         fInt(22, HordeJson.num(r, "riftChests", 6), v -> r.addProperty("riftChests", Math.max(0, Math.min(12, v))));
-        y += 22;
-        labelWrap(x, y, t("ui.rift.hint_resources"), W - 24);
-        y += 34;
-        label(x, y, "§6§l" + t("ui.rift.sec_counter"));
-        y += 14;
+        y = sec(x, next() + 2, "ui.rift.sec_counter");
         flow(x, y);
         fl(t("ui.rift.catalysts"));
         fInt(26, HordeJson.num(r, "catalysts", 3), v -> r.addProperty("catalysts", Math.max(1, Math.min(8, v))));
@@ -1961,12 +2000,9 @@ public class HordeEditorScreen extends Screen {
         fInt(36, HordeJson.num(r, "catalystHp", 150), v -> r.addProperty("catalystHp", Math.max(10, Math.min(5000, v))));
         fl(t("ui.rift.core_hp"));
         fInt(40, HordeJson.num(r, "coreHp", 500), v -> r.addProperty("coreHp", Math.max(10, Math.min(20000, v))));
-        y += 26;
-        flow(x, y);
         fl(t("ui.rift.reinforce"));
         fInt(30, HordeJson.num(r, "reinforceSeconds", 20), v -> r.addProperty("reinforceSeconds", Math.max(5, Math.min(300, v))));
-        y += 26;
-        flow(x, y);
+        flow(x, next());
         fl(t("ui.rift.regen"));
         fDbl(30, HordeJson.dbl(r, "catalystRegenPercent", 2.0), v -> r.addProperty("catalystRegenPercent", Math.max(0.0, Math.min(50.0, v))));
         fl(t("ui.rift.regen_radius"));
@@ -1977,7 +2013,7 @@ public class HordeEditorScreen extends Screen {
         fInt(26, HordeJson.num(r, "catalystGuardMax", 5), v -> r.addProperty("catalystGuardMax", Math.max(1, Math.min(30, v))));
         fl(t("ui.rift.guard_boost"));
         fInt(30, HordeJson.num(r, "catalystGuardBoostPercent", 35), v -> r.addProperty("catalystGuardBoostPercent", Math.max(0, Math.min(300, v))));
-        y += 30;
+        y = next() + 2;
         String fcur = HordeJson.str(r, "fortress", "citadelle");
         button(x, y - 2, 260, t("ui.rift.fortress") + ("random".equalsIgnoreCase(fcur) ? t("ui.rift.fortress_random") : t("rift.fortress." + fcur)), () -> {
             String[] forms = {"citadelle", "ruche", "bastion", "ziggurat", "random"};
@@ -1987,161 +2023,52 @@ public class HordeEditorScreen extends Screen {
             changed();
             init();
         });
-        y += 28;
-        labelWrap(x, y, t("ui.rift.hint_siege"), W - 24);
+        y += 22;
+        y += hintH(x, y, t("ui.rift.hint_resources"));
+        hint(x, y + 4, t("ui.rift.hint_siege"));
     }
 
-    /** Faille — page « Pluie de météores » (compétence du Titan). */
-    private void buildRiftMeteors(JsonObject r, int x, int y) {
-        label(x, y, "§6§l" + t("ui.rift.sec_meteors"));
-        y += 14;
-        flow(x, y);
-        fl(t("ui.rift.meteor_blocks"));
-        fText(300, HordeJson.str(r, "meteorBlocks", "magma_block=3, blackstone=3, obsidian=2, crying_obsidian=1"), v -> r.addProperty("meteorBlocks", v));
-        y += 26;
-        flow(x, y);
-        fl(t("ui.rift.meteor_size"));
-        fDbl(30, HordeJson.dbl(r, "meteorSize", 3.0), v -> r.addProperty("meteorSize", Math.max(1.0, Math.min(12.0, v))));
-        fl(t("ui.rift.meteor_radius"));
-        fDbl(30, HordeJson.dbl(r, "meteorRadius", 6.0), v -> r.addProperty("meteorRadius", Math.max(2.0, Math.min(20.0, v))));
-        fl(t("ui.rift.meteor_damage"));
-        fInt(30, HordeJson.num(r, "meteorDamage", 12), v -> r.addProperty("meteorDamage", Math.max(1, Math.min(200, v))));
-        y += 26;
-        flow(x, y);
-        fl(t("ui.rift.meteor_base"));
-        fInt(26, HordeJson.num(r, "meteorBase", 3), v -> r.addProperty("meteorBase", Math.max(1, Math.min(30, v))));
-        fl(t("ui.rift.meteor_per_player"));
-        fInt(26, HordeJson.num(r, "meteorPerPlayer", 1), v -> r.addProperty("meteorPerPlayer", Math.max(0, Math.min(10, v))));
-        fl(t("ui.rift.meteor_delay"));
-        fInt(30, HordeJson.num(r, "meteorDelay", 50), v -> r.addProperty("meteorDelay", Math.max(10, Math.min(200, v))));
-        fl(t("ui.rift.meteor_fall"));
-        fInt(30, HordeJson.num(r, "meteorFall", 24), v -> r.addProperty("meteorFall", Math.max(8, Math.min(100, v))));
-        y += 26;
-        String tr = HordeJson.str(r, "meteorTrail", "flame");
-        button(x, y - 2, 170, t("ui.rift.meteor_trail") + t("ui.rift.trail_" + tr), () -> {
-            String[] k = {"flame", "soul", "smoke"};
-            int i = 0;
-            for (int q = 0; q < k.length; q++) if (k[q].equals(tr)) i = q;
-            r.addProperty("meteorTrail", k[(i + 1) % k.length]);
-            changed();
-            init();
-        });
-        toggle(x + 180, y - 2, 170, t("ui.rift.meteor_crater"), r, "meteorCrater", true);
-        y += 30;
-        labelWrap(x, y, t("ui.rift.hint_meteors"), W - 24);
-        y += 40;
-        label(x, y, "§6§l" + t("ui.rift.sec_fcine"));
-        y += 14;
-        toggle(x, y - 2, 150, t("ui.rift.fcine_on"), r, "fortressCine", true);
-        toggle(x + 156, y - 2, 110, t("ui.rift.fcine_skip"), r, "fortressCineSkippable", true);
-        y += 24;
-        flow(x, y);
-        fl(t("ui.rift.fcine_seconds"));
-        fInt(22, HordeJson.num(r, "fortressCineSeconds", 20), v -> r.addProperty("fortressCineSeconds", Math.max(8, Math.min(60, v))));
-        fl(t("ui.rift.fcine_speed"));
-        fInt(26, HordeJson.num(r, "fortressCineSpeed", 150), v -> r.addProperty("fortressCineSpeed", Math.max(20, Math.min(2000, v))));
-        fl(t("ui.rift.fcine_title"));
-        fText(160, HordeJson.str(r, "fortressCineTitle", ""), v -> r.addProperty("fortressCineTitle", v));
-        y += 30;
-        label(x, y, "§6§l" + t("ui.rift.sec_cine"));
-        y += 14;
-        toggle(x, y - 2, 120, t("ui.rift.cine_on"), r, "titanCine", true);
-        toggle(x + 126, y - 2, 120, t("ui.rift.cine_skip"), r, "titanCineSkippable", true);
-        toggle(x + 252, y - 2, 120, t("ui.rift.cine_sounds"), r, "titanCineSounds", true);
-        y += 24;
-        flow(x, y);
-        fl(t("ui.rift.cine_seconds"));
-        fInt(22, HordeJson.num(r, "titanCineSeconds", 12), v -> r.addProperty("titanCineSeconds", Math.max(4, Math.min(40, v))));
-        fl(t("ui.rift.cine_name"));
-        fText(110, HordeJson.str(r, "titanCineName", ""), v -> r.addProperty("titanCineName", v));
-        fl(t("ui.rift.cine_sub"));
-        fText(120, HordeJson.str(r, "titanCineSub", ""), v -> r.addProperty("titanCineSub", v));
-        y += 30;
-        label(x, y, "§6§l" + t("ui.rift.sec_titan_more"));
-        y += 14;
-        flow(x, y);
-        fl(t("ui.rift.crystals"));
-        fInt(22, HordeJson.num(r, "titanCrystals", 4), v -> r.addProperty("titanCrystals", Math.max(0, Math.min(8, v))));
-        fl(t("ui.rift.crystal_hp"));
-        fInt(30, HordeJson.num(r, "titanCrystalHp", 120), v -> r.addProperty("titanCrystalHp", Math.max(10, Math.min(5000, v))));
-        fl(t("ui.rift.crystal_pct"));
-        fInt(22, HordeJson.num(r, "titanCrystalPercent", 5), v -> r.addProperty("titanCrystalPercent", Math.max(0, Math.min(50, v))));
-        fl(t("ui.rift.crystal_stun"));
-        fInt(22, HordeJson.num(r, "titanCrystalStunBonus", 2), v -> r.addProperty("titanCrystalStunBonus", Math.max(0, Math.min(30, v))));
-        y += 26;
-        flow(x, y);
-        fl(t("ui.rift.wave_base"));
-        fInt(22, HordeJson.num(r, "titanWaveBase", 5), v -> r.addProperty("titanWaveBase", Math.max(1, Math.min(50, v))));
-        fl(t("ui.rift.wave_interval"));
-        fInt(22, HordeJson.num(r, "titanWaveInterval", 10), v -> r.addProperty("titanWaveInterval", Math.max(3, Math.min(120, v))));
-        fl(t("ui.rift.wave_cap"));
-        fInt(26, HordeJson.num(r, "titanWaveCap", 60), v -> r.addProperty("titanWaveCap", Math.max(5, Math.min(300, v))));
-        y += 26;
-        flow(x, y);
-        fl(t("ui.rift.build_damage"));
-        fInt(30, HordeJson.num(r, "titanBuildDamage", 300), v -> r.addProperty("titanBuildDamage", Math.max(1, Math.min(5000, v))));
-        fl(t("ui.rift.build_radius"));
-        fInt(22, HordeJson.num(r, "titanBuildRadius", 6), v -> r.addProperty("titanBuildRadius", Math.max(2, Math.min(20, v))));
-        fl(t("ui.rift.ruin_pct"));
-        fInt(26, HordeJson.num(r, "ruinRepairPercent", 50), v -> r.addProperty("ruinRepairPercent", Math.max(0, Math.min(200, v))));
-        y += 26;
-        flow(x, y);
-        fl(t("ui.rift.emerald_min"));
-        fInt(22, HordeJson.num(r, "emeraldMin", 1), v -> r.addProperty("emeraldMin", Math.max(0, Math.min(64, v))));
-        fl(t("ui.rift.emerald_max"));
-        fInt(22, HordeJson.num(r, "emeraldMax", 2), v -> r.addProperty("emeraldMax", Math.max(0, Math.min(64, v))));
-        y += 26;
-        toggle(x, y - 2, 130, t("ui.rift.island_break"), r, "titanIslandBreak", true);
-        flow(x + 136, y);
-        fl(t("ui.rift.break_depth"));
-        fInt(22, HordeJson.num(r, "titanBreakDepth", 7), v -> r.addProperty("titanBreakDepth", Math.max(2, Math.min(20, v))));
-        fl(t("ui.rift.rock_hits"));
-        fInt(22, HordeJson.num(r, "titanRockHits", 3), v -> r.addProperty("titanRockHits", Math.max(1, Math.min(30, v))));
-        fl(t("ui.rift.stomp_dmg"));
-        fInt(26, HordeJson.num(r, "titanStompDamage", 10), v -> r.addProperty("titanStompDamage", Math.max(1, Math.min(200, v))));
-        y += 26;
-        toggle(x, y - 2, 260, t("ui.rift.mobs_hit_buildings"), r, "monstersAttackBuildings", true);
+    /** Aide en bas de page ; renvoie la hauteur utilisée (0 si elle ne tient pas). */
+    private int hintH(int x, int y, String text) {
+        int lines = Math.max(1, (font.width(text) + W - 25) / (W - 24) + 1);
+        if (y + lines * 10 > top + H - 4) return 0;
+        return labelWrap(x, y, text, W - 24);
     }
 
     /** Faille — page « Titan et engins de siège ». */
     private void buildRiftTitan(JsonObject r, int x, int y) {
-        label(x, y, "§6§l" + t("ui.rift.sec_titan"));
-        y += 14;
-        toggle(x, y, 120, t("ui.rift.titan_on"), r, "titanEnabled", true);
-        // Titan : n'importe quelle entité — identifiant tapé, liste déroulante (avec recherche) ou œuf d'apparition pris dans l'inventaire
-        flow(x + 130, y + 1);
-        fl(t("ui.rift.titan_entity"));
-        fText(150, HordeJson.str(r, "titanEntity", "wavesurvivor:devoreur"), v -> r.addProperty("titanEntity", v.trim()));
-        fBtn(16, "§e▼", () -> openEntityPicker(HordeJson.str(r, "titanEntity", ""), id -> r.addProperty("titanEntity", id)));
-        fBtn(24, t("ui.egg.btn"), () -> openEggPicker(id -> r.addProperty("titanEntity", id), false));
-        // Titans sur mesure : un clic règle l'entité et l'échelle (~50 blocs)
-        fBtn(60, t("ui.rift.titan_devoreur"), () -> { r.addProperty("titanEntity", "wavesurvivor:devoreur"); r.addProperty("titanScale", 5.0); changed(); init(); });
-        fBtn(60, t("ui.rift.titan_colosse"), () -> { r.addProperty("titanEntity", "wavesurvivor:colosse"); r.addProperty("titanScale", 5.0); changed(); init(); });
-        fBtn(60, t("ui.rift.titan_archonte"), () -> { r.addProperty("titanEntity", "wavesurvivor:archonte"); r.addProperty("titanScale", 5.0); changed(); init(); });
-        y += 26;
+        y = sec(x, y, "ui.rift.sec_titan");
         flow(x, y);
+        fToggle(120, t("ui.rift.titan_on"), r, "titanEnabled", true);
+        // Titan : n'importe quelle entité — identifiant tapé, liste déroulante (avec recherche) ou œuf d'apparition pris dans l'inventaire
+        fl(t("ui.rift.titan_entity"));
+        fText(140, HordeJson.str(r, "titanEntity", "wavesurvivor:devoreur"), v -> r.addProperty("titanEntity", v.trim()));
+        fBtn(16, "§e▼", () -> openEntityPicker(HordeJson.str(r, "titanEntity", ""), id -> r.addProperty("titanEntity", id)));
+        fBtn(28, t("ui.egg.btn"), () -> openEggPicker(id -> r.addProperty("titanEntity", id), false));
+        flow(x, next());
+        // Titans sur mesure : un clic règle l'entité et l'échelle (~50 blocs)
+        fl(t("ui.rift.titan_quick"));
+        fBtn(76, t("ui.rift.titan_devoreur"), () -> { r.addProperty("titanEntity", "wavesurvivor:devoreur"); r.addProperty("titanScale", 5.0); changed(); init(); });
+        fBtn(76, t("ui.rift.titan_colosse"), () -> { r.addProperty("titanEntity", "wavesurvivor:colosse"); r.addProperty("titanScale", 5.0); changed(); init(); });
+        fBtn(76, t("ui.rift.titan_archonte"), () -> { r.addProperty("titanEntity", "wavesurvivor:archonte"); r.addProperty("titanScale", 5.0); changed(); init(); });
+        flow(x, next());
         fl(t("ui.rift.titan_scale"));
         fDbl(36, HordeJson.dbl(r, "titanScale", 5.0), v -> r.addProperty("titanScale", Math.max(2.0, Math.min(250.0, v))));
         fl(t("ui.rift.titan_hp"));
-        fInt(40, HordeJson.num(r, "titanHp", 3000), v -> r.addProperty("titanHp", Math.max(100, Math.min(200000, v))));
+        fInt(44, HordeJson.num(r, "titanHp", 3000), v -> r.addProperty("titanHp", Math.max(100, Math.min(200000, v))));
         fl(t("ui.rift.titan_cap"));
         fInt(26, HordeJson.num(r, "titanDamageCapPercent", 6), v -> r.addProperty("titanDamageCapPercent", Math.max(1, Math.min(100, v))));
-        y += 26;
-        flow(x, y);
         fl(t("ui.rift.titan_gap"));
         fInt(26, HordeJson.num(r, "titanGap", 12), v -> r.addProperty("titanGap", Math.max(4, Math.min(120, v))));
-        y += 26;
-        flow(x, y);
-        toggle(x, y - 2, 120, t("ui.rift.charge_on"), r, "titanCharge", true);
-        flow(x + 130, y);
+        flow(x, next());
+        fToggle(120, t("ui.rift.charge_on"), r, "titanCharge", true);
         fl(t("ui.rift.charge_interval"));
         fInt(26, HordeJson.num(r, "titanChargeInterval", 60), v -> r.addProperty("titanChargeInterval", Math.max(10, Math.min(600, v))));
         fl(t("ui.rift.charge_stun"));
         fInt(22, HordeJson.num(r, "titanChargeStun", 6), v -> r.addProperty("titanChargeStun", Math.max(2, Math.min(60, v))));
         fl(t("ui.rift.charge_melee"));
         fInt(22, HordeJson.num(r, "titanChargeMelee", 10), v -> r.addProperty("titanChargeMelee", Math.max(2, Math.min(60, v))));
-        y += 26;
-        flow(x, y);
+        flow(x, next());
         fl(t("ui.rift.charge_damage"));
         fInt(26, HordeJson.num(r, "titanChargeDamage", 24), v -> r.addProperty("titanChargeDamage", Math.max(1, Math.min(500, v))));
         fl(t("ui.rift.charge_reach"));
@@ -2150,27 +2077,22 @@ public class HordeEditorScreen extends Screen {
         fInt(26, HordeJson.num(r, "titanMeleeDamage", 18), v -> r.addProperty("titanMeleeDamage", Math.max(1, Math.min(500, v))));
         fl(t("ui.rift.charge_cap"));
         fInt(22, HordeJson.num(r, "titanChargeCapPercent", 15), v -> r.addProperty("titanChargeCapPercent", Math.max(1, Math.min(100, v))));
-        y += 26;
-        flow(x, y);
+        flow(x, next());
         fl(t("ui.rift.monolith_hit"));
         fInt(30, HordeJson.num(r, "titanMonolithDamage", 60), v -> r.addProperty("titanMonolithDamage", Math.max(0, Math.min(5000, v))));
         fl(t("ui.rift.window_s"));
         fInt(26, HordeJson.num(r, "titanWindowSeconds", 8), v -> r.addProperty("titanWindowSeconds", Math.max(0, Math.min(60, v))));
         fl(t("ui.rift.window_cap"));
         fInt(26, HordeJson.num(r, "titanWindowCapPercent", 8), v -> r.addProperty("titanWindowCapPercent", Math.max(1, Math.min(50, v))));
-        y += 26;
-        flow(x, y);
         fl(t("ui.rift.avatar_pct"));
         fInt(26, HordeJson.num(r, "titanAvatarPercent", 8), v -> r.addProperty("titanAvatarPercent", Math.max(1, Math.min(50, v))));
         fl(t("ui.rift.avatar_hp"));
         fInt(36, HordeJson.num(r, "titanAvatarHp", 250), v -> r.addProperty("titanAvatarHp", Math.max(10, Math.min(20000, v))));
-        y += 32;
-        label(x, y, "§6§l" + t("ui.rift.sec_engines"));
-        y += 14;
-        toggle(x, y, 150, t("ui.rift.engines_on"), r, "engines", true);
-        toggle(x + 158, y, 230, t("ui.rift.tower_unlimited"), r, "catapultTowerUnlimited", false);
-        y += 26;
+        y = sec(x, next() + 2, "ui.rift.sec_engines");
         flow(x, y);
+        fToggle(150, t("ui.rift.engines_on"), r, "engines", true);
+        fToggle(200, t("ui.rift.tower_unlimited"), r, "catapultTowerUnlimited", false);
+        flow(x, next());
         fl(t("ui.rift.cata_reload"));
         fInt(30, HordeJson.num(r, "catapultReload1", 600), v -> r.addProperty("catapultReload1", Math.max(20, Math.min(6000, v))));
         fInt(30, HordeJson.num(r, "catapultReload2", 480), v -> r.addProperty("catapultReload2", Math.max(20, Math.min(6000, v))));
@@ -2180,8 +2102,111 @@ public class HordeEditorScreen extends Screen {
         fl(t("ui.rift.bal_reload"));
         fInt(30, HordeJson.num(r, "ballistaReload1", 200), v -> r.addProperty("ballistaReload1", Math.max(20, Math.min(3000, v))));
         fInt(30, HordeJson.num(r, "ballistaReload2", 160), v -> r.addProperty("ballistaReload2", Math.max(20, Math.min(3000, v))));
-        y += 28;
-        labelWrap(x, y, t("ui.rift.hint_titan"), W - 24);
+        hint(x, next() + 2, t("ui.rift.hint_titan"));
+    }
+
+    /** Faille — page « Combat du Titan » : points faibles, vagues, bâtiments, île, émeraudes. */
+    private void buildRiftBattle(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_titan_more");
+        flow(x, y);
+        fl(t("ui.rift.crystals"));
+        fInt(22, HordeJson.num(r, "titanCrystals", 4), v -> r.addProperty("titanCrystals", Math.max(0, Math.min(8, v))));
+        fl(t("ui.rift.crystal_hp"));
+        fInt(30, HordeJson.num(r, "titanCrystalHp", 120), v -> r.addProperty("titanCrystalHp", Math.max(10, Math.min(5000, v))));
+        fl(t("ui.rift.crystal_pct"));
+        fInt(22, HordeJson.num(r, "titanCrystalPercent", 5), v -> r.addProperty("titanCrystalPercent", Math.max(0, Math.min(50, v))));
+        fl(t("ui.rift.crystal_stun"));
+        fInt(22, HordeJson.num(r, "titanCrystalStunBonus", 2), v -> r.addProperty("titanCrystalStunBonus", Math.max(0, Math.min(30, v))));
+        flow(x, next());
+        fl(t("ui.rift.wave_base"));
+        fInt(22, HordeJson.num(r, "titanWaveBase", 5), v -> r.addProperty("titanWaveBase", Math.max(1, Math.min(50, v))));
+        fl(t("ui.rift.wave_interval"));
+        fInt(22, HordeJson.num(r, "titanWaveInterval", 10), v -> r.addProperty("titanWaveInterval", Math.max(3, Math.min(120, v))));
+        fl(t("ui.rift.wave_cap"));
+        fInt(26, HordeJson.num(r, "titanWaveCap", 60), v -> r.addProperty("titanWaveCap", Math.max(5, Math.min(300, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_buildings");
+        flow(x, y);
+        fl(t("ui.rift.build_damage"));
+        fInt(30, HordeJson.num(r, "titanBuildDamage", 300), v -> r.addProperty("titanBuildDamage", Math.max(1, Math.min(5000, v))));
+        fl(t("ui.rift.build_radius"));
+        fInt(22, HordeJson.num(r, "titanBuildRadius", 6), v -> r.addProperty("titanBuildRadius", Math.max(2, Math.min(20, v))));
+        fl(t("ui.rift.ruin_pct"));
+        fInt(26, HordeJson.num(r, "ruinRepairPercent", 50), v -> r.addProperty("ruinRepairPercent", Math.max(0, Math.min(200, v))));
+        flow(x, next());
+        fToggle(260, t("ui.rift.mobs_hit_buildings"), r, "monstersAttackBuildings", true);
+        y = sec(x, next() + 2, "ui.rift.sec_island_break");
+        flow(x, y);
+        fToggle(130, t("ui.rift.island_break"), r, "titanIslandBreak", true);
+        fl(t("ui.rift.break_depth"));
+        fInt(22, HordeJson.num(r, "titanBreakDepth", 7), v -> r.addProperty("titanBreakDepth", Math.max(2, Math.min(20, v))));
+        fl(t("ui.rift.rock_hits"));
+        fInt(22, HordeJson.num(r, "titanRockHits", 3), v -> r.addProperty("titanRockHits", Math.max(1, Math.min(30, v))));
+        fl(t("ui.rift.stomp_dmg"));
+        fInt(26, HordeJson.num(r, "titanStompDamage", 10), v -> r.addProperty("titanStompDamage", Math.max(1, Math.min(200, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_loot");
+        flow(x, y);
+        fl(t("ui.rift.emerald_min"));
+        fInt(22, HordeJson.num(r, "emeraldMin", 1), v -> r.addProperty("emeraldMin", Math.max(0, Math.min(64, v))));
+        fl(t("ui.rift.emerald_max"));
+        fInt(22, HordeJson.num(r, "emeraldMax", 2), v -> r.addProperty("emeraldMax", Math.max(0, Math.min(64, v))));
+    }
+
+    /** Faille — page « Météores et cinématiques ». */
+    private void buildRiftMeteors(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_meteors");
+        flow(x, y);
+        fl(t("ui.rift.meteor_blocks"));
+        fText(restW(), HordeJson.str(r, "meteorBlocks", "magma_block=3, blackstone=3, obsidian=2, crying_obsidian=1"), v -> r.addProperty("meteorBlocks", v));
+        flow(x, next());
+        fl(t("ui.rift.meteor_size"));
+        fDbl(30, HordeJson.dbl(r, "meteorSize", 3.0), v -> r.addProperty("meteorSize", Math.max(1.0, Math.min(12.0, v))));
+        fl(t("ui.rift.meteor_radius"));
+        fDbl(30, HordeJson.dbl(r, "meteorRadius", 6.0), v -> r.addProperty("meteorRadius", Math.max(2.0, Math.min(20.0, v))));
+        fl(t("ui.rift.meteor_damage"));
+        fInt(30, HordeJson.num(r, "meteorDamage", 12), v -> r.addProperty("meteorDamage", Math.max(1, Math.min(200, v))));
+        fl(t("ui.rift.meteor_base"));
+        fInt(26, HordeJson.num(r, "meteorBase", 3), v -> r.addProperty("meteorBase", Math.max(1, Math.min(30, v))));
+        fl(t("ui.rift.meteor_per_player"));
+        fInt(26, HordeJson.num(r, "meteorPerPlayer", 1), v -> r.addProperty("meteorPerPlayer", Math.max(0, Math.min(10, v))));
+        flow(x, next());
+        fl(t("ui.rift.meteor_delay"));
+        fInt(30, HordeJson.num(r, "meteorDelay", 50), v -> r.addProperty("meteorDelay", Math.max(10, Math.min(200, v))));
+        fl(t("ui.rift.meteor_fall"));
+        fInt(30, HordeJson.num(r, "meteorFall", 24), v -> r.addProperty("meteorFall", Math.max(8, Math.min(100, v))));
+        String tr = HordeJson.str(r, "meteorTrail", "flame");
+        fBtn(130, t("ui.rift.meteor_trail") + t("ui.rift.trail_" + tr), () -> {
+            String[] k = {"flame", "soul", "smoke"};
+            int i = 0;
+            for (int q = 0; q < k.length; q++) if (k[q].equals(tr)) i = q;
+            r.addProperty("meteorTrail", k[(i + 1) % k.length]);
+            changed();
+            init();
+        });
+        fToggle(140, t("ui.rift.meteor_crater"), r, "meteorCrater", true);
+        y = sec(x, next() + 2, "ui.rift.sec_fcine");
+        flow(x, y);
+        fToggle(150, t("ui.rift.fcine_on"), r, "fortressCine", true);
+        fToggle(110, t("ui.rift.fcine_skip"), r, "fortressCineSkippable", true);
+        flow(x, next());
+        fl(t("ui.rift.fcine_seconds"));
+        fInt(24, HordeJson.num(r, "fortressCineSeconds", 20), v -> r.addProperty("fortressCineSeconds", Math.max(8, Math.min(60, v))));
+        fl(t("ui.rift.fcine_speed"));
+        fInt(30, HordeJson.num(r, "fortressCineSpeed", 150), v -> r.addProperty("fortressCineSpeed", Math.max(20, Math.min(2000, v))));
+        fl(t("ui.rift.fcine_title"));
+        fText(Math.min(160, restW()), HordeJson.str(r, "fortressCineTitle", ""), v -> r.addProperty("fortressCineTitle", v));
+        y = sec(x, next() + 2, "ui.rift.sec_cine");
+        flow(x, y);
+        fToggle(120, t("ui.rift.cine_on"), r, "titanCine", true);
+        fToggle(120, t("ui.rift.cine_skip"), r, "titanCineSkippable", true);
+        fToggle(120, t("ui.rift.cine_sounds"), r, "titanCineSounds", true);
+        flow(x, next());
+        fl(t("ui.rift.cine_seconds"));
+        fInt(24, HordeJson.num(r, "titanCineSeconds", 12), v -> r.addProperty("titanCineSeconds", Math.max(4, Math.min(40, v))));
+        fl(t("ui.rift.cine_name"));
+        fText(110, HordeJson.str(r, "titanCineName", ""), v -> r.addProperty("titanCineName", v));
+        fl(t("ui.rift.cine_sub"));
+        fText(Math.min(130, restW()), HordeJson.str(r, "titanCineSub", ""), v -> r.addProperty("titanCineSub", v));
+        hint(x, next() + 2, t("ui.rift.hint_meteors"));
     }
 
     private void buildInvasionSettings() {
