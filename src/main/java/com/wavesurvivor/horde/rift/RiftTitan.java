@@ -1618,6 +1618,13 @@ final class RiftTitan {
 
     // ─── Cinématique d'apparition (~12 s) : silence, l'abîme s'éveille, le Titan surgit, rugissement, son nom, fin ───
 
+    /** Position (pied) et hauteur du Titan, pour la mise en scène de sa mort : {x, y, z, hauteur}. */
+    static double[] deathPos() {
+        double h = 40;
+        try { if (rs != null) h = titanHeight(); } catch (Exception ignored) { }
+        return new double[]{baseX, baseY, baseZ, h};
+    }
+
     private static double titanHeight() {
         EntityType<?> t = titanType(rs.titanEntity);
         return (t != null ? t.getHeight() : 2.7) * rs.titanScale;

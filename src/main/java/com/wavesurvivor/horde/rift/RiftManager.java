@@ -1343,8 +1343,10 @@ public final class RiftManager {
 
     private static void finalVictory(MinecraftServer server, ServerLevel rd) {
         tellAll(rd, WSLang.t("rift.victory"));
+        double[] titanAt = RiftTitan.deathPos();   // avant que le Titan soit retiré
         finalRewards(server, rd);
         toEnding(server, rd, true);
+        TitanChest.startVictory(rd, titanAt);   // 2.0 : le Coffre du Titan descend de la Faille (1 Clé du Titan par joueur)
     }
 
     /** Récompenses de fin de Faille : celles de la horde (classement, coffres…) et le butin du Titan. */

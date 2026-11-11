@@ -5026,5 +5026,7 @@
   "titan_chest.key_received": "§b🗝 You receive a Titan's Key: open the Titan's Chest before the Rift closes.",
   "titan_chest.gauge": "§d(Rift Gauge: +{0}%)",
   "titan_chest.gauge_up": "§d🌌 Rift Gauge: +{0}% Legendary chance at the next Titan's Chest.",
-  "titan_chest.gauge_reset": "§d🌌 Rift relic obtained: the Rift Gauge resets to 0."
+  "titan_chest.gauge_reset": "§d🌌 Rift relic obtained: the Rift Gauge resets to 0.",
+  "titan_chest.victory_title": "The Titan is defeated",
+  "titan_chest.victory_sub": "The Titan's Chest descends from the Rift"
 }

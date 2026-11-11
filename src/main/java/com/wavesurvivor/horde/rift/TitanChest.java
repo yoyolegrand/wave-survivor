@@ -225,6 +225,7 @@ public class TitanChest {
 
     /** Fermeture de la Faille : le coffre implose (les clés non utilisées restent valables). */
     public static void clear(ServerLevel l) {
+        Cinematic.cancel();
         if (pos != null) remove(true);
     }
 
@@ -266,8 +267,183 @@ public class TitanChest {
         }
     }
 
-    /** Mise en scène de la victoire (étape suivante). */
+    /** Lance la mise en scène de la victoire (Titan vaincu) : le coffre descend de la Faille près du centre de l'île. */
+    public static void startVictory(ServerLevel rd, double[] titan) {
+        Cinematic.start(rd, titan);
+    }
+
+    /**
+     * MISE EN SCÈNE DE LA VICTOIRE (~10 s, ticks depuis la mort du Titan) :
+     *   0-40    le Titan se dissout en particules (portail, poussière violette / turquoise) qui tombent dans l'abîme ;
+     *   40-60   la Faille (tourbillon dans le ciel) projette un faisceau turquoise sur l'emplacement du coffre ;
+     *   60-140  le Coffre du Titan descend lentement dans le faisceau depuis 30 blocs, en tournant, dans une spirale de portail ;
+     *   140     atterrissage : onde de choc, son grave et cristallin, petite secousse, titre « Le Titan est vaincu », 1 Clé du Titan par joueur.
+     * La descente est un objet d'affichage (le coffre en objet, agrandi) dont la transformation est interpolée côté client par paliers de 10 ticks.
+     */
     static final class Cinematic {
-        static void tick(MinecraftServer server, long now) { }
+        static final int BEAM = 40, DROP = 60, LAND = 140, DROP_H = 30, SKY_H = 42;
+        static ServerLevel l;
+        static long t0 = -1;
+        static double tx, ty, tz, th;
+        static BlockPos at;
+        static net.minecraft.world.entity.Display.ItemDisplay disp;
+
+        static void start(ServerLevel rd, double[] titan) {
+            cancel();
+            l = rd;
+            t0 = rd.getServer().getTickCount();
+            tx = titan[0];
+            ty = titan[1];
+            tz = titan[2];
+            th = Math.max(10, titan[3]);
+            at = spot(rd);
+        }
+
+        /** Emplacement du coffre : près du Monolithe (centre de l'île), sur un sol encore debout. */
+        static BlockPos spot(ServerLevel rd) {
+            int[][] cand = {{4, 0}, {-4, 0}, {4, 4}, {-4, 4}, {0, 5}, {6, 0}, {-6, 0}};
+            for (int[] c : cand) {
+                BlockPos p = RiftManager.CENTER.offset(c[0], 1, c[1]);
+                if (!rd.getBlockState(p.below()).isAir()) return p;
+            }
+            return RiftManager.CENTER.offset(4, 1, 0);
+        }
+
+        static void cancel() {
+            if (disp != null && !disp.isRemoved()) disp.discard();
+            disp = null;
+            t0 = -1;
+            l = null;
+            at = null;
+        }
+
+        static void tick(MinecraftServer server, long now) {
+            if (t0 < 0 || l == null || at == null) return;
+            if (!RiftManager.isActive()) { cancel(); return; }
+            long t = now - t0;
+            double cx = at.getX() + 0.5, cz = at.getZ() + 0.5, gy = at.getY();
+            double s = scale();
+            // 1. Le Titan se dissout et tombe dans l'abîme
+            if (t < BEAM && t % 2 == 0) {
+                for (int i = 0; i < 6; i++) {
+                    double a = l.random.nextDouble() * Math.PI * 2, r = l.random.nextDouble() * 5, h = l.random.nextDouble() * th;
+                    double x = tx + Math.cos(a) * r, y = ty + h - t * 0.6, z = tz + Math.sin(a) * r;
+                    l.sendParticles(i % 2 == 0 ? VIOLET : TURQUOISE, x, y, z, 3, 0.4, 0.4, 0.4, 0);
+                    l.sendParticles(ParticleTypes.PORTAL, x, y, z, 6, 0.6, 0.6, 0.6, 0.4);
+                }
+                l.sendParticles(ParticleTypes.REVERSE_PORTAL, tx, ty - 10 - t, tz, 20, 4, 6, 4, 0.05);   // ce qui tombe dans l'abîme
+                if (t == 0) l.playSound(null, BlockPos.containing(tx, ty, tz), SoundEvents.BEACON_DEACTIVATE, SoundSource.HOSTILE, 6f, 0.4f);
+            }
+            // 2. La Faille s'ouvre dans le ciel et projette son faisceau (jusqu'à l'atterrissage)
+            if (t >= BEAM - 10 && t <= LAND + 10 && t % 2 == 0) {
+                double sky = gy + SKY_H;
+                for (int i = 0; i < 10; i++) {
+                    double a = (t * 0.25) + i * Math.PI / 5;
+                    l.sendParticles(ParticleTypes.REVERSE_PORTAL, cx + Math.cos(a) * 3.5, sky, cz + Math.sin(a) * 3.5, 2, 0.2, 0.2, 0.2, 0.02);
+                }
+                l.sendParticles(VIOLET, cx, sky, cz, 8, 1.5, 0.3, 1.5, 0);
+                if (t >= BEAM) {
+                    for (double y = gy; y < sky; y += 1.5) {
+                        l.sendParticles(TURQUOISE, cx, y, cz, 1, 0.12, 0.3, 0.12, 0);
+                        if (((int) y + t) % 6 == 0) l.sendParticles(ParticleTypes.END_ROD, cx, y, cz, 1, 0.05, 0.3, 0.05, 0.01);
+                    }
+                }
+                if (t == BEAM) l.playSound(null, at, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 4f, 0.6f);
+            }
+            // 3. Descente du coffre, en tournant, dans une spirale de portail
+            if (t == DROP) spawnDisplay(s);
+            if (t > DROP && t < LAND) {
+                double u = (t - DROP) / (double) (LAND - DROP), h = DROP_H * (1 - u) * (1 - u);
+                double y = gy + 0.45 * s + h;
+                for (int i = 0; i < 3; i++) {
+                    double a = t * 0.35 + i * Math.PI * 2 / 3;
+                    l.sendParticles(ParticleTypes.PORTAL, cx + Math.cos(a) * 1.4 * s, y - 0.5, cz + Math.sin(a) * 1.4 * s, 3, 0.05, 0.05, 0.05, 0.1);
+                }
+                if ((t - DROP) % 10 == 0) step((int) ((t - DROP) / 10) + 1, s);
+            }
+            // 4. Atterrissage : onde de choc, son, secousse, titre et clés
+            if (t == LAND) land(s);
+            if (t > LAND && t <= LAND + 12 && t % 3 == 0) {
+                double r = 1 + (t - LAND) * 0.45;
+                for (int i = 0; i < 24; i++) {
+                    double a = i * Math.PI / 12;
+                    l.sendParticles(TURQUOISE, cx + Math.cos(a) * r, gy + 0.1, cz + Math.sin(a) * r, 1, 0, 0.05, 0, 0);
+                }
+            }
+            if (t > LAND + 12) t0 = -1;   // fin de la mise en scène
+        }
+
+        /** Le coffre (en objet) au sommet du faisceau, deux fois plus grand, toujours éclairé. */
+        static void spawnDisplay(double s) {
+            RouletteChestConfig cfg = config();
+            if (cfg == null) return;
+            var d = EntityType.ITEM_DISPLAY.create(l);
+            if (d == null) return;
+            d.moveTo(at.getX() + 0.5, at.getY() + 0.45 * s, at.getZ() + 0.5, 0f, 0f);
+            CompoundTag tag = d.saveWithoutId(new CompoundTag());
+            tag.put("item", RouletteChestManager.createChestItem(cfg).save(new CompoundTag()));
+            tag.putString("item_display", "none");
+            tag.put("transformation", transform(DROP_H, 0f, s));
+            CompoundTag br = new CompoundTag();
+            br.putInt("sky", 15);
+            br.putInt("block", 15);
+            tag.put("brightness", br);
+            tag.putFloat("view_range", 4f);
+            d.load(tag);
+            d.addTag(TAG);
+            if (l.addFreshEntity(d)) disp = d;
+        }
+
+        /** Palier k de la descente (8 paliers de 10 ticks) : plus bas, un quart de tour de plus. */
+        static void step(int k, double s) {
+            if (disp == null || disp.isRemoved() || k > 8) return;
+            double u = Math.min(1, k / 8.0), h = DROP_H * (1 - u) * (1 - u);
+            CompoundTag tag = disp.saveWithoutId(new CompoundTag());
+            tag.put("transformation", transform(h, k * 90f, s));
+            tag.putInt("interpolation_duration", 10);
+            tag.putInt("start_interpolation", 0);
+            disp.load(tag);
+        }
+
+        static CompoundTag transform(double h, float yawDeg, double s) {
+            org.joml.Quaternionf q = new org.joml.Quaternionf().rotateY((float) Math.toRadians(yawDeg));
+            CompoundTag t = new CompoundTag();
+            t.put("translation", floats(0f, (float) h, 0f));
+            t.put("left_rotation", floats(q.x, q.y, q.z, q.w));
+            t.put("scale", floats((float) s, (float) s, (float) s));
+            t.put("right_rotation", floats(0f, 0f, 0f, 1f));
+            return t;
+        }
+
+        static net.minecraft.nbt.ListTag floats(float... v) {
+            net.minecraft.nbt.ListTag l = new net.minecraft.nbt.ListTag();
+            for (float f : v) l.add(net.minecraft.nbt.FloatTag.valueOf(f));
+            return l;
+        }
+
+        static void land(double s) {
+            if (disp != null && !disp.isRemoved()) disp.discard();
+            disp = null;
+            if (!place(l, at, Direction.SOUTH)) return;
+            double cx = at.getX() + 0.5, cz = at.getZ() + 0.5;
+            l.sendParticles(ParticleTypes.EXPLOSION, cx, at.getY() + 0.3, cz, 3, 0.8, 0.1, 0.8, 0);
+            l.sendParticles(ParticleTypes.REVERSE_PORTAL, cx, at.getY() + 0.5, cz, 120, 1.5, 0.3, 1.5, 0.3);
+            l.sendParticles(TURQUOISE, cx, at.getY() + 0.3, cz, 60, 2.0, 0.1, 2.0, 0);
+            l.playSound(null, at, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 4f, 0.6f);
+            l.playSound(null, at, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 4f, 0.5f);
+            l.playSound(null, at, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.5f, 0.5f);
+            List<ServerPlayer> present = new ArrayList<>();
+            for (ServerPlayer p : l.players()) {
+                if (p.isSpectator()) continue;
+                present.add(p);
+                com.wavesurvivor.network.ShakePacket.send(p, 20, 0.6f);
+                p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(10, 70, 20));
+                p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(
+                        Component.literal(WSLang.t("titan_chest.victory_title")).withStyle(net.minecraft.ChatFormatting.LIGHT_PURPLE, net.minecraft.ChatFormatting.BOLD)));
+                p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(
+                        Component.literal(WSLang.t("titan_chest.victory_sub")).withStyle(net.minecraft.ChatFormatting.AQUA)));
+            }
+            giveKeys(present);
+        }
     }
 }
