@@ -4344,5 +4344,6 @@
   "ui.skillcat.normal": "Ordinaires",
   "ui.skillcat.titan": "⚔ Titan",
   "ui.skillcat.normal_tip": "Compétences des monstres et des boss.",
-  "ui.skillcat.titan_tip": "Compétences du Titan de la Faille (seul le Titan peut les utiliser ; liste dans l’éditeur de horde › Faille › Compétences)."
+  "ui.skillcat.titan_tip": "Compétences du Titan de la Faille (seul le Titan peut les utiliser ; liste dans l’éditeur de horde › Faille › Compétences).",
+  "Charme ou Bague": "Charme ou Bague"
 }

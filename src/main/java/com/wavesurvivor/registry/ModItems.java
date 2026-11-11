@@ -401,14 +401,14 @@ public class ModItems {
     public static final RegistryObject<Item> DE_FAILLE = ITEMS.register("de_faille",
             () -> new com.wavesurvivor.item.RiftRelicItem("de_faille", "Charme"));
     public static final RegistryObject<Item> SCEAU_TITAN = ITEMS.register("sceau_titan",
-            () -> new com.wavesurvivor.item.RiftRelicItem("sceau_titan", "Bague"));
+            () -> new com.wavesurvivor.item.RiftRelicItem("sceau_titan", "Charme"));
     public static final RegistryObject<Item> TROPHEE_TITAN = ITEMS.register("trophee_titan",
-            () -> new com.wavesurvivor.item.RiftRelicItem("trophee_titan", "Ceinture"));
+            () -> new com.wavesurvivor.item.RiftRelicItem("trophee_titan", "Charme"));
     public static final RegistryObject<Item> COEUR_TITAN = ITEMS.register("coeur_titan",
-            () -> new com.wavesurvivor.item.RiftRelicItem("coeur_titan", "Collier"));
+            () -> new com.wavesurvivor.item.RiftRelicItem("coeur_titan", "Dos"));
     /** 2.0 — Légendaires de la Faille (fusion à la Forge) : Destin de la Faille (Dé + Sceau), Couronne du Titan (Trophée + Cœur). */
     public static final RegistryObject<Item> DESTIN_FAILLE = ITEMS.register("destin_faille",
-            () -> new com.wavesurvivor.item.RiftLegendaryItem("Charme", "relic.destin_faille.quote",
+            () -> new com.wavesurvivor.item.RiftLegendaryItem("Charme ou Bague", "relic.destin_faille.quote",
                     "relic.destin_faille.parents", "relic.destin_faille.unique"));
     public static final RegistryObject<Item> COURONNE_TITAN = ITEMS.register("couronne_titan",
             () -> new com.wavesurvivor.item.RiftLegendaryItem("Tête", "relic.couronne_titan.quote",

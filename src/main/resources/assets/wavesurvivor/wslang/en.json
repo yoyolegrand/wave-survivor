@@ -5105,5 +5105,6 @@
   "ui.skillcat.normal": "Regular",
   "ui.skillcat.titan": "⚔ Titan",
   "ui.skillcat.normal_tip": "Skills for monsters and bosses.",
-  "ui.skillcat.titan_tip": "Skills of the Rift Titan (only the Titan can use them; list in the horde editor › Rift › Skills)."
+  "ui.skillcat.titan_tip": "Skills of the Rift Titan (only the Titan can use them; list in the horde editor › Rift › Skills).",
+  "Charme ou Bague": "Charm or Ring"
 }
