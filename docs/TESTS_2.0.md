@@ -496,3 +496,10 @@ Test rapide : dans la Faille, `/ws rift sky <horde|siege|contre|titan|victoire>`
 ## Siège de la Faille : île accélérée ×2
 - [ ] Au début du Siège, l'île s'agrandit deux fois plus vite (départ 1 s, un anneau toutes les 4 ticks, pause finale 2 s) ; secousses et sons toujours présents ; la forteresse se construit ensuite normalement
 - [ ] Cinématique de construction de la forteresse ennemie deux fois plus rapide : 10 s au lieu de 20 (déchirure 3 s, socle, pont, murs, sommets, titre) ; toutes les étapes ont le temps de se jouer, la forteresse est complète à la fin ; le champ « durée » de l'éditeur affiche 10 par défaut
+
+## Terrains complets (Kingdom) : eau et blocs flottants
+Test : nouveau monde (ou zone jamais générée) près d'un lac / d'une rivière, ou `/ws arena place val_de_la_couronne` au bord de l'eau.
+- [ ] Plus de vide sous l'eau à côté du terrain : le lac reste plein, l'eau recouvre seulement le bas du talus (fond en terre, pas d'herbe sous l'eau)
+- [ ] Pas d'eau sur le terrain de la structure lui-même
+- [ ] Plus de petits blocs de terre / herbe / pierre qui flottent dans l'emprise et dans la bande autour ; le relief naturel (collines, berges) reste intact, pas de trou ouvert dans une grotte
+- [ ] Les blocs du plan (palissades, bâtiments) ne sont jamais retirés

@@ -293,6 +293,7 @@ public final class ArenaBlueprint {
         if (floating) y0 = center.getY();                       // île flottante : au niveau demandé
         else if (aquatic) y0 = level.getSeaLevel() - 1;         // arène sur l'eau : sol au niveau de la mer
         build(level, ox, oz, y0, rot, null, false);
+        sweepVegetation(level, ox, oz, y0, rot, null);   // 2.0 : végétation hors plan et blocs flottants, aussi pour la pose de test
         return new Placement(this, rot, new BlockPos(ox, y0, oz), d[0], d[1], y0, worldMarkers(ox, oz, y0, rot));
     }
 
@@ -413,11 +414,14 @@ public final class ArenaBlueprint {
             int ty = (int) Math.round(from0 + (h - from0) * frac);
             int hi = Math.max(h, ty) + 1 + clearHeight() / 2;
             if (square) hi = Math.max(hi, surfaceTop(level, wx, wz, wg) + 1); // arbres coupés compris
-            for (int y = ty + 1; y <= hi; y++) set(level, new BlockPos(wx, y, wz), air);
-            if (square) { // talus : herbe sur terre, jamais de pierre à nu
+            // 2.0 : niveau de l'eau de la colonne (lac, rivière) : sous ce niveau, le talus est recouvert d'eau au lieu d'être vidé (plus de mur d'eau ni de vide)
+            int wl = square ? waterTop(level, wx, wz, h + 1, hi) : Integer.MIN_VALUE;
+            BlockState water = Blocks.WATER.defaultBlockState();
+            for (int y = ty + 1; y <= hi; y++) set(level, new BlockPos(wx, y, wz), y <= wl ? water : air);
+            if (square) { // talus : herbe sur terre, jamais de pierre à nu (sous l'eau : terre / sable)
                 for (int y = ty - 1; y >= ty - 3; y--) set(level, new BlockPos(wx, y, wz), (desert ? Blocks.SAND : Blocks.DIRT).defaultBlockState());
                 fill(level, wx, ty - 4, wz, ty - 48, desert);
-                set(level, new BlockPos(wx, ty, wz), (desert ? Blocks.SAND : Blocks.GRASS_BLOCK).defaultBlockState());
+                set(level, new BlockPos(wx, ty, wz), (desert ? Blocks.SAND : ty < wl ? Blocks.DIRT : Blocks.GRASS_BLOCK).defaultBlockState());
                 continue;
             }
             fill(level, wx, ty - 1, wz, ty - 48, false);
@@ -429,6 +433,7 @@ public final class ArenaBlueprint {
     public static final int VEGETATION_MARGIN = 10;
 
     private static boolean isVegetation(BlockState st) {
+        if (!st.getFluidState().isEmpty()) return false;   // 2.0 : eau, herbes marines, varech : jamais retirés (sinon le lac se vide)
         return st.is(BlockTags.LEAVES) || st.is(BlockTags.LOGS) || st.is(BlockTags.FLOWERS) || st.is(BlockTags.REPLACEABLE_BY_TREES)
                 || st.is(Blocks.CACTUS) || st.is(Blocks.SUGAR_CANE) || st.is(Blocks.BAMBOO) || st.is(Blocks.BAMBOO_SAPLING) || st.is(Blocks.VINE)
                 || st.is(Blocks.BROWN_MUSHROOM) || st.is(Blocks.RED_MUSHROOM) || st.is(Blocks.DEAD_BUSH) || st.is(Blocks.MELON) || st.is(Blocks.PUMPKIN);
@@ -485,6 +490,87 @@ public final class ArenaBlueprint {
             }
         }
         clearVegetationMargin(level, ox, oz, w, dep, cx, cz, blendWidth(), 0, clip, false);
+        clearFloating(level, ox, oz, y0, rot, clip);
+    }
+
+    /** Plus haut bloc d'eau de la colonne entre {@code lo} et {@code hi} (Integer.MIN_VALUE : pas d'eau). */
+    private static int waterTop(WorldGenLevel level, int x, int z, int lo, int hi) {
+        BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+        for (int y = hi; y >= lo; y--) if (level.getFluidState(m.set(x, y, z)).is(net.minecraft.tags.FluidTags.WATER)) return y;
+        return Integer.MIN_VALUE;
+    }
+
+    /** Bloc de terrain naturel (terre, herbe, pierre, sable, gravier…) : ceux qu'on peut retirer s'ils flottent. */
+    private static boolean isTerrain(BlockState st) {
+        return st.is(BlockTags.DIRT) || st.is(BlockTags.BASE_STONE_OVERWORLD) || st.is(BlockTags.SAND) || st.is(BlockTags.TERRACOTTA)
+                || st.is(Blocks.GRAVEL) || st.is(Blocks.CLAY) || st.is(Blocks.DIRT_PATH) || st.is(Blocks.SNOW_BLOCK) || st.is(Blocks.SANDSTONE)
+                || st.is(BlockTags.COAL_ORES) || st.is(BlockTags.IRON_ORES) || st.is(BlockTags.COPPER_ORES);
+    }
+
+    /** Rien de porteur : air, liquide, herbes et plantes. */
+    private static boolean open(BlockState st) {
+        return st.isAir() || !st.getFluidState().isEmpty() || st.canBeReplaced();
+    }
+
+    /** Taille maximale d'un amas flottant retiré (au-delà : on considère qu'il tient au relief). */
+    private static final int FLOAT_MAX = 24;
+
+    /**
+     * 2.0 — Terrain complet : retire les petits amas de terrain qui flottent (restes coupés par le talus, ou posés par les chunks voisins après l'arène),
+     * dans l'emprise (hors blocs du plan) et dans la bande autour. Un amas = blocs de terrain reliés entre eux, posés sur du vide, de {@link #FLOAT_MAX}
+     * blocs au plus et sans appui sur autre chose (bloc du plan, bois…). Remplacé par de l'eau s'il touche de l'eau, sinon par de l'air.
+     */
+    private void clearFloating(WorldGenLevel level, int ox, int oz, int y0, Rotation rot, BoundingBox clip) {
+        int[] d = dims(rot);
+        int w = d[0], dep = d[1];
+        double cx = (w - 1) / 2.0, cz = (dep - 1) / 2.0;
+        int ext = blendWidth() + 1 + VEGETATION_MARGIN;
+        java.util.Set<Long> done = new java.util.HashSet<>();
+        BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+        for (int x = -ext; x <= w - 1 + ext; x++) for (int z = -ext; z <= dep - 1 + ext; z++) {
+            int wx = ox + x, wz = oz + z;
+            if (!in(clip, wx, wz) || edge(x, z, cx, cz, 0) > blendWidth() + VEGETATION_MARGIN) continue;
+            int top = surfaceTop(level, wx, wz, false);
+            for (int y = top; y >= y0 - 12; y--) {
+                m.set(wx, y, wz);
+                BlockState st = level.getBlockState(m);
+                if (!isTerrain(st) || !open(level.getBlockState(m.below()))) continue;
+                if (done.contains(m.asLong())) continue;
+                java.util.List<BlockPos> clump = floatingClump(level, m.immutable(), done);
+                if (clump == null) continue;
+                for (BlockPos p : clump) {
+                    boolean wet = false;
+                    for (net.minecraft.core.Direction dir : net.minecraft.core.Direction.values()) {
+                        if (dir != net.minecraft.core.Direction.UP && level.getFluidState(p.relative(dir)).is(net.minecraft.tags.FluidTags.WATER)) wet = true;
+                    }
+                    level.setBlock(p, (wet ? Blocks.WATER : Blocks.AIR).defaultBlockState(), 2);
+                }
+            }
+        }
+    }
+
+    /** Amas de terrain relié à {@code start} s'il flotte (taille ≤ FLOAT_MAX, aucun appui hors terrain), sinon null. */
+    private java.util.List<BlockPos> floatingClump(WorldGenLevel level, BlockPos start, java.util.Set<Long> done) {
+        java.util.ArrayDeque<BlockPos> todo = new java.util.ArrayDeque<>();
+        java.util.Set<Long> seen = new java.util.HashSet<>();
+        java.util.List<BlockPos> out = new java.util.ArrayList<>();
+        todo.add(start);
+        seen.add(start.asLong());
+        while (!todo.isEmpty()) {
+            BlockPos p = todo.poll();
+            out.add(p);
+            done.add(p.asLong());
+            if (out.size() > FLOAT_MAX) return null;   // trop gros : relié au relief
+            for (net.minecraft.core.Direction dir : net.minecraft.core.Direction.values()) {
+                BlockPos n = p.relative(dir);
+                if (!level.hasChunk(n.getX() >> 4, n.getZ() >> 4)) return null;   // chunk absent : on ne prend pas de risque
+                BlockState ns = level.getBlockState(n);
+                if (open(ns) || ns.is(BlockTags.LEAVES)) continue;
+                if (!isTerrain(ns)) return null;   // appuyé sur un bloc du plan, du bois… : on garde
+                if (seen.add(n.asLong())) todo.add(n);
+            }
+        }
+        return out;
     }
 
     /** Hauteur (couche) du dernier bloc solide de chaque colonne du plan, dans le repère tourné. */
