@@ -266,6 +266,13 @@ public class ModItems {
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.STONE_BRUTE, 0x8A7A66, 0xFF46C8, new Item.Properties()));
     public static final RegistryObject<Item> NEANTIDE_SPAWN_EGG = ITEMS.register("neantide_spawn_egg",
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.NEANTIDE, 0x1A1030, 0xBA5CFF, new Item.Properties()));
+    /** 2.0 — Œufs d'apparition des monstres de la Faille. */
+    public static final RegistryObject<Item> GEODON_SPAWN_EGG = ITEMS.register("geodon_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.GEODON, 0x1B1428, 0xC37BFF, new Item.Properties()));
+    public static final RegistryObject<Item> ANCREUR_SPAWN_EGG = ITEMS.register("ancreur_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.ANCREUR, 0x14101E, 0x3CE6D2, new Item.Properties()));
+    public static final RegistryObject<Item> BOLIDE_SPAWN_EGG = ITEMS.register("bolide_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.BOLIDE, 0x2A1626, 0xFF5AB4, new Item.Properties()));
 
     /** Relique : Anneau d'Ancrage du Néant (immunité à la Lévitation, compatible Curios « bague »). */
     public static final RegistryObject<Item> ANNEAU_ANCRAGE = ITEMS.register("anneau_ancrage",
@@ -445,6 +452,9 @@ public class ModItems {
                         output.accept(ROOTLING_SPAWN_EGG.get());
                         output.accept(STONE_BRUTE_SPAWN_EGG.get());
                         output.accept(NEANTIDE_SPAWN_EGG.get());
+                        output.accept(GEODON_SPAWN_EGG.get());
+                        output.accept(ANCREUR_SPAWN_EGG.get());
+                        output.accept(BOLIDE_SPAWN_EGG.get());
                         output.accept(ECLAT_NEANT_SPAWN_EGG.get());
                         output.accept(ANNEAU_ANCRAGE.get());
                         output.accept(AMULETTE_BRASIER.get());

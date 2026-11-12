@@ -223,5 +223,11 @@
   "item.wavesurvivor.coeur_titan": "Titan's Heart",
   "item.wavesurvivor.poussiere_faille": "Rift Dust",
   "item.wavesurvivor.destin_faille": "Rift Destiny",
-  "item.wavesurvivor.couronne_titan": "Titan's Crown"
+  "item.wavesurvivor.couronne_titan": "Titan's Crown",
+  "entity.wavesurvivor.geodon": "Geodon",
+  "item.wavesurvivor.geodon_spawn_egg": "Geodon Spawn Egg",
+  "entity.wavesurvivor.ancreur": "Anchorer",
+  "item.wavesurvivor.ancreur_spawn_egg": "Anchorer Spawn Egg",
+  "entity.wavesurvivor.bolide": "Bolide",
+  "item.wavesurvivor.bolide_spawn_egg": "Bolide Spawn Egg"
 }

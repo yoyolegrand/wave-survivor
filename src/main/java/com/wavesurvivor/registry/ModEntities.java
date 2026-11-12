@@ -223,6 +223,24 @@ public class ModEntities {
                     .build("archonte"));
 
     /** Néantide : créature du néant insectoïde (modèle sur mesure, haute résolution). */
+    /** 2.0 — Monstres de la Faille (modèles de Claude chat) : Géodon, Ancreur, Bolide. */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Geodon>> GEODON = ENTITIES.register("geodon",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Geodon>of(com.wavesurvivor.entity.Geodon::new, MobCategory.MONSTER)
+                    .sized(1.3f, 1.3f)
+                    .clientTrackingRange(8)
+                    .build("geodon"));
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Ancreur>> ANCREUR = ENTITIES.register("ancreur",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Ancreur>of(com.wavesurvivor.entity.Ancreur::new, MobCategory.MONSTER)
+                    .sized(1.5f, 2.9f)
+                    .clientTrackingRange(10)
+                    .build("ancreur"));
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.Bolide>> BOLIDE = ENTITIES.register("bolide",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.Bolide>of(com.wavesurvivor.entity.Bolide::new, MobCategory.MONSTER)
+                    .sized(1.3f, 2.5f)
+                    .fireImmune()
+                    .clientTrackingRange(10)
+                    .build("bolide"));
+
     public static final RegistryObject<EntityType<com.wavesurvivor.entity.Neantide>> NEANTIDE = ENTITIES.register("neantide",
             () -> EntityType.Builder.<com.wavesurvivor.entity.Neantide>of(com.wavesurvivor.entity.Neantide::new, MobCategory.MONSTER)
                     .sized(0.8f, 2.4f)
@@ -255,6 +273,9 @@ public class ModEntities {
         event.put(ROOTLING.get(), com.wavesurvivor.entity.Rootling.createAttributes().build());
         event.put(STONE_BRUTE.get(), com.wavesurvivor.entity.StoneBrute.createAttributes().build());
         event.put(NEANTIDE.get(), com.wavesurvivor.entity.Neantide.createAttributes().build());
+        event.put(GEODON.get(), com.wavesurvivor.entity.Geodon.createAttributes().build());
+        event.put(ANCREUR.get(), com.wavesurvivor.entity.Ancreur.createAttributes().build());
+        event.put(BOLIDE.get(), com.wavesurvivor.entity.Bolide.createAttributes().build());
         event.put(DEVOREUR.get(), com.wavesurvivor.entity.RiftTitanEntity.createAttributes().build());
         event.put(COLOSSE.get(), com.wavesurvivor.entity.RiftTitanEntity.createAttributes().build());
         event.put(ARCHONTE.get(), com.wavesurvivor.entity.RiftTitanEntity.createAttributes().build());

@@ -223,5 +223,11 @@
   "item.wavesurvivor.coeur_titan": "Cœur du Titan",
   "item.wavesurvivor.poussiere_faille": "Poussière de Faille",
   "item.wavesurvivor.destin_faille": "Destin de la Faille",
-  "item.wavesurvivor.couronne_titan": "Couronne du Titan"
+  "item.wavesurvivor.couronne_titan": "Couronne du Titan",
+  "entity.wavesurvivor.geodon": "Géodon",
+  "item.wavesurvivor.geodon_spawn_egg": "Œuf d'apparition de Géodon",
+  "entity.wavesurvivor.ancreur": "Ancreur",
+  "item.wavesurvivor.ancreur_spawn_egg": "Œuf d'apparition d'Ancreur",
+  "entity.wavesurvivor.bolide": "Bolide",
+  "item.wavesurvivor.bolide_spawn_egg": "Œuf d'apparition de Bolide"
 }

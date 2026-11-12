@@ -146,6 +146,7 @@ public class WaveSurvivorMod {
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.skill.IceFx()); // effets de glace en blocs (nettoyage)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.horde.kingdom.OfferingBrazier()); // Brasier des Offrandes (Ferveur du royaume)
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.entity.Djinn.Events()); // invocations du Djinn -> Esprits du Djinn
+        MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.entity.Ancreur.Events()); // 2.0 : ancre plantée de l'Ancreur (frappable)
         // Iron's Spells (optionnel) : fait avancer les sorts chargés / canalisés des créatures
         MinecraftForge.EVENT_BUS.register(new com.wavesurvivor.compat.IronsSpells());
         // Difficulté des boss (phases, anti-exploitation, bouclier, plafond de dégâts)
