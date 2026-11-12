@@ -229,5 +229,9 @@
   "entity.wavesurvivor.ancreur": "Ancreur",
   "item.wavesurvivor.ancreur_spawn_egg": "Œuf d'apparition d'Ancreur",
   "entity.wavesurvivor.bolide": "Bolide",
-  "item.wavesurvivor.bolide_spawn_egg": "Œuf d'apparition de Bolide"
+  "item.wavesurvivor.bolide_spawn_egg": "Œuf d'apparition de Bolide",
+  "item.wavesurvivor.fallen_seraph_helmet": "Heaume du Séraphin déchu",
+  "item.wavesurvivor.fallen_seraph_chestplate": "Plastron du Séraphin déchu",
+  "item.wavesurvivor.fallen_seraph_leggings": "Jambières du Séraphin déchu",
+  "item.wavesurvivor.fallen_seraph_boots": "Solerets du Séraphin déchu"
 }

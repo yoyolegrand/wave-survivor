@@ -171,6 +171,15 @@ public class ModItems {
             () -> new com.wavesurvivor.item.SeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final RegistryObject<Item> SERAPH_BOOTS = ITEMS.register("seraph_boots",
             () -> new com.wavesurvivor.item.SeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
+    /** 2.0 — Armure du Séraphin déchu (variante corrompue ; modèle et textures de Claude chat). */
+    public static final RegistryObject<Item> FALLEN_SERAPH_HELMET = ITEMS.register("fallen_seraph_helmet",
+            () -> new com.wavesurvivor.item.FallenSeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> FALLEN_SERAPH_CHESTPLATE = ITEMS.register("fallen_seraph_chestplate",
+            () -> new com.wavesurvivor.item.FallenSeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> FALLEN_SERAPH_LEGGINGS = ITEMS.register("fallen_seraph_leggings",
+            () -> new com.wavesurvivor.item.FallenSeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> FALLEN_SERAPH_BOOTS = ITEMS.register("fallen_seraph_boots",
+            () -> new com.wavesurvivor.item.FallenSeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
 
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
     /** 2.0 — Éclat de Faille (Titan vaincu) : monte une relique au niveau IV à la Forge. */
@@ -550,6 +559,10 @@ public class ModItems {
                         output.accept(SERAPH_CHESTPLATE.get());
                         output.accept(SERAPH_LEGGINGS.get());
                         output.accept(SERAPH_BOOTS.get());
+                        output.accept(FALLEN_SERAPH_HELMET.get());
+                        output.accept(FALLEN_SERAPH_CHESTPLATE.get());
+                        output.accept(FALLEN_SERAPH_LEGGINGS.get());
+                        output.accept(FALLEN_SERAPH_BOOTS.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(RIFT_SHARD.get());

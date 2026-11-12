@@ -114,6 +114,20 @@ public class CraftEquipEvents {
         return true;
     }
 
+    /** 2.0 — Les quatre pièces de l'Armure du Séraphin déchu sont portées. */
+    public static boolean fullFallenSeraph(ServerPlayer p) {
+        for (ItemStack a : p.getInventory().armor) if (!(a.getItem() instanceof com.wavesurvivor.item.FallenSeraphArmorItem)) return false;
+        return true;
+    }
+
+    /** Pacte du Déchu : rage sous le seuil de PV (40 % par défaut). */
+    private static boolean fallenRage(ServerPlayer p) {
+        return fullFallenSeraph(p) && p.getHealth() < p.getMaxHealth() * CraftConfig.equipNum("fallen_seraph_set", "rageBelowPercent", 40) / 100.0;
+    }
+
+    /** Soin du vol de vie en cours : il échappe au malus de soins du Pacte. */
+    private static boolean lifestealing = false;
+
     private static boolean holds(ServerPlayer p, Item item) { return p.getMainHandItem().is(item); }
 
     // ─── Dégâts : Lame, Faux, flèches, bonus du Totem de souillure ───
@@ -156,6 +170,17 @@ public class CraftEquipEvents {
         if (src.getEntity() instanceof ServerPlayer tp) {
             TaintState st = TAINT.get(tp.getUUID());
             if (st != null && tp.level().getGameTime() < st.bonusEnd) amt *= 1f + (float) CraftConfig.equipNum("taint_totem", "damageBonusPercent", 50) / 100f;
+        }
+        // 2.0 — Pacte du Déchu (4 pièces) : rage sous 40 % des PV (+15 % de dégâts), puis Soif de sang (8 % des dégâts infligés rendus en vie)
+        if (src.getEntity() instanceof ServerPlayer fp && victim != fp && !(victim instanceof net.minecraft.world.entity.player.Player) && fullFallenSeraph(fp)) {
+            if (fallenRage(fp)) amt *= 1f + (float) CraftConfig.equipNum("fallen_seraph_set", "rageDamagePercent", 15) / 100f;
+            float steal = amt * (float) CraftConfig.equipNum("fallen_seraph_set", "lifestealPercent", 8) / 100f;
+            if (steal > 0 && fp.getHealth() < fp.getMaxHealth()) {
+                lifestealing = true;
+                try { fp.heal(steal); } finally { lifestealing = false; }
+                if (fp.level() instanceof ServerLevel sl) sl.sendParticles(new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.75f, 0.05f, 0.1f), 1.0f),
+                        victim.getX(), victim.getY(0.6), victim.getZ(), 4, 0.25, 0.3, 0.25, 0);
+            }
         }
         e.setAmount(amt);
     }
@@ -209,6 +234,32 @@ public class CraftEquipEvents {
         PENDING_MISS.put(p.getUUID(), p.level().getGameTime());
     }
 
+    /** 2.0 — Le prix du Pacte du Déchu : −10 % de soins reçus des autres sources (le vol de vie de l'armure n'est pas concerné). */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onFallenHeal(net.minecraftforge.event.entity.living.LivingHealEvent e) {
+        if (lifestealing || !(e.getEntity() instanceof ServerPlayer p) || !fullFallenSeraph(p)) return;
+        e.setAmount(e.getAmount() * (1f - (float) CraftConfig.equipNum("fallen_seraph_set", "healingPenaltyPercent", 10) / 100f));
+    }
+
+    private static final UUID FALLEN_RAGE = UUID.fromString("7c1a5f20-5a0e-4d51-9a11-0e5a1f0000d9");
+
+    /** Rage du déchu : +15 % de puissance des sorts de Sang (Iron's Spells) tant qu'elle dure ; braises rouges autour du joueur. */
+    private static void updateFallenRage(ServerPlayer p) {
+        boolean rage = fallenRage(p);
+        var attr = ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation("irons_spellbooks", "blood_spell_power"));
+        AttributeInstance blood = attr != null ? p.getAttribute(attr) : null;
+        if (blood != null) {
+            double pct = CraftConfig.equipNum("fallen_seraph_set", "rageBloodPowerPercent", 15) / 100.0;
+            AttributeModifier cur = blood.getModifier(FALLEN_RAGE);
+            if (rage && pct != 0 && cur == null) blood.addTransientModifier(new AttributeModifier(FALLEN_RAGE, "wavesurvivor_fallen_rage", pct, AttributeModifier.Operation.MULTIPLY_BASE));
+            else if (!rage && cur != null) blood.removeModifier(FALLEN_RAGE);
+        }
+        if (rage && p.level() instanceof ServerLevel sl) {
+            sl.sendParticles(new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.8f, 0.05f, 0.1f), 1.2f), p.getX(), p.getY(1.0), p.getZ(), 3, 0.35, 0.5, 0.35, 0);
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.SMALL_FLAME, p.getX(), p.getY() + 2.1, p.getZ(), 1, 0.15, 0.05, 0.15, 0.005);   // l'auréole brisée rougeoie
+        }
+    }
+
     private static final UUID SERAPH_HP = UUID.fromString("7c1a5f20-5a0e-4d51-9a11-0e5a1f0000a1");
 
     /** Ensemble complet du Séraphin : +2 cœurs de PV max (config « seraph_set.bonusHearts »), retirés dès qu'une pièce manque. */
@@ -236,6 +287,7 @@ public class CraftEquipEvents {
         long now = p.level().getGameTime();
         if (now % 4 == 0) updateGlow(p);
         if (now % 10 == 0) updateSeraphHearts(p);
+        if (now % 10 == 0) updateFallenRage(p);
         if (now % 8 == 0 && p.getMainHandItem().is(ModItems.DAWN_BLADE.get()) && p.level().getDayTime() % 24000L >= 13000L && p.level() instanceof ServerLevel nl) {
             nl.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, p.getX(), p.getY(1.0), p.getZ(), 2, 0.4, 0.5, 0.4, 0.01); // la Lame de l'aube brille la nuit
         }

@@ -519,3 +519,19 @@ Test : `/ws rift monster <geodon|ancreur|bolide>` en fait apparaître un à 6 bl
 - [ ] Éditeur : fiches rift_geodon / rift_ancreur / rift_bolide dans le catalogue d'entités ; utilisables dans une autre horde
 - [ ] Codex : page « Créatures de la Faille » FR / EN
 - [ ] Stone Brute : textures corrigées (256 de large), rendu correct
+### Monstres de la Faille : coups et hauteur
+- [ ] Géodon et Ancreur jouent l'animation de coup (bras / tête) à chaque attaque au corps à corps
+- [ ] Géodon : charge dès 3 blocs (`/ws rift monster geodon charge`, `/ws rift monster geodon geode`)
+- [ ] Les pieds de l'Ancreur, du Géodon et du Bolide touchent le sol (plus de flottement) ; l'ancre plantée et la boule du Géodon ne s'enfoncent pas trop
+
+## Armure du Séraphin déchu (modèle et textures de Claude chat)
+Test : onglet créatif (4 pièces), ou Sanctuaire › Artisanat en alignement Corrompu (pièce de diamant + Fragments de souillure ; plastron : + 1 Cœur de souillure).
+- [ ] Chaque pièce seule puis l'ensemble : texture corrompue, auréole brisée et penchée derrière la tête, ailes retombées qui ne traversent pas le corps ; icônes des 4 objets
+- [ ] Noms FR / EN, rareté épique, infobulle du Pacte du Déchu ; protection et durabilité identiques au Séraphin ; son d'équipement de netherite ; réparation à l'enclume avec un Fragment de souillure
+- [ ] Artisanat : recettes visibles seulement en alignement Corrompu ; Forge du Sanctuaire : améliorations Profanées seulement
+- [ ] Pacte du Déchu (4 pièces) : vol de vie de 8 % (particules rouges sur la cible), y compris avec des sorts
+- [ ] Rage sous 40 % des PV : +15 % de dégâts, braises rouges autour du joueur ; s'arrête en remontant au-dessus
+- [ ] −10 % de soins reçus (potion, régénération, bénédictions) ; le vol de vie n'est pas réduit
+- [ ] Iron's Spells : +6 % de puissance de Sang et +25 de mana par pièce, +15 % de Sang pendant la rage ; sans le mod, aucune erreur
+- [ ] Séraphin et Séraphin déchu mélangés : aucun des deux ensembles ne s'active
+- [ ] Codex (page Artisanat) : paragraphe « Armure du Séraphin déchu » FR / EN

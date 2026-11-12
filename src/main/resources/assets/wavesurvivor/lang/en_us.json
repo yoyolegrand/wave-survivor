@@ -229,5 +229,9 @@
   "entity.wavesurvivor.ancreur": "Anchorer",
   "item.wavesurvivor.ancreur_spawn_egg": "Anchorer Spawn Egg",
   "entity.wavesurvivor.bolide": "Bolide",
-  "item.wavesurvivor.bolide_spawn_egg": "Bolide Spawn Egg"
+  "item.wavesurvivor.bolide_spawn_egg": "Bolide Spawn Egg",
+  "item.wavesurvivor.fallen_seraph_helmet": "Fallen Seraph Helm",
+  "item.wavesurvivor.fallen_seraph_chestplate": "Fallen Seraph Chestplate",
+  "item.wavesurvivor.fallen_seraph_leggings": "Fallen Seraph Leggings",
+  "item.wavesurvivor.fallen_seraph_boots": "Fallen Seraph Boots"
 }
