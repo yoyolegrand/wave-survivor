@@ -246,9 +246,10 @@ public class Ancreur extends FailleMonster {
     protected net.minecraft.sounds.SoundEvent getDeathSound() { return SoundEvents.IRON_GOLEM_DEATH; }
 
     /** Ancre plantée frappée au corps à corps (bus Forge, enregistré dans WaveSurvivorMod). */
-    public static class Events {
+    /** Nom unique (pas « Events ») : Forge nomme ses appelants d'après le nom court de la classe et de la méthode, un doublon avec Djinn.Events plantait. */
+    public static class AnchorEvents {
         @SubscribeEvent
-        public void onAttack(AttackEntityEvent e) {
+        public void onAnchorAttack(AttackEntityEvent e) {
             Entity t = e.getTarget();
             if (!(t instanceof Interaction) || !t.getTags().contains(ANCHOR_TAG)) return;
             e.setCanceled(true);
@@ -263,7 +264,7 @@ public class Ancreur extends FailleMonster {
 
         /** Ancre restée dans un monde rechargé (son Ancreur ne la connaît plus) : retirée. */
         @SubscribeEvent
-        public void onJoin(net.minecraftforge.event.entity.EntityJoinLevelEvent e) {
+        public void onAnchorJoin(net.minecraftforge.event.entity.EntityJoinLevelEvent e) {
             if (e.loadedFromDisk() && e.getEntity() instanceof Interaction && e.getEntity().getTags().contains(ANCHOR_TAG)) e.setCanceled(true);
         }
     }
