@@ -872,6 +872,8 @@ public class CustomSkillData {
     @SerializedName("tMeteorsBlocks") public String tMeteorsBlocks = RD.meteorBlocks;
     @SerializedName("tMeteorsTrail") public String tMeteorsTrail = RD.meteorTrail;
     @SerializedName("tMeteorsCrater") public boolean tMeteorsCrater = RD.meteorCrater;
+    /** 2.0 : 1 météore sur N est un Bolide (monstre de la Faille) qui se relève après l'impact ; 0 = aucun. */
+    @SerializedName("tMeteorsBolideEvery") public int tMeteorsBolideEvery = RD.meteorBolideEvery;
     @SerializedName("tTrackingDamage") public double tTrackingDamage = RD.titanTrackingDamage;
     @SerializedName("tLavaDamage") public double tLavaDamage = RD.titanLavaDamage;
     @SerializedName("tGiantDamage") public double tGiantDamage = RD.titanGiantDamage;

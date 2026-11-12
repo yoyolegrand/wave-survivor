@@ -558,6 +558,8 @@ final class RiftTitan {
         Vector3f off;
         long spawnAt, impactAt, animAt;
         boolean spawned, animated;
+        /** 2.0 : ce météore est un Bolide, qui se relève après l'impact. */
+        boolean bolide;
         float k;
         Quaternionf endRot;
         final List<Display.BlockDisplay> parts = new ArrayList<>();
@@ -573,6 +575,27 @@ final class RiftTitan {
     }
 
     private static final List<Meteor> METEORS = new ArrayList<>();
+    /** 2.0 : météores tombés depuis le début de la partie (pour « 1 sur N est un Bolide »). */
+    private static int meteorCount = 0;
+    /** Plafond d'ennemis vivants de la phase du Titan : un Bolide n'apparaît pas au-delà. */
+    private static final int BOLIDE_ALIVE_CAP = 60;
+
+    /** 2.0 : un Bolide se relève du cratère (la chute est celle du météore) ; il compte dans les ennemis de la partie et leur maximum. */
+    private static void spawnBolide(ServerLevel l, double x, double y, double z) {
+        if (com.wavesurvivor.horde.spawn.MobRegistry.size() >= BOLIDE_ALIVE_CAP) return;
+        com.wavesurvivor.entity.Bolide b = com.wavesurvivor.registry.ModEntities.BOLIDE.get().create(l);
+        if (b == null) return;
+        b.moveTo(x, y, z, RNG.nextFloat() * 360f, 0f);   // y = premier bloc libre au-dessus du sol
+        b.landFromMeteor();
+        b.finalizeSpawn(l, l.getCurrentDifficultyAt(b.blockPosition()), net.minecraft.world.entity.MobSpawnType.MOB_SUMMONED, null, null);
+        if (!l.addFreshEntity(b)) return;
+        if (com.wavesurvivor.horde.HordeManager.get().isRunning()) {
+            com.wavesurvivor.horde.model.HordeEntity t = new com.wavesurvivor.horde.model.HordeEntity();
+            t.entityType = "wavesurvivor:bolide";
+            t.customName = null;
+            com.wavesurvivor.horde.spawn.MobRegistry.register(b, t);
+        }
+    }
     private static final List<Restore> RESTORES = new ArrayList<>();
     /** Amas arrondi d'environ 3 × 3 × 3 : un cœur, six faces et quatre excroissances (x, y, z, taille, en blocs pour une taille de 3). */
     private static final float[][] CLUSTER = {
@@ -685,8 +708,10 @@ final class RiftTitan {
         // Un météore par zone : visible dans le ciel côté Titan, ~1,2 s avant l'impact
         int craterR = rs.meteorCrater ? (int) Math.max(1, Math.min(3, Math.round(radius / 3))) : 0;
         for (double[] s : spots) {
-            newMeteor(s[0], s[1], s[2], (float) Math.max(0.3, rs.meteorSize / 3.0), radius, rs.meteorDamage, craterR, 200, impact, fall, 1f, rs.meteorBlocks)
-                    .buildDamage = Math.max(1, rs.titanBuildDamage / 3f);
+            Meteor mt = newMeteor(s[0], s[1], s[2], (float) Math.max(0.3, rs.meteorSize / 3.0), radius, rs.meteorDamage, craterR, 200, impact, fall, 1f, rs.meteorBlocks);
+            mt.buildDamage = Math.max(1, rs.titanBuildDamage / 3f);
+            // 2.0 : 1 météore sur N est un Bolide (compteur continu d'une pluie à l'autre : la proportion est exacte)
+            if (rs.meteorBolideEvery > 0 && ++meteorCount % rs.meteorBolideEvery == 0) mt.bolide = true;
         }
         pose(com.wavesurvivor.entity.TitanAnimated.Pose.THROW, delay);
         schedule(l, now, delay, com.wavesurvivor.i18n.WSLang.t("rift.t.meteors"), t -> {
@@ -875,6 +900,7 @@ final class RiftTitan {
 
     private static void impact(ServerLevel l, Meteor m, long now) {
         double x = m.tx, y = m.ty, z = m.tz, radius = Math.max(1.5, m.radius), hit = radius * (6.4 / 6.0);
+        if (m.bolide) spawnBolide(l, x, y, z);   // 2.0 : un Bolide se relève du cratère
         BlockPos at = BlockPos.containing(x, y, z);
         l.sendParticles(ParticleTypes.EXPLOSION_EMITTER, x, y + 1, z, radius > 7 ? 5 : 2, 0.6 * m.k, 0.4, 0.6 * m.k, 0);
         l.sendParticles(ParticleTypes.LAVA, x, y + 1, z, (int) (20 * Math.max(0.5, m.k)), radius * 0.4, 0.3, radius * 0.4, 0);

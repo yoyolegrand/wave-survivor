@@ -426,6 +426,8 @@ public class HordeConfigMultiData {
         @SerializedName("meteorFall") public int meteorFall = 24;
         @SerializedName("meteorTrail") public String meteorTrail = "flame";
         @SerializedName("meteorCrater") public boolean meteorCrater = true;
+        /** 2.0 — Pluie de météores : 1 météore sur N est un Bolide qui se relève après l'impact (0 = aucun). */
+        @SerializedName("meteorBolideEvery") public int meteorBolideEvery = 5;
         /** Engins de siège : rechargement de la catapulte (ticks) niveaux 1 / 2 ; baliste : intervalle entre deux tirs et rechargement (ticks) niveaux 1 / 2. */
         /** Tour-catapulte : munitions illimitées (sinon 1 Pierre du trésor du royaume par tir). */
         @SerializedName("catapultTowerUnlimited") public boolean catapultTowerUnlimited = true;

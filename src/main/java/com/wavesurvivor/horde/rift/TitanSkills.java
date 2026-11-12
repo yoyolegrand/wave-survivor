@@ -138,6 +138,7 @@ public final class TitanSkills {
                 if (d.tMeteorsBlocks != null && !d.tMeteorsBlocks.isBlank()) o.meteorBlocks = d.tMeteorsBlocks;
                 if (d.tMeteorsTrail != null && !d.tMeteorsTrail.isBlank()) o.meteorTrail = d.tMeteorsTrail;
                 o.meteorCrater = d.tMeteorsCrater;
+                o.meteorBolideEvery = d.tMeteorsBolideEvery;
             }
             case TRACKING -> o.titanTrackingDamage = d.tTrackingDamage;
             case LAVA -> o.titanLavaDamage = d.tLavaDamage;
