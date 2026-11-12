@@ -503,3 +503,19 @@ Test : nouveau monde (ou zone jamais générée) près d'un lac / d'une rivière
 - [ ] Pas d'eau sur le terrain de la structure lui-même
 - [ ] Plus de petits blocs de terre / herbe / pierre qui flottent dans l'emprise et dans la bande autour ; le relief naturel (collines, berges) reste intact, pas de trou ouvert dans une grotte
 - [ ] Les blocs du plan (palissades, bâtiments) ne sont jamais retirés
+## Monstres de la Faille : Géodon, Ancreur, Bolide (modèles de Claude chat)
+Test : `/ws rift monster <geodon|ancreur|bolide>` en fait apparaître un à 6 blocs devant soi ; actions sur le plus proche : `/ws rift monster geodon charge` (charge sur soi), `geodon geode`, `ancreur anchor` (ancre sur soi), `bolide fall` (rechute du ciel), `bolide cool` (refroidi tout de suite). Œufs d'apparition dans l'onglet créatif.
+- [ ] Modèles et textures corrects (taille, ombre, calques lumineux dans le noir), boîte de collision à peu près à la taille du modèle
+- [ ] Géodon : marche lente ; charge (6–16 blocs, toutes les 10 s) : s'enroule, roule en ligne droite, 10 dégâts + fort recul au contact, s'arrête contre un mur
+- [ ] Géodon : géode 4 s juste après (cristaux dressés) : coups de face très réduits, coups dans le dos et explosions entiers ; se rouvre et reprend la marche
+- [ ] Ancreur : à moins de 12 blocs, lève l'ancre et l'abat (1 s) ; le joueur le plus proche (10 blocs) est enchaîné 8 s : impossible de s'éloigner à plus de 6 blocs de l'ancre (tiré en arrière, ramené si trop loin)
+- [ ] Ancreur : chaîne dessinée comme une laisse (maillons bleutés), qui pend quand on est près et se tend au bout ; l'ancre se brise en la frappant (≈ 20 PV) et libère le joueur
+- [ ] Ancreur : il reste immobile tant qu'il tient la chaîne ; pas d'ancre fantôme après sa mort ou après un rechargement du monde
+- [ ] Bolide : cercle rose au sol ~1,5 s avant, chute avec traînée de feu rose / violette, impact 8 dégâts sur 3 blocs (aucun bloc cassé), il se relève (accroupi dans le cratère)
+- [ ] Bolide : en fusion 15 s (rapide, coups qui mettent le feu, direct du poing), puis refroidi : textures turquoise, plus lent, coups plus faibles, +30 % de dégâts reçus
+- [ ] Butin : éclats d'améthyste (Géodon 2–4, Ancreur 3–5, Bolide 2–4)
+- [ ] Vagues de la Faille : Géodon dès la vague 2, Bolide dès la 3 (il tombe du ciel), Ancreur dès la 4 ; ils comptent dans la vague
+- [ ] Pluie de météores du Titan : 1 météore sur 5 est un Bolide qui se relève du cratère ; réglage « BolideEvery » de la compétence titan_meteors (0 = aucun) ; pas au-delà de 60 ennemis vivants
+- [ ] Éditeur : fiches rift_geodon / rift_ancreur / rift_bolide dans le catalogue d'entités ; utilisables dans une autre horde
+- [ ] Codex : page « Créatures de la Faille » FR / EN
+- [ ] Stone Brute : textures corrigées (256 de large), rendu correct

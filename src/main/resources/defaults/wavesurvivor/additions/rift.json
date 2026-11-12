@@ -293,6 +293,114 @@
             },
             "min_wave": 4,
             "max_wave": 0
+          },
+          {
+            "entity_type": "wavesurvivor:geodon",
+            "custom_name": "§5Géodon",
+            "base_count": 1,
+            "count_increment": 1,
+            "max_health": 60,
+            "attack_damage": 6,
+            "movement_speed": 0.22,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "wavesurvivor:poussiere_faille",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 15
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_des_tresors",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 3
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 2,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "wavesurvivor:bolide",
+            "custom_name": "§5Bolide",
+            "base_count": 1,
+            "count_increment": 1,
+            "max_health": 50,
+            "attack_damage": 9,
+            "movement_speed": 0.3,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:magma_cream",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 40
+              },
+              {
+                "item": "wavesurvivor:poussiere_faille",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 15
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_du_nether",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 4
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 3,
+            "max_wave": 0
+          },
+          {
+            "entity_type": "wavesurvivor:ancreur",
+            "custom_name": "§5Ancreur",
+            "base_count": 1,
+            "count_increment": 1,
+            "max_health": 80,
+            "attack_damage": 9,
+            "movement_speed": 0.2,
+            "follow_range": 64,
+            "equipment": {},
+            "loot_table": [
+              {
+                "item": "minecraft:chain",
+                "minQty": 1,
+                "maxQty": 3,
+                "chance": 50
+              },
+              {
+                "item": "wavesurvivor:poussiere_faille",
+                "minQty": 1,
+                "maxQty": 2,
+                "chance": 20
+              },
+              {
+                "item": "roulettechest:key_custom_reliquaire_de_l_end",
+                "minQty": 1,
+                "maxQty": 1,
+                "chance": 5
+              }
+            ],
+            "playerScaling": {
+              "countMultiplier": 0.3,
+              "healthMultiplier": 0.1,
+              "damageMultiplier": 0.1
+            },
+            "min_wave": 4,
+            "max_wave": 0
           }
         ],
         "useSpecialWaves": false,
@@ -496,6 +604,87 @@
           "chance": 35
         }
       ],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": []
+    },
+    {
+      "entityName": "rift_geodon",
+      "displayName": "§5Géodon",
+      "baseEntityType": "wavesurvivor:geodon",
+      "stats": {
+        "maxHealth": 60,
+        "attackDamage": 6,
+        "movementSpeed": 0.22,
+        "followRange": 48,
+        "knockbackResistance": 0.7
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": []
+    },
+    {
+      "entityName": "rift_ancreur",
+      "displayName": "§5Ancreur",
+      "baseEntityType": "wavesurvivor:ancreur",
+      "stats": {
+        "maxHealth": 80,
+        "attackDamage": 9,
+        "movementSpeed": 0.2,
+        "followRange": 48,
+        "knockbackResistance": 0.8
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
+      "mountEntity": {
+        "enabled": false
+      },
+      "isBoss": false,
+      "bossConfig": {},
+      "skills": []
+    },
+    {
+      "entityName": "rift_bolide",
+      "displayName": "§5Bolide",
+      "baseEntityType": "wavesurvivor:bolide",
+      "stats": {
+        "maxHealth": 50,
+        "attackDamage": 9,
+        "movementSpeed": 0.3,
+        "followRange": 48,
+        "knockbackResistance": 0.5
+      },
+      "equipment": {
+        "mainhand": "",
+        "offhand": "",
+        "head": "",
+        "chest": "",
+        "legs": "",
+        "feet": ""
+      },
+      "lootTable": [],
       "mountEntity": {
         "enabled": false
       },

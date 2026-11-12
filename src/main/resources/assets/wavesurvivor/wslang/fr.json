@@ -4351,5 +4351,15 @@
   "brute.test.none": "Aucun Stone Brute disponible à moins de 32 blocs (ou il lance déjà).",
   "rift.test.sky_now": "Ciel de la Faille : phase « {0} ».",
   "rift.test.sky_set": "Test : ciel de la Faille réglé sur « {0} » (fondu de 5 s). « /ws rift sky auto » revient à la phase réelle.",
-  "rift.test.sky_bad": "Phase inconnue : horde, siege, contre, titan, victoire ou auto."
+  "rift.test.sky_bad": "Phase inconnue : horde, siege, contre, titan, victoire ou auto.",
+  "codex.rift_creatures": "Créatures de la Faille",
+  "codex.rift_creatures.body": "§7Créatures propres à la Faille (veines turquoise, cristaux d'améthyste). Elles rejoignent les vagues de la Faille et sont dans le catalogue d'entités de l'éditeur (§frift_geodon§7, §frift_ancreur§7, §frift_bolide§7). Toutes lâchent des §déclats d'améthyste§7.\n\n§6§lGéodon §7(tank mobile)\n§7• Lent et très résistant. §fCharge en boule§7 : entre 6 et 16 blocs, il s'enroule puis roule en ligne droite à grande vitesse (10 dégâts et fort recul au contact), jusqu'à un obstacle. Toutes les 10 s.\n§7• §fGéode§7 : juste après, il se referme 4 s, cristaux dressés : §c−75 % de dégâts§7 de face. Les §fexplosions§7 et les coups §fdans le dos§7 passent en entier : contournez-le.\n\n§6§lAncreur §7(contrôle)\n§7• Très lent, frappe fort. §fAncre§7 : à moins de 12 blocs, il lève son ancre et l'abat devant lui (1 s d'annonce). Le joueur le plus proche est §fenchaîné§7 : impossible de s'éloigner à plus de §e6 blocs§7 de l'ancre pendant §e8 s§7.\n§7• L'ancre plantée se §fbrise§7 (20 PV) : frappez-la pour libérer l'enchaîné. Toutes les 15 s.\n\n§6§lBolide §7(arrivée spectaculaire)\n§7• Il tombe du ciel : un §dcercle rose§7 au sol l'annonce ~1,5 s avant ; l'impact fait 8 dégâts sur 3 blocs.\n§7• §cEn fusion§7 les 15 premières secondes : rapide, ses coups mettent le feu. §bRefroidi§7 ensuite (fissures turquoise) : plus lent, frappe moins fort et §esubit 30 % de dégâts en plus§7 : attendez qu'il refroidisse, ou tenez-le à distance.\n§7• Pendant la §fpluie de météores§7 du Titan, 1 météore sur 5 est un Bolide qui se relève du cratère (réglable dans la compétence).",
+  "§5Géodon": "§5Géodon",
+  "§5Ancreur": "§5Ancreur",
+  "§5Bolide": "§5Bolide",
+  "rift.test.monster_spawned": "Test : {0} apparu devant toi.",
+  "rift.test.monster_none": "Aucun monstre de ce type à moins de 32 blocs.",
+  "rift.test.monster_done": "Test : capacité déclenchée.",
+  "rift.test.monster_busy": "Impossible maintenant (capacité déjà en cours ?).",
+  "rift.test.monster_bad": "Usage : /ws rift monster <geodon|ancreur|bolide> [geodon : charge, geode | ancreur : anchor | bolide : fall, cool]."
 }

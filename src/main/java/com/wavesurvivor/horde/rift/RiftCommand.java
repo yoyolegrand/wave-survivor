@@ -41,6 +41,14 @@ public final class RiftCommand {
                                 .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(
                                         java.util.List.of("horde", "siege", "contre", "titan", "victoire", "auto"), b))
                                 .executes(ctx -> sky(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "phase")))))
+                .then(Commands.literal("monster").then(Commands.argument("type", com.mojang.brigadier.arguments.StringArgumentType.word())
+                        .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(java.util.List.of("geodon", "ancreur", "bolide"), b))
+                        .executes(ctx -> monster(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "type"), ""))
+                        .then(Commands.argument("action", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                .suggests((ctx, b) -> net.minecraft.commands.SharedSuggestionProvider.suggest(
+                                        java.util.List.of("charge", "geode", "anchor", "fall", "cool"), b))
+                                .executes(ctx -> monster(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "type"),
+                                        com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "action"))))))
                 .then(Commands.literal("gauge").then(Commands.argument("value", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0, 100))
                         .executes(ctx -> gauge(ctx.getSource(), com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "value")))))
                 .then(Commands.literal("devoreur").executes(ctx -> titan(ctx.getSource(), 1.0, "devoreur"))
@@ -127,6 +135,50 @@ public final class RiftCommand {
         net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(com.wavesurvivor.registry.ModItems.POUSSIERE_FAILLE.get(), 48));
         src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.relics_given")), false);
         return 1;
+    }
+
+    /**
+     * Test (2.0) : monstres de la Faille. Sans action : en fait apparaître un à 6 blocs devant soi (le Bolide tombe du ciel).
+     * Actions sur le plus proche (32 blocs) : geodon charge | geode, ancreur anchor (sur soi), bolide fall | cool.
+     */
+    private static int monster(CommandSourceStack src, String type, String action) {
+        if (!(src.getEntity() instanceof net.minecraft.server.level.ServerPlayer p)) return 0;
+        net.minecraft.server.level.ServerLevel l = p.serverLevel();
+        Class<? extends com.wavesurvivor.entity.FailleMonster> cls = switch (type) {
+            case "geodon" -> com.wavesurvivor.entity.Geodon.class;
+            case "ancreur" -> com.wavesurvivor.entity.Ancreur.class;
+            case "bolide" -> com.wavesurvivor.entity.Bolide.class;
+            default -> null;
+        };
+        if (cls == null) { src.sendFailure(Component.literal(WSLang.t("rift.test.monster_bad"))); return 0; }
+        if (action.isEmpty()) {
+            net.minecraft.world.entity.EntityType<?> et = switch (type) {
+                case "geodon" -> com.wavesurvivor.registry.ModEntities.GEODON.get();
+                case "ancreur" -> com.wavesurvivor.registry.ModEntities.ANCREUR.get();
+                default -> com.wavesurvivor.registry.ModEntities.BOLIDE.get();
+            };
+            net.minecraft.world.phys.Vec3 look = p.getLookAngle();
+            net.minecraft.core.BlockPos at = net.minecraft.core.BlockPos.containing(p.getX() + look.x * 6, p.getY(), p.getZ() + look.z * 6);
+            at = l.getHeightmapPos(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, at);
+            net.minecraft.world.entity.Entity e = et.spawn(l, at, net.minecraft.world.entity.MobSpawnType.COMMAND);
+            if (e == null) return 0;
+            src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.monster_spawned", e.getName().getString())), false);
+            return 1;
+        }
+        com.wavesurvivor.entity.FailleMonster m = null;
+        for (var c : l.getEntitiesOfClass(cls, p.getBoundingBox().inflate(32))) if (m == null || c.distanceToSqr(p) < m.distanceToSqr(p)) m = c;
+        if (m == null) { src.sendFailure(Component.literal(WSLang.t("rift.test.monster_none"))); return 0; }
+        boolean ok;
+        switch (type + ":" + action) {
+            case "geodon:charge" -> ok = ((com.wavesurvivor.entity.Geodon) m).startCharge(p);
+            case "geodon:geode" -> { ((com.wavesurvivor.entity.Geodon) m).startGeode(); ok = true; }
+            case "ancreur:anchor" -> { m.setTarget(p); ok = ((com.wavesurvivor.entity.Ancreur) m).startAnchor(); }
+            case "bolide:fall" -> { ((com.wavesurvivor.entity.Bolide) m).restartFall(); ok = true; }
+            case "bolide:cool" -> { ((com.wavesurvivor.entity.Bolide) m).coolNow(); ok = true; }
+            default -> { src.sendFailure(Component.literal(WSLang.t("rift.test.monster_bad"))); return 0; }
+        }
+        src.sendSuccess(() -> Component.literal(WSLang.t(ok ? "rift.test.monster_done" : "rift.test.monster_busy")), false);
+        return ok ? 1 : 0;
     }
 
     /** Test (2.0) : force une phase du ciel de la Faille (« auto » = phase réelle ; sans argument : affiche la phase). */

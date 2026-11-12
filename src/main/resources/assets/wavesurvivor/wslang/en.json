@@ -5112,5 +5112,15 @@
   "brute.test.none": "No available Stone Brute within 32 blocks (or it is already throwing).",
   "rift.test.sky_now": "Rift sky: phase \"{0}\".",
   "rift.test.sky_set": "Test: Rift sky set to \"{0}\" (5 s fade). \"/ws rift sky auto\" goes back to the real phase.",
-  "rift.test.sky_bad": "Unknown phase: horde, siege, contre, titan, victoire or auto."
+  "rift.test.sky_bad": "Unknown phase: horde, siege, contre, titan, victoire or auto.",
+  "codex.rift_creatures": "Rift Creatures",
+  "codex.rift_creatures.body": "§7Creatures native to the Rift (turquoise veins, amethyst crystals). They join the Rift waves and are in the editor's entity catalog (§frift_geodon§7, §frift_ancreur§7, §frift_bolide§7). All of them drop §damethyst shards§7.\n\n§6§lGeodon §7(mobile tank)\n§7• Slow and very tough. §fBall charge§7: between 6 and 16 blocks, it curls up and rolls in a straight line at high speed (10 damage and strong knockback on contact), until it hits an obstacle. Every 10 s.\n§7• §fGeode§7: right after, it closes up for 4 s, crystals raised: §c−75% damage§7 from the front. §fExplosions§7 and hits §ffrom behind§7 deal full damage: go around it.\n\n§6§lAnchorer §7(control)\n§7• Very slow, hits hard. §fAnchor§7: within 12 blocks, it raises its anchor and slams it down in front of it (1 s warning). The nearest player is §fchained§7: they can't move more than §e6 blocks§7 away from the anchor for §e8 s§7.\n§7• The planted anchor can be §fbroken§7 (20 HP): hit it to free the chained player. Every 15 s.\n\n§6§lBolide §7(spectacular arrival)\n§7• It falls from the sky: a §dpink circle§7 on the ground warns ~1.5 s before; the impact deals 8 damage within 3 blocks.\n§7• §cMolten§7 for the first 15 seconds: fast, its hits set you on fire. Then §bcooled§7 (turquoise cracks): slower, hits weaker and §etakes 30% more damage§7: wait for it to cool down, or keep it at range.\n§7• During the Titan's §fmeteor shower§7, 1 meteor in 5 is a Bolide rising from the crater (adjustable in the skill).",
+  "§5Géodon": "§5Geodon",
+  "§5Ancreur": "§5Anchorer",
+  "§5Bolide": "§5Bolide",
+  "rift.test.monster_spawned": "Test: {0} spawned in front of you.",
+  "rift.test.monster_none": "No monster of this type within 32 blocks.",
+  "rift.test.monster_done": "Test: ability triggered.",
+  "rift.test.monster_busy": "Not possible right now (ability already running?).",
+  "rift.test.monster_bad": "Usage: /ws rift monster <geodon|ancreur|bolide> [geodon: charge, geode | ancreur: anchor | bolide: fall, cool]."
 }
