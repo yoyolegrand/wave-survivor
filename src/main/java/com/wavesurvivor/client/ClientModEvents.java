@@ -124,9 +124,9 @@ public class ClientModEvents {
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ROOTLING.get(), RootlingRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.STONE_BRUTE.get(), StoneBruteRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.NEANTIDE.get(), NeantideRenderer::new);
-        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.GEODON.get(), GeodonRenderer::new);
-        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ANCREUR.get(), AncreurRenderer::new);
-        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.BOLIDE.get(), BolideRenderer::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.GEODON.get(), FailleRenderers.Geodon::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ANCREUR.get(), FailleRenderers.Ancreur::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.BOLIDE.get(), FailleRenderers.Bolide::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DEVOREUR.get(), DevoreurRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.COLOSSE.get(), ColosseRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ARCHONTE.get(), ArchonteRenderer::new);

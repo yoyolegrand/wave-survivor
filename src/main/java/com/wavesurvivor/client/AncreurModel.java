@@ -103,6 +103,16 @@ public class AncreurModel<T extends Mob> extends HierarchicalModel<T> {
         torso.zRot = Mth.sin(w) * 0.06f * a;
         head.yRot = netHeadYaw * Mth.DEG_TO_RAD * 0.5f;
         armL.xRot += -Mth.sin(w) * 0.4f * a;
+        // COUP NORMAL (attaque au corps à corps, attackTime fourni par le rendu) : grand revers du poing droit
+        float atk = this.attackTime;
+        if (atk > 0f && st == 0) {
+            float s = Mth.sin(atk * (float) Math.PI);
+            armR.xRot += -1.9f * s;
+            armR.zRot += 0.35f * s;
+            foreR.xRot += -0.5f * s;
+            torso.yRot = -0.35f * s;
+            torso.xRot += 0.15f * s;
+        }
         boolean planted = st == 2 || (st == 1 && p > 0.55f);
         anchorBack.visible = !planted;
         anchorPlanted.visible = planted;

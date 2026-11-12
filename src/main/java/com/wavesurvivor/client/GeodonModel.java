@@ -101,7 +101,8 @@ public class GeodonModel<T extends Mob> extends HierarchicalModel<T> {
         float w = limbSwing * 0.6f, a = Math.min(1f, limbSwingAmount * 1.5f);
         // États : 0 = MARCHE, 1 = ROULÉ (charge en boule), 2 = GÉODE (refermé, quasi invulnérable de face).
         // failleProgress : 0 → 1 depuis le début de l'état ; l'enroulement se fait sur le premier tiers.
-        float curl = st == 0 ? 0f : smooth(p * 3f);
+        // ROULÉ : s'enroule sur le premier tiers ; GÉODE : reste enroulé et ne se rouvre que sur les derniers 15 % (pas de saut entre les deux)
+        float curl = st == 1 ? smooth(p * 3f) : st == 2 ? 1f - smooth((p - 0.85f) / 0.15f) : 0f;
         // marche : pattes en diagonale, petit balancement de la carapace
         float sw = Mth.sin(w) * 0.6f * a * (1f - curl);
         legs[0].xRot = sw; legs[3].xRot = sw; legs[1].xRot = -sw; legs[2].xRot = -sw;
@@ -121,5 +122,15 @@ public class GeodonModel<T extends Mob> extends HierarchicalModel<T> {
         if (st == 1) body.xRot = t * 0.6f * curl;              // la boule roule
         boolean geode = st == 2 && curl > 0.9f;                  // les cristaux jaillissent des jointures
         for (ModelPart c : crack) c.visible = geode;
+        // COUP NORMAL (attaque au corps à corps, attackTime fourni par le rendu) : coup de tête, le corps plonge en avant
+        float atk = this.attackTime;
+        if (atk > 0f && st == 0) {
+            float s = Mth.sin(atk * (float) Math.PI);
+            head.z -= 4f * s;
+            head.xRot += 0.5f * s;
+            body.xRot = 0.18f * s;
+            legs[0].xRot -= 0.5f * s;
+            legs[2].xRot -= 0.5f * s;
+        }
     }
 }

@@ -26,7 +26,7 @@ import java.util.UUID;
 /**
  * GÉODON (monstre de la Faille) — tank mobile, modèle de Claude chat (GeodonModel).
  * États : 0 = MARCHE, 1 = ROULÉ (charge en boule, 2,5 s), 2 = GÉODE (refermé 4 s).
- *  - CHARGE EN BOULE : cible visible entre 6 et 16 blocs, recharge 10 s. Il s'enroule puis roule en ligne droite à ~3× sa vitesse ;
+ *  - CHARGE EN BOULE : cible visible entre 3 et 16 blocs, recharge 10 s. Il s'enroule puis roule en ligne droite à ~3× sa vitesse ;
  *    au contact : 10 dégâts + fort recul ; arrêt contre un obstacle ou au bout de la course.
  *  - GÉODE : juste après la charge, refermé 4 s : −75 % de dégâts reçus, sauf explosions et coups portés dans le dos.
  */
@@ -34,7 +34,7 @@ public class Geodon extends FailleMonster {
 
     public static final int WALK = 0, ROLL = 1, GEODE = 2;
     public static final int ROLL_TICKS = 50, GEODE_TICKS = 80, CHARGE_COOLDOWN = 200;
-    public static final double CHARGE_MIN = 6, CHARGE_MAX = 16, ROLL_SPEED = 0.38;
+    public static final double CHARGE_MIN = 3, CHARGE_MAX = 16, ROLL_SPEED = 0.38;
     public static final float CHARGE_DAMAGE = 10f;
     private static final DustParticleOptions AMETHYST = new DustParticleOptions(new Vector3f(0.72f, 0.42f, 1f), 1.1f);
 
