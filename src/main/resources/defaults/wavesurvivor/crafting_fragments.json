@@ -53,7 +53,16 @@
     "grace_lantern": { "radius": 8, "damageReductionPercent": 20 },
     "holy_fountain": { "radius": 5, "amplifier": 0, "intervalSeconds": 2 },
     "votive_candle": { "radius": 12 },
-    "bait_totem": { "radius": 64, "activeSeconds": 30, "cooldownSeconds": 60 },
+    "bait_totem": { "radius": 64, "activeSeconds": 30, "cooldownSeconds": 60,
+      "_waveComment": "Vague du totem : waveChance % à l'activation ; waveMin..waveMax monstres (+ wavePerExtraPlayer par joueur en plus) sur un anneau de waveRingMin à waveRingMax blocs ; waveInGame = aussi pendant une partie (horde, Kingdom, Faille) ; waveFragmentChance % de Fragment de souillure par monstre ; disparition après waveDespawnSeconds sans joueur à moins de 32 blocs.",
+      "waveChance": 25, "waveMin": 6, "waveMax": 10, "wavePerExtraPlayer": 1, "waveRingMin": 16, "waveRingMax": 28,
+      "waveInGame": false, "waveFragmentChance": 5, "waveDespawnSeconds": 180,
+      "waveMobs": [
+        { "id": "minecraft:zombie", "weight": 4 },
+        { "id": "minecraft:skeleton", "weight": 4 },
+        { "id": "minecraft:spider", "weight": 3 },
+        { "id": "minecraft:wither_skeleton", "weight": 1 }
+      ] },
     "profane_obelisk": { "radius": 12, "damagePerSecond": 1, "hungerSeconds": 4 },
     "blood_altar": { "healthCost": 8, "xp": 120, "cooldownSeconds": 30 }
   },

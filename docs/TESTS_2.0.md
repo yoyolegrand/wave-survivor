@@ -535,3 +535,13 @@ Test : onglet créatif (4 pièces), ou Sanctuaire › Artisanat en alignement Co
 - [ ] Iron's Spells : +6 % de puissance de Sang et +25 de mana par pièce, +15 % de Sang pendant la rage ; sans le mod, aucune erreur
 - [ ] Séraphin et Séraphin déchu mélangés : aucun des deux ensembles ne s'active
 - [ ] Codex (page Artisanat) : paragraphe « Armure du Séraphin déchu » FR / EN
+
+## Totem d'appât : vague de monstres
+Réglages : `crafting_fragments.json` › `blocks` › `bait_totem` (`waveChance`, `waveMin`/`waveMax`, `waveMobs`, `waveInGame`…). Astuce : `waveChance` à 100 pour tester.
+- [ ] Clic droit : attraction comme avant (64 blocs, 30 s, recharge 60 s)
+- [ ] ~25 % des activations : son du Wither, flammes d'âme, message dans le fil d'événements, 6 à 10 monstres (+1 par joueur en plus) à 16–28 blocs du totem
+- [ ] Monstres : zombies, squelettes, araignées, squelettes wither (plus rares) ; jamais dans l'eau ni dans les murs ; ils visent le joueur le plus proche
+- [ ] Butin normal + parfois un Fragment de souillure (5 %)
+- [ ] Laissés seuls (aucun joueur à 32 blocs) pendant 3 min : ils disparaissent
+- [ ] Pendant une horde / Kingdom / Faille : attraction seulement, jamais de vague (sauf `waveInGame: true`)
+- [ ] Infobulle du totem et Codex (Artisanat) mentionnent la vague, FR / EN

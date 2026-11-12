@@ -113,6 +113,11 @@ public final class CraftConfig {
         return HordeJson.dbl(sub(sub(cfg(), "blocks"), block), key, def);
     }
 
+    /** Objet JSON complet d'un bloc utilitaire (« blocks.<bloc> »), vide si absent : pour les listes (ex. vague du Totem d'appât). */
+    public static JsonObject block(String block) {
+        return sub(sub(cfg(), "blocks"), block);
+    }
+
     /** Réglage numérique d'un équipement (« equipment.<objet>.<clé> »). */
     public static double equipNum(String item, String key, double def) {
         return HordeJson.dbl(sub(sub(cfg(), "equipment"), item), key, def);

@@ -238,6 +238,8 @@ public class CraftUtilityBlock extends Block implements EntityBlock {
                 be.setChanged();
                 level.playSound(null, pos, SoundEvents.WITHER_AMBIENT, SoundSource.BLOCKS, 0.6f, 0.6f);
                 p.displayClientMessage(Component.literal(WSLang.t("craft.block.bait_on", active / 20)), true);
+                // 2.0 : chance d'invoquer une vague de monstres (BaitWave)
+                if (level instanceof net.minecraft.server.level.ServerLevel sl) BaitWave.tryTrigger(sl, pos);
             }
             case ALTAR -> {
                 if (be == null) return InteractionResult.PASS;
