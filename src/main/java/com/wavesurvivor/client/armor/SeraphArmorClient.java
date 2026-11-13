@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public final class SeraphArmorClient {
 
-    private static final Map<EquipmentSlot, SeraphArmorModel> MODELS = new EnumMap<>(EquipmentSlot.class);
+    private static final Map<EquipmentSlot, HumanoidModel<LivingEntity>> MODELS = new EnumMap<>(EquipmentSlot.class);
     private static EntityModelSet lastSet;
 
     private SeraphArmorClient() {}
@@ -29,7 +30,8 @@ public final class SeraphArmorClient {
             MODELS.clear();
             lastSet = set;
         }
-        SeraphArmorModel m = MODELS.computeIfAbsent(slot, s -> new SeraphArmorModel(set.bakeLayer(SeraphArmorModel.LAYER)).forSlot(s));
+        // aplati pour Epic Fight (voir ArmorFlattener) : même rendu en vanilla, plus de casque décalé en mode combat
+        HumanoidModel<LivingEntity> m = MODELS.computeIfAbsent(slot, s -> ArmorFlattener.flatten(new SeraphArmorModel(set.bakeLayer(SeraphArmorModel.LAYER)).forSlot(s)));
         ((HumanoidModel) original).copyPropertiesTo(m);
         return m;
     }

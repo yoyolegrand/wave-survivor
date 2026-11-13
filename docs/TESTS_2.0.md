@@ -545,3 +545,10 @@ Réglages : `crafting_fragments.json` › `blocks` › `bait_totem` (`waveChance
 - [ ] Laissés seuls (aucun joueur à 32 blocs) pendant 3 min : ils disparaissent
 - [ ] Pendant une horde / Kingdom / Faille : attraction seulement, jamais de vague (sauf `waveInGame: true`)
 - [ ] Infobulle du totem et Codex (Artisanat) mentionnent la vague, FR / EN
+
+## Armures du Séraphin : compatibilité Epic Fight
+Modèles « aplatis » au chargement (client/armor/ArmorFlattener) : sous-parties fusionnées dans tête / corps / bras / jambes.
+- [ ] Sans Epic Fight : Séraphin et Séraphin déchu identiques à avant (casque, auréole, ailes, épaulières, jambières, solerets, pièce par pièce)
+- [ ] Epic Fight, mode combat, arme en main : casque bien sur la tête en regardant en haut / en bas / sur les côtés, en attaquant, en marchant
+- [ ] Epic Fight : auréole et ailes suivent la tête / le dos ; jambières et solerets suivent les jambes
+- [ ] Recharger les ressources (F3+T) : pas d'erreur, armures toujours correctes
