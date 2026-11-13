@@ -107,5 +107,5 @@ Les correctifs internes à la 2.0 (jamais publiés) sont volontairement absents.
 - **Full-terrain arenas** (Kingdom): lake water is kept, water now covers the lower slope instead of leaving a void next to the structure, and small floating terrain clumps around the arena are removed.
 
 ### 🔧 Under the hood
-- New optional dependency: **Pehkui** (needed for the Rift Titans and the Titan's Crown size).
+- **Pehkui** (still optional) is now needed to play the Rift (giant Titans) and for the Titan's Crown size.
 - Test commands for the Rift: `/ws rift` (status, sky, fortress, catalysts, skill, chest, relics, monster…), `/ws brute throw`.
