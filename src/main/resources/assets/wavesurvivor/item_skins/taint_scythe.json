@@ -1,6 +1,12 @@
 {
 	"transforms": {
-		"mainhand": { "Tool_R": { "translation": [0.0, 0.0, 0.16], "rotation": [-90.0, 0.0, 0.0] } },
-		"offhand": { "Tool_L": { "translation": [0.0, 0.0, 0.16], "rotation": [-90.0, 0.0, 0.0] } }
+		"mainhand": {
+			"Tool_R": { "translation": [0.0, 0.0, 0.16], "rotation": [-90.0, 0.0, 0.0] },
+			"Chest": { "translation": [0.552, 0.4343, 0.15], "rotation": [180.0, 90.0, -40.0] }
+		},
+		"offhand": {
+			"Tool_L": { "translation": [0.0, 0.0, 0.16], "rotation": [-90.0, 0.0, 0.0] },
+			"Chest": { "translation": [-0.552, 0.4343, 0.151], "rotation": [180.0, -90.0, 40.0] }
+		}
 	}
 }
