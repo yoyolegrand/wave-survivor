@@ -5,6 +5,7 @@ import com.wavesurvivor.WaveSurvivorMod;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -96,7 +97,11 @@ public final class ArmorFlattener {
         return new ArrayList<>(ch.keySet());
     }
 
-    /** Sommets en pixels : p' = M·(p/16)·16 ; normales tournées puis normalisées. */
+    /** Sommets en pixels : p' = M·(p/16)·16 ; normales tournées puis « recalées » sur l'axe le plus proche.
+     *  Epic Fight (VanillaModelTransformer.getDirectionFromVector) ne reconnaît une face que si sa normale vaut EXACTEMENT
+     *  l'un des 6 axes : une normale penchée (sous-partie tournée) ou approchée (0.99999994, -0.0) donnait « null » et faisait
+     *  planter le rendu (NullPointerException dans AnimatedPolygon). La forme du modèle ne change pas, seule l'orientation
+     *  de la face (éclairage) est arrondie à l'axe le plus proche. */
     private static void transform(ModelPart.Cube cube, Matrix4f m, Matrix3f n) throws Exception {
         Object polys = cubePolygons.get(cube);
         Vector3f tmp = new Vector3f();
@@ -109,7 +114,9 @@ public final class ArmorFlattener {
                 pos.set(tmp.x * 16f, tmp.y * 16f, tmp.z * 16f);
             }
             Vector3f normal = (Vector3f) polyNormal.get(poly);
-            n.transform(normal).normalize();
+            n.transform(normal);
+            Direction d = Direction.getNearest(normal.x(), normal.y(), normal.z());
+            normal.set(d.getStepX(), d.getStepY(), d.getStepZ()); // valeurs entières exactes (0.0f positif, jamais -0.0f)
         }
     }
 
