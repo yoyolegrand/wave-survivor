@@ -1,0 +1,6 @@
+{
+	"transforms": {
+		"mainhand": { "Tool_R": { "translation": [0.0, 0.0, 0.16], "rotation": [-90.0, 0.0, 0.0] } },
+		"offhand": { "Tool_L": { "translation": [0.0, 0.0, 0.16], "rotation": [-90.0, 0.0, 0.0] } }
+	}
+}

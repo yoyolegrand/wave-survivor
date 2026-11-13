@@ -552,3 +552,11 @@ Modèles « aplatis » au chargement (client/armor/ArmorFlattener) : sous-partie
 - [ ] Epic Fight, mode combat, arme en main : casque bien sur la tête en regardant en haut / en bas / sur les côtés, en attaquant, en marchant
 - [ ] Epic Fight : auréole et ailes suivent la tête / le dos ; jambières et solerets suivent les jambes
 - [ ] Recharger les ressources (F3+T) : pas d'erreur, armures toujours correctes
+- [ ] Hors mode combat (Embeddium / Oculus) : auréole, ailes du casque et du dos, épaulières, genouillères bien présentes (modèle d'origine)
+- [ ] Mode combat : idem avec le modèle aplati, rien ne vole autour du joueur
+
+## Armes : compatibilité Epic Fight
+`data/wavesurvivor/capabilities/weapons/` (type d'arme) et `assets/wavesurvivor/item_skins/` (position en main).
+- [ ] Lame de l'aube : attaques d'épée longue (`epicfight:longsword`), poignée dans la main (plus trop haute)
+- [ ] Faux de la souillure : attaques d'espadon (`epicfight:greatsword`), manche dans la main ; effets de la faux (balayage, vol de vie) toujours actifs
+- [ ] Sans Epic Fight : aucune erreur, armes inchangées en main

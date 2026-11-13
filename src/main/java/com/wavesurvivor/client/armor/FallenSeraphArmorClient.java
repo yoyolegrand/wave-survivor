@@ -18,7 +18,8 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public final class FallenSeraphArmorClient {
 
-    private static final Map<EquipmentSlot, HumanoidModel<LivingEntity>> MODELS = new EnumMap<>(EquipmentSlot.class);
+    private static final Map<EquipmentSlot, HumanoidModel<LivingEntity>> MODELS = new EnumMap<>(EquipmentSlot.class); // aplatis (Epic Fight)
+    private static final Map<EquipmentSlot, HumanoidModel<LivingEntity>> PLAIN = new EnumMap<>(EquipmentSlot.class);  // d'origine (rendu vanilla)
     private static EntityModelSet lastSet;
 
     private FallenSeraphArmorClient() {}
@@ -28,10 +29,13 @@ public final class FallenSeraphArmorClient {
         EntityModelSet set = Minecraft.getInstance().getEntityModels();
         if (set != lastSet) {
             MODELS.clear();
+            PLAIN.clear();
             lastSet = set;
         }
-        // aplati pour Epic Fight (voir ArmorFlattener) : même rendu en vanilla, plus de casque décalé en mode combat
-        HumanoidModel<LivingEntity> m = MODELS.computeIfAbsent(slot, s -> ArmorFlattener.flatten(new FallenSeraphArmorModel(set.bakeLayer(SeraphArmorModel.LAYER)).forSlot(s)));
+        // Epic Fight : modèle aplati (plus de casque décalé en mode combat) ; rendu vanilla : modèle d'origine (voir ArmorFlattener)
+        HumanoidModel<LivingEntity> m = ArmorFlattener.calledByEpicFight()
+                ? MODELS.computeIfAbsent(slot, s -> ArmorFlattener.flatten(new FallenSeraphArmorModel(set.bakeLayer(SeraphArmorModel.LAYER)).forSlot(s)))
+                : PLAIN.computeIfAbsent(slot, s -> new FallenSeraphArmorModel(set.bakeLayer(SeraphArmorModel.LAYER)).forSlot(s));
         ((HumanoidModel) original).copyPropertiesTo(m);
         return m;
     }

@@ -28,7 +28,7 @@ import java.util.Map;
  * sont recalculés à chaque image à partir de la pose ACTUELLE de la grande partie. Si cette pose n'est pas exactement remise à zéro
  * à ce moment-là (animations d'arme en mode combat, Player Animator…), tout le casque se décale de la tête, d'un écart variable.
  * Ici, toutes les sous-parties visibles sont fusionnées dans leur grande partie (sommets et normales transformés une fois) :
- * le modèle a la même structure qu'une armure vanilla, le rendu vanilla est identique, et Epic Fight n'a plus rien à recalculer.
+ * le modèle a la même structure qu'une armure vanilla et Epic Fight n'a plus rien à recalculer. Utilisé SEULEMENT pour Epic Fight (calledByEpicFight).
  * Les cubes sont modifiés EN PLACE : le modèle source doit être une instance à part (set.bakeLayer neuf), déjà réglée (forSlot, pièces déplacées).
  */
 @OnlyIn(Dist.CLIENT)
@@ -40,6 +40,19 @@ public final class ArmorFlattener {
     private static boolean failed;
 
     private ArmorFlattener() {}
+
+    private static Boolean epicFight;
+
+    /**
+     * Vrai si l'appel vient d'Epic Fight (rendu en mode combat ou conversion de l'armure en maillage).
+     * Le modèle aplati n'est donné qu'à Epic Fight : en rendu vanilla, Embeddium / Sodium redessinent les cubes à partir de leurs
+     * dimensions d'origine (et non des sommets modifiés), ce qui ferait disparaître auréole, ailes et épaulières dans la tête et les bras.
+     */
+    public static boolean calledByEpicFight() {
+        if (epicFight == null) epicFight = net.minecraftforge.fml.ModList.get().isLoaded("epicfight");
+        if (!epicFight) return false;
+        return StackWalker.getInstance().walk(s -> s.limit(20).anyMatch(f -> f.getClassName().startsWith("yesman.epicfight")));
+    }
 
     /** Modèle aplati équivalent à « src » ; en cas d'échec (réflexion), renvoie « src » tel quel. */
     public static HumanoidModel<LivingEntity> flatten(HumanoidModel<LivingEntity> src) {
