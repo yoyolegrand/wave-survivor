@@ -92,6 +92,12 @@ public class ClientModEvents {
         event.registerLayerDefinition(SeraphShrineModel.MODEL_LAYER, SeraphShrineModel::createBodyLayer); // Sanctuaire du Séraphin (bloc, HD)
     }
 
+    /** 2.0 : calque lumineux des armures du Séraphin (joueurs, supports d'armure). */
+    @SubscribeEvent
+    public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+        com.wavesurvivor.client.armor.SeraphGlowLayer.addLayers(event);
+    }
+
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.ALTAR_RUNIC.get(), AltarBookRenderer::new);

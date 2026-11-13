@@ -112,12 +112,12 @@
     { "id": "seraph_boots", "result": "wavesurvivor:seraph_boots", "count": 1, "align": "consecrated",
       "cost": [ { "item": "wavesurvivor:grace_fragment", "count": 3 }, { "item": "minecraft:netherite_boots", "count": 1 } ] },
     { "id": "fallen_seraph_helmet", "result": "wavesurvivor:fallen_seraph_helmet", "count": 1, "align": "profaned",
-      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 4 }, { "item": "minecraft:diamond_helmet", "count": 1 } ] },
+      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 4 }, { "item": "minecraft:netherite_helmet", "count": 1 } ] },
     { "id": "fallen_seraph_chestplate", "result": "wavesurvivor:fallen_seraph_chestplate", "count": 1, "align": "profaned",
-      "cost": [ { "item": "wavesurvivor:taint_heart", "count": 1 }, { "item": "wavesurvivor:taint_fragment", "count": 6 }, { "item": "minecraft:diamond_chestplate", "count": 1 } ] },
+      "cost": [ { "item": "wavesurvivor:taint_heart", "count": 1 }, { "item": "wavesurvivor:taint_fragment", "count": 6 }, { "item": "minecraft:netherite_chestplate", "count": 1 } ] },
     { "id": "fallen_seraph_leggings", "result": "wavesurvivor:fallen_seraph_leggings", "count": 1, "align": "profaned",
-      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 5 }, { "item": "minecraft:diamond_leggings", "count": 1 } ] },
+      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 5 }, { "item": "minecraft:netherite_leggings", "count": 1 } ] },
     { "id": "fallen_seraph_boots", "result": "wavesurvivor:fallen_seraph_boots", "count": 1, "align": "profaned",
-      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 3 }, { "item": "minecraft:diamond_boots", "count": 1 } ] }
+      "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 3 }, { "item": "minecraft:netherite_boots", "count": 1 } ] }
   ]
 }

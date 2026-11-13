@@ -525,7 +525,7 @@ Test : `/ws rift monster <geodon|ancreur|bolide>` en fait apparaître un à 6 bl
 - [ ] Les pieds de l'Ancreur, du Géodon et du Bolide touchent le sol (plus de flottement) ; l'ancre plantée et la boule du Géodon ne s'enfoncent pas trop
 
 ## Armure du Séraphin déchu (modèle et textures de Claude chat)
-Test : onglet créatif (4 pièces), ou Sanctuaire › Artisanat en alignement Corrompu (pièce de diamant + Fragments de souillure ; plastron : + 1 Cœur de souillure).
+Test : onglet créatif (4 pièces), ou Sanctuaire › Artisanat en alignement Corrompu (pièce de netherite + Fragments de souillure ; plastron : + 1 Cœur de souillure).
 - [ ] Chaque pièce seule puis l'ensemble : texture corrompue, auréole brisée et penchée derrière la tête, ailes retombées qui ne traversent pas le corps ; icônes des 4 objets
 - [ ] Noms FR / EN, rareté épique, infobulle du Pacte du Déchu ; protection et durabilité identiques au Séraphin ; son d'équipement de netherite ; réparation à l'enclume avec un Fragment de souillure
 - [ ] Artisanat : recettes visibles seulement en alignement Corrompu ; Forge du Sanctuaire : améliorations Profanées seulement
@@ -560,3 +560,10 @@ Modèles « aplatis » au chargement (client/armor/ArmorFlattener) : sous-partie
 - [ ] Lame de l'aube : attaques d'épée longue (`epicfight:longsword`), poignée dans la main (plus trop haute)
 - [ ] Faux de la souillure : attaques d'espadon (`epicfight:greatsword`), manche dans la main ; effets de la faux (balayage, vol de vie) toujours actifs
 - [ ] Sans Epic Fight : aucune erreur, armes inchangées en main
+
+## Armures du Séraphin : recettes en netherite et calque lumineux
+- [ ] Artisanat du Sanctuaire : Séraphin ET Séraphin déchu demandent une pièce de netherite ; Codex FR / EN à jour (netherite)
+- [ ] Séraphin déchu : fissures, yeux, cœur et auréole roses lumineux dans le noir (hors mode combat Epic Fight)
+- [ ] Séraphin : auréole et gemmes bleues lumineuses dans le noir
+- [ ] Support d'armure : le calque lumineux s'affiche aussi ; joueur invisible : rien
+- [ ] Mode combat Epic Fight : pas de calque décalé (il n'est simplement pas dessiné)
