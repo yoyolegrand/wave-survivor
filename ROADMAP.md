@@ -27,9 +27,8 @@
 - 🏜 **The Desert Kingdom** — the Oasis of the Pharaohs: a new arena, horde, market and desert events (1.9)
 - 🎰 **Roulette chests reborn** — a new 3D chest, composed keys, animations, an in-game editor and the Key Pouch (1.9)
 - ⏩ **Ready button, consolation prize and Heritage rework** (1.9)
-
-## 🔜 Next: 2.0 — The Rift
-- 🌌 **The Rift** — a fourth kind of event started from the altar: a huge portal opens onto a dedicated floating-island dimension, for a Horde → Siege → Counter-offensive sequence with a giant Titan (needs the optional **Pehkui** mod). Design in progress.
+- 🌌 **The Rift** — the final mode: a portal onto a floating-island dimension, Horde → Siege → Counter-offensive → Titan, three Titans, siege engines, Rift relics and Rift Legacy (2.0)
+- 🖤 **Fallen Seraph Armor** and **Epic Fight compatibility** for our armors and weapons (2.0)
 
 ## 🔭 Later
 - 🧩 **Creator API** (KubeJS / datapacks) — add skills, hordes and relics without touching the code
