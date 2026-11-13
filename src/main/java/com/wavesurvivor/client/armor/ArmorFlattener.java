@@ -105,11 +105,15 @@ public final class ArmorFlattener {
     private static void transform(ModelPart.Cube cube, Matrix4f m, Matrix3f n) throws Exception {
         Object polys = cubePolygons.get(cube);
         Vector3f tmp = new Vector3f();
+        // les coins d'un cube sont PARTAGÉS entre ses faces (Vertex.remap garde le même Vector3f) : chacun n'est transformé qu'une fois,
+        // sinon un coin commun à 3 faces est déplacé 3 fois et les morceaux tournés (auréole, ailes) s'envolent
+        java.util.Set<Vector3f> done = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
         for (int i = 0, len = Array.getLength(polys); i < len; i++) {
             Object poly = Array.get(polys, i);
             Object verts = polyVertices.get(poly);
             for (int j = 0, vl = Array.getLength(verts); j < vl; j++) {
                 Vector3f pos = (Vector3f) vertexPos.get(Array.get(verts, j));
+                if (!done.add(pos)) continue;
                 m.transformPosition(tmp.set(pos.x / 16f, pos.y / 16f, pos.z / 16f));
                 pos.set(tmp.x * 16f, tmp.y * 16f, tmp.z * 16f);
             }
