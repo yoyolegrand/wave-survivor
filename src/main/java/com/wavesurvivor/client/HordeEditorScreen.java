@@ -2120,6 +2120,22 @@ public class HordeEditorScreen extends Screen {
         fInt(22, HordeJson.num(r, "merchantCalm", 2), v -> r.addProperty("merchantCalm", Math.max(1, Math.min(20, v))));
         fl(t("ui.rift.merchant_limit"));
         fInt(22, HordeJson.num(r, "merchantLimit", 4), v -> r.addProperty("merchantLimit", Math.max(0, Math.min(64, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_chest");
+        flow(x, y);
+        fToggle(120, t("ui.rift.chest_on"), r, "isletChest", true);
+        fl(t("ui.rift.chest_calm"));
+        fInt(22, HordeJson.num(r, "chestCalmMin", 2), v -> r.addProperty("chestCalmMin", Math.max(1, Math.min(20, v))));
+        fl("–");
+        fInt(22, HordeJson.num(r, "chestCalmMax", 4), v -> r.addProperty("chestCalmMax", Math.max(1, Math.min(20, v))));
+        flow(x, next());
+        fl(t("ui.rift.chest_guards"));
+        fInt(22, HordeJson.num(r, "chestGuardMin", 3), v -> r.addProperty("chestGuardMin", Math.max(0, Math.min(12, v))));
+        fl("–");
+        fInt(22, HordeJson.num(r, "chestGuardMax", 5), v -> r.addProperty("chestGuardMax", Math.max(0, Math.min(12, v))));
+        fl(t("ui.rift.chest_guard_hp"));
+        fInt(30, HordeJson.num(r, "chestGuardHpPct", 200), v -> r.addProperty("chestGuardHpPct", Math.max(10, Math.min(1000, v))));
+        fl(t("ui.rift.chest_boss_hp"));
+        fInt(34, HordeJson.num(r, "chestBossHp", 200), v -> r.addProperty("chestBossHp", Math.max(20, Math.min(5000, v))));
         y = next() + 2;
         hint(x, y, t("ui.rift.hint_islets"));
     }

@@ -65,9 +65,24 @@
 - [ ] Lanterne de vigie : monstres proches en surbrillance 30 s (visibles à travers les blocs)
 - [ ] Relance de bénédiction : +1 relance au prochain choix de cartes
 
+## 6. Île au coffre
+- [ ] Une fois par partie, à un Calme du Siège entre le 2e et le 4e : annonce, l'île en ruines monte du vide sur le côté libre restant (sud-ouest par défaut)
+- [ ] Puis un pont de cristal (verre violet + perlelampes) se forme petit à petit jusqu'à elle, message
+- [ ] Décor : piédestal, coffre géant en bois cerclé d'or, 4 piliers coiffés d'un cristal, chaînes vers le coffre, colonnes cassées, éclats dorés flottants
+- [ ] En posant le pied sur l'île : 3 à 5 gardiens d'élite (« Gardien des ruines », PV ×2) + Gardien du trésor (Ravageur, barre de vie jaune), message
+- [ ] Chaque gardien tué brise une partie des chaînes (cristal éteint, son, message) ; le dernier tué ouvre le coffre
+- [ ] Un gardien tombé dans le vide compte comme tué (pas de blocage)
+- [ ] Coffre ouvert : le coffre géant éclate, un coffre roulette « Coffre des Ruines » apparaît ; chaque joueur de la Faille a 1 tirage gratuit sans clé ; un 2e clic demande une clé
+- [ ] Butin : émeraudes, améthyste, Poussière de Faille, pomme dorée, Clé scellée, Reliquaire scellé, rare Éclat de Faille ; la Chance compte
+- [ ] Début de l'Assaut suivant : l'île repart (blocs et pont retirés), joueurs dessus ramenés sur l'île principale ; coffre non ouvert → « coffre perdu »
+- [ ] Une roulette en cours au moment du départ : l'île attend la fin du tirage
+- [ ] Le pont de cristal ne retire aucun bloc de l'île principale en partant
+- [ ] `/ws rift islets chest` : arrivée immédiate (pendant le Siège) ; `/ws rift islets` montre son état
+
 ## Sauvegarde et reprise (§ A)
 - [ ] Quitter / relancer pendant le Siège : îlot reposé, pont acheté reposé avec ses segments effondrés, filons vivants reposés
 - [ ] Reprise à la Contre-offensive : îlot et pont toujours là
+- [ ] Île au coffre : venue / ouverte retrouvé à la reprise ; sauvegarde pendant l'événement sans ouverture → elle revient au Calme suivant
 - [ ] Marchand : arrivé ou pas, stock du Calme, Éclat déjà acheté — retrouvés à la reprise
 - [ ] Autel capturé + bonus : retrouvés à la reprise (faisceau allumé) ; capture en cours : repart de 0
 

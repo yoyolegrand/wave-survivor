@@ -208,6 +208,16 @@ public final class RiftIslets {
         return w;
     }
 
+    static double[] dirOf(String side) { return sideDir(side); }
+
+    /** Côté de l'île au coffre : le premier côté libre après les autres îlots. */
+    static String chestSide(HordeConfigMultiData.RiftSettings s, int siegeFinal) {
+        java.util.Set<String> used = new java.util.HashSet<>();
+        for (Islet i : planned(s, siegeFinal)) used.add(i.side);
+        for (String sd : SIDES) if (!used.contains(sd)) return sd;
+        return "southwest";
+    }
+
     private static Islet make(Kind k, String side, HordeConfigMultiData.RiftSettings s, int siegeFinal) {
         double[] d = sideDir(side);
         int gap = Math.max(8, Math.min(60, s.isletGap));
@@ -226,6 +236,10 @@ public final class RiftIslets {
         for (Islet i : planned(s, siegeFinal)) {
             int m = i.r + 8;
             out.add(new int[]{i.cx - c.getX() - m, i.cx - c.getX() + m, i.cz - c.getZ() - m, i.cz - c.getZ() + m});
+        }
+        if (s != null && s.siegeEnabled && s.isletsEnabled) {
+            int[] ch = RiftChestIslet.forceArea(s, siegeFinal);
+            if (ch != null) out.add(ch);
         }
         return out;
     }
@@ -297,7 +311,10 @@ public final class RiftIslets {
             }
         }
         if (RiftManager.phasePublic() != RiftManager.Phase.SIEGE) clearRaiders(l);   // § C : plus de reprise après le Siège
-        else if (get(Kind.MERCHANT) != null) VoidMerchant.onSiegeCalm(l);          // arrivée du Marchand, stock renouvelé
+        else {
+            if (get(Kind.MERCHANT) != null) VoidMerchant.onSiegeCalm(l);          // arrivée du Marchand, stock renouvelé
+            RiftChestIslet.onSiegeCalm(l);                                         // l'île au coffre (une fois par partie)
+        }
         int players = 0;
         for (ServerPlayer p : l.players()) if (!p.isSpectator()) players++;
         int bonus = players <= 1 ? s.calmBonusSolo : players == 2 ? s.calmBonusDuo : 0;
@@ -837,6 +854,8 @@ public final class RiftIslets {
 
     /** Début d'un Assaut du Siège (KingdomManager.startAssault) : un groupe de monstres part vers l'île-autel. */
     public static void onAssault(MinecraftServer server) {
+        ServerLevel cl = server.getLevel(RiftManager.RIFT_DIM);
+        if (cl != null && active()) RiftChestIslet.onAssault(cl);   // l'île au coffre repart
         Islet a = get(Kind.ALTAR);
         if (a == null || RiftManager.phasePublic() != RiftManager.Phase.SIEGE) return;
         ServerLevel l = server.getLevel(RiftManager.RIFT_DIM);
@@ -1073,6 +1092,7 @@ public final class RiftIslets {
         if (!active()) return;
         if (now % 10 == 0) altarTick(l, now);
         if (get(Kind.MERCHANT) != null) VoidMerchant.tick(l, now);
+        RiftChestIslet.tick(l, now);
         for (Islet i : ISLETS) {
             if (i.queue.isEmpty()) continue;
             int per = Math.max(1, (int) Math.ceil(i.pieces.size() / 200.0));
@@ -1197,6 +1217,7 @@ public final class RiftIslets {
         CompoundTag t = new CompoundTag();
         if (!placed) return t;
         t.putBoolean("placed", true);
+        t.put("chest", RiftChestIslet.save());
         t.putLong("seed", seed);
         ListTag list = new ListTag();
         for (Islet i : ISLETS) {
@@ -1235,6 +1256,7 @@ public final class RiftIslets {
         }
         seed = t.getLong("seed");
         build(l, siegeFinal);
+        RiftChestIslet.restore(l, t.getCompound("chest"));
         Map<String, CompoundTag> byKind = new HashMap<>();
         for (Tag e : t.getList("islets", Tag.TAG_COMPOUND)) byKind.put(((CompoundTag) e).getString("kind"), (CompoundTag) e);
         for (Islet i : ISLETS) {
@@ -1278,6 +1300,7 @@ public final class RiftIslets {
             clearRaiders(l);
         }
         VoidMerchant.clear(l);
+        RiftChestIslet.clear(l);
         ISLETS.clear();
         placed = false;
     }
@@ -1302,6 +1325,8 @@ public final class RiftIslets {
             if (i.kind == Kind.ALTAR) sb.append(i.captured ? " §b✦ " + (i.bonus == null ? "?" : i.bonus.label()) : " §8✦ " + Math.round(i.progress * 100) + "%");
             sb.append("\n");
         }
+        String ch = RiftChestIslet.status();
+        if (!ch.isEmpty()) sb.append(ch).append("\n");
         return sb.toString().trim();
     }
 

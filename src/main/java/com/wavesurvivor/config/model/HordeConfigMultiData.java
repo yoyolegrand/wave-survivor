@@ -498,6 +498,18 @@ public class HordeConfigMultiData {
          *  prix en améthyste et stock des 12 articles (Fiole, Pomme dorée, Élixirs résistance / force, Pierre de rappel, Kit de pont,
          *  Kit d'engin, Lanterne de vigie, Clé du Titan, Poussière de Faille ×4, Relance de bénédiction, Éclat de Faille).
          *  Stock : 0 = illimité (limite par joueur), n = n par Calme pour toute l'équipe, −n = n par partie. */
+        /** Île au coffre : une fois par partie, pendant un Calme du Siège tiré entre chestCalmMin et chestCalmMax ; gardiens d'élite
+         *  (PV en % de la normale) + Gardien du trésor (type, PV) ; coffre roulette « Coffre des Ruines », 1 tirage gratuit par joueur. */
+        @SerializedName("isletChest") public boolean isletChest = true;
+        @SerializedName("chestCalmMin") public int chestCalmMin = 2;
+        @SerializedName("chestCalmMax") public int chestCalmMax = 4;
+        @SerializedName("chestGap") public int chestGap = 22;
+        @SerializedName("chestGuardMin") public int chestGuardMin = 3;
+        @SerializedName("chestGuardMax") public int chestGuardMax = 5;
+        @SerializedName("chestGuardHpPct") public int chestGuardHpPct = 200;
+        @SerializedName("chestGuardMobs") public java.util.List<String> chestGuardMobs = new java.util.ArrayList<>(java.util.List.of("minecraft:wither_skeleton", "minecraft:vindicator", "minecraft:stray", "minecraft:husk"));
+        @SerializedName("chestBossMob") public String chestBossMob = "minecraft:ravager";
+        @SerializedName("chestBossHp") public int chestBossHp = 200;
         @SerializedName("isletMerchant") public boolean isletMerchant = true;
         @SerializedName("isletMerchantSide") public String isletMerchantSide = "northwest";
         @SerializedName("merchantCalm") public int merchantCalm = 2;

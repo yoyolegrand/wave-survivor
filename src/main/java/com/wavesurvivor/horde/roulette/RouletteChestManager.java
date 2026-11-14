@@ -302,7 +302,9 @@ public class RouletteChestManager {
         boolean heldKey = com.wavesurvivor.horde.roulette.KeyPouch.isKey(itemInHand);
         int keys;
         boolean fromPouch = false;
-        if (heldKey) {
+        if (com.wavesurvivor.horde.rift.RiftChestIslet.takeFreeDraw(player, config, pos)) {
+            keys = 1;   // 2.1 — île au coffre : 1 tirage gratuit par joueur, sans clé
+        } else if (heldKey) {
             if (!keyMatches(itemInHand, config)) {
                 player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().noKey()).replace("{key}", RouletteKeyItem.keyDisplayName(config.keyName()))));
                 return true;
