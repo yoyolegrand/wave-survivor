@@ -309,6 +309,12 @@ public class MonolithShopScreen extends Screen {
                     buyButton(left + PANEL_W - 92, yd + i * DEF_ROW + 4, 82, KingdomDefenses.ENGINE_COST[i], 25 + i,
                             WSLang.c(i == 0 ? "rift.engine.desc.catapult" : "rift.engine.desc.ballista"), have);
                 }
+                // 2.1 : pont vers l'île minière (bois + pierre du trésor, pas d'émeraudes)
+                Button br = Button.builder(Component.literal("§a" + WSLang.t("ui.shop.bridge_build")),
+                        b -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(94)))
+                        .bounds(left + PANEL_W - 92, yd + 2 * DEF_ROW + 4, 82, 18).build();
+                br.setTooltip(Tooltip.create(WSLang.c("rift.bridge.shop_tip")));
+                addRenderableWidget(br);
             } else {
                 for (int i = 0; i < 5; i++) {
                     buyButton(left + PANEL_W - 92, yd + i * DEF_ROW + 4, 82, KingdomDefenses.TRAP_COST[i], 30 + i,
@@ -486,6 +492,7 @@ public class MonolithShopScreen extends Screen {
                 itemRow(g, yd, DEF_ROW, cat, "§f§l" + cat.getHoverName().getString(), WSLang.t("rift.engine.desc.catapult"));
                 ItemStack bal = new ItemStack(ModItems.SIEGE_BALLISTA_ITEM.get());
                 itemRow(g, yd + DEF_ROW, DEF_ROW, bal, "§f§l" + bal.getHoverName().getString(), WSLang.t("rift.engine.desc.ballista"));
+                itemRow(g, yd + 2 * DEF_ROW, DEF_ROW, new ItemStack(Items.DEEPSLATE_BRICKS), "§f§l" + WSLang.t("rift.shop.bridge_mine"), WSLang.t("rift.bridge.shop_desc"));
             } else {
                 for (int i = 0; i < 5; i++) {
                     ItemStack it = trapItem(i);

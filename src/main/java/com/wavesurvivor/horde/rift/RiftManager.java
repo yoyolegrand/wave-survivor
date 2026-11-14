@@ -67,7 +67,7 @@ public final class RiftManager {
     private static RiftGate gate;
 
     // ─── Déroulement (jalon 2 : phase Horde) ───
-    private enum Phase { NONE, PORTAL, LOBBY, HORDE, INTERLUDE, SIEGE, COUNTER, TITAN, ENDING }
+    enum Phase { NONE, PORTAL, LOBBY, HORDE, INTERLUDE, SIEGE, COUNTER, TITAN, ENDING }
     private static Phase phase = Phase.NONE;
     /** 2.0 — Ciel de la Faille : phase envoyée aux clients (horde, siege, contre, titan, victoire), victoire obtenue, forçage de test. */
     private static String sky = "horde";
@@ -339,6 +339,7 @@ public final class RiftManager {
             RiftFortress.clearTargets(rd);
             RiftFortress.reset();
             RiftEngines.clear();
+            RiftIslets.clear(rd);   // 2.1 : îlots (filons, gardes) ; leurs blocs partent avec l'île
             clearIsland(rd);
         }
         DUE_KEYS.clear();
@@ -402,6 +403,8 @@ public final class RiftManager {
      */
     public static boolean freeBuild(BlockPos pos, boolean breaking) {
         if (!active) return false;
+        // 2.1 : sur un îlot et entre l'île et un îlot, on peut poser des blocs (rentrer d'un îlot coincé) et casser ceux qu'on a posés
+        if (RiftIslets.inBuildZone(pos)) return !breaking || PLAYER_PLACED.contains(pos.asLong());
         boolean late = phase == Phase.COUNTER || phase == Phase.TITAN
                 || (phase == Phase.INTERLUDE && (nextPhase == Phase.COUNTER || nextPhase == Phase.TITAN));
         if (!late) return false;
@@ -487,6 +490,7 @@ public final class RiftManager {
             int d = (int) Math.ceil(RiftTitan.distance(rs, siegeFinal));
             forceRect(l, -64, 64, d - 64, d + 64);
         }
+        for (int[] a : RiftIslets.forceAreas(rs, siegeFinal)) forceRect(l, a[0], a[1], a[2], a[3]);   // 2.1 : îlots et ponts
     }
 
     private static void forceRect(ServerLevel l, int x0, int x1, int z0, int z1) {
@@ -507,6 +511,12 @@ public final class RiftManager {
 
     /** Réglages de la Faille en cours (cadences des engins). */
     static HordeConfigMultiData.RiftSettings settingsPublic() { return settings(); }
+
+    /** Phase en cours (îlots du Siège, 2.1). */
+    static Phase phasePublic() { return phase; }
+
+    /** Rayon final de l'île au Siège (îlots, commandes de test). */
+    static int siegeFinalPublic() { return siegeFinal; }
 
     /** Un coup reçu par une boîte de contact du Titan est porté au Titan (appelé par TitanHitboxEntity). */
     public static boolean hurtTitan(net.minecraft.world.damagesource.DamageSource source, float amount) {
@@ -742,6 +752,7 @@ public final class RiftManager {
             if (!anyAlive) { defeat(server, rd); return; }
         }
         RiftEngines.tick(rd);
+        RiftIslets.tick(rd, now);   // 2.1 : ponts des îlots qui se construisent
         if (now % 600 == 0) captureSession(server, false);   // point de reprise toutes les 30 s
         switch (phase) {
             case PORTAL -> {
@@ -778,6 +789,7 @@ public final class RiftManager {
                         if (!RiftIsland.ring(rd, growCur, to, growTarget)) RiftFortress.islandRing(rd, growCur, to);
                         growCur = to;
                         radius = to;
+                        if (to == growTarget) RiftIslets.onGrowthDone(rd, siegeFinal);   // 2.1 : l'île a fini de grandir, les îlots apparaissent
                         growNextAt = now + 4;   // 2.0 : île deux fois plus rapide (anneau toutes les 4 ticks)
                         for (ServerPlayer p : rd.players()) com.wavesurvivor.network.ShakePacket.send(p, 10, 0.5f);
                         rd.playSound(null, CENTER, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 3f, 0.5f);
@@ -997,9 +1009,12 @@ public final class RiftManager {
         }
         siegeHordeOn = true;
         RiftFortress.openPortcullis(rd, siegeFinal);   // la herse s'ouvre : les ennemis sortent de la forteresse
+        boolean wasResume = resuming != null;
+        if (!wasResume) RiftIslets.onGrowthDone(rd, siegeFinal);   // 2.1 : sans effet si les îlots sont déjà posés
         if (resuming != null) {   // reprise : trésor, rôles, défenses et assaut atteint ; Contre-offensive : on enchaîne directement
             RiftSession s = resuming;
             resuming = null;
+            RiftIslets.restore(rd, s.islets, siegeFinal);   // 2.1 : îlots, ponts et filons
             com.wavesurvivor.horde.rewards.KillTracker.restore(s.kills);
             if (!s.kingdom.isEmpty()) com.wavesurvivor.horde.kingdom.KingdomManager.restoreState(s.kingdom, server);
             RiftEngines.restore(rd, s.engines);   // engins de siège reposés
@@ -1010,6 +1025,7 @@ public final class RiftManager {
             }
             tellAll(rd, WSLang.t("rift.session.resumed", s.wave));
         }
+        RiftIslets.onSiegeStart(rd, wasResume);   // 2.1 : filons de l'île minière et gardes
         lastWave = HordeManager.get().getCurrentWave();
         lastState = null;
         tellAll(rd, WSLang.t("rift.siege_go"));
@@ -1107,6 +1123,7 @@ public final class RiftManager {
         s.fortress = RiftFortress.currentId();
         s.kingdom = kingdom;
         s.engines = RiftEngines.save(server.getLevel(RIFT_DIM));
+        s.islets = RiftIslets.save();   // 2.1
         var diff = com.wavesurvivor.horde.difficulty.HordeDifficulty.active();
         s.difficulty = diff == null ? "" : diff.id;
         s.mutators = com.wavesurvivor.horde.mutator.Mutator.join(com.wavesurvivor.horde.mutator.HordeMutators.active());
@@ -1663,6 +1680,12 @@ public final class RiftManager {
         HordeConfigMultiData.RiftSettings s = settings();
         int min = Math.max(0, s.emeraldMin), max = Math.max(min, s.emeraldMax);
         int n = min == max ? min : min + e.getEntity().getRandom().nextInt(max - min + 1);
+        // 2.1 : un peu d'améthyste (monnaie du Marchand du Néant), plus rare que sur l'île minière
+        if (s.amethystDropChance > 0 && e.getEntity().getRandom().nextInt(100) < s.amethystDropChance) {
+            int a = 1 + e.getEntity().getRandom().nextInt(Math.max(1, s.amethystDropMax));
+            e.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(e.getEntity().level(), e.getEntity().getX(), e.getEntity().getY(), e.getEntity().getZ(),
+                    new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.AMETHYST_SHARD, a)));
+        }
         if (n <= 0) return;
         e.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(e.getEntity().level(), e.getEntity().getX(), e.getEntity().getY(), e.getEntity().getZ(),
                 new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.EMERALD, n)));

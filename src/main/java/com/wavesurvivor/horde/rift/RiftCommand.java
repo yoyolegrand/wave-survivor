@@ -32,6 +32,13 @@ public final class RiftCommand {
                         .executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), true))
                         .then(Commands.literal("fast").executes(ctx -> fortress(ctx.getSource(), com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "id"), false)))))
                 .then(Commands.literal("catalysts").executes(ctx -> catalysts(ctx.getSource())))
+                // 2.1 — Îlots : état, pose forcée, segment de pont cassé / réparé
+                .then(Commands.literal("islets").executes(ctx -> islets(ctx.getSource(), null, -1))
+                        .then(Commands.literal("place").executes(ctx -> islets(ctx.getSource(), "place", -1)))
+                        .then(Commands.literal("break").then(Commands.argument("seg", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 5))
+                                .executes(ctx -> islets(ctx.getSource(), "break", com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "seg") - 1))))
+                        .then(Commands.literal("repair").then(Commands.argument("seg", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 5))
+                                .executes(ctx -> islets(ctx.getSource(), "repair", com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "seg") - 1)))))
                 // 2.0 — Récompenses du Titan : mise en scène + coffre, coffre seul, reliques de la Faille, Jauge
                 .then(Commands.literal("chest").executes(ctx -> chest(ctx.getSource(), false))
                         .then(Commands.literal("place").executes(ctx -> chest(ctx.getSource(), true))))
@@ -182,6 +189,26 @@ public final class RiftCommand {
     }
 
     /** Test (2.0) : force une phase du ciel de la Faille (« auto » = phase réelle ; sans argument : affiche la phase). */
+    /** Test des îlots (2.1) : sans argument, l'état ; « place » pose les îlots tout de suite ; break / repair un segment du pont. */
+    private static int islets(CommandSourceStack src, String action, int seg) {
+        net.minecraft.server.level.ServerLevel rd = src.getServer().getLevel(RiftManager.RIFT_DIM);
+        if (!RiftManager.isActive() || rd == null) {
+            src.sendFailure(Component.literal(WSLang.t("rift.islet.cmd_inactive")));
+            return 0;
+        }
+        boolean ok = true;
+        if ("place".equals(action)) ok = RiftIslets.forcePlace(rd, RiftManager.siegeFinalPublic());
+        else if ("break".equals(action)) ok = RiftIslets.debugSegment(rd, seg, false);
+        else if ("repair".equals(action)) ok = RiftIslets.debugSegment(rd, seg, true);
+        if (!ok) {
+            src.sendFailure(Component.literal(WSLang.t("rift.islet.cmd_fail")));
+            return 0;
+        }
+        String st = RiftIslets.status();
+        src.sendSuccess(() -> Component.literal(st), false);
+        return 1;
+    }
+
     private static int sky(CommandSourceStack src, String ph) {
         if (ph == null) {
             src.sendSuccess(() -> Component.literal(WSLang.t("rift.test.sky_now", RiftManager.skyNow())), false);

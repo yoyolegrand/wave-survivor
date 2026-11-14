@@ -150,6 +150,14 @@ public class ChaosApplier {
             int rr = com.wavesurvivor.horde.rift.RiftManager.islandRadiusNow();
             dMax = Math.max(5, Math.min(dMax, rr - 4));
             dMin = Math.max(4, Math.min(dMin, dMax - 2));
+            // 2.1 : avec l'île minière, l'île principale garde moins de gisements, et jamais d'émeraude, d'améthyste ni d'Essence
+            if (!tree && com.wavesurvivor.horde.rift.RiftIslets.mineActive()) {
+                if (csv.contains("emerald") || csv.contains("amethyst")) return;
+                int kept = 0;
+                for (int k = 0; k < count; k++) if (RNG.nextInt(100) < com.wavesurvivor.horde.rift.RiftIslets.mainDepositShare()) kept++;
+                if (kept == 0) return;
+                count = kept;
+            }
         }
         String firstDir = null;
         int firstDist = 0;

@@ -477,6 +477,31 @@ public class HordeConfigMultiData {
         @SerializedName("titanIslandBreak") public boolean titanIslandBreak = true;
         /** 2.1 — Cassure « organique » (contour en morsure, bord qui s'effrite, fissures de magma, débris) ; false = ancien découpage rectangle × anneau. */
         @SerializedName("titanBreakOrganic") public boolean titanBreakOrganic = true;
+        /** 2.1 — ÎLOTS du Siège (fiche docs/faille/v2_1_ilots/FICHE_2_1_0.md) : posés à la fin de l'agrandissement de l'île, à « isletGap »
+         *  blocs du bord, jamais côté forteresse (est) ni côté Titan (sud). Côtés : north, west, northwest, southwest, northeast. */
+        @SerializedName("isletsEnabled") public boolean isletsEnabled = true;
+        @SerializedName("isletGap") public int isletGap = 27;
+        @SerializedName("isletMine") public boolean isletMine = true;
+        @SerializedName("isletMineSide") public String isletMineSide = "north";
+        /** Pont : coût au Monolithe (bois + pierre du trésor), PV de chacun des 5 segments, pierre (objets en main) pour réparer un segment. */
+        @SerializedName("bridgeWood") public int bridgeWood = 20;
+        @SerializedName("bridgeStone") public int bridgeStone = 20;
+        @SerializedName("bridgeSegmentHp") public int bridgeSegmentHp = 300;
+        @SerializedName("bridgeRepairStone") public int bridgeRepairStone = 16;
+        /** Île minière : repousse des filons à chaque Calme (%, Mineur présent), gardes au début de chaque Calme. */
+        @SerializedName("mineRegrow") public int mineRegrow = 50;
+        @SerializedName("mineRegrowMiner") public int mineRegrowMiner = 75;
+        @SerializedName("mineGuards") public boolean mineGuards = true;
+        @SerializedName("mineGuardsPerPoint") public int mineGuardsPerPoint = 2;
+        @SerializedName("mineGuardMobs") public java.util.List<String> mineGuardMobs = new java.util.ArrayList<>(java.util.List.of("minecraft:zombie", "minecraft:skeleton", "minecraft:spider", "minecraft:husk"));
+        /** Part (%) des gisements de l'île principale quand l'île minière est là (émeraude, améthyste et Essence : île minière seulement). */
+        @SerializedName("mainDepositShare") public int mainDepositShare = 40;
+        /** Améthyste lâchée par les monstres de la Faille (chance en %, quantité max). */
+        @SerializedName("amethystDropChance") public int amethystDropChance = 12;
+        @SerializedName("amethystDropMax") public int amethystDropMax = 1;
+        /** Calme plus long dès qu'un îlot est actif (secondes) : en solo, à 2 ; rien à 3 joueurs et plus. */
+        @SerializedName("calmBonusSolo") public int calmBonusSolo = 60;
+        @SerializedName("calmBonusDuo") public int calmBonusDuo = 30;
         /** Récompenses de fin : PR bonus si le Titan est tué, Reliquaires scellés pour chaque participant, bonus du podium (top 1 / 2 / 3, aux éliminations). */
         @SerializedName("titanPrBonus") public int titanPrBonus = 30;
         @SerializedName("rewardReliquaries") public int rewardReliquaries = 1;

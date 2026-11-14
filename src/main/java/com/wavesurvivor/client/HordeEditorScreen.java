@@ -1871,7 +1871,7 @@ public class HordeEditorScreen extends Screen {
         flowWrap = true;   // les lignes trop longues passent à la ligne au lieu de déborder du panneau
         JsonObject r = HordeJson.obj(cd(), "rift");
         // 5 sous-onglets de même largeur, sur toute la largeur du panneau
-        String[] subs = {"ui.rift.sub_start", "ui.rift.sub_siege", "ui.rift.sub_titan", "ui.rift.sub_skills", "ui.rift.sub_battle", "ui.rift.sub_meteors"};
+        String[] subs = {"ui.rift.sub_start", "ui.rift.sub_siege", "ui.rift.sub_titan", "ui.rift.sub_skills", "ui.rift.sub_battle", "ui.rift.sub_meteors", "ui.rift.sub_islets"};
         int bw = (W - 20 - 4 * (subs.length - 1)) / subs.length;
         for (int i = 0; i < subs.length; i++) {
             final int k = i;
@@ -1885,6 +1885,7 @@ public class HordeEditorScreen extends Screen {
             case 3 -> buildRiftSkills(r, x, y);
             case 4 -> buildRiftBattle(r, x, y);
             case 5 -> buildRiftMeteors(r, x, y);
+            case 6 -> buildRiftIslets(r, x, y);
             default -> buildRiftStart(r, x, y);
         }
     }
@@ -2027,6 +2028,58 @@ public class HordeEditorScreen extends Screen {
         y += 22;
         y += hintH(x, y, t("ui.rift.hint_resources"));
         hint(x, y + 4, t("ui.rift.hint_siege"));
+    }
+
+    /** Faille — page « Îlots » (2.1) : îlots du Siège, pont, île minière. */
+    private void buildRiftIslets(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_islets");
+        flow(x, y);
+        fToggle(120, t("ui.rift.islets_on"), r, "isletsEnabled", true);
+        fl(t("ui.rift.islet_gap"));
+        fInt(26, HordeJson.num(r, "isletGap", 27), v -> r.addProperty("isletGap", Math.max(8, Math.min(60, v))));
+        fl(t("ui.rift.calm_solo"));
+        fInt(26, HordeJson.num(r, "calmBonusSolo", 60), v -> r.addProperty("calmBonusSolo", Math.max(0, Math.min(600, v))));
+        fl(t("ui.rift.calm_duo"));
+        fInt(26, HordeJson.num(r, "calmBonusDuo", 30), v -> r.addProperty("calmBonusDuo", Math.max(0, Math.min(600, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_bridge");
+        flow(x, y);
+        fl(t("ui.rift.bridge_wood"));
+        fInt(26, HordeJson.num(r, "bridgeWood", 20), v -> r.addProperty("bridgeWood", Math.max(0, Math.min(999, v))));
+        fl(t("ui.rift.bridge_stone"));
+        fInt(26, HordeJson.num(r, "bridgeStone", 20), v -> r.addProperty("bridgeStone", Math.max(0, Math.min(999, v))));
+        fl(t("ui.rift.bridge_hp"));
+        fInt(36, HordeJson.num(r, "bridgeSegmentHp", 300), v -> r.addProperty("bridgeSegmentHp", Math.max(20, Math.min(20000, v))));
+        fl(t("ui.rift.bridge_repair"));
+        fInt(26, HordeJson.num(r, "bridgeRepairStone", 16), v -> r.addProperty("bridgeRepairStone", Math.max(1, Math.min(64, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_mine");
+        flow(x, y);
+        fToggle(120, t("ui.rift.mine_on"), r, "isletMine", true);
+        String side = HordeJson.str(r, "isletMineSide", "north");
+        button(fx, fy - 2, 110, t("ui.rift.islet_side") + t("ui.rift.side." + side), () -> {
+            String[] sides = {"north", "west", "northwest", "southwest", "northeast"};
+            int k = 0;
+            for (int j = 0; j < sides.length; j++) if (sides[j].equalsIgnoreCase(side)) k = j;
+            r.addProperty("isletMineSide", sides[(k + 1) % sides.length]);
+            changed();
+            init();
+        });
+        flow(x, next());
+        fl(t("ui.rift.mine_regrow"));
+        fInt(26, HordeJson.num(r, "mineRegrow", 50), v -> r.addProperty("mineRegrow", Math.max(0, Math.min(100, v))));
+        fl(t("ui.rift.mine_regrow_miner"));
+        fInt(26, HordeJson.num(r, "mineRegrowMiner", 75), v -> r.addProperty("mineRegrowMiner", Math.max(0, Math.min(100, v))));
+        fl(t("ui.rift.main_share"));
+        fInt(26, HordeJson.num(r, "mainDepositShare", 40), v -> r.addProperty("mainDepositShare", Math.max(0, Math.min(100, v))));
+        flow(x, next());
+        fToggle(110, t("ui.rift.mine_guards"), r, "mineGuards", true);
+        fl(t("ui.rift.mine_guards_n"));
+        fInt(22, HordeJson.num(r, "mineGuardsPerPoint", 2), v -> r.addProperty("mineGuardsPerPoint", Math.max(0, Math.min(6, v))));
+        fl(t("ui.rift.amethyst_chance"));
+        fInt(26, HordeJson.num(r, "amethystDropChance", 12), v -> r.addProperty("amethystDropChance", Math.max(0, Math.min(100, v))));
+        fl(t("ui.rift.amethyst_max"));
+        fInt(22, HordeJson.num(r, "amethystDropMax", 1), v -> r.addProperty("amethystDropMax", Math.max(1, Math.min(16, v))));
+        y = next() + 2;
+        hint(x, y, t("ui.rift.hint_islets"));
     }
 
     /** Aide en bas de page ; renvoie la hauteur utilisée (0 si elle ne tient pas). */

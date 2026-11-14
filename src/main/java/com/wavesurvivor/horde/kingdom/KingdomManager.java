@@ -730,6 +730,9 @@ public final class KingdomManager {
         // Augure : fin du présage de l'Assaut, nouveaux présages proposés
         KingdomOmens.onCalm(level.getServer());
         phaseEndTick = now + (com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.pauseSeconds() : Math.max(10, cfg.calmSeconds)) * 20L;
+        // 2.1 — Siège de la Faille : repousse et gardes de l'île minière, Calme prolongé en solo / à 2 dès qu'un îlot est là
+        if (com.wavesurvivor.horde.rift.RiftManager.kingdomSiege() && !com.wavesurvivor.horde.bossrush.BossRush.active())
+            phaseEndTick += com.wavesurvivor.horde.rift.RiftIslets.onCalm(level.getServer()) * 20L;
         // Arène du Roi : l'Assaut final est repoussé → la Porte du Roi s'ouvre sur l'arène du boss
         if (raidAwait && !RaidManager.isOpen()) {
             raidAwait = false;
