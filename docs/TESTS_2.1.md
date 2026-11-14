@@ -43,9 +43,32 @@
 - [ ] Après le Siège : plus de raid, bonus gardé jusqu'à la fin de la Faille
 - [ ] `/ws rift islets capture` : capture immédiate (test) ; `/ws rift islets` affiche l'état de l'autel
 
+## 4. Marchand du Néant
+- [ ] Île du Marchand au nord-ouest (rayon 9) : mousse et roche, tapis violet, échoppe à auvent violet, étagères, comptoir, gros cristal d'améthyste flottant, lanternes flottantes
+- [ ] Boutique du Monolithe : 5e ligne « Pont vers l'île du Marchand »
+- [ ] 1er Calme du Siège : pas de marchand ; 2e Calme : il arrive (particules, message), tourné vers le pont, derrière son comptoir
+- [ ] Clic droit : boutique du Marchand (jamais l'écran d'échange vanilla), 12 articles, solde d'améthyste affiché, infobulle au survol
+- [ ] Achat : améthyste retirée de l'inventaire, objet reçu ; pas assez : bouton grisé
+- [ ] Consommables : 4 max par joueur et par Calme (« reste N ») ; Clé du Titan 2 / Calme, Poussière ×4 1 / Calme, Relance 1 / Calme (partagés) ; Éclat de Faille 1 par partie
+- [ ] Nouveau Calme : stock renouvelé
+- [ ] Pendant un Assaut : bouclier de particules, clic → « boutique fermée »
+- [ ] Contre-offensive : ouvert ; combat du Titan : fermé
+- [ ] `/ws rift islets merchant` : arrivée immédiate (test) ; `/ws rift islets` montre son état
+
+## 5. Objets du Marchand
+- [ ] Textures et noms des 8 objets (onglet créatif)
+- [ ] Fiole du Néant : se boit, +8 cœurs
+- [ ] Élixirs : Résistance I / Force I pendant 2 min
+- [ ] Pierre de rappel : téléporte à côté du Monolithe (pas dans un mur), consommée
+- [ ] Kit de pont : près d'un segment effondré → reconstruit, consommé ; sinon message
+- [ ] Kit d'engin : clic droit sur un engin abîmé → +50 % PV ; engin plein → message, pas consommé
+- [ ] Lanterne de vigie : monstres proches en surbrillance 30 s (visibles à travers les blocs)
+- [ ] Relance de bénédiction : +1 relance au prochain choix de cartes
+
 ## Sauvegarde et reprise (§ A)
 - [ ] Quitter / relancer pendant le Siège : îlot reposé, pont acheté reposé avec ses segments effondrés, filons vivants reposés
 - [ ] Reprise à la Contre-offensive : îlot et pont toujours là
+- [ ] Marchand : arrivé ou pas, stock du Calme, Éclat déjà acheté — retrouvés à la reprise
 - [ ] Autel capturé + bonus : retrouvés à la reprise (faisceau allumé) ; capture en cours : repart de 0
 
 ## Éditeur

@@ -73,7 +73,7 @@ public final class RiftIslets {
     private RiftIslets() {}
 
     public enum Kind {
-        MINE("mine", 18), ALTAR("altar", 12);
+        MINE("mine", 18), ALTAR("altar", 12), MERCHANT("merchant", 9);
         final String id;
         final int radius;
         Kind(String id, int radius) { this.id = id; this.radius = radius; }
@@ -191,6 +191,7 @@ public final class RiftIslets {
         java.util.Set<String> used = new java.util.HashSet<>();
         if (s.isletMine) out.add(make(Kind.MINE, freeSide(s.isletMineSide, "north", used), s, siegeFinal));
         if (s.isletAltar) out.add(make(Kind.ALTAR, freeSide(s.isletAltarSide, "west", used), s, siegeFinal));
+        if (s.isletMerchant) out.add(make(Kind.MERCHANT, freeSide(s.isletMerchantSide, "northwest", used), s, siegeFinal));
         return out;
     }
 
@@ -251,6 +252,7 @@ public final class RiftIslets {
             Random r = new Random(seed ^ (i.kind.ordinal() * 0x9E3779B97F4A7C15L));
             if (i.kind == Kind.MINE) buildMine(l, i, r);
             else if (i.kind == Kind.ALTAR) buildAltar(l, i, r);
+            else if (i.kind == Kind.MERCHANT) buildMerchant(l, i, r);
             planBridge(i);
             java.util.Arrays.fill(i.hp, segmentHp());
             ISLETS.add(i);
@@ -295,6 +297,7 @@ public final class RiftIslets {
             }
         }
         if (RiftManager.phasePublic() != RiftManager.Phase.SIEGE) clearRaiders(l);   // § C : plus de reprise après le Siège
+        else if (get(Kind.MERCHANT) != null) VoidMerchant.onSiegeCalm(l);          // arrivée du Marchand, stock renouvelé
         int players = 0;
         for (ServerPlayer p : l.players()) if (!p.isSpectator()) players++;
         int bonus = players <= 1 ? s.calmBonusSolo : players == 2 ? s.calmBonusDuo : 0;
@@ -888,6 +891,107 @@ public final class RiftIslets {
         return base + (RNG.nextDouble() < v - base ? 1 : 0);
     }
 
+    // ─── Île du Marchand du Néant ───
+
+    /**
+     * Île du Marchand (rayon 9) d'après sources/merchant.py : mousse et roche, tapis violet devant l'échoppe ; auvent en toile violette
+     * sur la moitié arrière, étagères (améthyste, coffres), comptoir avec marchandises, gros cristal d'améthyste flottant (enseigne),
+     * lanternes de cristal flottantes, allée vers le pont. Le marchand lui-même arrive au Calme prévu (VoidMerchant).
+     */
+    private static void buildMerchant(ServerLevel l, Islet i, Random rnd) {
+        int y0 = RiftManager.CENTER.getY();
+        int R = i.r;
+        i.top = y0 + 1;
+        long sA = seed + 81, sB = seed + 93;
+        BlockState deep = Blocks.DEEPSLATE.defaultBlockState(), tuff = Blocks.TUFF.defaultBlockState(), moss = Blocks.MOSS_BLOCK.defaultBlockState(),
+                dark = Blocks.COBBLED_DEEPSLATE.defaultBlockState();
+        for (int x = i.cx - R - 3; x <= i.cx + R + 3; x++) {
+            for (int z = i.cz - R - 3; z <= i.cz + R + 3; z++) {
+                double ox = x + 0.5 - (i.cx + 0.5), oz = z + 0.5 - (i.cz + 0.5);
+                double rr = Math.hypot(ox, oz) + (noise(sA, x, z, 6) - 0.5) * 2.4;
+                if (rr > R) continue;
+                double nA = noise(sA, x, z, 6), nB = noise(sB, x, z, 3);
+                set(l, new BlockPos(x, y0 + 1, z), nA < 0.32 ? moss : nB > 0.62 ? tuff : deep);
+                set(l, new BlockPos(x, y0, z), deep);
+                int dep = (int) (3 + 13 * Math.pow(1 - rr / R, 0.9) + (nB - 0.5) * 5);
+                if (rnd.nextDouble() < 0.08) dep += 3 + rnd.nextInt(4);
+                for (int y = -1; y > -dep; y--) set(l, new BlockPos(x, y0 + y, z), rnd.nextDouble() > 0.25 ? deep : dark);
+            }
+        }
+        // repère local du plan : px = −u (vers le pont), pz = v
+        java.util.function.BiFunction<Integer, Integer, BlockPos> at = (px, pz) -> i.local(-px, 0, pz);
+        java.util.function.Consumer<Object[]> put = o -> {   // {px, y (plan), pz, état}
+            BlockPos c = at.apply((Integer) o[0], (Integer) o[2]);
+            set(l, new BlockPos(c.getX(), y0 + (Integer) o[1], c.getZ()), (BlockState) o[3]);
+        };
+        BlockState carpet = Blocks.PURPLE_WOOL.defaultBlockState(), carpetD = Blocks.BLACK_WOOL.defaultBlockState(),
+                canvas = Blocks.PURPLE_WOOL.defaultBlockState(), canvasD = Blocks.MAGENTA_WOOL.defaultBlockState(),
+                post = Blocks.DARK_OAK_LOG.defaultBlockState(), plank = Blocks.DARK_OAK_PLANKS.defaultBlockState(),
+                cluster = Blocks.AMETHYST_CLUSTER.defaultBlockState(), chest = Blocks.BARREL.defaultBlockState(),
+                essence = Blocks.SEA_LANTERN.defaultBlockState(), gold = Blocks.GOLD_BLOCK.defaultBlockState(),
+                amethyst = Blocks.AMETHYST_BLOCK.defaultBlockState(), lamp = Blocks.PEARLESCENT_FROGLIGHT.defaultBlockState();
+        // tapis devant l'échoppe
+        for (int px = 0; px < 6; px++) for (int pz = -2; pz <= 2; pz++) put.accept(new Object[]{px, 1, pz, Math.floorMod(px + pz, 2) == 1 ? carpet : carpetD});
+        // échoppe : auvent sur la moitié arrière
+        int sx0 = -6, sx1 = -2, sz0 = -3, sz1 = 3;
+        for (int[] c : new int[][]{{sx0, sz0}, {sx0, sz1}, {sx1, sz0}, {sx1, sz1}}) for (int y = 2; y <= 6; y++) put.accept(new Object[]{c[0], y, c[1], post});
+        for (int pz = sz0 - 1; pz <= sz1 + 1; pz++) {
+            for (int px = sx0 - 1; px <= sx1; px++) put.accept(new Object[]{px, px >= sx1 - 1 ? 7 : 8, pz, Math.floorMod(pz, 2) == 0 ? canvas : canvasD});
+            put.accept(new Object[]{sx1 + 1, 6, pz, Math.floorMod(pz, 2) == 1 ? canvasD : canvas});   // lambrequin
+        }
+        // étagères au fond
+        for (int pz = sz0 + 1; pz < sz1; pz++) {
+            put.accept(new Object[]{sx0, 2, pz, plank});
+            put.accept(new Object[]{sx0, 4, pz, plank});
+            put.accept(new Object[]{sx0, 3, pz, Math.floorMod(pz, 2) == 1 ? cluster : chest});
+            put.accept(new Object[]{sx0, 5, pz, pz == 0 ? essence : gold});
+        }
+        // place du marchand derrière le comptoir, tourné vers le pont
+        int mx = sx1 + 1;
+        BlockPos m = at.apply(mx, 0);
+        float facing = (float) Math.toDegrees(Math.atan2(i.dx, -i.dz));
+        VoidMerchant.place(new BlockPos(m.getX(), y0 + 2, m.getZ()), facing);
+        // comptoir avec marchandises
+        int cxp = mx + 2;
+        for (int pz = -2; pz <= 2; pz++) put.accept(new Object[]{cxp, 2, pz, plank});
+        put.accept(new Object[]{cxp, 3, -2, cluster});
+        put.accept(new Object[]{cxp, 3, -1, gold});
+        put.accept(new Object[]{cxp, 3, 1, chest});
+        put.accept(new Object[]{cxp, 3, 2, essence});
+        // gros cristal d'améthyste flottant (enseigne)
+        for (int[] c : new int[][]{{0, 0, 0}, {1, 0, 0}, {-1, 0, 0}, {0, 0, 1}, {0, 0, -1}}) put.accept(new Object[]{-4 + c[0], 11 + c[1], c[2], amethyst});
+        put.accept(new Object[]{-4, 12, 0, lamp});
+        put.accept(new Object[]{-4, 10, 0, lamp});
+        put.accept(new Object[]{-4, 13, 0, amethyst});
+        // tonneaux, caisses autour
+        for (int[] c : new int[][]{{cxp + 1, -4, 0}, {cxp + 2, -4, 1}, {cxp + 1, -5, 0}, {cxp + 1, 4, 0}, {cxp + 2, 5, 2}}) {
+            put.accept(new Object[]{c[0], 2, c[1], c[2] == 1 ? plank : c[2] == 2 ? amethyst : chest});
+        }
+        // lanternes de cristal flottantes
+        for (int[] c : new int[][]{{3, -6, 5}, {-2, -7, 6}, {6, 5, 4}, {-6, 6, 6}, {1, 7, 5}, {-8, 0, 7}}) put.accept(new Object[]{c[0], c[2], c[1], lamp});
+        // allée vers le pont
+        for (int px = 5; px <= R; px++) {
+            for (int pz = -1; pz <= 1; pz++) {
+                BlockPos c = at.apply(px, pz);
+                BlockPos p = new BlockPos(c.getX(), y0 + 1, c.getZ());
+                if (!l.getBlockState(p).isAir()) set(l, p, Blocks.POLISHED_DEEPSLATE.defaultBlockState());
+            }
+        }
+    }
+
+    /** Kit de pont : reconstruit le segment effondré le plus proche (à 8 blocs). */
+    public static boolean kitRepair(ServerPlayer p) {
+        if (!active() || p.level().dimension() != RiftManager.RIFT_DIM) { p.displayClientMessage(Component.literal(WSLang.t("item.kit_pont.none")), true); return false; }
+        int[] hit = brokenNear(p, 8);
+        if (hit == null || !repairSegment(p.serverLevel(), Kind.values()[hit[0]], hit[1])) {
+            p.displayClientMessage(Component.literal(WSLang.t("item.kit_pont.none")), true);
+            return false;
+        }
+        p.displayClientMessage(Component.literal(WSLang.t("rift.bridge.repaired")), true);
+        p.level().playSound(null, p.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.8f, 1.2f);
+        return true;
+    }
+
     // ─── Le pont ───
 
     private static float segmentHp() {
@@ -968,6 +1072,7 @@ public final class RiftIslets {
     static void tick(ServerLevel l, long now) {
         if (!active()) return;
         if (now % 10 == 0) altarTick(l, now);
+        if (get(Kind.MERCHANT) != null) VoidMerchant.tick(l, now);
         for (Islet i : ISLETS) {
             if (i.queue.isEmpty()) continue;
             int per = Math.max(1, (int) Math.ceil(i.pieces.size() / 200.0));
@@ -1111,6 +1216,7 @@ public final class RiftIslets {
                 o.putBoolean("captured", i.captured);
                 o.putString("bonus", i.bonus == null ? "" : i.bonus.id);
             }
+            if (i.kind == Kind.MERCHANT) o.put("merchant", VoidMerchant.save());   // § A : arrivé, stock du Calme, achats « 1 par partie »
             list.add(o);
         }
         t.put("islets", list);
@@ -1148,6 +1254,7 @@ public final class RiftIslets {
                 for (Bonus b : Bonus.values()) if (b.id.equals(o.getString("bonus"))) i.bonus = b;
                 altarVisual(l, i);
             }
+            if (i.kind == Kind.MERCHANT) VoidMerchant.restore(l, o.getCompound("merchant"));
             i.bought = o.getBoolean("bought");
             if (i.bought) {
                 for (Piece pc : i.pieces) {
@@ -1170,6 +1277,7 @@ public final class RiftIslets {
             }
             clearRaiders(l);
         }
+        VoidMerchant.clear(l);
         ISLETS.clear();
         placed = false;
     }
@@ -1190,6 +1298,7 @@ public final class RiftIslets {
             int alive = 0;
             for (Slot s : i.slots) if (s.alive) alive++;
             if (i.kind == Kind.MINE) sb.append(" §e⛏ ").append(alive).append("/").append(i.slots.size());
+            if (i.kind == Kind.MERCHANT) sb.append(VoidMerchant.status());
             if (i.kind == Kind.ALTAR) sb.append(i.captured ? " §b✦ " + (i.bonus == null ? "?" : i.bonus.label()) : " §8✦ " + Math.round(i.progress * 100) + "%");
             sb.append("\n");
         }

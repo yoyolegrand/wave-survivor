@@ -494,6 +494,16 @@ public class HordeConfigMultiData {
         @SerializedName("altarRampartPct") public int altarRampartPct = 1;
         @SerializedName("altarArsenalPct") public int altarArsenalPct = 20;
         @SerializedName("altarProsperityPct") public int altarProsperityPct = 25;
+        /** Marchand du Néant : côté de son îlot, Calme du Siège où il arrive, limite par joueur et par Calme des consommables (0 = illimité),
+         *  prix en améthyste et stock des 12 articles (Fiole, Pomme dorée, Élixirs résistance / force, Pierre de rappel, Kit de pont,
+         *  Kit d'engin, Lanterne de vigie, Clé du Titan, Poussière de Faille ×4, Relance de bénédiction, Éclat de Faille).
+         *  Stock : 0 = illimité (limite par joueur), n = n par Calme pour toute l'équipe, −n = n par partie. */
+        @SerializedName("isletMerchant") public boolean isletMerchant = true;
+        @SerializedName("isletMerchantSide") public String isletMerchantSide = "northwest";
+        @SerializedName("merchantCalm") public int merchantCalm = 2;
+        @SerializedName("merchantLimit") public int merchantLimit = 4;
+        @SerializedName("merchantPrices") public java.util.List<Integer> merchantPrices = new java.util.ArrayList<>(java.util.List.of(3, 4, 5, 5, 4, 3, 6, 4, 8, 10, 12, 40));
+        @SerializedName("merchantStock") public java.util.List<Integer> merchantStock = new java.util.ArrayList<>(java.util.List.of(0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, -1));
         /** Pont : coût au Monolithe (bois + pierre du trésor), PV de chacun des 5 segments, pierre (objets en main) pour réparer un segment. */
         @SerializedName("bridgeWood") public int bridgeWood = 20;
         @SerializedName("bridgeStone") public int bridgeStone = 20;

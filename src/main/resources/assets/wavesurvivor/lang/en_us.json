@@ -233,5 +233,13 @@
   "item.wavesurvivor.fallen_seraph_helmet": "Fallen Seraph Helm",
   "item.wavesurvivor.fallen_seraph_chestplate": "Fallen Seraph Chestplate",
   "item.wavesurvivor.fallen_seraph_leggings": "Fallen Seraph Leggings",
-  "item.wavesurvivor.fallen_seraph_boots": "Fallen Seraph Boots"
+  "item.wavesurvivor.fallen_seraph_boots": "Fallen Seraph Boots",
+  "item.wavesurvivor.fiole_neant": "Void Vial",
+  "item.wavesurvivor.elixir_resistance": "Elixir of Resistance",
+  "item.wavesurvivor.elixir_force": "Elixir of Strength",
+  "item.wavesurvivor.pierre_rappel": "Recall Stone",
+  "item.wavesurvivor.kit_pont": "Bridge Kit",
+  "item.wavesurvivor.kit_engin": "Engine Kit",
+  "item.wavesurvivor.lanterne_vigie": "Watch Lantern",
+  "item.wavesurvivor.relance_benediction": "Blessing Reroll"
 }

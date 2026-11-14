@@ -250,6 +250,12 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, RiftSkyPacket.class,
                 RiftSkyPacket::encode, RiftSkyPacket::decode, RiftSkyPacket::handle);
 
+        // Boutique du Marchand du Néant (2.1)
+        CHANNEL.registerMessage(id++, VoidMerchantPackets.Open.class,
+                VoidMerchantPackets.Open::encode, VoidMerchantPackets.Open::decode, VoidMerchantPackets.Open::handle);
+        CHANNEL.registerMessage(id++, VoidMerchantPackets.Buy.class,
+                VoidMerchantPackets.Buy::encode, VoidMerchantPackets.Buy::decode, VoidMerchantPackets.Buy::handle);
+
         WaveSurvivorMod.LOGGER.info("[Network] Channel 'main' enregistré (protocol v{}, {} packets)",
                 PROTOCOL_VERSION, id);
     }

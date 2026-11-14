@@ -321,6 +321,12 @@ public class MonolithShopScreen extends Screen {
                         .bounds(left + PANEL_W - 92, yd + 3 * DEF_ROW + 4, 82, 18).build();
                 ba.setTooltip(Tooltip.create(WSLang.c("rift.bridge.shop_tip_altar")));
                 addRenderableWidget(ba);
+                // 2.1 : pont vers l'île du Marchand du Néant
+                Button bm = Button.builder(Component.literal("§a" + WSLang.t("ui.shop.bridge_build")),
+                        b -> NetworkHandler.CHANNEL.sendToServer(new MonolithShopPackets.Upgrade(96)))
+                        .bounds(left + PANEL_W - 92, yd + 4 * DEF_ROW + 4, 82, 18).build();
+                bm.setTooltip(Tooltip.create(WSLang.c("rift.bridge.shop_tip_merchant")));
+                addRenderableWidget(bm);
             } else {
                 for (int i = 0; i < 5; i++) {
                     buyButton(left + PANEL_W - 92, yd + i * DEF_ROW + 4, 82, KingdomDefenses.TRAP_COST[i], 30 + i,
@@ -500,6 +506,7 @@ public class MonolithShopScreen extends Screen {
                 itemRow(g, yd + DEF_ROW, DEF_ROW, bal, "§f§l" + bal.getHoverName().getString(), WSLang.t("rift.engine.desc.ballista"));
                 itemRow(g, yd + 2 * DEF_ROW, DEF_ROW, new ItemStack(Items.DEEPSLATE_BRICKS), "§f§l" + WSLang.t("rift.shop.bridge_mine"), WSLang.t("rift.bridge.shop_desc"));
                 itemRow(g, yd + 3 * DEF_ROW, DEF_ROW, new ItemStack(Items.AMETHYST_CLUSTER), "§f§l" + WSLang.t("rift.shop.bridge_altar"), WSLang.t("rift.bridge.shop_desc"));
+                itemRow(g, yd + 4 * DEF_ROW, DEF_ROW, new ItemStack(Items.AMETHYST_SHARD), "§f§l" + WSLang.t("rift.shop.bridge_merchant"), WSLang.t("rift.bridge.shop_desc"));
             } else {
                 for (int i = 0; i < 5; i++) {
                     ItemStack it = trapItem(i);

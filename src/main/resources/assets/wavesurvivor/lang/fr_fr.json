@@ -233,5 +233,13 @@
   "item.wavesurvivor.fallen_seraph_helmet": "Heaume du Séraphin déchu",
   "item.wavesurvivor.fallen_seraph_chestplate": "Plastron du Séraphin déchu",
   "item.wavesurvivor.fallen_seraph_leggings": "Jambières du Séraphin déchu",
-  "item.wavesurvivor.fallen_seraph_boots": "Solerets du Séraphin déchu"
+  "item.wavesurvivor.fallen_seraph_boots": "Solerets du Séraphin déchu",
+  "item.wavesurvivor.fiole_neant": "Fiole du Néant",
+  "item.wavesurvivor.elixir_resistance": "Élixir de résistance",
+  "item.wavesurvivor.elixir_force": "Élixir de force",
+  "item.wavesurvivor.pierre_rappel": "Pierre de rappel",
+  "item.wavesurvivor.kit_pont": "Kit de pont",
+  "item.wavesurvivor.kit_engin": "Kit d'engin",
+  "item.wavesurvivor.lanterne_vigie": "Lanterne de vigie",
+  "item.wavesurvivor.relance_benediction": "Relance de bénédiction"
 }

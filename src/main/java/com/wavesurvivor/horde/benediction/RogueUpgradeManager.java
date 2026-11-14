@@ -249,6 +249,13 @@ public class RogueUpgradeManager {
         }
     }
 
+    /** 2.1 — Relance de bénédiction (Marchand du Néant) : relances en plus. */
+    public static void addRerolls(ServerPlayer p, int n) {
+        CompoundTag st = blessState(p, com.wavesurvivor.horde.HordeManager.get().getCurrentWave());
+        st.putInt("rerolls", st.getInt("rerolls") + Math.max(0, n));
+        store(p).put(NBT_STATE, st);
+    }
+
     public static int rerollsLeft(ServerPlayer p) { return blessState(p, com.wavesurvivor.horde.HordeManager.get().getCurrentWave()).getInt("rerolls"); }
 
     public static int bansLeft(ServerPlayer p) { return blessState(p, com.wavesurvivor.horde.HordeManager.get().getCurrentWave()).getInt("bans"); }

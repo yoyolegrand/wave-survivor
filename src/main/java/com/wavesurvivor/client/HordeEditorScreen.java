@@ -2104,6 +2104,22 @@ public class HordeEditorScreen extends Screen {
         fInt(26, HordeJson.num(r, "altarArsenalPct", 20), v -> r.addProperty("altarArsenalPct", Math.max(0, Math.min(200, v))));
         fl(t("ui.rift.altar_prosperity"));
         fInt(26, HordeJson.num(r, "altarProsperityPct", 25), v -> r.addProperty("altarProsperityPct", Math.max(0, Math.min(200, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_merchant");
+        flow(x, y);
+        fToggle(120, t("ui.rift.merchant_on"), r, "isletMerchant", true);
+        String mside = HordeJson.str(r, "isletMerchantSide", "northwest");
+        button(fx, fy - 2, 110, t("ui.rift.islet_side") + t("ui.rift.side." + mside), () -> {
+            String[] sides = {"north", "west", "northwest", "southwest", "northeast"};
+            int k = 0;
+            for (int j = 0; j < sides.length; j++) if (sides[j].equalsIgnoreCase(mside)) k = j;
+            r.addProperty("isletMerchantSide", sides[(k + 1) % sides.length]);
+            changed();
+            init();
+        });
+        fl(t("ui.rift.merchant_calm"));
+        fInt(22, HordeJson.num(r, "merchantCalm", 2), v -> r.addProperty("merchantCalm", Math.max(1, Math.min(20, v))));
+        fl(t("ui.rift.merchant_limit"));
+        fInt(22, HordeJson.num(r, "merchantLimit", 4), v -> r.addProperty("merchantLimit", Math.max(0, Math.min(64, v))));
         y = next() + 2;
         hint(x, y, t("ui.rift.hint_islets"));
     }

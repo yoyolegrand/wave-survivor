@@ -182,6 +182,23 @@ public class ModItems {
             () -> new com.wavesurvivor.item.FallenSeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
 
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
+    /** 2.1 — Objets du Marchand du Néant (îlot de la Faille). */
+    public static final RegistryObject<Item> FIOLE_NEANT = ITEMS.register("fiole_neant",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.FIOLE));
+    public static final RegistryObject<Item> ELIXIR_RESISTANCE = ITEMS.register("elixir_resistance",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.RESISTANCE));
+    public static final RegistryObject<Item> ELIXIR_FORCE = ITEMS.register("elixir_force",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.FORCE));
+    public static final RegistryObject<Item> PIERRE_RAPPEL = ITEMS.register("pierre_rappel",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.RAPPEL));
+    public static final RegistryObject<Item> KIT_PONT = ITEMS.register("kit_pont",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.KIT_PONT));
+    public static final RegistryObject<Item> KIT_ENGIN = ITEMS.register("kit_engin",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.KIT_ENGIN));
+    public static final RegistryObject<Item> LANTERNE_VIGIE = ITEMS.register("lanterne_vigie",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.VIGIE));
+    public static final RegistryObject<Item> RELANCE_BENEDICTION = ITEMS.register("relance_benediction",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.RELANCE));
     /** 2.0 — Éclat de Faille (Titan vaincu) : monte une relique au niveau IV à la Forge. */
     public static final RegistryObject<Item> RIFT_SHARD = ITEMS.register("rift_shard",
             () -> new com.wavesurvivor.item.RiftShardItem(new Item.Properties()));
@@ -566,6 +583,14 @@ public class ModItems {
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(RIFT_SHARD.get());
+                        output.accept(FIOLE_NEANT.get());
+                        output.accept(ELIXIR_RESISTANCE.get());
+                        output.accept(ELIXIR_FORCE.get());
+                        output.accept(PIERRE_RAPPEL.get());
+                        output.accept(KIT_PONT.get());
+                        output.accept(KIT_ENGIN.get());
+                        output.accept(LANTERNE_VIGIE.get());
+                        output.accept(RELANCE_BENEDICTION.get());
                         output.accept(SIEGE_CATAPULT_ITEM.get());
                         output.accept(SIEGE_BALLISTA_ITEM.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());
