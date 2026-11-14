@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.0.1 — Rift polish
+
+### 🌌 A new Rift in the sky
+- 🌀 The Rift is now a **jagged tear** onto a dark, starry void, with an irregular glowing rim, surrounded by a **slowly turning dust vortex** (one turn every 4 minutes) that breathes gently.
+- 🌈 The auroras now pass **in front of** the Rift instead of being cut by it, and the tear only pulses subtly.
+- 🎨 Five versions, one per phase (Horde, Siege, Counter-offensive, Titan, Victory, where the tear is almost closed), with a smooth fade between them.
+
+### 💥 The island breaks for real
+- 🪨 When the Titan charges, the island edge is now **bitten off with an organic outline** (lobes and points, no more straight edges), narrowing on the sides.
+- 🧱 The new edge **crumbles**: holes, cracked and fallen surface blocks, small collapses and a jagged cliff underneath, with overhangs.
+- 🔥 **Glowing magma cracks** creep from the new edge towards the centre; they already show up as orange sparks while the charge is being announced.
+- ☄ A few **rock fragments** stay floating in the void beyond the break.
+- ⚙ The old cut is still available with `titanBreakOrganic: false` in the Rift settings.
+
+### 🤺 Epic Fight
+- 🗡 The **Scythe of Taint** now sits properly on the back when it is put away.
+
 ## 2.0.0 — The Rift
 
 > 🌀 **The final mode is here.** An altar opens **a Rift onto a floating-island dimension of eternal night**: ⚔ survive a **Horde**, 🏰 hold a **Siege** on the Kingdom engine, 🔥 storm an enemy fortress in the **Counter-offensive**, then 👁 bring down a **Titan** that rises from the abyss. New creatures, new relics, a new Legacy tab, the 🖤 **Fallen Seraph Armor**, and 🤺 **Epic Fight compatibility** for our armors and weapons. Requires the optional **Pehkui** mod for the Rift.

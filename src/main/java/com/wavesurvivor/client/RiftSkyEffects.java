@@ -33,8 +33,9 @@ import java.nio.file.Path;
 
 /**
  * 2.0 — Ciel de la Faille (dimension wavesurvivor:rift), textures de Claude chat (docs/faille/ciel/CIEL_FAILLE.md).
- * Trois calques, dans l'ordre : fond en cube (sky_&lt;phase&gt;.png), anneau d'aurores teinté et additif qui défile (aurora.png),
- * puis la Faille, fixe dans le ciel du côté du Titan (rift_&lt;phase&gt;.png), qui pulse lentement.
+ * Calques, dans l'ordre : fond en cube (sky_&lt;phase&gt;.png), tourbillon additif qui tourne lentement (rift_&lt;phase&gt;_glow.png),
+ * cœur de la Faille fixe dans le ciel du côté du Titan (rift_&lt;phase&gt;.png, « fente », pulse à peine), puis l'anneau d'aurores
+ * teinté et additif qui défile (aurora.png), dessiné après la Faille pour passer devant elle (2.1 : fiche docs/faille/v2_fente_cassure).
  * La phase vient du serveur ({@link com.wavesurvivor.network.RiftSkyPacket}) ; fondu de 100 ticks entre deux phases (fond, aurores,
  * Faille et brouillard). Option client : config/wavesurvivor/client_options.json › {"riftSky": false} = fond Horde seul, sans animation.
  */
@@ -50,12 +51,13 @@ public class RiftSkyEffects extends DimensionSpecialEffects {
     private static final float[] AURORA_SPEED = {0.0005f, 0.0010f, 0.0020f, 0.0015f, 0.0008f};
     private static final int[] FOG_RGB = {0x26123E, 0x1B0A34, 0x220E3C, 0x380A24, 0x323F6E};
 
-    private static final ResourceLocation[] SKY = new ResourceLocation[5], RIFT = new ResourceLocation[5];
+    private static final ResourceLocation[] SKY = new ResourceLocation[5], RIFT = new ResourceLocation[5], SWIRL = new ResourceLocation[5];
     private static final ResourceLocation AURORA = tex("aurora");
     static {
         for (int i = 0; i < 5; i++) {
             SKY[i] = tex("sky_" + PHASES[i]);
             RIFT[i] = tex("rift_" + PHASES[i]);
+            SWIRL[i] = tex("rift_" + PHASES[i] + "_glow");
         }
     }
 
@@ -69,6 +71,9 @@ public class RiftSkyEffects extends DimensionSpecialEffects {
     private static final float CUBE = 50f, AURORA_R = 40f, RIFT_R = 45f;
     // La Faille : 44° de large, 60° de haut, centrée à +36° de tangage
     private static final float RIFT_W = 44f, RIFT_H = 60f, RIFT_PITCH = 36f;
+    // Le tourbillon : zone carrée de 60° × 60° autour du même centre, 1 tour en 4 800 ticks (antihoraire), pulsation de 120 ticks
+    private static final float SWIRL_SIZE = 60f;
+    private static final double SWIRL_TURN = 4800.0, SWIRL_PULSE = 120.0;
 
     // État côté client
     private static int cur = 0, prev = 0;
@@ -165,7 +170,22 @@ public class RiftSkyEffects extends DimensionSpecialEffects {
             if (f < 1f) cube(m, SKY[prev], 1f);
             cube(m, SKY[cur], f);
 
-            // 2. Aurores : teinte, intensité et vitesse mêlées entre les deux phases
+            // 2. Tourbillon (additif) : tourne lentement, luminosité ±10 % sur 120 ticks, fondu entre les deux textures
+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+                    GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            double turn = 2 * Math.PI * (now % SWIRL_TURN) / SWIRL_TURN;
+            float sb = (float) (1 + 0.10 * Math.sin(2 * Math.PI * now / SWIRL_PULSE));
+            if (f < 1f) swirl(m, SWIRL[prev], turn, sb, 1f - f);
+            swirl(m, SWIRL[cur], turn, sb, f);
+            RenderSystem.defaultBlendFunc();
+
+            // 3. Cœur de la Faille (alpha normal) : pulsation discrète (échelle ±1,5 %, luminosité ±6 %, 80 ticks)
+            double w = Math.sin(2 * Math.PI * now / 80.0);
+            float scale = (float) (1 + 0.015 * w), bright = (float) (1 + 0.06 * w);
+            if (f < 1f) rift(m, RIFT[prev], scale, bright, 1f - f);
+            rift(m, RIFT[cur], scale, bright, f);
+
+            // 4. Aurores (additives), APRÈS la Faille pour passer devant elle : teinte, intensité et vitesse mêlées entre les deux phases
             double dt = lastT < 0 ? 0 : Math.max(0, Math.min(10, now - lastT));
             lastT = now;
             float speed = lerp(AURORA_SPEED[prev], AURORA_SPEED[cur], f);
@@ -176,12 +196,6 @@ public class RiftSkyEffects extends DimensionSpecialEffects {
                     GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             aurora(m, c[0] * k, c[1] * k, c[2] * k);
             RenderSystem.defaultBlendFunc();
-
-            // 3. La Faille : pulsation lente (échelle ±3 %, luminosité ±10 %), fondu entre les deux textures
-            double w = Math.sin(2 * Math.PI * now / 80.0);
-            float scale = (float) (1 + 0.03 * w), bright = (float) (1 + 0.10 * w);
-            if (f < 1f) rift(m, RIFT[prev], scale, bright, 1f - f);
-            rift(m, RIFT[cur], scale, bright, f);
         }
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -286,6 +300,37 @@ public class RiftSkyEffects extends DimensionSpecialEffects {
         double yaw = riftYaw + (u - 0.5) * RIFT_W * scale;
         double pitch = RIFT_PITCH + (0.5 - v) * RIFT_H * scale;
         float[] p = dir(yaw, pitch, RIFT_R);
+        bb.vertex(m, p[0], p[1], p[2]).uv(u, v).endVertex();
+    }
+
+    /**
+     * Le tourbillon : grille carrée posée sur la sphère autour du centre de la Faille. C'est la GÉOMÉTRIE qui tourne (le décalage
+     * angulaire de chaque sommet est tourné de « turn » avant le calcul du lacet et du tangage) ; les UV restent fixes, la texture
+     * étant fondue en cercle, ses coins noirs ne se voient jamais.
+     */
+    private static void swirl(Matrix4f m, ResourceLocation tex, double turn, float bright, float alpha) {
+        if (alpha <= 0.002f) return;
+        RenderSystem.setShaderTexture(0, tex);
+        RenderSystem.setShaderColor(bright, bright, bright, alpha);
+        int n = 12;
+        double cs = Math.cos(turn), sn = Math.sin(turn);
+        BufferBuilder bb = Tesselator.getInstance().getBuilder();
+        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) {
+            float ua = (float) i / n, ub = (float) (i + 1) / n, va = (float) j / n, vb = (float) (j + 1) / n;
+            swirlVertex(bb, m, ua, va, cs, sn);
+            swirlVertex(bb, m, ua, vb, cs, sn);
+            swirlVertex(bb, m, ub, vb, cs, sn);
+            swirlVertex(bb, m, ub, va, cs, sn);
+        }
+        BufferUploader.drawWithShader(bb.end());
+    }
+
+    /** Sommet du tourbillon. Le lacet grandit vers la gauche de l'écran : (dy, dp) tourné ainsi = sens antihoraire vu du joueur. */
+    private static void swirlVertex(BufferBuilder bb, Matrix4f m, float u, float v, double cs, double sn) {
+        double dy = (u - 0.5) * SWIRL_SIZE, dp = (0.5 - v) * SWIRL_SIZE;
+        double ry = dy * cs + dp * sn, rp = -dy * sn + dp * cs;
+        float[] p = dir(riftYaw + ry, RIFT_PITCH + rp, RIFT_R);
         bb.vertex(m, p[0], p[1], p[2]).uv(u, v).endVertex();
     }
 

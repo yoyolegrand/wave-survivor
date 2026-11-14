@@ -475,6 +475,8 @@ public class HordeConfigMultiData {
         @SerializedName("titanBuildDamage") public int titanBuildDamage = 300;
         /** Compétences du Titan : chaque charge brise un secteur du bord de l'île (profondeur en blocs), coups pour abattre le rocher, dégâts du piétinement. */
         @SerializedName("titanIslandBreak") public boolean titanIslandBreak = true;
+        /** 2.1 — Cassure « organique » (contour en morsure, bord qui s'effrite, fissures de magma, débris) ; false = ancien découpage rectangle × anneau. */
+        @SerializedName("titanBreakOrganic") public boolean titanBreakOrganic = true;
         /** Récompenses de fin : PR bonus si le Titan est tué, Reliquaires scellés pour chaque participant, bonus du podium (top 1 / 2 / 3, aux éliminations). */
         @SerializedName("titanPrBonus") public int titanPrBonus = 30;
         @SerializedName("rewardReliquaries") public int rewardReliquaries = 1;

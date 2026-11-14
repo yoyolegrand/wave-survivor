@@ -106,6 +106,8 @@ final class RiftTitan {
     /** Charges déjà faites (choix du secteur visé), secteurs de l'île déjà effondrés, secteur et x visés par la charge en cours. */
     private static int chargeCount, chargeSector;
     private static final Set<Integer> brokenSectors = new HashSet<>();
+    /** 2.1 — Cassure organique préparée pour la charge en cours (null : ancien découpage, secteur déjà brisé ou cassure désactivée). */
+    private static TitanIslandBreak bite;
     private static double chargeX;
 
     private RiftTitan() {}
@@ -277,6 +279,7 @@ final class RiftTitan {
         stunBonus = 0;
         chargeCount = 0;
         brokenSectors.clear();
+        bite = null;
         nextWaveAt = Long.MAX_VALUE;
         nextChargeAt = cineStart + (long) (240 * cineF) + Math.max(10, settings.titanChargeInterval) * 20L;
         bar = new ServerBossEvent(Component.literal("§5§l" + com.wavesurvivor.i18n.WSLang.t("rift.t.name")), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
@@ -1578,6 +1581,10 @@ final class RiftTitan {
         chargeTargetZ = c.getZ() + 0.5 + edge - reach + halfWidth();
         double hw = Math.min(halfWidth(), 14);   // zone d'impact réduite : seul le bord visé de l'île est touché
         zone = new double[]{chargeX - hw, chargeX + hw, c.getZ() + 0.5 + edge - reach - 2, c.getZ() + 0.5 + edge + 4};
+        // 2.1 : contour organique et fissures tirés dès l'annonce (les particules suivent les vrais trajets)
+        bite = rs.titanIslandBreak && rs.titanBreakOrganic && !brokenSectors.contains(chargeSector)
+                ? new TitanIslandBreak(c, sr, Math.max(2, Math.min(sr / 2, rs.titanBreakDepth)), chargeX, c.getZ() + 0.5 + edge, hw)
+                : null;
         chargeDealt = 0f;
         stunBonus = 0;
         charge = 1;
@@ -1631,6 +1638,11 @@ final class RiftTitan {
     private static void crackTelegraph(ServerLevel l) {
         if (!rs.titanIslandBreak || brokenSectors.contains(chargeSector) || zone == null) return;
         BlockPos c = RiftManager.CENTER;
+        if (bite != null) {   // 2.1 : les fissures se dessinent le long des trajets précalculés
+            bite.telegraph(l, 1.0 - (chargeAt - l.getGameTime()) / 60.0);
+            l.playSound(null, BlockPos.containing(chargeX, c.getY(), zone[3]), SoundEvents.DEEPSLATE_BREAK, SoundSource.HOSTILE, 3f, 0.5f);
+            return;
+        }
         int sr = siegeRadius, depth = Math.max(2, rs.titanBreakDepth);
         for (int i = 0; i < 16; i++) {
             double x = zone[0] + RNG.nextDouble() * (zone[1] - zone[0]);
@@ -1649,6 +1661,17 @@ final class RiftTitan {
     private static void breakSector(ServerLevel l, long now) {
         if (!rs.titanIslandBreak || !brokenSectors.add(chargeSector)) return;
         BlockPos c = RiftManager.CENTER;
+        if (bite != null) {   // 2.1 : cassure organique (morsure, bande qui s'effrite, fissures de magma, débris)
+            TitanIslandBreak b = bite;
+            bite = null;
+            final int[] falling = {0};
+            double[] box = b.execute(l, falling);
+            if (box == null) return;
+            announce(l, "§6§l" + com.wavesurvivor.i18n.WSLang.t("rift.titan.island_break"));
+            l.playSound(null, BlockPos.containing(chargeX, c.getY(), zone[3]), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 8f, 0.3f);
+            hitRect(l, box[0], box[1], box[2], box[3], Math.max(1, rs.titanBuildDamage * 4f));
+            return;
+        }
         int sr = siegeRadius, depth = Math.max(2, Math.min(sr / 2, rs.titanBreakDepth));
         int x0 = (int) Math.floor(zone[0]), x1 = (int) Math.ceil(zone[1]);
         List<int[]> cols = new ArrayList<>();
@@ -1669,7 +1692,7 @@ final class RiftTitan {
     }
 
     /** Une colonne de l'île tombe : les blocs du dessus chutent (blocs qui tombent), le reste disparaît dans l'abîme. */
-    private static void collapseColumn(ServerLevel l, int x, int z, int[] falling) {
+    static void collapseColumn(ServerLevel l, int x, int z, int[] falling) {
         BlockPos c = RiftManager.CENTER;
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
         int seen = 0;
