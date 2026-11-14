@@ -1,5 +1,52 @@
 # Changelog
 
+## 2.1.0 — The Rift Expands
+
+> 🏝 **Islets drift around the Rift island during the Siege.** Buy bridges to reach them: 🪨 a **Mining Islet** full of veins, 🔮 an **Altar Islet** to capture for a team bonus, 🌑 the **Void Merchant** and his shop paid in amethyst, and once per run ✪ a **Chest Islet** that rises from the void with a chained treasure. Watch your bridges: 🕷 **Bridgebreakers** climb from the void to gnaw them.
+
+---
+
+### 🌉 Islets and bridges
+- 🏝 When the island has finished growing, **islets appear around it** (never on the fortress side or the Titan side). Each islet's side can be set in the editor.
+- 🌉 **Bridges are bought at the Monolith** (Defenses › Engines) with treasury wood and stone, and **build themselves** in about 10 s: glowing ghost blocks float down and settle, with violet crystal lanterns on posts and hanging under the deck.
+- 💔 A bridge has **5 sections with HP**: a section at 0 HP **collapses** into the void. Right-click with **16 stone** near the gap to rebuild it (same animation), or use a **Bridge Kit**.
+- 🧱 Stuck on an islet? You can **place blocks** between the islet and the island (and break the ones you placed).
+- ⌛ While an islet is active, **Calms are longer**: +60 s solo, +30 s for two players.
+- 💾 Islets, bridges, sections, veins, the altar, the Merchant and the Chest Islet are all **saved and resumed**.
+
+### 🪨 Mining Islet
+- ⛏ A decorative mine at the back (mound, propped gallery, rails, loaded minecart, barrels), an amethyst geode and ores in the cliffs underneath.
+- 💎 **8 permanent veins**: 4 iron, 2 emerald, an **amethyst geode** and **Essence crystals**, with a minimum pickaxe like deposits. Loot goes to the treasury.
+- 🌱 Every Siege Calm, **half the depleted veins grow back** (75% with a **Miner**), and light **guards** return.
+- ⚖ The main island keeps **40% of its deposits**, without emerald or amethyst. Rift monsters now also drop a little **amethyst**.
+
+### 🔮 Altar Islet
+- 🟣 A checkered platform with a glowing **capture circle**, a golden altar, a floating crystal and 4 dark pillars.
+- ⏱ **Stand in the circle** to capture it (about 30 s solo, faster in a group): the pillars light up one by one. A monster in the circle **freezes** the capture.
+- ✨ Once captured, a **light column** rises and the team **picks a bonus** in the chat: 🛡 **Rampart** (the Monolith regains 1% HP every 10 s), 🏹 **Arsenal** (siege engines +20% damage) or 💰 **Prosperity** (+25% stone, wood, iron, emeralds and amethyst).
+- ⚔ **Every Assault, monsters march on the altar**: left alone in the circle, they **retake it** and the bonus is lost. Recapture it to choose again. After the Siege, the bonus stays until the end of the Rift.
+
+### 🌑 The Void Merchant
+- 🏪 A hooded merchant arrives on his islet at the **2nd Siege Calm**: a stall under a violet awning, shelves, a counter and a huge floating amethyst crystal.
+- 🛒 **His own shop**, paid in **amethyst shards**: stock refreshed every Calm, 4 of each consumable per player per Calm. Closed behind a **shield** during Assaults and during the Titan fight, open during the Counter-offensive.
+- 🎁 **8 new items**: 🧪 **Void Vial** (heals 8 hearts), **Elixirs of Resistance and Strength** (2 min), 🌀 **Recall Stone** (back to the Monolith), 🔧 **Bridge Kit**, ⚙ **Engine Kit** (+50% engine HP), 🏮 **Watch Lantern** (nearby monsters glow for 30 s, even through blocks) and 🎟 **Blessing Reroll**.
+- 🗝 He also sells golden apples, Titan Keys, Rift Dust and one Rift Shard per run. Prices and stocks are editable.
+
+### ✪ Chest Islet
+- 🏚 **Once per run**, during a random Siege Calm, a ruined island **rises from the void**, linked by a free **crystal bridge**.
+- ⛓ A giant gold-banded chest is **chained to 4 pillars**. Step on the island and **elite guardians** plus a **Treasure Guardian** (with a boss bar) awaken. Each guardian slain breaks a chain.
+- 🎰 When the last chain breaks, the **Ruins Chest** roulette appears: **1 free draw per player**, no key needed (emeralds, amethyst, Rift Dust, Sealed Key, Sealed Reliquary, a small chance of a Rift Shard; Luck counts).
+- 🌫 It **drifts away at the next Assault**: an unopened chest is lost, and players still on it are brought back.
+
+### 🕷 Bridgebreaker
+- 🦂 A **new Rift creature** the size of a spider: dark violet carapace plates, cyan veins, crystal spines and a glowing weak spot on its back.
+- 🔊 During Assaults, a violet glow and a **scraping sound** under a bridge announce it. It **climbs from the void**, clings to the deck and **gnaws**: cracks spread, the section collapses in about 15 s, then it moves on to the next one.
+- 🎯 **Hit its back** (from behind or from above) for **double damage**, and **knock it into the void** for an instant kill. The Watch Lantern makes it glow.
+
+### ✏ Editor and Codex
+- 🗂 A new **Rift › Islets** tab with five pages (islets and bridges, Mining Islet, Altar Islet, Merchant with all prices and stocks, Chest Islet), plus Bridgebreaker settings.
+- 📖 A new **Rift Islets** Codex page.
+
 ## 2.0.1 — Rift polish
 
 ### 🌌 A new Rift in the sky

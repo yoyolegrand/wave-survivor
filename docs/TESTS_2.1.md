@@ -103,4 +103,9 @@
 
 ## Éditeur
 - [ ] Onglet Faille › Îlots : réglages enregistrés (îlots, distance, Calme, pont, île minière et son côté, repousse, part des gisements, gardes, améthyste, île-autel : côté, capture, reprise, raid, valeurs des bonus)
-- [ ] La page Îlots tient à l'écran (sinon le dire : je la découperai)
+- [ ] Faille › Îlots : 5 sous-pages (Îlots et ponts, Île minière, Île-autel, Marchand, Île au coffre), chacune tient à l'écran
+- [ ] Marchand : prix et stock des 12 articles modifiables, pris en compte en jeu
+- [ ] Île au coffre : choix du Gardien (liste / œuf) pris en compte
+
+## Codex
+- [ ] Page « Îlots de la Faille » dans le sommaire (après Créatures de la Faille), texte complet fr / en

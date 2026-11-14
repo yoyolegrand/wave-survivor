@@ -2031,7 +2031,40 @@ public class HordeEditorScreen extends Screen {
     }
 
     /** Faille — page « Îlots » (2.1) : îlots du Siège, pont, île minière. */
+    private static int isletSub = 0;
+
+    /** Faille — page « Îlots » : 5 sous-pages (général / pont / Brise-pont, île minière, île-autel, Marchand, île au coffre). */
     private void buildRiftIslets(JsonObject r, int x, int y) {
+        String[] subs = {"ui.rift.isub_general", "ui.rift.isub_mine", "ui.rift.isub_altar", "ui.rift.isub_merchant", "ui.rift.isub_chest"};
+        int bw = (W - 20 - 4 * (subs.length - 1)) / subs.length;
+        for (int i = 0; i < subs.length; i++) {
+            final int k = i;
+            button(x + i * (bw + 4), y - 2, bw, (isletSub == i ? "§d§l" : "§8") + fitText(t(subs[i]), bw - 8), () -> { isletSub = k; init(); });
+        }
+        y += 20;
+        switch (isletSub) {
+            case 1 -> buildIsletMine(r, x, y);
+            case 2 -> buildIsletAltar(r, x, y);
+            case 3 -> buildIsletMerchant(r, x, y);
+            case 4 -> buildIsletChest(r, x, y);
+            default -> buildIsletGeneral(r, x, y);
+        }
+    }
+
+    /** Bouton « Côté : … » (fait défiler les côtés autorisés : jamais l'est ni le sud). */
+    private void sideButton(JsonObject r, String key, String def) {
+        String side = HordeJson.str(r, key, def);
+        button(fx, fy - 2, 110, t("ui.rift.islet_side") + t("ui.rift.side." + side), () -> {
+            String[] sides = {"north", "west", "northwest", "southwest", "northeast"};
+            int k = 0;
+            for (int j = 0; j < sides.length; j++) if (sides[j].equalsIgnoreCase(side)) k = j;
+            r.addProperty(key, sides[(k + 1) % sides.length]);
+            changed();
+            init();
+        });
+    }
+
+    private void buildIsletGeneral(JsonObject r, int x, int y) {
         y = sec(x, y, "ui.rift.sec_islets");
         flow(x, y);
         fToggle(120, t("ui.rift.islets_on"), r, "isletsEnabled", true);
@@ -2051,18 +2084,28 @@ public class HordeEditorScreen extends Screen {
         fInt(36, HordeJson.num(r, "bridgeSegmentHp", 300), v -> r.addProperty("bridgeSegmentHp", Math.max(20, Math.min(20000, v))));
         fl(t("ui.rift.bridge_repair"));
         fInt(26, HordeJson.num(r, "bridgeRepairStone", 16), v -> r.addProperty("bridgeRepairStone", Math.max(1, Math.min(64, v))));
-        y = sec(x, next() + 2, "ui.rift.sec_mine");
+        y = sec(x, next() + 2, "ui.rift.sec_breaker");
+        flow(x, y);
+        fToggle(120, t("ui.rift.breaker_on"), r, "breakerEnabled", true);
+        fl(t("ui.rift.breaker_per"));
+        fInt(22, HordeJson.num(r, "breakerMin", 1), v -> r.addProperty("breakerMin", Math.max(0, Math.min(6, v))));
+        fl("–");
+        fInt(22, HordeJson.num(r, "breakerPer", 2), v -> r.addProperty("breakerPer", Math.max(0, Math.min(6, v))));
+        fl(t("ui.rift.breaker_max"));
+        fInt(22, HordeJson.num(r, "breakerMax", 3), v -> r.addProperty("breakerMax", Math.max(0, Math.min(12, v))));
+        flow(x, next());
+        fl(t("ui.rift.breaker_gnaw"));
+        fInt(26, HordeJson.num(r, "breakerGnawSeconds", 15), v -> r.addProperty("breakerGnawSeconds", Math.max(3, Math.min(120, v))));
+        fl(t("ui.rift.breaker_hp"));
+        fInt(30, HordeJson.num(r, "breakerHp", 40), v -> r.addProperty("breakerHp", Math.max(4, Math.min(2000, v))));
+        hint(x, next() + 4, t("ui.rift.hint_islets"));
+    }
+
+    private void buildIsletMine(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_mine");
         flow(x, y);
         fToggle(120, t("ui.rift.mine_on"), r, "isletMine", true);
-        String side = HordeJson.str(r, "isletMineSide", "north");
-        button(fx, fy - 2, 110, t("ui.rift.islet_side") + t("ui.rift.side." + side), () -> {
-            String[] sides = {"north", "west", "northwest", "southwest", "northeast"};
-            int k = 0;
-            for (int j = 0; j < sides.length; j++) if (sides[j].equalsIgnoreCase(side)) k = j;
-            r.addProperty("isletMineSide", sides[(k + 1) % sides.length]);
-            changed();
-            init();
-        });
+        sideButton(r, "isletMineSide", "north");
         flow(x, next());
         fl(t("ui.rift.mine_regrow"));
         fInt(26, HordeJson.num(r, "mineRegrow", 50), v -> r.addProperty("mineRegrow", Math.max(0, Math.min(100, v))));
@@ -2078,18 +2121,14 @@ public class HordeEditorScreen extends Screen {
         fInt(26, HordeJson.num(r, "amethystDropChance", 12), v -> r.addProperty("amethystDropChance", Math.max(0, Math.min(100, v))));
         fl(t("ui.rift.amethyst_max"));
         fInt(22, HordeJson.num(r, "amethystDropMax", 1), v -> r.addProperty("amethystDropMax", Math.max(1, Math.min(16, v))));
-        y = sec(x, next() + 2, "ui.rift.sec_altar");
+        hint(x, next() + 4, t("ui.rift.hint_mine"));
+    }
+
+    private void buildIsletAltar(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_altar");
         flow(x, y);
         fToggle(120, t("ui.rift.altar_on"), r, "isletAltar", true);
-        String aside = HordeJson.str(r, "isletAltarSide", "west");
-        button(fx, fy - 2, 110, t("ui.rift.islet_side") + t("ui.rift.side." + aside), () -> {
-            String[] sides = {"north", "west", "northwest", "southwest", "northeast"};
-            int k = 0;
-            for (int j = 0; j < sides.length; j++) if (sides[j].equalsIgnoreCase(aside)) k = j;
-            r.addProperty("isletAltarSide", sides[(k + 1) % sides.length]);
-            changed();
-            init();
-        });
+        sideButton(r, "isletAltarSide", "west");
         flow(x, next());
         fl(t("ui.rift.altar_capture"));
         fInt(26, HordeJson.num(r, "altarCaptureSeconds", 30), v -> r.addProperty("altarCaptureSeconds", Math.max(5, Math.min(600, v))));
@@ -2104,43 +2143,63 @@ public class HordeEditorScreen extends Screen {
         fInt(26, HordeJson.num(r, "altarArsenalPct", 20), v -> r.addProperty("altarArsenalPct", Math.max(0, Math.min(200, v))));
         fl(t("ui.rift.altar_prosperity"));
         fInt(26, HordeJson.num(r, "altarProsperityPct", 25), v -> r.addProperty("altarProsperityPct", Math.max(0, Math.min(200, v))));
-        y = sec(x, next() + 2, "ui.rift.sec_merchant");
+        hint(x, next() + 4, t("ui.rift.hint_altar"));
+    }
+
+    private static final int[] MERCHANT_PRICE = {3, 4, 5, 5, 4, 3, 6, 4, 8, 10, 12, 40};
+    private static final int[] MERCHANT_STOCK = {0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, -1};
+
+    /** Valeur n° i d'un tableau d'entiers de la config (défaut si absent). */
+    private static int arrInt(JsonObject r, String key, int i, int def) {
+        if (r.has(key) && r.get(key).isJsonArray()) {
+            com.google.gson.JsonArray a = r.getAsJsonArray(key);
+            if (i < a.size() && a.get(i).isJsonPrimitive()) return a.get(i).getAsInt();
+        }
+        return def;
+    }
+
+    private static void arrSet(JsonObject r, String key, int i, int v, int[] defs) {
+        com.google.gson.JsonArray a = new com.google.gson.JsonArray();
+        for (int k = 0; k < defs.length; k++) a.add(k == i ? v : arrInt(r, key, k, defs[k]));
+        r.add(key, a);
+    }
+
+    private void buildIsletMerchant(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_merchant");
         flow(x, y);
         fToggle(120, t("ui.rift.merchant_on"), r, "isletMerchant", true);
-        String mside = HordeJson.str(r, "isletMerchantSide", "northwest");
-        button(fx, fy - 2, 110, t("ui.rift.islet_side") + t("ui.rift.side." + mside), () -> {
-            String[] sides = {"north", "west", "northwest", "southwest", "northeast"};
-            int k = 0;
-            for (int j = 0; j < sides.length; j++) if (sides[j].equalsIgnoreCase(mside)) k = j;
-            r.addProperty("isletMerchantSide", sides[(k + 1) % sides.length]);
-            changed();
-            init();
-        });
+        sideButton(r, "isletMerchantSide", "northwest");
+        flow(x, next());
         fl(t("ui.rift.merchant_calm"));
         fInt(22, HordeJson.num(r, "merchantCalm", 2), v -> r.addProperty("merchantCalm", Math.max(1, Math.min(20, v))));
         fl(t("ui.rift.merchant_limit"));
         fInt(22, HordeJson.num(r, "merchantLimit", 4), v -> r.addProperty("merchantLimit", Math.max(0, Math.min(64, v))));
-        y = sec(x, next() + 2, "ui.rift.sec_breaker");
-        flow(x, y);
-        fToggle(120, t("ui.rift.breaker_on"), r, "breakerEnabled", true);
-        fl(t("ui.rift.breaker_per"));
-        fInt(22, HordeJson.num(r, "breakerMin", 1), v -> r.addProperty("breakerMin", Math.max(0, Math.min(6, v))));
-        fl("–");
-        fInt(22, HordeJson.num(r, "breakerPer", 2), v -> r.addProperty("breakerPer", Math.max(0, Math.min(6, v))));
-        fl(t("ui.rift.breaker_max"));
-        fInt(22, HordeJson.num(r, "breakerMax", 3), v -> r.addProperty("breakerMax", Math.max(0, Math.min(12, v))));
-        flow(x, next());
-        fl(t("ui.rift.breaker_gnaw"));
-        fInt(26, HordeJson.num(r, "breakerGnawSeconds", 15), v -> r.addProperty("breakerGnawSeconds", Math.max(3, Math.min(120, v))));
-        fl(t("ui.rift.breaker_hp"));
-        fInt(30, HordeJson.num(r, "breakerHp", 40), v -> r.addProperty("breakerHp", Math.max(4, Math.min(2000, v))));
-        y = sec(x, next() + 2, "ui.rift.sec_chest");
+        y = sec(x, next() + 2, "ui.rift.sec_merchant_items");
+        // 12 articles sur 2 colonnes : nom, prix (améthyste), stock (0 = illimité, n = par Calme, −n = par partie)
+        int colW = (W - 24) / 2;
+        for (int i = 0; i < 12; i++) {
+            final int k = i;
+            flow(x + (i / 6) * colW, y + (i % 6) * 18);
+            fl(fitText(t("ui.rift.mitem." + i), colW - 120));
+            fx = x + (i / 6) * colW + colW - 112;
+            fl("✦");
+            fInt(24, arrInt(r, "merchantPrices", i, MERCHANT_PRICE[i]), v -> arrSet(r, "merchantPrices", k, Math.max(0, Math.min(999, v)), MERCHANT_PRICE));
+            fl(t("ui.rift.mstock"));
+            fInt(24, arrInt(r, "merchantStock", i, MERCHANT_STOCK[i]), v -> arrSet(r, "merchantStock", k, Math.max(-99, Math.min(99, v)), MERCHANT_STOCK));
+        }
+        hint(x, y + 6 * 18 + 4, t("ui.rift.hint_merchant"));
+    }
+
+    private void buildIsletChest(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_chest");
         flow(x, y);
         fToggle(120, t("ui.rift.chest_on"), r, "isletChest", true);
         fl(t("ui.rift.chest_calm"));
         fInt(22, HordeJson.num(r, "chestCalmMin", 2), v -> r.addProperty("chestCalmMin", Math.max(1, Math.min(20, v))));
         fl("–");
         fInt(22, HordeJson.num(r, "chestCalmMax", 4), v -> r.addProperty("chestCalmMax", Math.max(1, Math.min(20, v))));
+        fl(t("ui.rift.chest_gap"));
+        fInt(26, HordeJson.num(r, "chestGap", 22), v -> r.addProperty("chestGap", Math.max(8, Math.min(60, v))));
         flow(x, next());
         fl(t("ui.rift.chest_guards"));
         fInt(22, HordeJson.num(r, "chestGuardMin", 3), v -> r.addProperty("chestGuardMin", Math.max(0, Math.min(12, v))));
@@ -2148,10 +2207,15 @@ public class HordeEditorScreen extends Screen {
         fInt(22, HordeJson.num(r, "chestGuardMax", 5), v -> r.addProperty("chestGuardMax", Math.max(0, Math.min(12, v))));
         fl(t("ui.rift.chest_guard_hp"));
         fInt(30, HordeJson.num(r, "chestGuardHpPct", 200), v -> r.addProperty("chestGuardHpPct", Math.max(10, Math.min(1000, v))));
+        flow(x, next());
+        // Gardien du trésor : n'importe quelle entité (identifiant, liste, œuf)
+        fl(t("ui.rift.chest_boss"));
+        fText(140, HordeJson.str(r, "chestBossMob", "minecraft:ravager"), v -> r.addProperty("chestBossMob", v.trim()));
+        fBtn(16, "§e▼", () -> openEntityPicker(HordeJson.str(r, "chestBossMob", ""), id -> r.addProperty("chestBossMob", id)));
+        fBtn(28, t("ui.egg.btn"), () -> openEggPicker(id -> r.addProperty("chestBossMob", id), false));
         fl(t("ui.rift.chest_boss_hp"));
         fInt(34, HordeJson.num(r, "chestBossHp", 200), v -> r.addProperty("chestBossHp", Math.max(20, Math.min(5000, v))));
-        y = next() + 2;
-        hint(x, y, t("ui.rift.hint_islets"));
+        hint(x, next() + 4, t("ui.rift.hint_chest"));
     }
 
     /** Aide en bas de page ; renvoie la hauteur utilisée (0 si elle ne tient pas). */
