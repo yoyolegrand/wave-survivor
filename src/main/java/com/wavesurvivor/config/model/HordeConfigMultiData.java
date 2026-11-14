@@ -500,6 +500,14 @@ public class HordeConfigMultiData {
          *  Stock : 0 = illimité (limite par joueur), n = n par Calme pour toute l'équipe, −n = n par partie. */
         /** Île au coffre : une fois par partie, pendant un Calme du Siège tiré entre chestCalmMin et chestCalmMax ; gardiens d'élite
          *  (PV en % de la normale) + Gardien du trésor (type, PV) ; coffre roulette « Coffre des Ruines », 1 tirage gratuit par joueur. */
+        /** Brise-pont : pendant chaque Assaut du Siège, breakerMin à breakerPer par pont construit (breakerMax en même temps au plus) ;
+         *  un segment rongé s'effondre en breakerGnawSeconds secondes ; PV. */
+        @SerializedName("breakerEnabled") public boolean breakerEnabled = true;
+        @SerializedName("breakerMin") public int breakerMin = 1;
+        @SerializedName("breakerPer") public int breakerPer = 2;
+        @SerializedName("breakerMax") public int breakerMax = 3;
+        @SerializedName("breakerGnawSeconds") public int breakerGnawSeconds = 15;
+        @SerializedName("breakerHp") public int breakerHp = 40;
         @SerializedName("isletChest") public boolean isletChest = true;
         @SerializedName("chestCalmMin") public int chestCalmMin = 2;
         @SerializedName("chestCalmMax") public int chestCalmMax = 4;

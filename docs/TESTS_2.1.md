@@ -79,6 +79,21 @@
 - [ ] Le pont de cristal ne retire aucun bloc de l'île principale en partant
 - [ ] `/ws rift islets chest` : arrivée immédiate (pendant le Siège) ; `/ws rift islets` montre son état
 
+## 7. Brise-pont
+- [ ] Modèle et texture : carapace violet sombre en 3 plaques, veines cyan lumineuses, 5 épines de cristal, point faible cyan sur le dos, 2 grands yeux cyan + 2 petits violets, 6 pattes ; pieds posés au sol (ni enfoncés ni flottants)
+- [ ] Animation de marche (trépied) ; pose « ronge » (corps plaqué, tête plongée, mandibles qui claquent)
+- [ ] Œuf d'apparition dans l'onglet créatif, nom fr/en
+- [ ] Début de chaque Assaut du Siège : 1 à 2 par pont construit (3 en même temps max) ; ~3 s avant : particules violettes et raclement sous le segment
+- [ ] Il grimpe depuis le vide à travers le bord du pont, se pose sur le tablier et ronge : fissures (briques fendues, gouttes de lave), segment effondré en ~15 s, puis il saute sur le segment suivant (vers l'îlot d'abord)
+- [ ] Plus aucun segment debout : il redescend dans le vide
+- [ ] Mord les joueurs tout près pendant qu'il ronge
+- [ ] Coup dans le dos ou depuis au-dessus (flèche plongeante) : dégâts ×2 (éclat cyan, son de cristal)
+- [ ] Recul renforcé : un bon coup (Recul / sprint) le jette dans le vide → mort immédiate
+- [ ] Lanterne de vigie : il brille, même sous le pont
+- [ ] Début du Calme : les Brise-pont restants redescendent dans le vide ; après le Siège : plus aucun
+- [ ] `/ws rift islets breaker` : un Brise-pont sous le premier pont construit (test)
+- [ ] Éditeur : section Brise-pont (activé, nombre par pont, max, durée de rongement, PV)
+
 ## Sauvegarde et reprise (§ A)
 - [ ] Quitter / relancer pendant le Siège : îlot reposé, pont acheté reposé avec ses segments effondrés, filons vivants reposés
 - [ ] Reprise à la Contre-offensive : îlot et pont toujours là

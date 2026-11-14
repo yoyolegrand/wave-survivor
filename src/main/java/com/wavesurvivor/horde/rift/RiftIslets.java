@@ -42,6 +42,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -107,6 +108,7 @@ public final class RiftIslets {
         float[] hp = new float[SEGMENTS];
         boolean[] down = new boolean[SEGMENTS];
         final List<Piece> queue = new ArrayList<>();   // blocs encore à poser (construction ou réparation)
+        final List<List<BlockPos>> deck = new ArrayList<>();   // milieu du tablier, par segment (Brise-pont)
         int bStart, bEnd;        // distance au centre du début et de la fin du pont
         // île minière
         final List<Slot> slots = new ArrayList<>();
@@ -310,6 +312,7 @@ public final class RiftIslets {
                 spawnGuards(l, i);
             }
         }
+        clearBreakers(l);   // les Brise-pont redescendent dans le vide
         if (RiftManager.phasePublic() != RiftManager.Phase.SIEGE) clearRaiders(l);   // § C : plus de reprise après le Siège
         else {
             if (get(Kind.MERCHANT) != null) VoidMerchant.onSiegeCalm(l);          // arrivée du Marchand, stock renouvelé
@@ -856,6 +859,7 @@ public final class RiftIslets {
     public static void onAssault(MinecraftServer server) {
         ServerLevel cl = server.getLevel(RiftManager.RIFT_DIM);
         if (cl != null && active()) RiftChestIslet.onAssault(cl);   // l'île au coffre repart
+        if (cl != null && active() && RiftManager.phasePublic() == RiftManager.Phase.SIEGE) spawnBreakers(cl, cl.getGameTime());   // Brise-pont
         Islet a = get(Kind.ALTAR);
         if (a == null || RiftManager.phasePublic() != RiftManager.Phase.SIEGE) return;
         ServerLevel l = server.getLevel(RiftManager.RIFT_DIM);
@@ -1011,6 +1015,145 @@ public final class RiftIslets {
         return true;
     }
 
+    // ─── Brise-pont (§ 8) ───
+
+    /** Un Brise-pont annoncé : particules violettes et raclement sous le segment, puis il grimpe. */
+    private record Pending(Islet islet, int seg, BlockPos deck, long when) {}
+
+    private static final List<Pending> PENDING = new ArrayList<>();
+    private static final List<UUID> BREAKERS = new ArrayList<>();
+    private static final net.minecraft.core.particles.DustParticleOptions VIOLET =
+            new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.69f, 0.3f, 1f), 1.6f);
+
+    private static BlockPos deckCenter(Islet i, int seg) {
+        List<BlockPos> d = i.deck.get(seg);
+        return d.isEmpty() ? null : d.get(d.size() / 2);
+    }
+
+    private static int nextIntact(Islet i, int seg) {
+        for (int s = seg + 1; s < SEGMENTS; s++) if (!i.down[s]) return s;   // vers l'îlot d'abord
+        for (int s = seg - 1; s >= 0; s--) if (!i.down[s]) return s;
+        return -1;
+    }
+
+    /** Début d'un Assaut du Siège : 1 à 2 Brise-pont par pont construit (3 en même temps au plus). */
+    private static void spawnBreakers(ServerLevel l, long now) {
+        HordeConfigMultiData.RiftSettings s = rs();
+        if (!s.breakerEnabled) return;
+        BREAKERS.removeIf(id -> !(l.getEntity(id) instanceof com.wavesurvivor.entity.BrisePont b) || !b.isAlive());
+        int room = Math.max(0, s.breakerMax) - BREAKERS.size() - PENDING.size();
+        for (Islet i : ISLETS) {
+            if (!i.bought || room <= 0) continue;
+            List<Integer> intact = new ArrayList<>();
+            for (int k = 0; k < SEGMENTS; k++) if (!i.down[k] && deckCenter(i, k) != null) intact.add(k);
+            if (intact.isEmpty()) continue;
+            int lo = Math.max(0, s.breakerMin), hi = Math.max(lo, s.breakerPer);
+            int n = Math.min(room, lo + RNG.nextInt(hi - lo + 1));
+            for (int k = 0; k < n; k++) {
+                int seg = intact.get(RNG.nextInt(intact.size()));
+                PENDING.add(new Pending(i, seg, deckCenter(i, seg), now + 60 + k * 40L));
+                room--;
+            }
+        }
+    }
+
+    private static Vec3 below(Islet i, BlockPos deck) {
+        double side = RNG.nextBoolean() ? 3.5 : -3.5;
+        return new Vec3(deck.getX() + 0.5 - i.dz * side, deck.getY() - 5, deck.getZ() + 0.5 + i.dx * side);
+    }
+
+    /** Chaque tick : annonces, apparitions, rongement (toutes les secondes). */
+    private static void breakerTick(ServerLevel l, long now) {
+        for (java.util.Iterator<Pending> it = PENDING.iterator(); it.hasNext(); ) {
+            Pending pd = it.next();
+            BlockPos d = pd.deck();
+            if (now % 5 == 0) {
+                l.sendParticles(VIOLET, d.getX() + 0.5, d.getY() - 2, d.getZ() + 0.5, 12, 1.2, 1.5, 1.2, 0.02);
+                l.sendParticles(ParticleTypes.REVERSE_PORTAL, d.getX() + 0.5, d.getY() - 3, d.getZ() + 0.5, 6, 1, 1, 1, 0.05);
+            }
+            if (now % 15 == 0) l.playSound(null, d, SoundEvents.GRINDSTONE_USE, SoundSource.HOSTILE, 1.2f, 0.5f);
+            if (now < pd.when()) continue;
+            it.remove();
+            if (!pd.islet().bought || pd.islet().down[pd.seg()]) continue;
+            com.wavesurvivor.entity.BrisePont b = com.wavesurvivor.registry.ModEntities.BRISE_PONT.get().create(l);
+            if (b == null) continue;
+            Vec3 from = below(pd.islet(), d);
+            var a = b.getAttribute(Attributes.MAX_HEALTH);
+            if (a != null) { a.setBaseValue(Math.max(4, Math.min(2000, rs().breakerHp))); b.setHealth(b.getMaxHealth()); }
+            float yaw = (float) Math.toDegrees(Math.atan2(-(d.getX() + 0.5 - from.x), d.getZ() + 0.5 - from.z));
+            b.moveTo(from.x, from.y, from.z, yaw, 0f);
+            b.isletKind = pd.islet().kind.ordinal();
+            b.segment = pd.seg();
+            b.addTag(GUARD_TAG);
+            b.startClimb(from, new Vec3(d.getX() + 0.5, d.getY() + 1, d.getZ() + 0.5), d.getY());
+            if (l.addFreshEntity(b)) {
+                BREAKERS.add(b.getUUID());
+                EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.breaker.climb", pd.islet().name())), "minecraft:cracked_deepslate_bricks", EventFeedPacket.DANGER, true);
+            }
+        }
+        if (now % 20 != 0 || BREAKERS.isEmpty()) return;
+        float dps = segmentHp() / Math.max(3, Math.min(120, rs().breakerGnawSeconds));
+        for (java.util.Iterator<UUID> it = BREAKERS.iterator(); it.hasNext(); ) {
+            if (!(l.getEntity(it.next()) instanceof com.wavesurvivor.entity.BrisePont b) || !b.isAlive()) { it.remove(); continue; }
+            if (b.climbing() || !b.gnawing()) continue;
+            Islet i = b.isletKind >= 0 && b.isletKind < Kind.values().length ? get(Kind.values()[b.isletKind]) : null;
+            if (i == null || !i.bought) { retreat(l, b); it.remove(); continue; }
+            // segment sous ses pattes (il a pu être poussé)
+            int seg = b.segment;
+            double best = 9;
+            for (int k = 0; k < SEGMENTS; k++) {
+                for (BlockPos p : i.deck.get(k)) {
+                    double dd = p.distToCenterSqr(b.getX(), p.getY() + 0.5, b.getZ());
+                    if (dd < best) { best = dd; seg = k; }
+                }
+            }
+            if (seg < 0 || i.down[seg]) {
+                int nx = seg < 0 ? -1 : nextIntact(i, seg);
+                if (nx < 0) { retreat(l, b); it.remove(); continue; }
+                b.segment = nx;
+                b.hopTo(Vec3.atBottomCenterOf(deckCenter(i, nx).above()));
+                continue;
+            }
+            b.segment = seg;
+            crack(l, i, seg);
+            if (i.hp[seg] - dps <= 0) {   // il saute sur le segment suivant juste avant l'effondrement
+                int nx = nextIntact(i, seg);
+                if (nx >= 0) { b.segment = nx; b.hopTo(Vec3.atBottomCenterOf(deckCenter(i, nx).above())); }
+                else { retreat(l, b); it.remove(); }
+            }
+            damageSegment(l, i.kind, seg, dps);
+        }
+    }
+
+    /** Fissures orange qui s'étendent sur le tablier rongé. */
+    private static void crack(ServerLevel l, Islet i, int seg) {
+        List<BlockPos> d = i.deck.get(seg);
+        if (d.isEmpty()) return;
+        for (int k = 0; k < 2; k++) {
+            BlockPos p = d.get(RNG.nextInt(d.size()));
+            for (int o = -1; o <= 1; o++) {
+                BlockPos q = p.offset((int) Math.round(-i.dz * o), 0, (int) Math.round(i.dx * o));
+                BlockState st = l.getBlockState(q);
+                if (st.is(Blocks.DEEPSLATE_BRICKS) || st.is(Blocks.POLISHED_DEEPSLATE)) {
+                    if (RNG.nextInt(3) == 0) l.setBlock(q, Blocks.CRACKED_DEEPSLATE_BRICKS.defaultBlockState(), 3);
+                    l.sendParticles(ParticleTypes.LAVA, q.getX() + 0.5, q.getY() + 1, q.getZ() + 0.5, 1, 0.3, 0, 0.3, 0);
+                }
+            }
+        }
+    }
+
+    /** Le Brise-pont redescend dans le vide (Calme, plus rien à ronger). */
+    private static void retreat(ServerLevel l, Entity e) {
+        l.sendParticles(ParticleTypes.REVERSE_PORTAL, e.getX(), e.getY() + 0.5, e.getZ(), 30, 0.5, 0.5, 0.5, 0.2);
+        e.discard();
+    }
+
+    private static void clearBreakers(ServerLevel l) {
+        PENDING.clear();
+        for (UUID id : BREAKERS) { Entity e = l.getEntity(id); if (e != null) retreat(l, e); }
+        BREAKERS.clear();
+    }
+
     // ─── Le pont ───
 
     private static float segmentHp() {
@@ -1023,6 +1166,8 @@ public final class RiftIslets {
      */
     private static void planBridge(Islet i) {
         i.pieces.clear();
+        i.deck.clear();
+        for (int k = 0; k < SEGMENTS; k++) i.deck.add(new ArrayList<>());
         BlockPos c = RiftManager.CENTER;
         int y = c.getY();
         int L = Math.max(4, i.bEnd - i.bStart);
@@ -1040,7 +1185,10 @@ public final class RiftIslets {
                 int bz = (int) Math.round(c.getZ() + 0.5 + i.dz * d + i.dx * o - 0.5);
                 if (!seen.add(BlockPos.asLong(bx, 0, bz))) continue;
                 List<Piece> col = new ArrayList<>();
-                if (o == 0) col.add(new Piece(new BlockPos(bx, y - 1, bz), under, seg));
+                if (o == 0) {
+                    col.add(new Piece(new BlockPos(bx, y - 1, bz), under, seg));
+                    i.deck.get(seg).add(new BlockPos(bx, y, bz));
+                }
                 col.add(new Piece(new BlockPos(bx, y, bz), Math.abs(o) == 2 ? edge : ((a + o) % 3 == 0 ? deckB : deck), seg));
                 if (Math.abs(o) == 2) {
                     if (lantern) {
@@ -1091,6 +1239,7 @@ public final class RiftIslets {
     static void tick(ServerLevel l, long now) {
         if (!active()) return;
         if (now % 10 == 0) altarTick(l, now);
+        breakerTick(l, now);
         if (get(Kind.MERCHANT) != null) VoidMerchant.tick(l, now);
         RiftChestIslet.tick(l, now);
         for (Islet i : ISLETS) {
@@ -1298,7 +1447,10 @@ public final class RiftIslets {
                 for (UUID id : i.guards) { Entity e = l.getEntity(id); if (e != null) e.discard(); }
             }
             clearRaiders(l);
+            clearBreakers(l);
         }
+        PENDING.clear();
+        BREAKERS.clear();
         VoidMerchant.clear(l);
         RiftChestIslet.clear(l);
         ISLETS.clear();
@@ -1336,6 +1488,20 @@ public final class RiftIslets {
         onGrowthDone(l, siegeFinal);
         onSiegeStart(l, false);
         return true;
+    }
+
+    /** Test : un Brise-pont sous le premier pont construit (segment au hasard). */
+    static boolean debugBreaker(ServerLevel l) {
+        for (Islet i : ISLETS) {
+            if (!i.bought) continue;
+            List<Integer> intact = new ArrayList<>();
+            for (int k = 0; k < SEGMENTS; k++) if (!i.down[k] && deckCenter(i, k) != null) intact.add(k);
+            if (intact.isEmpty()) return false;
+            int seg = intact.get(RNG.nextInt(intact.size()));
+            PENDING.add(new Pending(i, seg, deckCenter(i, seg), l.getGameTime() + 60));
+            return true;
+        }
+        return false;
     }
 
     /** Test : capture l'autel tout de suite. */

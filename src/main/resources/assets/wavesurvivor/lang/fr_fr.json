@@ -241,5 +241,7 @@
   "item.wavesurvivor.kit_pont": "Kit de pont",
   "item.wavesurvivor.kit_engin": "Kit d'engin",
   "item.wavesurvivor.lanterne_vigie": "Lanterne de vigie",
-  "item.wavesurvivor.relance_benediction": "Relance de bénédiction"
+  "item.wavesurvivor.relance_benediction": "Relance de bénédiction",
+  "entity.wavesurvivor.brise_pont": "Brise-pont",
+  "item.wavesurvivor.brise_pont_spawn_egg": "Œuf d'apparition de Brise-pont"
 }

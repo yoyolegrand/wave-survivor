@@ -293,6 +293,8 @@ public class ModItems {
     public static final RegistryObject<Item> NEANTIDE_SPAWN_EGG = ITEMS.register("neantide_spawn_egg",
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.NEANTIDE, 0x1A1030, 0xBA5CFF, new Item.Properties()));
     /** 2.0 — Œufs d'apparition des monstres de la Faille. */
+    public static final RegistryObject<Item> BRISE_PONT_SPAWN_EGG = ITEMS.register("brise_pont_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.BRISE_PONT, 0x231A33, 0x45F2FF, new Item.Properties()));
     public static final RegistryObject<Item> GEODON_SPAWN_EGG = ITEMS.register("geodon_spawn_egg",
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.GEODON, 0x1B1428, 0xC37BFF, new Item.Properties()));
     public static final RegistryObject<Item> ANCREUR_SPAWN_EGG = ITEMS.register("ancreur_spawn_egg",
@@ -479,6 +481,7 @@ public class ModItems {
                         output.accept(STONE_BRUTE_SPAWN_EGG.get());
                         output.accept(NEANTIDE_SPAWN_EGG.get());
                         output.accept(GEODON_SPAWN_EGG.get());
+                        output.accept(BRISE_PONT_SPAWN_EGG.get());
                         output.accept(ANCREUR_SPAWN_EGG.get());
                         output.accept(BOLIDE_SPAWN_EGG.get());
                         output.accept(ECLAT_NEANT_SPAWN_EGG.get());

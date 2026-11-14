@@ -4512,5 +4512,12 @@
   "ui.rift.chest_calm": "Calme",
   "ui.rift.chest_guards": "Gardiens",
   "ui.rift.chest_guard_hp": "PV %",
-  "ui.rift.chest_boss_hp": "PV du Gardien"
+  "ui.rift.chest_boss_hp": "PV du Gardien",
+  "rift.breaker.climb": "⚠ Un Brise-pont grimpe sous le pont vers l'{0} ! Frappez son dos (point faible) ou jetez-le dans le vide.",
+  "ui.rift.sec_breaker": "Brise-pont",
+  "ui.rift.breaker_on": "Brise-pont",
+  "ui.rift.breaker_per": "Par pont",
+  "ui.rift.breaker_max": "Max",
+  "ui.rift.breaker_gnaw": "Ronge (s)",
+  "ui.rift.breaker_hp": "PV"
 }

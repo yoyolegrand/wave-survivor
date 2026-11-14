@@ -38,6 +38,7 @@ public final class RiftCommand {
                         .then(Commands.literal("capture").executes(ctx -> islets(ctx.getSource(), "capture", -1)))
                         .then(Commands.literal("merchant").executes(ctx -> islets(ctx.getSource(), "merchant", -1)))
                         .then(Commands.literal("chest").executes(ctx -> islets(ctx.getSource(), "chest", -1)))
+                        .then(Commands.literal("breaker").executes(ctx -> islets(ctx.getSource(), "breaker", -1)))
                         .then(Commands.literal("break").then(Commands.argument("seg", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 5))
                                 .executes(ctx -> islets(ctx.getSource(), "break", com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "seg") - 1))))
                         .then(Commands.literal("repair").then(Commands.argument("seg", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 5))
@@ -204,6 +205,7 @@ public final class RiftCommand {
         else if ("capture".equals(action)) ok = RiftIslets.debugCapture(rd);
         else if ("merchant".equals(action)) ok = VoidMerchant.debugArrive(rd);
         else if ("chest".equals(action)) ok = RiftChestIslet.debugArrive(rd);
+        else if ("breaker".equals(action)) ok = RiftIslets.debugBreaker(rd);
         else if ("break".equals(action)) ok = RiftIslets.debugSegment(rd, seg, false);
         else if ("repair".equals(action)) ok = RiftIslets.debugSegment(rd, seg, true);
         if (!ok) {

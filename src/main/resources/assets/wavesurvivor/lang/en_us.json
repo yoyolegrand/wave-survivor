@@ -241,5 +241,7 @@
   "item.wavesurvivor.kit_pont": "Bridge Kit",
   "item.wavesurvivor.kit_engin": "Engine Kit",
   "item.wavesurvivor.lanterne_vigie": "Watch Lantern",
-  "item.wavesurvivor.relance_benediction": "Blessing Reroll"
+  "item.wavesurvivor.relance_benediction": "Blessing Reroll",
+  "entity.wavesurvivor.brise_pont": "Bridgebreaker",
+  "item.wavesurvivor.brise_pont_spawn_egg": "Bridgebreaker Spawn Egg"
 }

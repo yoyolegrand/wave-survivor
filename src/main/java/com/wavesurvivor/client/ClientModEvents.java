@@ -83,6 +83,7 @@ public class ClientModEvents {
         event.registerLayerDefinition(RootlingModel.LAYER, RootlingModel::createBodyLayer); // Rootling (Corrompus, modèle sur mesure)
         event.registerLayerDefinition(StoneBruteModel.MODEL_LAYER, StoneBruteModel::createBodyLayer); // Stone Brute (Corrompus, haute résolution)
         event.registerLayerDefinition(NeantideModel.MODEL_LAYER, NeantideModel::createBodyLayer); // Néantide (haute résolution)
+        event.registerLayerDefinition(BrisePontModel.MODEL_LAYER, BrisePontModel::createBodyLayer);   // 2.1 : Brise-pont
         event.registerLayerDefinition(GeodonModel.MODEL_LAYER, GeodonModel::createBodyLayer);   // 2.0 : monstres de la Faille (Claude chat)
         event.registerLayerDefinition(AncreurModel.MODEL_LAYER, AncreurModel::createBodyLayer);
         event.registerLayerDefinition(BolideModel.MODEL_LAYER, BolideModel::createBodyLayer);
@@ -131,6 +132,7 @@ public class ClientModEvents {
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.STONE_BRUTE.get(), StoneBruteRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.NEANTIDE.get(), NeantideRenderer::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.GEODON.get(), FailleRenderers.Geodon::new);
+        event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.BRISE_PONT.get(), BrisePontRenderer::new);   // 2.1
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.ANCREUR.get(), FailleRenderers.Ancreur::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.BOLIDE.get(), FailleRenderers.Bolide::new);
         event.registerEntityRenderer(com.wavesurvivor.registry.ModEntities.DEVOREUR.get(), DevoreurRenderer::new);

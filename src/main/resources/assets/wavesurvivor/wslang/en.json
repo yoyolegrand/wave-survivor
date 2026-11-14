@@ -5273,5 +5273,12 @@
   "ui.rift.chest_calm": "Calm",
   "ui.rift.chest_guards": "Guardians",
   "ui.rift.chest_guard_hp": "HP %",
-  "ui.rift.chest_boss_hp": "Guardian HP"
+  "ui.rift.chest_boss_hp": "Guardian HP",
+  "rift.breaker.climb": "⚠ A Bridgebreaker is climbing under the bridge to the {0}! Hit its back (weak spot) or knock it into the void.",
+  "ui.rift.sec_breaker": "Bridgebreaker",
+  "ui.rift.breaker_on": "Bridgebreaker",
+  "ui.rift.breaker_per": "Per bridge",
+  "ui.rift.breaker_max": "Max",
+  "ui.rift.breaker_gnaw": "Gnaw (s)",
+  "ui.rift.breaker_hp": "HP"
 }
