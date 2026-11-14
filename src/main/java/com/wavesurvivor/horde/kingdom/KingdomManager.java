@@ -669,6 +669,8 @@ public final class KingdomManager {
         if (!rush && cfg.finalBoss && hasFinalBoss() && !finalMarked && cycle >= finalBossWave()) markFinalForced();
         phase = Phase.ASSAULT;
         KingdomReport.start(cycle); // bilan de fin d'Assaut : compteurs remis à zéro
+        // 2.1 — Siège de la Faille : un groupe de monstres part reprendre l'île-autel
+        if (!rush && com.wavesurvivor.horde.rift.RiftManager.kingdomSiege()) com.wavesurvivor.horde.rift.RiftIslets.onAssault(level.getServer());
         com.wavesurvivor.horde.kingdom.vocation.VocationFx.onAssaultStart(level.getServer()); // Vocations : ultimes déclenchés à chaque Assaut
         KingdomRoles.sync(level.getServer());
         int budget = rush ? 0 : budgetFor(cycle);

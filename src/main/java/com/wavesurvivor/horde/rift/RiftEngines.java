@@ -59,7 +59,8 @@ final class RiftEngines {
 
     /** Héritage de la Faille 1 (Cœur d'acier) : +20 % de dégâts des engins si un joueur connecté l'a. */
     private static float boost(ServerLevel l) {
-        return com.wavesurvivor.horde.renaissance.RiftLegacy.anyone(l.getServer(), 1) ? 1.2f : 1f;
+        return (com.wavesurvivor.horde.renaissance.RiftLegacy.anyone(l.getServer(), 1) ? 1.2f : 1f)
+                * RiftIslets.arsenalMul();   // 2.1 — bonus Arsenal de l'île-autel
     }
 
     /** Engins enrayés par le rugissement du Titan jusqu'à ce tick de jeu. */

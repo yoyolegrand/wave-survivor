@@ -31,6 +31,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -40,6 +41,7 @@ import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -56,7 +58,7 @@ import java.util.UUID;
 
 /**
  * 2.1 — ÎLOTS DU SIÈGE et leurs ponts (fiche docs/faille/v2_1_ilots/FICHE_2_1_0.md, § 0 à 1 ; sauvegarde § A, placement § B,
- * après le Siège § C, Calme prolongé § E).
+ * après le Siège § C, Calme prolongé § E) ; île-autel § 2 (capture, bonus Rempart / Arsenal / Prospérité, reprise à chaque Assaut).
  * <ul>
  *   <li>Terrain posé à la fin de l'agrandissement de l'île, à « isletGap » blocs du bord, jamais côté forteresse (est) ni Titan (sud).</li>
  *   <li>Pont acheté au Monolithe (bois + pierre du trésor) : se construit tout seul, blocs qui arrivent en lévitation ; 5 segments à PV,
@@ -71,7 +73,7 @@ public final class RiftIslets {
     private RiftIslets() {}
 
     public enum Kind {
-        MINE("mine", 18);
+        MINE("mine", 18), ALTAR("altar", 12);
         final String id;
         final int radius;
         Kind(String id, int radius) { this.id = id; this.radius = radius; }
@@ -109,6 +111,16 @@ public final class RiftIslets {
         // île minière
         final List<Slot> slots = new ArrayList<>();
         final List<UUID> guards = new ArrayList<>();
+        // île-autel
+        boolean captured;
+        Bonus bonus;             // null = pas encore choisi pour cette capture
+        float progress;          // 0..1 (capture, puis reprise par les monstres)
+        int lit = -1;            // piliers allumés affichés
+        boolean beamOn, retakeWarned;
+        final List<BlockPos> pillarTops = new ArrayList<>();
+        final List<BlockPos> crystal = new ArrayList<>();
+        final List<UUID> raiders = new ArrayList<>();
+        int top;                 // hauteur du dallage (y monde)
 
         Islet(Kind kind, String side, double dx, double dz, int cx, int cz, int r) {
             this.kind = kind; this.side = side; this.dx = dx; this.dz = dz; this.cx = cx; this.cz = cz; this.r = r;
@@ -120,6 +132,14 @@ public final class RiftIslets {
         }
 
         String name() { return WSLang.t("rift.islet." + kind.id); }
+    }
+
+    /** Bonus de l'île-autel (un seul actif, choisi à chaque capture). */
+    public enum Bonus {
+        RAMPART("rampart", "minecraft:shield"), ARSENAL("arsenal", "minecraft:crossbow"), PROSPERITY("prosperity", "minecraft:gold_ingot");
+        final String id, icon;
+        Bonus(String id, String icon) { this.id = id; this.icon = icon; }
+        String label() { return WSLang.t("rift.altar.bonus." + id); }
     }
 
     static final int SEGMENTS = 5;
@@ -168,8 +188,23 @@ public final class RiftIslets {
     private static List<Islet> planned(HordeConfigMultiData.RiftSettings s, int siegeFinal) {
         List<Islet> out = new ArrayList<>();
         if (s == null || !s.siegeEnabled || !s.isletsEnabled) return out;
-        if (s.isletMine) out.add(make(Kind.MINE, s.isletMineSide, s, siegeFinal));
+        java.util.Set<String> used = new java.util.HashSet<>();
+        if (s.isletMine) out.add(make(Kind.MINE, freeSide(s.isletMineSide, "north", used), s, siegeFinal));
+        if (s.isletAltar) out.add(make(Kind.ALTAR, freeSide(s.isletAltarSide, "west", used), s, siegeFinal));
         return out;
+    }
+
+    private static final String[] SIDES = {"north", "west", "northwest", "southwest", "northeast"};
+
+    /** Côté demandé s'il est libre (et autorisé), sinon le premier côté libre : deux îlots ne se chevauchent jamais. */
+    private static String freeSide(String want, String def, java.util.Set<String> used) {
+        String w = want == null ? def : want.toLowerCase();
+        boolean ok = false;
+        for (String sd : SIDES) if (sd.equals(w)) ok = true;
+        if (!ok) w = def;
+        if (used.add(w)) return w;
+        for (String sd : SIDES) if (used.add(sd)) return sd;
+        return w;
     }
 
     private static Islet make(Kind k, String side, HordeConfigMultiData.RiftSettings s, int siegeFinal) {
@@ -215,6 +250,7 @@ public final class RiftIslets {
         for (Islet i : planned(rs(), siegeFinal)) {
             Random r = new Random(seed ^ (i.kind.ordinal() * 0x9E3779B97F4A7C15L));
             if (i.kind == Kind.MINE) buildMine(l, i, r);
+            else if (i.kind == Kind.ALTAR) buildAltar(l, i, r);
             planBridge(i);
             java.util.Arrays.fill(i.hp, segmentHp());
             ISLETS.add(i);
@@ -258,6 +294,7 @@ public final class RiftIslets {
                 spawnGuards(l, i);
             }
         }
+        if (RiftManager.phasePublic() != RiftManager.Phase.SIEGE) clearRaiders(l);   // § C : plus de reprise après le Siège
         int players = 0;
         for (ServerPlayer p : l.players()) if (!p.isSpectator()) players++;
         int bonus = players <= 1 ? s.calmBonusSolo : players == 2 ? s.calmBonusDuo : 0;
@@ -571,6 +608,286 @@ public final class RiftIslets {
         if (n > 0) EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.mine.guards")), "minecraft:iron_sword", EventFeedPacket.DANGER, false);
     }
 
+    // ─── Île-autel ───
+
+    private static final BlockState CRYS_OFF = Blocks.TINTED_GLASS.defaultBlockState();
+    private static final BlockState CRYS_ON = Blocks.PEARLESCENT_FROGLIGHT.defaultBlockState();
+    private static final int BEAM_FROM = 12, BEAM_TO = 44;
+    private static final double RING = 5.5;
+
+    /**
+     * Île-autel (rayon 12) d'après sources/altar.py : rocher à dessus plat dallé en damier, cercle de capture violet lumineux (rayon 5),
+     * estrade à 2 marches aux coins dorés, grand cristal flottant (éteint tant que l'autel n'est pas capturé), 4 piliers sombres
+     * coiffés d'un cristal aux points cardinaux (rayon 8), allée dallée vers le pont.
+     */
+    private static void buildAltar(ServerLevel l, Islet i, Random rnd) {
+        int y0 = RiftManager.CENTER.getY();
+        int R = i.r;
+        i.top = y0 + 1;
+        long sA = seed + 61, sB = seed + 73;
+        BlockState deep = Blocks.DEEPSLATE.defaultBlockState(), tuff = Blocks.TUFF.defaultBlockState(), moss = Blocks.MOSS_BLOCK.defaultBlockState(),
+                polished = Blocks.POLISHED_DEEPSLATE.defaultBlockState(), tiles = Blocks.DEEPSLATE_TILES.defaultBlockState(),
+                dark = Blocks.COBBLED_DEEPSLATE.defaultBlockState();
+        // rocher, dessus plat ; cône du dessous déchiqueté
+        for (int x = i.cx - R - 3; x <= i.cx + R + 3; x++) {
+            for (int z = i.cz - R - 3; z <= i.cz + R + 3; z++) {
+                double ox = x + 0.5 - (i.cx + 0.5), oz = z + 0.5 - (i.cz + 0.5);
+                double r0 = Math.hypot(ox, oz);
+                double rr = r0 + (noise(sA, x, z, 6) - 0.5) * 2.4;
+                if (rr > R) continue;
+                double nB = noise(sB, x, z, 3), nA = noise(sA, x, z, 6);
+                BlockState top = r0 <= 9 ? (Math.floorMod(x + z, 2) == 0 ? tiles : polished) : nB > 0.6 ? tuff : nA < 0.3 ? moss : deep;
+                set(l, new BlockPos(x, y0 + 1, z), top);
+                set(l, new BlockPos(x, y0, z), deep);
+                int dep = (int) (3 + 15 * Math.pow(1 - rr / R, 0.9) + (nB - 0.5) * 6);
+                if (rnd.nextDouble() < 0.07) dep += 3 + rnd.nextInt(5);
+                for (int y = -1; y > -dep; y--) set(l, new BlockPos(x, y0 + y, z), rnd.nextDouble() > 0.25 ? deep : dark);
+            }
+        }
+        // allée dallée vers le pont (côté île principale = u négatif)
+        for (int u = -3; u >= -R; u--) {
+            for (int v = -1; v <= 1; v++) {
+                BlockPos p = i.local(u, y0 + 1, v);
+                if (!l.getBlockState(p).isAir()) set(l, p, Blocks.POLISHED_DEEPSLATE.defaultBlockState());
+            }
+        }
+        // cercle de capture incrusté (rayon 5)
+        for (int a = 0; a < 360; a += 3) {
+            int x = (int) Math.round(i.cx + 5 * Math.cos(Math.toRadians(a))), z = (int) Math.round(i.cz + 5 * Math.sin(Math.toRadians(a)));
+            set(l, new BlockPos(x, y0 + 1, z), Blocks.PEARLESCENT_FROGLIGHT.defaultBlockState());
+        }
+        // estrade 5 × 5 en 2 marches, coins dorés, autel
+        BlockState step = Blocks.POLISHED_DEEPSLATE.defaultBlockState(), altar = Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState(),
+                gold = Blocks.GOLD_BLOCK.defaultBlockState();
+        for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) set(l, new BlockPos(i.cx + dx, y0 + 2, i.cz + dz), step);
+        for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) set(l, new BlockPos(i.cx + dx, y0 + 3, i.cz + dz), altar);
+        for (int[] c : new int[][]{{-2, -2}, {-2, 2}, {2, -2}, {2, 2}}) set(l, new BlockPos(i.cx + c[0], y0 + 3, i.cz + c[1]), gold);
+        set(l, new BlockPos(i.cx, y0 + 4, i.cz), Blocks.CHISELED_POLISHED_BLACKSTONE.defaultBlockState());
+        set(l, new BlockPos(i.cx, y0 + 5, i.cz), Blocks.GILDED_BLACKSTONE.defaultBlockState());
+        // grand cristal flottant
+        i.crystal.clear();
+        int[][] cr = {{0, 7, 0}, {0, 8, 0}, {0, 9, 0}, {0, 10, 0}, {1, 8, 0}, {-1, 8, 0}, {0, 8, 1}, {0, 8, -1}, {1, 9, 0}, {-1, 9, 0}, {0, 9, 1}, {0, 9, -1}};
+        for (int[] c : cr) i.crystal.add(new BlockPos(i.cx + c[0], y0 + c[1], i.cz + c[2]));
+        // 4 piliers aux points cardinaux (rayon 8), sommet en cristal
+        i.pillarTops.clear();
+        BlockState pillar = Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState();
+        for (int[] c : new int[][]{{0, -8}, {8, 0}, {0, 8}, {-8, 0}}) {
+            int x = i.cx + c[0], z = i.cz + c[1];
+            for (int y = 2; y <= 6; y++) set(l, new BlockPos(x, y0 + y, z), pillar);
+            set(l, new BlockPos(x, y0 + 7, z), Blocks.GILDED_BLACKSTONE.defaultBlockState());
+            i.pillarTops.add(new BlockPos(x, y0 + 8, z));
+        }
+        i.captured = false;
+        i.bonus = null;
+        i.progress = 0f;
+        i.lit = -1;
+        i.beamOn = true;   // force l'effacement du faisceau au premier affichage
+        altarVisual(l, i);
+    }
+
+    /** Piliers allumés selon la progression, cristal et faisceau selon la capture. */
+    private static void altarVisual(ServerLevel l, Islet i) {
+        int n = i.captured ? (int) Math.ceil(i.progress * 4 - 1e-4) : (int) Math.floor(i.progress * 4 + 1e-4);
+        n = Math.max(0, Math.min(4, n));
+        if (n != i.lit) {
+            for (int k = 0; k < i.pillarTops.size(); k++) l.setBlock(i.pillarTops.get(k), k < n ? CRYS_ON : CRYS_OFF, 3);
+            if (i.lit >= 0 && n > i.lit) l.playSound(null, i.pillarTops.get(Math.min(3, n - 1)), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 2.5f, 0.7f + 0.15f * n);
+            i.lit = n;
+        }
+        boolean on = i.captured;
+        for (BlockPos p : i.crystal) {
+            BlockState want = on ? CRYS_ON : CRYS_OFF;
+            if (l.getBlockState(p) != want) l.setBlock(p, want, 3);
+        }
+        if (on != i.beamOn) {   // faisceau : colonne de barres de l'End au-dessus du cristal
+            BlockState rod = Blocks.END_ROD.defaultBlockState();
+            for (int y = BEAM_FROM; y <= BEAM_TO; y++) {
+                BlockPos p = new BlockPos(i.cx, RiftManager.CENTER.getY() + y, i.cz);
+                l.setBlock(p, on ? rod : Blocks.AIR.defaultBlockState(), 3);
+            }
+            i.beamOn = on;
+        }
+    }
+
+    private static float captureSeconds(int players) {
+        float base = Math.max(5, Math.min(600, rs().altarCaptureSeconds));
+        return base / (1f + (Math.max(1, players) - 1) / 3f);   // 30 s seul, ~15 s à 4
+    }
+
+    /** Toutes les 10 ticks : capture (joueurs dans le cercle), reprise (monstres seuls dans le cercle), bonus Rempart, raid. */
+    private static void altarTick(ServerLevel l, long now) {
+        Islet a = get(Kind.ALTAR);
+        if (a == null) return;
+        RiftManager.Phase ph = RiftManager.phasePublic();
+        boolean siege = ph == RiftManager.Phase.SIEGE;
+        boolean open = siege || ph == RiftManager.Phase.COUNTER || ph == RiftManager.Phase.TITAN;
+        double cx = a.cx + 0.5, cz = a.cz + 0.5;
+        AABB box = new AABB(cx - RING, a.top - 1, cz - RING, cx + RING, a.top + 7, cz + RING);
+        List<ServerPlayer> in = new ArrayList<>();
+        for (ServerPlayer p : l.players()) {
+            if (p.isSpectator() || !p.isAlive() || !box.contains(p.position())) continue;
+            if (Math.hypot(p.getX() - cx, p.getZ() - cz) <= RING) in.add(p);
+        }
+        int mobs = 0;
+        for (Mob m : l.getEntitiesOfClass(Mob.class, box, m -> m.isAlive() && m instanceof Enemy && !(m instanceof GisementEntity))) {
+            if (Math.hypot(m.getX() - cx, m.getZ() - cz) <= RING) mobs++;
+        }
+        float dt = 0.5f;
+        if (open) {
+            if (!a.captured) {
+                if (!in.isEmpty() && mobs == 0) {
+                    a.progress = Math.min(1f, a.progress + dt / captureSeconds(in.size()));
+                    if (a.progress >= 1f) capture(l, a);
+                }
+                if (!a.captured) for (ServerPlayer p : in) p.displayClientMessage(Component.literal(mobs > 0 ? WSLang.t("rift.altar.frozen")
+                        : WSLang.t("rift.altar.capturing", Math.round(a.progress * 100))), true);
+            } else if (siege && in.isEmpty() && mobs > 0) {
+                float ret = Math.max(5, Math.min(600, rs().altarRetakeSeconds));
+                a.progress = Math.max(0f, a.progress - dt / ret);
+                if (!a.retakeWarned) {
+                    a.retakeWarned = true;
+                    EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.altar.retaking")), "minecraft:amethyst_shard", EventFeedPacket.DANGER, true);
+                }
+                if (a.progress <= 0f) lose(l, a);
+            } else if (a.progress < 1f && !in.isEmpty() && mobs == 0) {   // les joueurs reviennent : l'autel se raffermit
+                a.progress = Math.min(1f, a.progress + dt / captureSeconds(in.size()));
+                if (a.progress >= 1f) a.retakeWarned = false;
+                for (ServerPlayer p : in) p.displayClientMessage(Component.literal(WSLang.t("rift.altar.capturing", Math.round(a.progress * 100))), true);
+            }
+        }
+        altarVisual(l, a);
+        // faisceau : poussière lumineuse visible de loin
+        if (a.captured && now % 20 == 0) {
+            for (ServerPlayer p : l.players()) {
+                l.sendParticles(p, ParticleTypes.END_ROD, true, cx, a.top + 14, cz, 6, 0.3, 8, 0.3, 0.02);
+                l.sendParticles(p, ParticleTypes.WITCH, true, cx, a.top + 7.5, cz, 4, 0.8, 0.8, 0.8, 0.02);
+            }
+        }
+        // Rempart : le Monolithe régénère 1 % de ses PV toutes les 10 s (pendant le Siège)
+        if (siege && a.captured && a.bonus == Bonus.RAMPART && now % 200 == 0 && com.wavesurvivor.altar.AltarDefense.isActive()) {
+            float pct = Math.max(0, Math.min(20, rs().altarRampartPct)) / 100f;
+            com.wavesurvivor.altar.AltarDefense.healMonolith(com.wavesurvivor.altar.AltarDefense.monolithMaxHp() * pct);
+        }
+        // les monstres du raid marchent vers le cercle quand ils n'ont personne à frapper
+        if (now % 20 == 0 && !a.raiders.isEmpty()) {
+            a.raiders.removeIf(id -> !(l.getEntity(id) instanceof Mob m) || !m.isAlive());
+            for (UUID id : a.raiders) {
+                if (!(l.getEntity(id) instanceof Mob m)) continue;
+                if (m.getTarget() != null && m.getTarget().isAlive() && m.distanceToSqr(m.getTarget()) < 24 * 24) continue;
+                if (Math.hypot(m.getX() - cx, m.getZ() - cz) > 2.5) m.getNavigation().moveTo(cx + RNG.nextInt(5) - 2, a.top + 1, cz + RNG.nextInt(5) - 2, 1.0);
+            }
+        }
+    }
+
+    private static void capture(ServerLevel l, Islet a) {
+        a.captured = true;
+        a.bonus = null;
+        a.progress = 1f;
+        a.retakeWarned = false;
+        altarVisual(l, a);
+        BlockPos at = new BlockPos(a.cx, a.top + 8, a.cz);
+        l.playSound(null, at, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 4f, 0.8f);
+        l.playSound(null, at, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 4f, 1f);
+        l.sendParticles(ParticleTypes.END_ROD, a.cx + 0.5, a.top + 8.5, a.cz + 0.5, 80, 1.5, 1.5, 1.5, 0.15);
+        EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.altar.captured")), "minecraft:amethyst_cluster", EventFeedPacket.RESOURCE, true);
+        for (ServerPlayer p : l.players()) sendChoice(p);
+    }
+
+    private static void lose(ServerLevel l, Islet a) {
+        Bonus old = a.bonus;
+        a.captured = false;
+        a.bonus = null;
+        a.progress = 0f;
+        a.retakeWarned = false;
+        altarVisual(l, a);
+        l.playSound(null, new BlockPos(a.cx, a.top + 8, a.cz), SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 4f, 0.7f);
+        EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.altar.lost", old == null ? "—" : old.label())), "minecraft:tinted_glass", EventFeedPacket.DANGER, true);
+    }
+
+    /** Ligne de choix cliquable (commande ouverte à tous : /wavesurvivor riftaltar <0-2>). */
+    private static void sendChoice(ServerPlayer p) {
+        net.minecraft.network.chat.MutableComponent line = Component.literal("§d✦ " + WSLang.t("rift.altar.choose") + " ");
+        HordeConfigMultiData.RiftSettings s = rs();
+        int[] vals = {s.altarRampartPct, s.altarArsenalPct, s.altarProsperityPct};
+        for (Bonus b : Bonus.values()) {
+            final String cmd = "/wavesurvivor riftaltar " + b.ordinal();
+            final Component tip = Component.literal(WSLang.t("rift.altar.bonus." + b.id + ".desc", vals[b.ordinal()]));
+            line.append(Component.literal("§e§l[" + b.label() + "]  ").withStyle(st -> st
+                    .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, cmd))
+                    .withHoverEvent(new net.minecraft.network.chat.HoverEvent(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT, tip))));
+        }
+        p.sendSystemMessage(line);
+    }
+
+    /** Choix du bonus (clic dans le chat) : un seul par capture, pour toute l'équipe. */
+    public static void chooseBonus(ServerPlayer p, int idx) {
+        Islet a = get(Kind.ALTAR);
+        if (a == null || !a.captured) { p.displayClientMessage(Component.literal(WSLang.t("rift.altar.not_captured")), true); return; }
+        if (a.bonus != null) { p.displayClientMessage(Component.literal(WSLang.t("rift.altar.already", a.bonus.label())), true); return; }
+        if (idx < 0 || idx >= Bonus.values().length || p.level().dimension() != RiftManager.RIFT_DIM) return;
+        a.bonus = Bonus.values()[idx];
+        if (p.level() instanceof ServerLevel l) {
+            EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.altar.chosen", p.getName().getString(), a.bonus.label())), a.bonus.icon, EventFeedPacket.RESOURCE, true);
+            l.playSound(null, new BlockPos(a.cx, a.top + 8, a.cz), SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 4f, 1.2f);
+        }
+    }
+
+    /** Début d'un Assaut du Siège (KingdomManager.startAssault) : un groupe de monstres part vers l'île-autel. */
+    public static void onAssault(MinecraftServer server) {
+        Islet a = get(Kind.ALTAR);
+        if (a == null || RiftManager.phasePublic() != RiftManager.Phase.SIEGE) return;
+        ServerLevel l = server.getLevel(RiftManager.RIFT_DIM);
+        HordeConfigMultiData.RiftSettings s = rs();
+        if (l == null || s.altarRaidSize <= 0 || s.altarRaidMobs == null || s.altarRaidMobs.isEmpty()) return;
+        clearRaiders(l);
+        int total = Math.min(24, s.altarRaidSize);
+        int[] vs = {-6, -2, 2, 6};   // 4 points d'arrivée, côté opposé au pont
+        for (int k = 0; k < total; k++) {
+            ResourceLocation id = ResourceLocation.tryParse(s.altarRaidMobs.get(RNG.nextInt(s.altarRaidMobs.size())));
+            if (id == null || !ForgeRegistries.ENTITY_TYPES.containsKey(id)) continue;
+            Entity e = ForgeRegistries.ENTITY_TYPES.getValue(id).create(l);
+            if (!(e instanceof Mob mob)) { if (e != null) e.discard(); continue; }
+            BlockPos p = a.local(a.r - 3, 0, vs[k % 4] + RNG.nextInt(3) - 1);
+            int y = top(l, p);
+            if (y == Integer.MIN_VALUE) { e.discard(); continue; }
+            mob.moveTo(p.getX() + 0.5, y + 1, p.getZ() + 0.5, RNG.nextFloat() * 360f, 0f);
+            mob.finalizeSpawn(l, l.getCurrentDifficultyAt(p), MobSpawnType.EVENT, null, null);
+            mob.addTag(GUARD_TAG);
+            mob.setPersistenceRequired();
+            mob.restrictTo(new BlockPos(a.cx, a.top + 1, a.cz), 4);
+            if (l.addFreshEntity(mob)) {
+                a.raiders.add(mob.getUUID());
+                l.sendParticles(ParticleTypes.PORTAL, mob.getX(), mob.getY() + 1, mob.getZ(), 30, 0.4, 0.8, 0.4, 0.3);
+            }
+        }
+        if (!a.raiders.isEmpty()) EventFeedPacket.toAll(server, Component.literal(WSLang.t("rift.altar.raid")), "minecraft:iron_sword", EventFeedPacket.DANGER, true);
+    }
+
+    private static void clearRaiders(ServerLevel l) {
+        Islet a = get(Kind.ALTAR);
+        if (a == null) return;
+        for (UUID id : a.raiders) { Entity e = l.getEntity(id); if (e != null) e.discard(); }
+        a.raiders.clear();
+    }
+
+    private static Bonus activeBonus() {
+        Islet a = get(Kind.ALTAR);
+        return a != null && a.captured ? a.bonus : null;
+    }
+
+    /** Arsenal : multiplicateur des dégâts des engins de siège (RiftEngines). */
+    public static float arsenalMul() {
+        return activeBonus() == Bonus.ARSENAL ? 1f + Math.max(0, Math.min(200, rs().altarArsenalPct)) / 100f : 1f;
+    }
+
+    /** Prospérité : ressources gagnées +25 % (arrondi au hasard, pour que les petits gains en profitent aussi). */
+    public static int prosper(int n) {
+        if (n <= 0 || activeBonus() != Bonus.PROSPERITY) return n;
+        double v = n * (1 + Math.max(0, Math.min(200, rs().altarProsperityPct)) / 100.0);
+        int base = (int) Math.floor(v);
+        return base + (RNG.nextDouble() < v - base ? 1 : 0);
+    }
+
     // ─── Le pont ───
 
     private static float segmentHp() {
@@ -650,6 +967,7 @@ public final class RiftIslets {
     /** Chaque tick (RiftManager.flow) : les blocs du pont arrivent en lévitation et se posent (~10 s pour un pont entier). */
     static void tick(ServerLevel l, long now) {
         if (!active()) return;
+        if (now % 10 == 0) altarTick(l, now);
         for (Islet i : ISLETS) {
             if (i.queue.isEmpty()) continue;
             int per = Math.max(1, (int) Math.ceil(i.pieces.size() / 200.0));
@@ -789,6 +1107,10 @@ public final class RiftIslets {
             byte[] alive = new byte[i.slots.size()];
             for (int s = 0; s < alive.length; s++) alive[s] = (byte) (i.slots.get(s).alive ? 1 : 0);
             o.putByteArray("veins", alive);
+            if (i.kind == Kind.ALTAR) {   // § A : capturé + bonus ; une capture en cours repart de 0
+                o.putBoolean("captured", i.captured);
+                o.putString("bonus", i.bonus == null ? "" : i.bonus.id);
+            }
             list.add(o);
         }
         t.put("islets", list);
@@ -820,6 +1142,12 @@ public final class RiftIslets {
             }
             byte[] alive = o.getByteArray("veins");
             for (int s = 0; s < i.slots.size(); s++) i.slots.get(s).alive = s >= alive.length || alive[s] != 0;
+            if (i.kind == Kind.ALTAR && o.getBoolean("captured")) {
+                i.captured = true;
+                i.progress = 1f;
+                for (Bonus b : Bonus.values()) if (b.id.equals(o.getString("bonus"))) i.bonus = b;
+                altarVisual(l, i);
+            }
             i.bought = o.getBoolean("bought");
             if (i.bought) {
                 for (Piece pc : i.pieces) {
@@ -840,6 +1168,7 @@ public final class RiftIslets {
                 }
                 for (UUID id : i.guards) { Entity e = l.getEntity(id); if (e != null) e.discard(); }
             }
+            clearRaiders(l);
         }
         ISLETS.clear();
         placed = false;
@@ -861,6 +1190,7 @@ public final class RiftIslets {
             int alive = 0;
             for (Slot s : i.slots) if (s.alive) alive++;
             if (i.kind == Kind.MINE) sb.append(" §e⛏ ").append(alive).append("/").append(i.slots.size());
+            if (i.kind == Kind.ALTAR) sb.append(i.captured ? " §b✦ " + (i.bonus == null ? "?" : i.bonus.label()) : " §8✦ " + Math.round(i.progress * 100) + "%");
             sb.append("\n");
         }
         return sb.toString().trim();
@@ -871,6 +1201,14 @@ public final class RiftIslets {
         if (placed) return false;
         onGrowthDone(l, siegeFinal);
         onSiegeStart(l, false);
+        return true;
+    }
+
+    /** Test : capture l'autel tout de suite. */
+    static boolean debugCapture(ServerLevel l) {
+        Islet a = get(Kind.ALTAR);
+        if (a == null || a.captured) return false;
+        capture(l, a);
         return true;
     }
 
@@ -908,6 +1246,15 @@ public final class RiftIslets {
         @SubscribeEvent
         public static void onRightClick(PlayerInteractEvent.RightClickBlock e) {
             if (!(e.getEntity() instanceof ServerPlayer p) || !active() || p.level().dimension() != RiftManager.RIFT_DIM) return;
+            // Île-autel : clic droit sur l'autel capturé sans bonus → choix du bonus
+            Islet a = get(Kind.ALTAR);
+            if (a != null && a.captured && a.bonus == null && Math.hypot(e.getPos().getX() - a.cx, e.getPos().getZ() - a.cz) <= 2.5
+                    && e.getPos().getY() > a.top && e.getPos().getY() <= a.top + 4) {
+                if (e.getHand() == net.minecraft.world.InteractionHand.MAIN_HAND) sendChoice(p);
+                e.setCanceled(true);
+                e.setCancellationResult(InteractionResult.SUCCESS);
+                return;
+            }
             ItemStack st = p.getItemInHand(e.getHand());
             if (!isStone(st)) return;
             int[] hit = brokenNear(p, 5);

@@ -1682,10 +1682,11 @@ public final class RiftManager {
         int n = min == max ? min : min + e.getEntity().getRandom().nextInt(max - min + 1);
         // 2.1 : un peu d'améthyste (monnaie du Marchand du Néant), plus rare que sur l'île minière
         if (s.amethystDropChance > 0 && e.getEntity().getRandom().nextInt(100) < s.amethystDropChance) {
-            int a = 1 + e.getEntity().getRandom().nextInt(Math.max(1, s.amethystDropMax));
+            int a = RiftIslets.prosper(1 + e.getEntity().getRandom().nextInt(Math.max(1, s.amethystDropMax)));
             e.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(e.getEntity().level(), e.getEntity().getX(), e.getEntity().getY(), e.getEntity().getZ(),
                     new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.AMETHYST_SHARD, a)));
         }
+        n = RiftIslets.prosper(n);   // 2.1 — Prospérité : +25 % d'émeraudes
         if (n <= 0) return;
         e.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(e.getEntity().level(), e.getEntity().getX(), e.getEntity().getY(), e.getEntity().getZ(),
                 new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.EMERALD, n)));

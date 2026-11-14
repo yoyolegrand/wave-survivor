@@ -483,6 +483,17 @@ public class HordeConfigMultiData {
         @SerializedName("isletGap") public int isletGap = 27;
         @SerializedName("isletMine") public boolean isletMine = true;
         @SerializedName("isletMineSide") public String isletMineSide = "north";
+        /** Île-autel : côté, temps de capture (s, seul ; plus vite à plusieurs), temps de reprise par les monstres (s), raid à chaque Assaut,
+         *  bonus Rempart (% des PV du Monolithe toutes les 10 s), Arsenal (% de dégâts des engins), Prospérité (% de ressources). */
+        @SerializedName("isletAltar") public boolean isletAltar = true;
+        @SerializedName("isletAltarSide") public String isletAltarSide = "west";
+        @SerializedName("altarCaptureSeconds") public int altarCaptureSeconds = 30;
+        @SerializedName("altarRetakeSeconds") public int altarRetakeSeconds = 20;
+        @SerializedName("altarRaidSize") public int altarRaidSize = 6;
+        @SerializedName("altarRaidMobs") public java.util.List<String> altarRaidMobs = new java.util.ArrayList<>(java.util.List.of("minecraft:zombie", "minecraft:husk", "minecraft:skeleton", "minecraft:vindicator"));
+        @SerializedName("altarRampartPct") public int altarRampartPct = 1;
+        @SerializedName("altarArsenalPct") public int altarArsenalPct = 20;
+        @SerializedName("altarProsperityPct") public int altarProsperityPct = 25;
         /** Pont : coût au Monolithe (bois + pierre du trésor), PV de chacun des 5 segments, pierre (objets en main) pour réparer un segment. */
         @SerializedName("bridgeWood") public int bridgeWood = 20;
         @SerializedName("bridgeStone") public int bridgeStone = 20;

@@ -360,6 +360,12 @@ public class AltarDefense {
         return true;
     }
 
+    /** PV max du Monolithe actif (0 sans partie). */
+    public static float monolithMaxHp() {
+        Session s = SESSION;
+        return s == null ? 0f : s.maxHp;
+    }
+
     /** Mode Kingdom (sanctuaire de réparation) : soigne le Monolithe actif. */
     public static void healMonolith(float amount) {
         Session s = SESSION;

@@ -2078,6 +2078,32 @@ public class HordeEditorScreen extends Screen {
         fInt(26, HordeJson.num(r, "amethystDropChance", 12), v -> r.addProperty("amethystDropChance", Math.max(0, Math.min(100, v))));
         fl(t("ui.rift.amethyst_max"));
         fInt(22, HordeJson.num(r, "amethystDropMax", 1), v -> r.addProperty("amethystDropMax", Math.max(1, Math.min(16, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_altar");
+        flow(x, y);
+        fToggle(120, t("ui.rift.altar_on"), r, "isletAltar", true);
+        String aside = HordeJson.str(r, "isletAltarSide", "west");
+        button(fx, fy - 2, 110, t("ui.rift.islet_side") + t("ui.rift.side." + aside), () -> {
+            String[] sides = {"north", "west", "northwest", "southwest", "northeast"};
+            int k = 0;
+            for (int j = 0; j < sides.length; j++) if (sides[j].equalsIgnoreCase(aside)) k = j;
+            r.addProperty("isletAltarSide", sides[(k + 1) % sides.length]);
+            changed();
+            init();
+        });
+        flow(x, next());
+        fl(t("ui.rift.altar_capture"));
+        fInt(26, HordeJson.num(r, "altarCaptureSeconds", 30), v -> r.addProperty("altarCaptureSeconds", Math.max(5, Math.min(600, v))));
+        fl(t("ui.rift.altar_retake"));
+        fInt(26, HordeJson.num(r, "altarRetakeSeconds", 20), v -> r.addProperty("altarRetakeSeconds", Math.max(5, Math.min(600, v))));
+        fl(t("ui.rift.altar_raid"));
+        fInt(22, HordeJson.num(r, "altarRaidSize", 6), v -> r.addProperty("altarRaidSize", Math.max(0, Math.min(24, v))));
+        flow(x, next());
+        fl(t("ui.rift.altar_rampart"));
+        fInt(22, HordeJson.num(r, "altarRampartPct", 1), v -> r.addProperty("altarRampartPct", Math.max(0, Math.min(20, v))));
+        fl(t("ui.rift.altar_arsenal"));
+        fInt(26, HordeJson.num(r, "altarArsenalPct", 20), v -> r.addProperty("altarArsenalPct", Math.max(0, Math.min(200, v))));
+        fl(t("ui.rift.altar_prosperity"));
+        fInt(26, HordeJson.num(r, "altarProsperityPct", 25), v -> r.addProperty("altarProsperityPct", Math.max(0, Math.min(200, v))));
         y = next() + 2;
         hint(x, y, t("ui.rift.hint_islets"));
     }

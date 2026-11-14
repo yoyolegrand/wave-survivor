@@ -35,6 +35,7 @@ public final class RiftCommand {
                 // 2.1 — Îlots : état, pose forcée, segment de pont cassé / réparé
                 .then(Commands.literal("islets").executes(ctx -> islets(ctx.getSource(), null, -1))
                         .then(Commands.literal("place").executes(ctx -> islets(ctx.getSource(), "place", -1)))
+                        .then(Commands.literal("capture").executes(ctx -> islets(ctx.getSource(), "capture", -1)))
                         .then(Commands.literal("break").then(Commands.argument("seg", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 5))
                                 .executes(ctx -> islets(ctx.getSource(), "break", com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(ctx, "seg") - 1))))
                         .then(Commands.literal("repair").then(Commands.argument("seg", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 5))
@@ -198,6 +199,7 @@ public final class RiftCommand {
         }
         boolean ok = true;
         if ("place".equals(action)) ok = RiftIslets.forcePlace(rd, RiftManager.siegeFinalPublic());
+        else if ("capture".equals(action)) ok = RiftIslets.debugCapture(rd);
         else if ("break".equals(action)) ok = RiftIslets.debugSegment(rd, seg, false);
         else if ("repair".equals(action)) ok = RiftIslets.debugSegment(rd, seg, true);
         if (!ok) {

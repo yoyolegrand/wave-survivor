@@ -272,6 +272,14 @@ public class HordeCommand {
                     ctx.getSource().sendSuccess(() -> com.wavesurvivor.i18n.WSLang.c("rift.session.abandoned"), true);
                     return 1;
                 }))
+                // 2.1 — choix du bonus de l'île-autel (clic dans le chat, ouvert à tous)
+                .then(Commands.literal("riftaltar")
+                        .then(Commands.argument("i", IntegerArgumentType.integer(0, 2))
+                                .executes(ctx -> {
+                                    com.wavesurvivor.horde.rift.RiftIslets.chooseBonus(ctx.getSource().getPlayerOrException(),
+                                            IntegerArgumentType.getInteger(ctx, "i"));
+                                    return 1;
+                                })))
                 .then(Commands.literal("riftengine")
                         .then(Commands.argument("i", IntegerArgumentType.integer(0, 2))
                                 .executes(ctx -> {

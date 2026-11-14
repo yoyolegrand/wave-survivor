@@ -93,8 +93,18 @@ public final class KingdomTreasury {
         return AMT[r.ordinal()];
     }
 
+    /** Remboursement / restauration : pas de bonus de gain (Prospérité…). */
+    private static boolean noBonus;
+
+    public static void refund(Res r, int n) {
+        noBonus = true;
+        try { add(r, n); } finally { noBonus = false; }
+    }
+
     public static void add(Res r, int n) {
         if (!active() || n <= 0) return;
+        // 2.1 — Prospérité (île-autel de la Faille) : pierre, bois, fer +25 % ; pièces via le butin des monstres (pas les dépôts de monnaie)
+        if (!noBonus && (r == Res.STONE || r == Res.WOOD || r == Res.IRON)) n = com.wavesurvivor.horde.rift.RiftIslets.prosper(n);
         AMT[r.ordinal()] += n;
         if (r == Res.MONEY && KingdomManager.level() != null) com.wavesurvivor.horde.kingdom.vocation.VocationXp.coins(KingdomManager.level().getServer(), n); // Vocations : XP de l'Intendant
         KingdomReport.onGain(r, n); // bilan de fin d'Assaut

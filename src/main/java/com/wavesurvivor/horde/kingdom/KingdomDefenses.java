@@ -303,7 +303,7 @@ public final class KingdomDefenses {
         Def d = DEFS.remove(pos);
         if (d != null && !demolishing && KingdomTreasury.active() && KingdomManager.isActive()) {
             double ruin = Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.ruin_refund"); // talent Restaurateur : une ruine rend une part de son coût
-            if (ruin > 0) refundOf(d, ruin).forEach((res, n) -> { if (n > 0) KingdomTreasury.add(res, n); });
+            if (ruin > 0) refundOf(d, ruin).forEach((res, n) -> { if (n > 0) KingdomTreasury.refund(res, n); });
         }
         if (d != null && !demolishing && level != null && com.wavesurvivor.horde.rift.RiftManager.kingdomSiege()) {
             Long t = PLAYER_BREAK.remove(pos);
@@ -432,7 +432,7 @@ public final class KingdomDefenses {
             placeRuin(l, pos, r);
         }
         int gates = t.getInt("gates");
-        if (gates > 0 && KingdomTreasury.active()) KingdomTreasury.add(KingdomTreasury.Res.MONEY, gates * GATE_COST);
+        if (gates > 0 && KingdomTreasury.active()) KingdomTreasury.refund(KingdomTreasury.Res.MONEY, gates * GATE_COST);
     }
 
     // ─── Faille (2.0) : ruines réparables ───
@@ -991,7 +991,7 @@ public final class KingdomDefenses {
             case "open" -> { DefenseBlock.openStorage(p, pos); return; }
             case "demolish" -> {
                 var refund = refundOf(d);
-                if (KingdomTreasury.active()) refund.forEach((res, n) -> { if (n > 0) KingdomTreasury.add(res, n); });
+                if (KingdomTreasury.active()) refund.forEach((res, n) -> { if (n > 0) KingdomTreasury.refund(res, n); });
                 int total = refund.values().stream().mapToInt(Integer::intValue).sum();
                 level.sendParticles(ParticleTypes.CLOUD, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 20, 0.8, 0.8, 0.8, 0.02);
                 demolishing = true;
