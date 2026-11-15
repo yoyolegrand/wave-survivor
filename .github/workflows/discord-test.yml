@@ -1,0 +1,47 @@
+name: Discord announce (manual)
+
+# Relance uniquement l'annonce Discord pour une version déjà présente dans CHANGELOG.md
+# (tester le message ou le reposter sans refaire de release). Actions > Discord announce (manual) > Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version du CHANGELOG à annoncer (ex. 2.1.0)'
+        required: true
+      dry_run:
+        description: 'Afficher les messages sans les envoyer'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    env:
+      HAS_DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_CHANGELOGS != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Announce on Discord
+        if: inputs.dry_run || env.HAS_DISCORD_WEBHOOK == 'true'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_CHANGELOGS }}
+          DISCORD_PING_ROLE_ID: ${{ vars.DISCORD_PING_ROLE_ID }}
+          VERSION: ${{ inputs.version }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          VERSION="${VERSION#v}"
+          export RELEASE_URL="https://github.com/${GITHUB_REPOSITORY}/releases/tag/v${VERSION}"
+          if [ "$DRY_RUN" = "true" ]; then
+            python3 .github/scripts/discord_announce.py --version "$VERSION" --dry-run
+          else
+            python3 .github/scripts/discord_announce.py --version "$VERSION"
+          fi
+
+      - name: Secret missing
+        if: ${{ !inputs.dry_run && env.HAS_DISCORD_WEBHOOK != 'true' }}
+        run: |
+          echo "::error::Secret DISCORD_WEBHOOK_CHANGELOGS non défini"
+          exit 1
