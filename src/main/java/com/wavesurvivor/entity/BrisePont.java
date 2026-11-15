@@ -41,6 +41,9 @@ public class BrisePont extends Monster {
     private int climbTicks = -1, climbLen = 30;
     private int deckY = Integer.MIN_VALUE;
     private int biteCd, unhooked;
+    /** Endroit du tablier à ronger (milieu de son segment) ; null = pas de pont attribué → il chasse les joueurs. */
+    private BlockPos gnawAt;
+    private int seekCd, seekTicks;
 
     // ── animation (client) ──
     private float gnawO, gnawV;
@@ -67,9 +70,52 @@ public class BrisePont extends Monster {
         entityData.define(GNAW, false);
     }
 
+    /**
+     * IA : s'il y a un pont de la Faille à portée, il y va et le ronge (RiftIslets.claimBridge) ; sinon il chasse les joueurs
+     * comme une araignée. Les objectifs de combat et de promenade se taisent pendant qu'il ronge, grimpe ou marche vers son pont.
+     */
     @Override
     protected void registerGoals() {
-        goalSelector.addGoal(0, new FloatGoal(this));   // tout le reste est scripté (RiftIslets)
+        goalSelector.addGoal(0, new FloatGoal(this));
+        goalSelector.addGoal(2, new net.minecraft.world.entity.ai.goal.MeleeAttackGoal(this, 1.15, false) {
+            @Override public boolean canUse() { return !busy() && super.canUse(); }
+            @Override public boolean canContinueToUse() { return !busy() && super.canContinueToUse(); }
+        });
+        goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8) {
+            @Override public boolean canUse() { return !busy() && super.canUse(); }
+            @Override public boolean canContinueToUse() { return !busy() && super.canContinueToUse(); }
+        });
+        goalSelector.addGoal(6, new net.minecraft.world.entity.ai.goal.LookAtPlayerGoal(this, Player.class, 8f));
+        goalSelector.addGoal(7, new net.minecraft.world.entity.ai.goal.RandomLookAroundGoal(this));
+        targetSelector.addGoal(1, new net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal(this) {
+            @Override public boolean canUse() { return !busy() && super.canUse(); }
+        });
+        targetSelector.addGoal(2, new net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal<>(this, Player.class, true) {
+            @Override public boolean canUse() { return !busy() && super.canUse(); }
+        });
+    }
+
+    /** Occupé par son pont (il ronge, grimpe ou y marche) : pas de combat ni de promenade. */
+    public boolean busy() { return gnawing() || climbing() || gnawAt != null; }
+
+    /** Pont attribué : il marche jusqu'à {@code at} (milieu du segment) puis ronge. */
+    public void assignBridge(int kind, int seg, BlockPos at) {
+        isletKind = kind;
+        segment = seg;
+        gnawAt = at;
+        deckY = at.getY();
+        seekTicks = 0;
+        setTarget(null);
+    }
+
+    /** Plus de pont à ronger : il redevient un chasseur. */
+    public void releaseBridge() {
+        isletKind = -1;
+        segment = -1;
+        gnawAt = null;
+        deckY = Integer.MIN_VALUE;
+        setGnawing(false);
+        seekCd = 100;
     }
 
     public boolean gnawing() { return entityData.get(GNAW); }
@@ -83,6 +129,7 @@ public class BrisePont extends Monster {
     public void startClimb(Vec3 from, Vec3 to, int deck) {
         climbFrom = from;
         climbTo = to;
+        gnawAt = BlockPos.containing(to.x, deck, to.z);
         climbTicks = 0;
         deckY = deck;
         setNoGravity(true);
@@ -131,6 +178,21 @@ public class BrisePont extends Monster {
             l.sendParticles(ParticleTypes.REVERSE_PORTAL, getX(), getY(), getZ(), 30, 0.4, 0.4, 0.4, 0.2);
             hurt(damageSources().fellOutOfWorld(), Float.MAX_VALUE);
             return;
+        }
+        // cherche un pont (toutes les 2 s) ; marche vers son segment ; s'il n'y arrive pas, il chasse les joueurs un moment
+        if (!gnawing() && tickCount % 20 == 0) {
+            if (gnawAt == null) {
+                if (seekCd > 0) seekCd -= 20;
+                else com.wavesurvivor.horde.rift.RiftIslets.claimBridge(this);
+            } else {
+                double d = Math.hypot(getX() - (gnawAt.getX() + 0.5), getZ() - (gnawAt.getZ() + 0.5));
+                if (d > 1.6 && unhooked <= 0) {
+                    setTarget(null);
+                    getNavigation().moveTo(gnawAt.getX() + 0.5, gnawAt.getY() + 1, gnawAt.getZ() + 0.5, 1.1);
+                    seekTicks += 20;
+                    if (seekTicks > 400) releaseBridge();   // pont inaccessible : il abandonne
+                }
+            }
         }
         if (gnawing()) {
             setDeltaMovement(0, Math.min(0, getDeltaMovement().y), 0);
@@ -183,7 +245,13 @@ public class BrisePont extends Monster {
         // décroché par un coup mais toujours sur le tablier : il se raccroche
         if (level().isClientSide) return;
         if (unhooked > 0) unhooked--;
-        else if (!gnawing() && !climbing() && onGround() && segment >= 0) setGnawing(true);
+        else if (!gnawing() && !climbing() && onGround() && segment >= 0 && gnawAt != null
+                && Math.hypot(getX() - (gnawAt.getX() + 0.5), getZ() - (gnawAt.getZ() + 0.5)) <= 1.6
+                && Math.abs(getY() - (gnawAt.getY() + 1)) < 1.2) {
+            getNavigation().stop();
+            seekTicks = 0;
+            setGnawing(true);
+        }
     }
 
     @Override

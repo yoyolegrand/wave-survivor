@@ -1221,7 +1221,7 @@ public final class RiftIslets {
             if (!(l.getEntity(it.next()) instanceof com.wavesurvivor.entity.BrisePont b) || !b.isAlive()) { it.remove(); continue; }
             if (b.climbing() || !b.gnawing()) continue;
             Islet i = b.isletKind >= 0 && b.isletKind < Kind.values().length ? get(Kind.values()[b.isletKind]) : null;
-            if (i == null || !i.bought) { retreat(l, b); it.remove(); continue; }
+            if (i == null || !i.bought) { b.releaseBridge(); it.remove(); continue; }
             // segment sous ses pattes (il a pu être poussé)
             int seg = b.segment;
             double best = 9;
@@ -1233,7 +1233,7 @@ public final class RiftIslets {
             }
             if (seg < 0 || i.down[seg]) {
                 int nx = seg < 0 ? -1 : nextIntact(i, seg);
-                if (nx < 0) { retreat(l, b); it.remove(); continue; }
+                if (nx < 0) { b.releaseBridge(); it.remove(); continue; }
                 b.segment = nx;
                 b.hopTo(Vec3.atBottomCenterOf(deckCenter(i, nx).above()));
                 continue;
@@ -1243,10 +1243,35 @@ public final class RiftIslets {
             if (i.hp[seg] - dps <= 0) {   // il saute sur le segment suivant juste avant l'effondrement
                 int nx = nextIntact(i, seg);
                 if (nx >= 0) { b.segment = nx; b.hopTo(Vec3.atBottomCenterOf(deckCenter(i, nx).above())); }
-                else { retreat(l, b); it.remove(); }
+                else { b.releaseBridge(); it.remove(); }
             }
             damageSegment(l, i.kind, seg, dps);
         }
+    }
+
+    /**
+     * Brise-pont libre (œuf, ou il a perdu son segment) : le segment debout le plus proche d'un pont construit, à 32 blocs ;
+     * il y marchera puis le rongera. Sinon il reste un simple chasseur de joueurs.
+     */
+    public static void claimBridge(com.wavesurvivor.entity.BrisePont b) {
+        if (!active() || !(b.level() instanceof ServerLevel l) || l.dimension() != RiftManager.RIFT_DIM) return;
+        Islet best = null;
+        int bestSeg = -1;
+        BlockPos bestPos = null;
+        double bd = 32 * 32;
+        for (Islet i : ISLETS) {
+            if (!i.bought) continue;
+            for (int k = 0; k < SEGMENTS; k++) {
+                if (i.down[k]) continue;
+                BlockPos p = deckCenter(i, k);
+                if (p == null) continue;
+                double d = b.distanceToSqr(p.getX() + 0.5, p.getY() + 1, p.getZ() + 0.5);
+                if (d < bd) { bd = d; best = i; bestSeg = k; bestPos = p; }
+            }
+        }
+        if (best == null) return;
+        b.assignBridge(best.kind.ordinal(), bestSeg, bestPos);
+        if (!BREAKERS.contains(b.getUUID())) BREAKERS.add(b.getUUID());
     }
 
     /** Fissures orange qui s'étendent sur le tablier rongé. */

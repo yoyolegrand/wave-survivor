@@ -5,25 +5,25 @@
 - [ ] Rien côté forteresse (est) ni côté Titan (sud)
 - [ ] Boutique du Monolithe › Défenses › Engins : ligne « Pont vers l'île minière », bouton Construire
 - [ ] Sans 20 bois + 20 pierre au trésor : refus avec message ; avec : le trésor baisse
-- [ ] Le pont se construit tout seul (~10 s) : blocs fantômes lumineux qui descendent, lanternes violettes sur poteaux tous les 8 blocs, lanternes pendues sous le tablier
+- [x] Le pont se construit tout seul (~10 s) : blocs fantômes lumineux qui descendent, lanternes violettes sur poteaux tous les 8 blocs, lanternes pendues sous le tablier
 - [ ] `/ws rift islets` : état (côté, pont, PV des 5 segments, filons vivants)
 - [ ] `/ws rift islets break 3` : le segment 3 s'effondre (blocs qui tombent), message d'alerte
 - [ ] Clic droit avec 16 pierre en main près du trou : le segment se reconstruit (même animation), pierre consommée ; moins de 16 : refus
 - [ ] Coincé sur l'îlot : on peut poser des blocs entre l'îlot et l'île (et casser ceux qu'on a posés), pas casser le terrain de l'îlot
 - [ ] Chute dans le vide : règles habituelles de la Faille
-- [ ] Calme prolongé : +60 s en solo, +30 s à 2, rien à 3+ (message)
+- [x] Calme prolongé : +60 s en solo, +30 s à 2, rien à 3+ (message)
 
 ## 2. Île minière
 - [x] Terrain : plat côté pont, monte vers le fond, mine décorative au fond (butte, galerie étayée, lanternes, rails, wagonnet, tonneaux), géode d'améthyste à gauche, filons de minerai sous l'île
-- [ ] 8 filons au début du Siège : 4 fer, 2 émeraude, géode d'améthyste, cristaux d'Essence (sans compte à rebours)
-- [ ] Pioche minimum : pierre pour fer / améthyste, fer pour émeraude / Essence
-- [ ] Butin : fer brut, émeraudes (→ trésor au ramassage), éclats d'améthyste, Essence au trésor (cristaux) ; pierre + fer au trésor à chaque filon épuisé
+- [x] 8 filons au début du Siège : 4 fer, 2 émeraude, géode d'améthyste, cristaux d'Essence (sans compte à rebours)
+- [x] Pioche minimum : pierre pour fer / améthyste, fer pour émeraude / Essence
+- [x] Butin : fer brut, émeraudes (→ trésor au ramassage), éclats d'améthyste, Essence au trésor (cristaux) ; pierre + fer au trésor à chaque filon épuisé
 - [x] Début de chaque Calme du Siège : ~50 % des filons épuisés repoussent (75 % avec un Mineur), message
-- [ ] Gardes au début du Siège et de chaque Calme (5 points), les anciens disparaissent
-- [ ] Mineur : colonne de lumière / flèche sur les filons de l'îlot
-- [ ] Île principale : moins de gisements (40 %), plus d'émeraude ni d'améthyste
-- [ ] Monstres de la Faille : éclat d'améthyste de temps en temps (12 %)
-- [ ] Après le Siège (Contre-offensive, Titan) : îlot toujours là, plus de repousse ni de gardes
+- [x] Gardes au début du Siège et de chaque Calme (5 points), les anciens disparaissent
+- [x] Mineur : colonne de lumière / flèche sur les filons de l'îlot
+- [x] Île principale : moins de gisements (40 %), plus d'émeraude ni d'améthyste
+- [x] Monstres de la Faille : éclat d'améthyste de temps en temps (12 %)
+- [x] Après le Siège (Contre-offensive, Titan) : îlot toujours là, plus de repousse ni de gardes
 
 ## Correctifs après le 1er test
 - [ ] Pont en diagonale (île du Marchand au nord-ouest, île au coffre) : plein, sans trou, bordures et lanternes régulières
@@ -41,10 +41,10 @@
 - [ ] Un monstre dans le cercle fige la barre (message « Capture figée »)
 - [ ] Capturé : cristal et piliers allumés, colonne lumineuse vers le ciel, son, message ; écran à 3 cartes pour ceux qui sont dans le cercle
 - [ ] Le choix marche pour un joueur non-op ; un seul choix par capture (un 2e joueur : « déjà choisi ») ; clic droit sur l'autel sans bonus choisi → l'écran revient
-- [ ] Rempart : le Monolithe regagne 1 % de ses PV toutes les 10 s
-- [ ] Arsenal : catapultes / balistes font plus mal (+20 %)
-- [ ] Prospérité : plus de pierre / bois / fer au trésor, plus d'émeraudes et d'améthyste sur les monstres ; démolir un bâtiment ne rend pas plus
-- [ ] Début de chaque Assaut du Siège : 6 monstres apparaissent au fond de l'île-autel et marchent vers le cercle (message)
+- [x] Rempart : le Monolithe regagne 1 % de ses PV toutes les 10 s
+- [x] Arsenal : catapultes / balistes font plus mal (+20 %)
+- [x] Prospérité : plus de pierre / bois / fer au trésor, plus d'émeraudes et d'améthyste sur les monstres ; démolir un bâtiment ne rend pas plus
+- [x] Début de chaque Assaut du Siège : 6 monstres apparaissent au fond de l'île-autel et marchent vers le cercle (message)
 - [ ] Seuls dans le cercle ~20 s : alerte « reprennent l'autel », piliers qui s'éteignent, puis autel repris (bonus perdu, faisceau éteint)
 - [ ] Revenir dans le cercle pendant la reprise : l'autel remonte à 100 %
 - [ ] Recapturer : nouveau choix de bonus
@@ -54,24 +54,24 @@
 ## 4. Marchand du Néant
 - [ ] Île du Marchand au nord-ouest (rayon 9) : mousse et roche, tapis violet, échoppe à auvent violet, étagères, comptoir, gros cristal d'améthyste flottant, lanternes flottantes
 - [ ] Boutique du Monolithe : 5e ligne « Pont vers l'île du Marchand »
-- [ ] 1er Calme du Siège : pas de marchand ; 2e Calme : il arrive (particules, message), tourné vers le pont, derrière son comptoir
+- [x] 1er Calme du Siège : pas de marchand ; 2e Calme : il arrive (particules, message), tourné vers le pont, derrière son comptoir
 - [ ] Clic droit : boutique du Marchand (jamais l'écran d'échange vanilla), 12 articles, solde d'améthyste affiché, infobulle au survol
-- [ ] Achat : améthyste retirée de l'inventaire, objet reçu ; pas assez : bouton grisé
+- [x] Achat : améthyste retirée de l'inventaire, objet reçu ; pas assez : bouton grisé
 - [ ] Consommables : 4 max par joueur et par Calme (« reste N ») ; Clé du Titan 2 / Calme, Poussière ×4 1 / Calme, Relance 1 / Calme (partagés) ; Éclat de Faille 1 par partie
 - [ ] Nouveau Calme : stock renouvelé
-- [ ] Pendant un Assaut : bouclier de particules, clic → « boutique fermée »
+- [x] Pendant un Assaut : bouclier de particules, clic → « boutique fermée »
 - [ ] Contre-offensive : ouvert ; combat du Titan : fermé
 - [ ] `/ws rift islets merchant` : arrivée immédiate (test) ; `/ws rift islets` montre son état
 
 ## 5. Objets du Marchand
 - [ ] Textures et noms des 8 objets (onglet créatif)
-- [ ] Fiole du Néant : se boit, +8 cœurs
-- [ ] Élixirs : Résistance I / Force I pendant 2 min
-- [ ] Pierre de rappel : téléporte à côté du Monolithe (pas dans un mur), consommée
+- [x] Fiole du Néant : se boit, +8 cœurs
+- [x] Élixirs : Résistance I / Force I pendant 2 min
+- [x] Pierre de rappel : téléporte à côté du Monolithe (pas dans un mur), consommée
 - [ ] Kit de pont : près d'un segment effondré → reconstruit, consommé ; sinon message
 - [ ] Kit d'engin : clic droit sur un engin abîmé → +50 % PV ; engin plein → message, pas consommé
-- [ ] Lanterne de vigie : monstres proches en surbrillance 30 s (visibles à travers les blocs)
-- [ ] Relance de bénédiction : +1 relance au prochain choix de cartes
+- [x] Lanterne de vigie : monstres proches en surbrillance 30 s (visibles à travers les blocs)
+- [x] Relance de bénédiction : +1 relance au prochain choix de cartes
 
 ## 6. Île au coffre
 - [ ] Une fois par partie, à un Calme du Siège entre le 2e et le 4e : annonce, l'île en ruines monte du vide sur le côté libre restant (sud-ouest par défaut)
@@ -88,12 +88,13 @@
 - [ ] `/ws rift islets chest` : arrivée immédiate (pendant le Siège) ; `/ws rift islets` montre son état
 
 ## 7. Brise-pont
-- [ ] Modèle et texture : carapace violet sombre en 3 plaques, veines cyan lumineuses, 5 épines de cristal, point faible cyan sur le dos, 2 grands yeux cyan + 2 petits violets, 6 pattes ; pieds posés au sol (ni enfoncés ni flottants)
-- [ ] Animation de marche (trépied) ; pose « ronge » (corps plaqué, tête plongée, mandibles qui claquent)
+- [x] Modèle et texture : carapace violet sombre en 3 plaques, veines cyan lumineuses, 5 épines de cristal, point faible cyan sur le dos, 2 grands yeux cyan + 2 petits violets, 6 pattes ; pieds posés au sol (ni enfoncés ni flottants)
+- [ ] Animation de marche (trépied) [marche validée] ; pose « ronge » (corps plaqué, tête plongée, mandibles qui claquent)
 - [ ] Œuf d'apparition dans l'onglet créatif, nom fr/en
 - [ ] Début de chaque Assaut du Siège : 1 à 2 par pont construit (3 en même temps max) ; ~3 s avant : particules violettes et raclement sous le segment
+- [ ] IA (corrigée) : pondu à l'œuf près d'un pont construit, il marche jusqu'au segment le plus proche (32 blocs) et le ronge ; pas de pont à portée → il chasse le joueur comme une araignée ; pont inaccessible ~20 s → il abandonne et chasse
+- [ ] Plus aucun segment debout : il redevient un chasseur de joueurs
 - [ ] Il grimpe depuis le vide à travers le bord du pont, se pose sur le tablier et ronge : fissures (briques fendues, gouttes de lave), segment effondré en ~15 s, puis il saute sur le segment suivant (vers l'îlot d'abord)
-- [ ] Plus aucun segment debout : il redescend dans le vide
 - [ ] Mord les joueurs tout près pendant qu'il ronge
 - [ ] Coup dans le dos ou depuis au-dessus (flèche plongeante) : dégâts ×2 (éclat cyan, son de cristal)
 - [ ] Recul renforcé : un bon coup (Recul / sprint) le jette dans le vide → mort immédiate
