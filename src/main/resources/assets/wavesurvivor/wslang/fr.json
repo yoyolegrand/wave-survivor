@@ -4546,5 +4546,8 @@
   "ui.rift.mitem.8": "Clé du Titan",
   "ui.rift.mitem.9": "Poussière de Faille ×4",
   "ui.rift.mitem.10": "Relance de bénédiction",
-  "ui.rift.mitem.11": "Éclat de Faille"
+  "ui.rift.mitem.11": "Éclat de Faille",
+  "rift.altar.screen_title": "L'autel est à vous",
+  "rift.altar.screen_sub": "Choisissez le bonus de l'équipe (un seul, jusqu'à ce que l'autel soit repris)",
+  "rift.altar.screen_pick": "Choisir"
 }

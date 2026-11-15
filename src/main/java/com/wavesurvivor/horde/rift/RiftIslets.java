@@ -43,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Mth;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -123,14 +124,24 @@ public final class RiftIslets {
         final List<BlockPos> crystal = new ArrayList<>();
         final List<UUID> raiders = new ArrayList<>();
         int top;                 // hauteur du dallage (y monde)
+        // cristaux blancs animés (blocs d'affichage) : grand cristal, 4 piliers, mini-cristaux en orbite quand l'autel est capturé
+        UUID crystalMain;
+        final UUID[] crystalPillar = new UUID[4];
+        final List<UUID> orbit = new ArrayList<>();
+        boolean[] pillarLit = new boolean[4];
+        boolean mainLit;
+
+        final double sx, sz;     // direction ramenée à l'axe le plus proche (décors en blocs : jamais de trou en diagonale)
 
         Islet(Kind kind, String side, double dx, double dz, int cx, int cz, int r) {
             this.kind = kind; this.side = side; this.dx = dx; this.dz = dz; this.cx = cx; this.cz = cz; this.r = r;
+            if (Math.abs(dx) >= Math.abs(dz)) { this.sx = Math.signum(dx); this.sz = 0; }
+            else { this.sx = 0; this.sz = Math.signum(dz); }
         }
 
-        /** Position monde d'un point local (u vers l'extérieur, v de côté) à la hauteur y. */
+        /** Position monde d'un point local (u vers l'extérieur, v de côté) à la hauteur y, dans le repère carré des décors. */
         BlockPos local(double u, int y, double v) {
-            return BlockPos.containing(cx + 0.5 + dx * u - dz * v, y, cz + 0.5 + dz * u + dx * v);
+            return BlockPos.containing(cx + 0.5 + sx * u - sz * v, y, cz + 0.5 + sz * u + sx * v);
         }
 
         String name() { return WSLang.t("rift.islet." + kind.id); }
@@ -460,7 +471,7 @@ public final class RiftIslets {
             for (int y = ys + 1; y < ys + 5; y++) set(l, new BlockPos(p.getX(), y, p.getZ()), Blocks.BLACK_CONCRETE.defaultBlockState());
         }
         // cadre : gros poteaux, double linteau, jambes de force, lanternes
-        boolean vAlongX = Math.abs(i.dz) > Math.abs(i.dx);   // v suit l'axe X quand l'îlot est au nord / au sud
+        boolean vAlongX = Math.abs(i.sz) > Math.abs(i.sx);   // v suit l'axe X quand l'îlot est au nord / au sud
         BlockState post = Blocks.SPRUCE_LOG.defaultBlockState();
         BlockState beam = Blocks.SPRUCE_LOG.defaultBlockState().setValue(RotatedPillarBlock.AXIS, vAlongX ? Direction.Axis.X : Direction.Axis.Z);
         for (int v : new int[]{-3, 3}) {
@@ -667,13 +678,8 @@ public final class RiftIslets {
                 for (int y = -1; y > -dep; y--) set(l, new BlockPos(x, y0 + y, z), rnd.nextDouble() > 0.25 ? deep : dark);
             }
         }
-        // allée dallée vers le pont (côté île principale = u négatif)
-        for (int u = -3; u >= -R; u--) {
-            for (int v = -1; v <= 1; v++) {
-                BlockPos p = i.local(u, y0 + 1, v);
-                if (!l.getBlockState(p).isAir()) set(l, p, Blocks.POLISHED_DEEPSLATE.defaultBlockState());
-            }
-        }
+        // allée dallée vers le pont (côté île principale), dans la vraie direction du pont
+        path(l, i, 3, R, y0 + 1, Blocks.POLISHED_DEEPSLATE.defaultBlockState());
         // cercle de capture incrusté (rayon 5)
         for (int a = 0; a < 360; a += 3) {
             int x = (int) Math.round(i.cx + 5 * Math.cos(Math.toRadians(a))), z = (int) Math.round(i.cz + 5 * Math.sin(Math.toRadians(a)));
@@ -698,8 +704,11 @@ public final class RiftIslets {
             int x = i.cx + c[0], z = i.cz + c[1];
             for (int y = 2; y <= 6; y++) set(l, new BlockPos(x, y0 + y, z), pillar);
             set(l, new BlockPos(x, y0 + 7, z), Blocks.GILDED_BLACKSTONE.defaultBlockState());
-            i.pillarTops.add(new BlockPos(x, y0 + 8, z));
+            i.pillarTops.add(new BlockPos(x, y0 + 8, z));   // cristal animé posé au-dessus (bloc d'affichage)
         }
+        // anciens cristaux en blocs (sauvegardes d'avant les cristaux animés) : retirés
+        for (BlockPos p : i.crystal) set(l, p, Blocks.AIR.defaultBlockState());
+        for (BlockPos p : i.pillarTops) set(l, p, Blocks.AIR.defaultBlockState());
         i.captured = false;
         i.bonus = null;
         i.progress = 0f;
@@ -713,15 +722,13 @@ public final class RiftIslets {
         int n = i.captured ? (int) Math.ceil(i.progress * 4 - 1e-4) : (int) Math.floor(i.progress * 4 + 1e-4);
         n = Math.max(0, Math.min(4, n));
         if (n != i.lit) {
-            for (int k = 0; k < i.pillarTops.size(); k++) l.setBlock(i.pillarTops.get(k), k < n ? CRYS_ON : CRYS_OFF, 3);
+            for (int k = 0; k < i.pillarTops.size() && k < 4; k++) i.pillarLit[k] = k < n;
             if (i.lit >= 0 && n > i.lit) l.playSound(null, i.pillarTops.get(Math.min(3, n - 1)), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 2.5f, 0.7f + 0.15f * n);
             i.lit = n;
         }
         boolean on = i.captured;
-        for (BlockPos p : i.crystal) {
-            BlockState want = on ? CRYS_ON : CRYS_OFF;
-            if (l.getBlockState(p) != want) l.setBlock(p, want, 3);
-        }
+        i.mainLit = on;
+        crystals(l, i, l.getGameTime(), true);
         if (on != i.beamOn) {   // faisceau : colonne de barres de l'End au-dessus du cristal
             BlockState rod = Blocks.END_ROD.defaultBlockState();
             for (int y = BEAM_FROM; y <= BEAM_TO; y++) {
@@ -730,6 +737,116 @@ public final class RiftIslets {
             }
             i.beamOn = on;
         }
+    }
+
+    // ─── Cristaux blancs animés (même modèle facetté que le cristal de la Mairie) ───
+
+    private static BlockState crystal(boolean lit) {
+        return com.wavesurvivor.registry.ModBlocks.ALTAR_CRYSTAL.get().defaultBlockState().setValue(AltarCrystalBlock.LIT, lit);
+    }
+
+    private static Display.BlockDisplay display(ServerLevel l, UUID id) {
+        return id != null && l.getEntity(id) instanceof Display.BlockDisplay d && d.isAlive() ? d : null;
+    }
+
+    /** Crée un cristal (bloc d'affichage) centré en (x, y, z), de taille s. */
+    private static Display.BlockDisplay spawnCrystal(ServerLevel l, double x, double y, double z, float s, boolean lit) {
+        Display.BlockDisplay d = IceFx.spawn(l, x, y, z, crystal(lit), new Quaternionf(), s, s, s, 0f);
+        if (d == null) return null;
+        CompoundTag t = d.saveWithoutId(new CompoundTag());
+        t.putFloat("view_range", 6f);
+        d.load(t);
+        setLit(d, lit);
+        return d;
+    }
+
+    private static void setLit(Display.BlockDisplay d, boolean lit) {
+        CompoundTag t = d.saveWithoutId(new CompoundTag());
+        t.put("block_state", net.minecraft.nbt.NbtUtils.writeBlockState(crystal(lit)));
+        CompoundTag light = new CompoundTag();
+        light.putInt("sky", lit ? 15 : 7);
+        light.putInt("block", lit ? 15 : 0);
+        t.put("brightness", light);
+        d.load(t);
+    }
+
+    /** Transformation d'un cristal : rotation autour de son axe vertical, décalage (dx, lift, dz), taille s, interpolée. */
+    private static void spin(Display.BlockDisplay d, float angleDeg, float s, float ox, float lift, float oz, int dur) {
+        Quaternionf q = new Quaternionf().rotationY((float) Math.toRadians(angleDeg));
+        org.joml.Vector3f tr = q.transform(new org.joml.Vector3f(-s / 2f, 0f, -s / 2f)).add(ox, lift, oz);
+        CompoundTag tag = d.saveWithoutId(new CompoundTag());
+        CompoundTag tf = new CompoundTag();
+        tf.put("translation", floats3(tr.x, tr.y, tr.z));
+        ListTag lr = new ListTag();
+        for (float f : new float[]{q.x, q.y, q.z, q.w}) lr.add(net.minecraft.nbt.FloatTag.valueOf(f));
+        tf.put("left_rotation", lr);
+        tf.put("scale", floats3(s, s, s));
+        ListTag rr = new ListTag();
+        for (float f : new float[]{0, 0, 0, 1}) rr.add(net.minecraft.nbt.FloatTag.valueOf(f));
+        tf.put("right_rotation", rr);
+        tag.put("transformation", tf);
+        tag.putInt("interpolation_duration", Math.max(0, dur));
+        tag.putInt("start_interpolation", 0);
+        d.load(tag);
+    }
+
+    private static ListTag floats3(float a, float b, float c) {
+        ListTag l = new ListTag();
+        l.add(net.minecraft.nbt.FloatTag.valueOf(a));
+        l.add(net.minecraft.nbt.FloatTag.valueOf(b));
+        l.add(net.minecraft.nbt.FloatTag.valueOf(c));
+        return l;
+    }
+
+    /**
+     * Cristaux de l'autel : le grand cristal flotte et tourne (allumé quand l'autel est capturé, avec 4 mini-cristaux en orbite),
+     * un petit cristal sur chaque pilier (allumé selon la progression). {@code stateOnly} : met juste à jour l'allumage.
+     */
+    private static void crystals(ServerLevel l, Islet i, long now, boolean stateOnly) {
+        double cx = i.cx + 0.5, cz = i.cz + 0.5, cy = RiftManager.CENTER.getY() + 7.0;
+        float t = now;
+        // grand cristal
+        Display.BlockDisplay m = display(l, i.crystalMain);
+        if (m == null) { m = spawnCrystal(l, cx, cy, cz, 3f, i.mainLit); if (m != null) i.crystalMain = m.getUUID(); }
+        else if (stateOnly) setLit(m, i.mainLit);
+        if (m != null && !stateOnly) spin(m, t * 1.2f, 3f, 0f, Mth.sin(t * 0.05f) * 0.15f, 0f, 20);
+        // piliers
+        for (int k = 0; k < 4 && k < i.pillarTops.size(); k++) {
+            BlockPos p = i.pillarTops.get(k);
+            Display.BlockDisplay d = display(l, i.crystalPillar[k]);
+            if (d == null) { d = spawnCrystal(l, p.getX() + 0.5, p.getY(), p.getZ() + 0.5, 1f, i.pillarLit[k]); if (d != null) i.crystalPillar[k] = d.getUUID(); }
+            else if (stateOnly) setLit(d, i.pillarLit[k]);
+            if (d != null && !stateOnly) spin(d, t * (i.pillarLit[k] ? 2.4f : 0.6f) + k * 30f, 1f, 0f, Mth.sin(t * 0.07f + k) * 0.08f, 0f, 20);
+        }
+        // mini-cristaux en orbite (autel capturé)
+        if (!i.mainLit) {
+            for (UUID id : i.orbit) { Display.BlockDisplay d = display(l, id); if (d != null) IceFx.remove(d); }
+            i.orbit.clear();
+        } else {
+            i.orbit.removeIf(id -> display(l, id) == null);
+            while (i.orbit.size() < 4) {
+                Display.BlockDisplay d = spawnCrystal(l, cx, cy, cz, 0.7f, true);
+                if (d == null) break;
+                i.orbit.add(d.getUUID());
+            }
+            if (!stateOnly) {
+                for (int k = 0; k < i.orbit.size(); k++) {
+                    Display.BlockDisplay d = display(l, i.orbit.get(k));
+                    if (d == null) continue;
+                    double a = Math.toRadians(t * 1.6f + k * 90f);
+                    float r = 3.2f + (k % 2) * 0.5f;
+                    spin(d, -t * 2f + k * 40f, 0.7f, (float) Math.cos(a) * r, 0.6f + Mth.sin(t * 0.07f + k) * 0.6f, (float) Math.sin(a) * r, 20);
+                }
+            }
+        }
+    }
+
+    private static void removeCrystals(ServerLevel l, Islet i) {
+        Display.BlockDisplay m = display(l, i.crystalMain);
+        if (m != null) IceFx.remove(m);
+        for (UUID id : i.crystalPillar) { Display.BlockDisplay d = display(l, id); if (d != null) IceFx.remove(d); }
+        for (UUID id : i.orbit) { Display.BlockDisplay d = display(l, id); if (d != null) IceFx.remove(d); }
+        i.orbit.clear();
     }
 
     private static float captureSeconds(int players) {
@@ -779,6 +896,7 @@ public final class RiftIslets {
             }
         }
         altarVisual(l, a);
+        if (now % 20 == 0) crystals(l, a, now, false);   // les cristaux tournent (interpolés côté client)
         // faisceau : poussière lumineuse visible de loin
         if (a.captured && now % 20 == 0) {
             for (ServerPlayer p : l.players()) {
@@ -813,7 +931,11 @@ public final class RiftIslets {
         l.playSound(null, at, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 4f, 1f);
         l.sendParticles(ParticleTypes.END_ROD, a.cx + 0.5, a.top + 8.5, a.cz + 0.5, 80, 1.5, 1.5, 1.5, 0.15);
         EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.altar.captured")), "minecraft:amethyst_cluster", EventFeedPacket.RESOURCE, true);
-        for (ServerPlayer p : l.players()) sendChoice(p);
+        // ceux qui ont capturé : écran à 3 cartes tout de suite ; les autres peuvent faire un clic droit sur l'autel
+        double cx = a.cx + 0.5, cz = a.cz + 0.5;
+        for (ServerPlayer p : l.players()) {
+            if (!p.isSpectator() && Math.hypot(p.getX() - cx, p.getZ() - cz) <= RING + 1 && Math.abs(p.getY() - a.top) < 8) sendChoice(p);
+        }
     }
 
     private static void lose(ServerLevel l, Islet a) {
@@ -827,8 +949,16 @@ public final class RiftIslets {
         EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.altar.lost", old == null ? "—" : old.label())), "minecraft:tinted_glass", EventFeedPacket.DANGER, true);
     }
 
-    /** Ligne de choix cliquable (commande ouverte à tous : /wavesurvivor riftaltar <0-2>). */
+    /** Écran de choix du bonus (3 cartes, comme une bénédiction). */
     private static void sendChoice(ServerPlayer p) {
+        HordeConfigMultiData.RiftSettings s = rs();
+        com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                new com.wavesurvivor.network.AltarBonusPackets.Open(s.altarRampartPct, s.altarArsenalPct, s.altarProsperityPct));
+    }
+
+    /** Ligne de choix cliquable (secours : commande ouverte à tous /wavesurvivor riftaltar <0-2>). */
+    @SuppressWarnings("unused")
+    private static void sendChoiceChat(ServerPlayer p) {
         net.minecraft.network.chat.MutableComponent line = Component.literal("§d✦ " + WSLang.t("rift.altar.choose") + " ");
         HordeConfigMultiData.RiftSettings s = rs();
         int[] vals = {s.altarRampartPct, s.altarArsenalPct, s.altarProsperityPct};
@@ -972,7 +1102,7 @@ public final class RiftIslets {
         // place du marchand derrière le comptoir, tourné vers le pont
         int mx = sx1 + 1;
         BlockPos m = at.apply(mx, 0);
-        float facing = (float) Math.toDegrees(Math.atan2(i.dx, -i.dz));
+        float facing = (float) Math.toDegrees(Math.atan2(i.sx, -i.sz));
         VoidMerchant.place(new BlockPos(m.getX(), y0 + 2, m.getZ()), facing);
         // comptoir avec marchandises
         int cxp = mx + 2;
@@ -992,14 +1122,8 @@ public final class RiftIslets {
         }
         // lanternes de cristal flottantes
         for (int[] c : new int[][]{{3, -6, 5}, {-2, -7, 6}, {6, 5, 4}, {-6, 6, 6}, {1, 7, 5}, {-8, 0, 7}}) put.accept(new Object[]{c[0], c[2], c[1], lamp});
-        // allée vers le pont
-        for (int px = 5; px <= R; px++) {
-            for (int pz = -1; pz <= 1; pz++) {
-                BlockPos c = at.apply(px, pz);
-                BlockPos p = new BlockPos(c.getX(), y0 + 1, c.getZ());
-                if (!l.getBlockState(p).isAir()) set(l, p, Blocks.POLISHED_DEEPSLATE.defaultBlockState());
-            }
-        }
+        // allée vers le pont (vraie direction du pont : en diagonale aussi)
+        path(l, i, 5, R, y0 + 1, Blocks.POLISHED_DEEPSLATE.defaultBlockState());
     }
 
     /** Kit de pont : reconstruit le segment effondré le plus proche (à 8 blocs). */
@@ -1175,35 +1299,73 @@ public final class RiftIslets {
                 edge = Blocks.DEEPSLATE_TILES.defaultBlockState(), wall = Blocks.DEEPSLATE_TILE_WALL.defaultBlockState(),
                 postSt = Blocks.POLISHED_BLACKSTONE_WALL.defaultBlockState(), lamp = Blocks.PEARLESCENT_FROGLIGHT.defaultBlockState(),
                 chain = Blocks.CHAIN.defaultBlockState(), under = Blocks.POLISHED_DEEPSLATE.defaultBlockState();
-        java.util.Set<Long> seen = new java.util.HashSet<>();
-        for (int a = 0; a <= L; a++) {
+        // Chaque bloc dont le centre tombe dans la bande du pont (distance au centre et écart latéral continus) : aucun trou,
+        // même en diagonale. Tablier |écart| ≤ 1,5 ; bordure 1,5 – 2,6 ; poutre dessous |écart| ≤ 0,72.
+        List<double[]> cells = new ArrayList<>();   // {x, z, le long, écart}
+        for (double[] cell : strip(i.dx, i.dz, i.bStart, i.bStart + L, 2.6)) cells.add(cell);
+        cells.sort(java.util.Comparator.comparingDouble(q -> q[2]));
+        java.util.Set<Long> posts = new java.util.HashSet<>(), chains = new java.util.HashSet<>();
+        for (double[] q : cells) {
+            int bx = (int) q[0], bz = (int) q[1];
+            int a = (int) Math.max(0, Math.min(L, Math.round(q[2] - i.bStart)));
+            double side = q[3], as = Math.abs(side);
             int seg = Math.min(SEGMENTS - 1, a * SEGMENTS / (L + 1));
-            double d = i.bStart + a;
             boolean lantern = a % 8 == 4;
-            for (int o = -2; o <= 2; o++) {
-                int bx = (int) Math.round(c.getX() + 0.5 + i.dx * d - i.dz * o - 0.5);
-                int bz = (int) Math.round(c.getZ() + 0.5 + i.dz * d + i.dx * o - 0.5);
-                if (!seen.add(BlockPos.asLong(bx, 0, bz))) continue;
-                List<Piece> col = new ArrayList<>();
-                if (o == 0) {
-                    col.add(new Piece(new BlockPos(bx, y - 1, bz), under, seg));
+            if (as <= 1.5) {
+                i.pieces.add(new Piece(new BlockPos(bx, y, bz), (a + (int) Math.round(side)) % 3 == 0 ? deckB : deck, seg));
+                if (as <= 0.72) {
+                    i.pieces.add(new Piece(new BlockPos(bx, y - 1, bz), under, seg));
                     i.deck.get(seg).add(new BlockPos(bx, y, bz));
-                }
-                col.add(new Piece(new BlockPos(bx, y, bz), Math.abs(o) == 2 ? edge : ((a + o) % 3 == 0 ? deckB : deck), seg));
-                if (Math.abs(o) == 2) {
-                    if (lantern) {
-                        for (int k = 1; k <= 3; k++) col.add(new Piece(new BlockPos(bx, y + k, bz), postSt, seg));
-                        col.add(new Piece(new BlockPos(bx, y + 4, bz), lamp, seg));
-                    } else {
-                        col.add(new Piece(new BlockPos(bx, y + 1, bz), wall, seg));
+                    if (lantern && chains.add((long) a)) {
+                        for (int k = 2; k <= 4; k++) i.pieces.add(new Piece(new BlockPos(bx, y - k, bz), chain, seg));
+                        i.pieces.add(new Piece(new BlockPos(bx, y - 5, bz), lamp, seg));
                     }
                 }
-                if (o == 0 && lantern) {
-                    for (int k = 2; k <= 4; k++) col.add(new Piece(new BlockPos(bx, y - k, bz), chain, seg));
-                    col.add(new Piece(new BlockPos(bx, y - 5, bz), lamp, seg));
+            } else {
+                i.pieces.add(new Piece(new BlockPos(bx, y, bz), edge, seg));
+                if (lantern && posts.add(a * 2L + (side > 0 ? 1 : 0))) {
+                    for (int k = 1; k <= 3; k++) i.pieces.add(new Piece(new BlockPos(bx, y + k, bz), postSt, seg));
+                    i.pieces.add(new Piece(new BlockPos(bx, y + 4, bz), lamp, seg));
+                } else {
+                    i.pieces.add(new Piece(new BlockPos(bx, y + 1, bz), wall, seg));
                 }
-                i.pieces.addAll(col);
             }
+        }
+    }
+
+    /**
+     * Blocs d'une bande droite partant du centre de l'île dans la direction (dx, dz) : distance « le long » entre from et to,
+     * écart latéral ≤ half. Test sur le centre de chaque bloc : pas de trou en diagonale. Renvoie {x, z, le long, écart}.
+     */
+    static List<double[]> strip(double dx, double dz, double from, double to, double half) {
+        BlockPos c = RiftManager.CENTER;
+        double ox = c.getX() + 0.5, oz = c.getZ() + 0.5;
+        double minX = Double.MAX_VALUE, maxX = -Double.MAX_VALUE, minZ = Double.MAX_VALUE, maxZ = -Double.MAX_VALUE;
+        for (double al : new double[]{from - 1, to + 1}) {
+            for (double sd : new double[]{-half - 1, half + 1}) {
+                double x = ox + dx * al - dz * sd, z = oz + dz * al + dx * sd;
+                minX = Math.min(minX, x); maxX = Math.max(maxX, x); minZ = Math.min(minZ, z); maxZ = Math.max(maxZ, z);
+            }
+        }
+        List<double[]> out = new ArrayList<>();
+        for (int x = (int) Math.floor(minX); x <= (int) Math.ceil(maxX); x++) {
+            for (int z = (int) Math.floor(minZ); z <= (int) Math.ceil(maxZ); z++) {
+                double px = x + 0.5 - ox, pz = z + 0.5 - oz;
+                double along = px * dx + pz * dz, side = -px * dz + pz * dx;
+                if (along < from - 0.5 || along > to + 0.5 || Math.abs(side) > half) continue;
+                out.add(new double[]{x, z, along, side});
+            }
+        }
+        return out;
+    }
+
+    /** Allée d'un îlot vers son pont (sans trou en diagonale) : dallage posé sur le dessus existant, de u = from à u = to (vers le pont). */
+    private static void path(ServerLevel l, Islet i, double from, double to, int y, BlockState st) {
+        double cx = i.cx + 0.5 - (RiftManager.CENTER.getX() + 0.5), cz = i.cz + 0.5 - (RiftManager.CENTER.getZ() + 0.5);
+        double base = cx * i.dx + cz * i.dz;   // distance du centre de l'îlot au centre de l'île
+        for (double[] q : strip(i.dx, i.dz, base - to, base - from, 1.5)) {
+            BlockPos p = new BlockPos((int) q[0], y, (int) q[1]);
+            if (!l.getBlockState(p).isAir()) set(l, p, st);
         }
     }
 
@@ -1448,6 +1610,8 @@ public final class RiftIslets {
             }
             clearRaiders(l);
             clearBreakers(l);
+            Islet al = get(Kind.ALTAR);
+            if (al != null) removeCrystals(l, al);
         }
         PENDING.clear();
         BREAKERS.clear();

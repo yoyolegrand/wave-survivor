@@ -76,6 +76,7 @@ public final class RiftChestIslet {
     private static boolean present, triggered, leaving;
     private static int cx, cz, top, offset;   // offset : décalage vertical pendant la montée (0 = en place)
     private static double dx, dz;
+    private static double sdx, sdz;   // direction ramenée à l'axe le plus proche (décors : pas de trou en diagonale)
     private static long nextRise;
     private static final Map<BlockPos, BlockState> PLAN = new LinkedHashMap<>();
     private static final List<List<BlockPos>> CHAINS = new ArrayList<>();
@@ -132,6 +133,7 @@ public final class RiftChestIslet {
         double[] d = RiftIslets.dirOf(RiftIslets.chestSide(s, siegeFinal));
         dx = d[0];
         dz = d[1];
+        if (Math.abs(dx) >= Math.abs(dz)) { sdx = Math.signum(dx); sdz = 0; } else { sdx = 0; sdz = Math.signum(dz); }
         int dd = dist(s, siegeFinal);
         BlockPos c = RiftManager.CENTER;
         cx = (int) Math.round(c.getX() + dx * dd);
@@ -155,7 +157,7 @@ public final class RiftChestIslet {
     }
 
     private static BlockPos local(double u, int y, double v) {
-        return BlockPos.containing(cx + 0.5 + dx * u - dz * v, y, cz + 0.5 + dz * u + dx * v);
+        return BlockPos.containing(cx + 0.5 + sdx * u - sdz * v, y, cz + 0.5 + sdz * u + sdx * v);
     }
 
     private static double smooth(double t) { return t * t * (3 - 2 * t); }
@@ -261,17 +263,17 @@ public final class RiftChestIslet {
         BRIDGE_ST.clear();
         BlockPos c = RiftManager.CENTER;
         int a0 = siegeFinal - 3, a1 = dd - R + 2, L = Math.max(1, a1 - a0);
-        Set<Long> seen = new HashSet<>();
-        for (int a = 0; a <= L; a++) {
-            double d = a0 + a;
-            int y = c.getY() + (int) Math.round((double) LIFT * a / L);
-            for (int o = -1; o <= 1; o++) {
-                int bx = (int) Math.round(c.getX() + 0.5 + dx * d - dz * o - 0.5), bz = (int) Math.round(c.getZ() + 0.5 + dz * d + dx * o - 0.5);
-                if (!seen.add(BlockPos.asLong(bx, y, bz))) continue;
-                BlockPos p = new BlockPos(bx, y, bz);
-                BRIDGE.add(p);
-                BRIDGE_ST.put(p, (a + o) % 4 == 0 ? Blocks.PEARLESCENT_FROGLIGHT.defaultBlockState() : Blocks.PURPLE_STAINED_GLASS.defaultBlockState());
-            }
+        // bande continue (aucun trou en diagonale), triée du bord de l'île vers l'îlot pour la pose
+        List<double[]> cells = RiftIslets.strip(dx, dz, a0, a1, 1.5);
+        cells.sort(java.util.Comparator.comparingDouble(q -> q[2]));
+        for (double[] q : cells) {
+            double t = Math.max(0, Math.min(1, (q[2] - a0) / L));
+            int y = c.getY() + (int) Math.round(LIFT * t);
+            BlockPos p = new BlockPos((int) q[0], y, (int) q[1]);
+            if (BRIDGE_ST.containsKey(p)) continue;
+            BRIDGE.add(p);
+            int a = (int) Math.round(q[2] - a0);
+            BRIDGE_ST.put(p, (a + (int) Math.round(q[3])) % 4 == 0 ? Blocks.PEARLESCENT_FROGLIGHT.defaultBlockState() : Blocks.PURPLE_STAINED_GLASS.defaultBlockState());
         }
     }
 
@@ -431,7 +433,7 @@ public final class RiftChestIslet {
         BlockPos at = at(0, 2, 0);
         RouletteChestConfig cfg = config();
         if (cfg != null) {
-            Direction facing = Direction.getNearest(-dx, 0, -dz);
+            Direction facing = Direction.getNearest(-sdx, 0, -sdz);
             l.setBlock(at, com.wavesurvivor.registry.ModBlocks.ROULETTE_CHEST.get().defaultBlockState().setValue(RouletteChestBlock.FACING, facing), 3);
             if (l.getBlockEntity(at) instanceof RouletteChestBlockEntity be) {
                 be.setCustomName(Component.literal(cfg.chestName()));

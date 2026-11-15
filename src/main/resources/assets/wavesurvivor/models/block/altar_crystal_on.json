@@ -1,0 +1,8 @@
+{
+  "parent": "wavesurvivor:block/town_crystal",
+  "textures": {
+    "particle": "wavesurvivor:block/altar_crystal",
+    "light": "wavesurvivor:block/altar_crystal",
+    "dark": "wavesurvivor:block/altar_crystal_shade"
+  }
+}

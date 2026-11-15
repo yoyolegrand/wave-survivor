@@ -522,7 +522,7 @@ public class HordeConfigMultiData {
         @SerializedName("isletMerchantSide") public String isletMerchantSide = "northwest";
         @SerializedName("merchantCalm") public int merchantCalm = 2;
         @SerializedName("merchantLimit") public int merchantLimit = 4;
-        @SerializedName("merchantPrices") public java.util.List<Integer> merchantPrices = new java.util.ArrayList<>(java.util.List.of(3, 4, 5, 5, 4, 3, 6, 4, 8, 10, 12, 40));
+        @SerializedName("merchantPrices") public java.util.List<Integer> merchantPrices = new java.util.ArrayList<>(java.util.List.of(3, 4, 5, 5, 4, 3, 6, 4, 24, 30, 12, 120));
         @SerializedName("merchantStock") public java.util.List<Integer> merchantStock = new java.util.ArrayList<>(java.util.List.of(0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, -1));
         /** Pont : coût au Monolithe (bois + pierre du trésor), PV de chacun des 5 segments, pierre (objets en main) pour réparer un segment. */
         @SerializedName("bridgeWood") public int bridgeWood = 20;

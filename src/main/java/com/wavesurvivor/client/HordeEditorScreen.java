@@ -2146,7 +2146,7 @@ public class HordeEditorScreen extends Screen {
         hint(x, next() + 4, t("ui.rift.hint_altar"));
     }
 
-    private static final int[] MERCHANT_PRICE = {3, 4, 5, 5, 4, 3, 6, 4, 8, 10, 12, 40};
+    private static final int[] MERCHANT_PRICE = {3, 4, 5, 5, 4, 3, 6, 4, 24, 30, 12, 120};
     private static final int[] MERCHANT_STOCK = {0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, -1};
 
     /** Valeur n° i d'un tableau d'entiers de la config (défaut si absent). */

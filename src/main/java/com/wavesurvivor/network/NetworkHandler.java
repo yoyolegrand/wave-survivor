@@ -250,6 +250,11 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, RiftSkyPacket.class,
                 RiftSkyPacket::encode, RiftSkyPacket::decode, RiftSkyPacket::handle);
 
+        // Bonus de l'île-autel : écran à 3 cartes (2.1)
+        CHANNEL.registerMessage(id++, AltarBonusPackets.Open.class,
+                AltarBonusPackets.Open::encode, AltarBonusPackets.Open::decode, AltarBonusPackets.Open::handle);
+        CHANNEL.registerMessage(id++, AltarBonusPackets.Choose.class,
+                AltarBonusPackets.Choose::encode, AltarBonusPackets.Choose::decode, AltarBonusPackets.Choose::handle);
         // Boutique du Marchand du Néant (2.1)
         CHANNEL.registerMessage(id++, VoidMerchantPackets.Open.class,
                 VoidMerchantPackets.Open::encode, VoidMerchantPackets.Open::decode, VoidMerchantPackets.Open::handle);

@@ -49,7 +49,7 @@ public final class VoidMerchant {
 
     public static final int N = 12;
     static final String TAG = "ws_void_merchant";
-    private static final int[] DEF_PRICE = {3, 4, 5, 5, 4, 3, 6, 4, 8, 10, 12, 40};
+    private static final int[] DEF_PRICE = {3, 4, 5, 5, 4, 3, 6, 4, 24, 30, 12, 120};
     private static final int[] DEF_STOCK = {0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, -1};
 
     private static boolean arrived;

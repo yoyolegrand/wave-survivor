@@ -5307,5 +5307,8 @@
   "ui.rift.mitem.8": "Titan Key",
   "ui.rift.mitem.9": "Rift Dust ×4",
   "ui.rift.mitem.10": "Blessing Reroll",
-  "ui.rift.mitem.11": "Rift Shard"
+  "ui.rift.mitem.11": "Rift Shard",
+  "rift.altar.screen_title": "The altar is yours",
+  "rift.altar.screen_sub": "Choose the team bonus (only one, until the altar is retaken)",
+  "rift.altar.screen_pick": "Choose"
 }
