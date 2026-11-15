@@ -129,6 +129,7 @@ public final class RiftIslets {
         final UUID[] crystalPillar = new UUID[4];
         final List<UUID> orbit = new ArrayList<>();
         boolean[] pillarLit = new boolean[4];
+        final java.util.Set<UUID> inCircle = new java.util.HashSet<>();   // joueurs dans le cercle au dernier passage
         boolean mainLit;
 
         final double sx, sz;     // direction ramenée à l'axe le plus proche (décors en blocs : jamais de trou en diagonale)
@@ -729,13 +730,12 @@ public final class RiftIslets {
         boolean on = i.captured;
         i.mainLit = on;
         crystals(l, i, l.getGameTime(), true);
-        if (on != i.beamOn) {   // faisceau : colonne de barres de l'End au-dessus du cristal
-            BlockState rod = Blocks.END_ROD.defaultBlockState();
+        if (i.beamOn) {   // ancien faisceau en barres de l'End (retiré) : effacé s'il reste des blocs
             for (int y = BEAM_FROM; y <= BEAM_TO; y++) {
                 BlockPos p = new BlockPos(i.cx, RiftManager.CENTER.getY() + y, i.cz);
-                l.setBlock(p, on ? rod : Blocks.AIR.defaultBlockState(), 3);
+                if (l.getBlockState(p).is(Blocks.END_ROD)) l.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             }
-            i.beamOn = on;
+            i.beamOn = false;
         }
     }
 
@@ -897,13 +897,16 @@ public final class RiftIslets {
         }
         altarVisual(l, a);
         if (now % 20 == 0) crystals(l, a, now, false);   // les cristaux tournent (interpolés côté client)
-        // faisceau : poussière lumineuse visible de loin
-        if (a.captured && now % 20 == 0) {
-            for (ServerPlayer p : l.players()) {
-                l.sendParticles(p, ParticleTypes.END_ROD, true, cx, a.top + 14, cz, 6, 0.3, 8, 0.3, 0.02);
-                l.sendParticles(p, ParticleTypes.WITCH, true, cx, a.top + 7.5, cz, 4, 0.8, 0.8, 0.8, 0.02);
-            }
+        // autel capturé : quelques étincelles autour du cristal
+        if (a.captured && now % 20 == 0) l.sendParticles(ParticleTypes.END_ROD, cx, a.top + 7.5, cz, 3, 1.2, 1.2, 1.2, 0.01);
+        // bonus pas encore choisi : l'écran des cartes revient dès qu'un joueur entre dans le cercle
+        java.util.Set<UUID> nowIn = new java.util.HashSet<>();
+        for (ServerPlayer p : in) {
+            nowIn.add(p.getUUID());
+            if (a.captured && a.bonus == null && !a.inCircle.contains(p.getUUID())) sendChoice(p);
         }
+        a.inCircle.clear();
+        a.inCircle.addAll(nowIn);
         // Rempart : le Monolithe régénère 1 % de ses PV toutes les 10 s (pendant le Siège)
         if (siege && a.captured && a.bonus == Bonus.RAMPART && now % 200 == 0 && com.wavesurvivor.altar.AltarDefense.isActive()) {
             float pct = Math.max(0, Math.min(20, rs().altarRampartPct)) / 100f;
@@ -931,7 +934,12 @@ public final class RiftIslets {
         l.playSound(null, at, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 4f, 1f);
         l.sendParticles(ParticleTypes.END_ROD, a.cx + 0.5, a.top + 8.5, a.cz + 0.5, 80, 1.5, 1.5, 1.5, 0.15);
         EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.altar.captured")), "minecraft:amethyst_cluster", EventFeedPacket.RESOURCE, true);
-        // ceux qui ont capturé : écran à 3 cartes tout de suite ; les autres peuvent faire un clic droit sur l'autel
+        // lien dans le chat pour tous : rouvrir l'écran (après Échap par exemple)
+        net.minecraft.network.chat.MutableComponent link = Component.literal("§d✦ " + WSLang.t("rift.altar.reopen_hint") + " ")
+                .append(Component.literal("§e§l[" + WSLang.t("rift.altar.reopen_btn") + "]").withStyle(st -> st.withClickEvent(
+                        new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/wavesurvivor riftaltar"))));
+        for (ServerPlayer p : l.players()) p.sendSystemMessage(link);
+        // ceux qui ont capturé : écran à 3 cartes tout de suite ; les autres : en entrant dans le cercle, clic droit sur l'autel ou le lien
         double cx = a.cx + 0.5, cz = a.cz + 0.5;
         for (ServerPlayer p : l.players()) {
             if (!p.isSpectator() && Math.hypot(p.getX() - cx, p.getZ() - cz) <= RING + 1 && Math.abs(p.getY() - a.top) < 8) sendChoice(p);
@@ -972,7 +980,15 @@ public final class RiftIslets {
         p.sendSystemMessage(line);
     }
 
-    /** Choix du bonus (clic dans le chat) : un seul par capture, pour toute l'équipe. */
+    /** Rouvre l'écran des cartes (commande /wavesurvivor riftaltar, lien dans le chat). */
+    public static void reopenChoice(ServerPlayer p) {
+        Islet a = get(Kind.ALTAR);
+        if (a == null || !a.captured) { p.displayClientMessage(Component.literal(WSLang.t("rift.altar.not_captured")), true); return; }
+        if (a.bonus != null) { p.displayClientMessage(Component.literal(WSLang.t("rift.altar.already", a.bonus.label())), true); return; }
+        sendChoice(p);
+    }
+
+    /** Choix du bonus (écran des cartes) : un seul par capture, pour toute l'équipe. */
     public static void chooseBonus(ServerPlayer p, int idx) {
         Islet a = get(Kind.ALTAR);
         if (a == null || !a.captured) { p.displayClientMessage(Component.literal(WSLang.t("rift.altar.not_captured")), true); return; }
@@ -1737,8 +1753,8 @@ public final class RiftIslets {
             if (!(e.getEntity() instanceof ServerPlayer p) || !active() || p.level().dimension() != RiftManager.RIFT_DIM) return;
             // Île-autel : clic droit sur l'autel capturé sans bonus → choix du bonus
             Islet a = get(Kind.ALTAR);
-            if (a != null && a.captured && a.bonus == null && Math.hypot(e.getPos().getX() - a.cx, e.getPos().getZ() - a.cz) <= 2.5
-                    && e.getPos().getY() > a.top && e.getPos().getY() <= a.top + 4) {
+            if (a != null && a.captured && a.bonus == null && Math.hypot(e.getPos().getX() - a.cx, e.getPos().getZ() - a.cz) <= RING
+                    && e.getPos().getY() >= a.top && e.getPos().getY() <= a.top + 8) {
                 if (e.getHand() == net.minecraft.world.InteractionHand.MAIN_HAND) sendChoice(p);
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.SUCCESS);

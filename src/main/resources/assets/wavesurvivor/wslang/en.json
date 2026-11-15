@@ -5310,5 +5310,7 @@
   "ui.rift.mitem.11": "Rift Shard",
   "rift.altar.screen_title": "The altar is yours",
   "rift.altar.screen_sub": "Choose the team bonus (only one, until the altar is retaken)",
-  "rift.altar.screen_pick": "Choose"
+  "rift.altar.screen_pick": "Choose",
+  "rift.altar.reopen_hint": "Altar bonus choice:",
+  "rift.altar.reopen_btn": "Open"
 }

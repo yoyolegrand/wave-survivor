@@ -186,7 +186,7 @@ public class BrisePont extends Monster {
                 else com.wavesurvivor.horde.rift.RiftIslets.claimBridge(this);
             } else {
                 double d = Math.hypot(getX() - (gnawAt.getX() + 0.5), getZ() - (gnawAt.getZ() + 0.5));
-                if (d > 1.6 && unhooked <= 0) {
+                if (d > 2.8 && unhooked <= 0) {
                     setTarget(null);
                     getNavigation().moveTo(gnawAt.getX() + 0.5, gnawAt.getY() + 1, gnawAt.getZ() + 0.5, 1.1);
                     seekTicks += 20;
@@ -246,8 +246,8 @@ public class BrisePont extends Monster {
         if (level().isClientSide) return;
         if (unhooked > 0) unhooked--;
         else if (!gnawing() && !climbing() && onGround() && segment >= 0 && gnawAt != null
-                && Math.hypot(getX() - (gnawAt.getX() + 0.5), getZ() - (gnawAt.getZ() + 0.5)) <= 1.6
-                && Math.abs(getY() - (gnawAt.getY() + 1)) < 1.2) {
+                && Math.hypot(getX() - (gnawAt.getX() + 0.5), getZ() - (gnawAt.getZ() + 0.5)) <= 3.0
+                && Math.abs(getY() - (gnawAt.getY() + 1)) < 1.5) {
             getNavigation().stop();
             seekTicks = 0;
             setGnawing(true);

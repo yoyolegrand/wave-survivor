@@ -31,6 +31,11 @@
 - [ ] Prix ×3 : Clé du Titan 24, Poussière de Faille ×4 30, Éclat de Faille 120
 - [ ] Capture de l'autel : écran à 3 cartes (Rempart / Arsenal / Prospérité) qui s'ouvre tout seul pour ceux qui sont dans le cercle, cartes qui arrivent l'une après l'autre ; clic droit sur l'autel pour le rouvrir
 - [ ] Cristaux de l'autel : grand cristal blanc facetté (modèle du cristal du Monolithe) qui flotte et tourne, sombre tant que l'autel n'est pas pris, allumé + 4 mini-cristaux en orbite une fois capturé ; petit cristal sur chaque pilier, allumé selon la progression
+- [ ] Écran des bonus fermé par Échap : il revient en rentrant dans le cercle, par clic droit sur n'importe quel bloc du cercle (autel, estrade, dallage) ou par le lien [Ouvrir] dans le chat
+- [ ] Plus de colonne de barres de l'End au-dessus de l'autel (et l'ancienne disparaît d'une partie reprise)
+- [ ] Brise-pont pondu à côté du pont : il monte sur le tablier et se met à ronger (ne reste plus planté)
+- [x] Kit de pont : répare un segment effondré
+- [x] Structure de l'île minière intacte, pont attaqué par les Brise-pont
 - [ ] Montée de niveau de la Mairie : les Golems de fer n'essaient plus d'attaquer le cristal du Monolithe
 
 ## 3. Île-autel
@@ -68,7 +73,7 @@
 - [x] Fiole du Néant : se boit, +8 cœurs
 - [x] Élixirs : Résistance I / Force I pendant 2 min
 - [x] Pierre de rappel : téléporte à côté du Monolithe (pas dans un mur), consommée
-- [ ] Kit de pont : près d'un segment effondré → reconstruit, consommé ; sinon message
+- [x] Kit de pont : près d'un segment effondré → reconstruit, consommé ; sinon message
 - [ ] Kit d'engin : clic droit sur un engin abîmé → +50 % PV ; engin plein → message, pas consommé
 - [x] Lanterne de vigie : monstres proches en surbrillance 30 s (visibles à travers les blocs)
 - [x] Relance de bénédiction : +1 relance au prochain choix de cartes

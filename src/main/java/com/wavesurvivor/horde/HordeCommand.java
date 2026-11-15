@@ -274,6 +274,7 @@ public class HordeCommand {
                 }))
                 // 2.1 — choix du bonus de l'île-autel (clic dans le chat, ouvert à tous)
                 .then(Commands.literal("riftaltar")
+                        .executes(ctx -> { com.wavesurvivor.horde.rift.RiftIslets.reopenChoice(ctx.getSource().getPlayerOrException()); return 1; })
                         .then(Commands.argument("i", IntegerArgumentType.integer(0, 2))
                                 .executes(ctx -> {
                                     com.wavesurvivor.horde.rift.RiftIslets.chooseBonus(ctx.getSource().getPlayerOrException(),
