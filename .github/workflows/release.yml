@@ -92,3 +92,18 @@ jobs:
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Annonce dans le salon Discord #changelogs (secret DISCORD_WEBHOOK_CHANGELOGS).
+      # Ne bloque jamais la release : un échec Discord laisse le workflow vert.
+      - name: Announce on Discord
+        if: success() && env.HAS_DISCORD_WEBHOOK == 'true'
+        continue-on-error: true
+        env:
+          HAS_DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_CHANGELOGS != '' }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_CHANGELOGS }}
+          DISCORD_PING_ROLE_ID: ${{ vars.DISCORD_PING_ROLE_ID }}
+          RELEASE_VERSION: ${{ steps.ver.outputs.version }}
+          RELEASE_SUBTITLE: ${{ steps.log.outputs.subtitle }}
+          RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+          CHANGELOG_FILE: release_changelog.md
+        run: python3 .github/scripts/discord_announce.py
