@@ -32,6 +32,8 @@
 - [ ] Capture de l'autel : écran à 3 cartes (Rempart / Arsenal / Prospérité) qui s'ouvre tout seul pour ceux qui sont dans le cercle, cartes qui arrivent l'une après l'autre ; clic droit sur l'autel pour le rouvrir
 - [ ] Cristaux de l'autel : grand cristal blanc facetté (modèle du cristal du Monolithe) qui flotte et tourne, sombre tant que l'autel n'est pas pris, allumé + 4 mini-cristaux en orbite une fois capturé ; petit cristal sur chaque pilier, allumé selon la progression
 
+- [ ] Montée de niveau de la Mairie : les Golems de fer n'essaient plus d'attaquer le cristal du Monolithe
+
 ## 3. Île-autel
 - [ ] Île-autel visible à l'ouest (rayon 12) : dallage en damier, cercle violet lumineux, estrade dorée, cristal flottant sombre, 4 piliers sombres
 - [ ] Si l'île minière et l'île-autel sont réglées sur le même côté : l'autel prend un autre côté libre
