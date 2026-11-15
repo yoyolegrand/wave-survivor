@@ -14,11 +14,11 @@
 - [ ] Calme prolongé : +60 s en solo, +30 s à 2, rien à 3+ (message)
 
 ## 2. Île minière
-- [ ] Terrain : plat côté pont, monte vers le fond, mine décorative au fond (butte, galerie étayée, lanternes, rails, wagonnet, tonneaux), géode d'améthyste à gauche, filons de minerai sous l'île
+- [x] Terrain : plat côté pont, monte vers le fond, mine décorative au fond (butte, galerie étayée, lanternes, rails, wagonnet, tonneaux), géode d'améthyste à gauche, filons de minerai sous l'île
 - [ ] 8 filons au début du Siège : 4 fer, 2 émeraude, géode d'améthyste, cristaux d'Essence (sans compte à rebours)
 - [ ] Pioche minimum : pierre pour fer / améthyste, fer pour émeraude / Essence
 - [ ] Butin : fer brut, émeraudes (→ trésor au ramassage), éclats d'améthyste, Essence au trésor (cristaux) ; pierre + fer au trésor à chaque filon épuisé
-- [ ] Début de chaque Calme du Siège : ~50 % des filons épuisés repoussent (75 % avec un Mineur), message
+- [x] Début de chaque Calme du Siège : ~50 % des filons épuisés repoussent (75 % avec un Mineur), message
 - [ ] Gardes au début du Siège et de chaque Calme (5 points), les anciens disparaissent
 - [ ] Mineur : colonne de lumière / flèche sur les filons de l'îlot
 - [ ] Île principale : moins de gisements (40 %), plus d'émeraude ni d'améthyste
@@ -31,7 +31,6 @@
 - [ ] Prix ×3 : Clé du Titan 24, Poussière de Faille ×4 30, Éclat de Faille 120
 - [ ] Capture de l'autel : écran à 3 cartes (Rempart / Arsenal / Prospérité) qui s'ouvre tout seul pour ceux qui sont dans le cercle, cartes qui arrivent l'une après l'autre ; clic droit sur l'autel pour le rouvrir
 - [ ] Cristaux de l'autel : grand cristal blanc facetté (modèle du cristal du Monolithe) qui flotte et tourne, sombre tant que l'autel n'est pas pris, allumé + 4 mini-cristaux en orbite une fois capturé ; petit cristal sur chaque pilier, allumé selon la progression
-
 - [ ] Montée de niveau de la Mairie : les Golems de fer n'essaient plus d'attaquer le cristal du Monolithe
 
 ## 3. Île-autel
@@ -40,8 +39,8 @@
 - [ ] Boutique : ligne « Pont vers l'île-autel » (4e ligne des Engins), le pont se construit
 - [ ] Capture : rester dans le cercle → message de progression, les piliers s'allument un par un (~30 s seul, plus rapide à plusieurs)
 - [ ] Un monstre dans le cercle fige la barre (message « Capture figée »)
-- [ ] Capturé : cristal et piliers allumés, colonne lumineuse vers le ciel, son, message ; choix cliquable dans le chat [Rempart] [Arsenal] [Prospérité] (infobulle avec la valeur)
-- [ ] Le choix marche pour un joueur non-op ; un seul choix par capture (2e clic : « déjà choisi ») ; clic droit sur l'autel sans bonus choisi → le choix revient
+- [ ] Capturé : cristal et piliers allumés, colonne lumineuse vers le ciel, son, message ; écran à 3 cartes pour ceux qui sont dans le cercle
+- [ ] Le choix marche pour un joueur non-op ; un seul choix par capture (un 2e joueur : « déjà choisi ») ; clic droit sur l'autel sans bonus choisi → l'écran revient
 - [ ] Rempart : le Monolithe regagne 1 % de ses PV toutes les 10 s
 - [ ] Arsenal : catapultes / balistes font plus mal (+20 %)
 - [ ] Prospérité : plus de pierre / bois / fer au trésor, plus d'émeraudes et d'améthyste sur les monstres ; démolir un bâtiment ne rend pas plus
