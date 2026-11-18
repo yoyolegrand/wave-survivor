@@ -243,6 +243,29 @@ public class ChaosEvent {
     @SerializedName("guaranteed")
     public int guaranteed = 0;
 
+    /**
+     * 2.1 — Déclencheur propre à l'événement (tous les types, toutes les hordes) :
+     * « » / « chaos » = minuteur global du Chaos (tirage au hasard, comme avant) ; « timer » = son propre minuteur
+     * (trigMin–trigMax s) ; « calm » = 1 fois tous les trigEvery Calmes (pause entre vagues en classique) ;
+     * « assault » = 1 fois tous les trigEvery Assauts / vagues. trigCount = apparitions à chaque déclenchement.
+     * Un événement à déclencheur propre ne fait plus partie du tirage au hasard, et marche même si le Chaos est désactivé.
+     */
+    @SerializedName("trigger")
+    public String trigger = "";
+    @SerializedName("trigMin")
+    public int trigMin = 30;
+    @SerializedName("trigMax")
+    public int trigMax = 60;
+    @SerializedName("trigEvery")
+    public int trigEvery = 1;
+    @SerializedName("trigCount")
+    public int trigCount = 1;
+
+    /** Vrai si l'événement a son propre déclencheur (hors tirage au hasard du Chaos). */
+    public boolean ownTrigger() {
+        return "timer".equalsIgnoreCase(trigger) || "calm".equalsIgnoreCase(trigger) || "assault".equalsIgnoreCase(trigger);
+    }
+
     /** Taille : petit, moyen, grand, aleatoire (60 / 30 / 10 %). */
     @SerializedName("size")
     public String size = "petit";

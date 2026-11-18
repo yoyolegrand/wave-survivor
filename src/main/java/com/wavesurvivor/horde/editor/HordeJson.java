@@ -84,6 +84,9 @@ public final class HordeJson {
         cd.add("wavePauses", new JsonArray());
         cd.addProperty("chaosEnabled", false);
         cd.add("chaosEvents", new JsonArray());
+        JsonObject kg = new JsonObject();
+        kg.addProperty("tutorial", false);   // 2.1 — tuto du Kingdom : coché pour les Kingdoms livrés, pas pour une horde neuve
+        cd.add("kingdom", kg);
         h.add("configData", cd);
         return h;
     }

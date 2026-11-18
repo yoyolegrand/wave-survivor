@@ -111,6 +111,13 @@ public class BrecheEntity extends Mob implements net.minecraft.world.entity.mons
     @Override
     public boolean isPickable() { return !isGroundRift() && !isCrystal() && super.isPickable(); }
 
+    /**
+     * Cristal de la Mairie et faille au sol : purement visuels, jamais pris pour cible (Golems de fer, tours, monstres…).
+     * Sans ça, le cristal (une brèche « ennemie ») attire les Golems de fer à chaque montée de niveau de la Mairie.
+     */
+    @Override
+    public boolean canBeSeenAsEnemy() { return !isCrystal() && !isGroundRift() && super.canBeSeenAsEnemy(); }
+
     public void setBuilt(boolean b) { this.entityData.set(BUILT, b); }
 
     public boolean isBuilt() { return this.entityData.get(BUILT); }
@@ -217,6 +224,7 @@ public class BrecheEntity extends Mob implements net.minecraft.world.entity.mons
             // Mode Kingdom : bouclier pendant l'Assaut (le portail ne peut être attaqué que pendant le Calme)
             if (source.getEntity() instanceof net.minecraft.server.level.ServerPlayer sp) {
                 sp.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.portal_shielded"), true);
+                com.wavesurvivor.horde.kingdom.KingdomTuto.tip(sp, "gate_shield");   // 2.1 — tuto
             }
             this.level().playSound(null, this.blockPosition(), SoundEvents.SHIELD_BLOCK, net.minecraft.sounds.SoundSource.HOSTILE, 1f, 0.6f);
             return false;

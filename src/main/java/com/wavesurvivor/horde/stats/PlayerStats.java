@@ -55,6 +55,19 @@ public class PlayerStats extends SavedData {
         com.wavesurvivor.carnet.CarnetObjectives.check(p, snap);
     }
 
+    /** 2.1 — Efface les compteurs du joueur dont la clé vérifie {@code which} (tuto du Kingdom). @return nombre de clés effacées. */
+    public static int removeKeys(ServerPlayer p, java.util.function.Predicate<String> which) {
+        if (p == null || p.getServer() == null) return 0;
+        PlayerStats s = get(p.getServer());
+        Map<String, Long> m = s.data.get(p.getUUID());
+        if (m == null) return 0;
+        int before = m.size();
+        m.keySet().removeIf(which);
+        int n = before - m.size();
+        if (n > 0) s.setDirty();
+        return n;
+    }
+
     /** Ajoute {@code n} à tous les joueurs connectés qui ne sont pas spectateurs. */
     public static void addForAll(MinecraftServer srv, String key, long n) {
         if (srv == null) return;

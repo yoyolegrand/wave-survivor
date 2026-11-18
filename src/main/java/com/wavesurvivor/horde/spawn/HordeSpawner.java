@@ -138,6 +138,35 @@ public class HordeSpawner {
         return spawned;
     }
 
+    /**
+     * 2.1 — Fait apparaître UN monstre de horde à une position précise (stats, nom, équipement, compétences, taille, butin)
+     * et le renvoie (null si échec). Entité custom : déléguée au CustomEntitySpawner.
+     */
+    public static Entity spawnOne(ServerLevel level, HordeEntity template, BlockPos pos, int playerCount) {
+        if (template == null || template.entityType == null) return null;
+        CustomEntityData custom = CustomEntityRegistry.get(template.entityType);
+        if (custom != null) return CustomEntitySpawner.spawnBoss(level, custom, pos, 1, template.customName);
+        EntityType<?> type = resolveEntityType(template.entityType);
+        if (type == null) return null;
+        Entity ent = type.create(level);
+        if (ent == null) return null;
+        ent.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, RNG.nextFloat() * 360f, 0f);
+        if (ent instanceof LivingEntity living) {
+            applyStats(living, template, playerCount);
+            if (template.customName != null && !template.customName.isBlank()) {
+                living.setCustomName(Component.literal(com.wavesurvivor.i18n.WSLang.t(template.customName)));
+                living.setCustomNameVisible(true);
+            }
+        }
+        if (ent instanceof Mob mob) {
+            mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null, null);
+            applyEquipment(mob, template);
+        }
+        if (!level.addFreshEntity(ent)) return null;
+        MobRegistry.register(ent, template);
+        return ent;
+    }
+
     public static int spawnMobs(ServerLevel level, HordeEntity template, BlockPos center, int radius, int count) {
         return spawnMobs(level, template, center, radius, count, 1);
     }
@@ -195,7 +224,8 @@ public class HordeSpawner {
         setAttribute(living, Attributes.ATTACK_DAMAGE, dmg);
         setAttribute(living, Attributes.MOVEMENT_SPEED, t.movementSpeed);
         setAttribute(living, Attributes.FOLLOW_RANGE, t.followRange);
-        setAttribute(living, Attributes.KNOCKBACK_RESISTANCE, t.knockbackResistance);
+        // 0 = non réglé dans la fiche : on garde la résistance propre à l'entité (Brute de pierre, Ancreur, Ravageur…)
+        if (t.knockbackResistance > 0) setAttribute(living, Attributes.KNOCKBACK_RESISTANCE, t.knockbackResistance);
     }
 
     private static void setAttribute(LivingEntity living, Attribute attr, double value) {

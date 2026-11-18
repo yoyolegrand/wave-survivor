@@ -46,6 +46,8 @@ public class RiftSession extends SavedData {
     CompoundTag kingdom = new CompoundTag();
     /** Engins de siège posés (type, niveau, variante, position). */
     net.minecraft.nbt.ListTag engines = new net.minecraft.nbt.ListTag();
+    /** 2.1 : îlots du Siège (lesquels, ponts et segments, filons) — RiftIslets.save(). */
+    net.minecraft.nbt.CompoundTag islets = new net.minecraft.nbt.CompoundTag();
 
     public RiftSession() {}
 
@@ -75,6 +77,7 @@ public class RiftSession extends SavedData {
         c.kills.putAll(kills);
         c.kingdom = kingdom.copy();
         c.engines = engines.copy();
+        c.islets = islets.copy();
         return c;
     }
 
@@ -89,6 +92,7 @@ public class RiftSession extends SavedData {
         s.kills.clear();
         s.kingdom = new CompoundTag();
         s.engines = new net.minecraft.nbt.ListTag();
+        s.islets = new net.minecraft.nbt.CompoundTag();
         s.setDirty();
     }
 
@@ -135,6 +139,7 @@ public class RiftSession extends SavedData {
         }
         s.kingdom = t.getCompound("kingdom");
         s.engines = t.getList("engines", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        s.islets = t.getCompound("islets");
         return s;
     }
 
@@ -157,6 +162,7 @@ public class RiftSession extends SavedData {
         t.put("kills", k);
         if (kingdom != null && !kingdom.isEmpty()) t.put("kingdom", kingdom);
         t.put("engines", engines);
+        t.put("islets", islets);
         return t;
     }
 }

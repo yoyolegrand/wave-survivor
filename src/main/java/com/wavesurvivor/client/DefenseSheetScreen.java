@@ -67,7 +67,7 @@ public class DefenseSheetScreen extends Screen {
         top = (height - H) / 2;
         clearWidgets();
         boolean creative = Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative();
-        int y = top + 104;
+        int y = sepY();
         // Amélioration / spécialisations
         if (s.level == 1) {
             Button b = addRenderableWidget(Button.builder(Component.literal(WSLang.t("sheet.upgrade")), bt -> act("upgrade", ""))
@@ -146,23 +146,18 @@ public class DefenseSheetScreen extends Screen {
         g.fill(bx - 1, by - 1, bx + bw + 1, by + 9, 0xFF000000);
         g.fill(bx, by, bx + (int) (bw * p), by + 8, p > 0.5f ? 0xFF22C55E : p > 0.25f ? 0xFFEAB308 : 0xFFEF4444);
         g.drawCenteredString(font, Math.round(s.hp) + " / " + Math.round(s.maxHp) + " PV", left + W / 2, by, 0xFFFFFFFF);
-        // Description (et effet de la spécialisation)
+        // Description (et effet de la spécialisation) : la séparation descend sous le texte (voir sepY)
         int y = top + 48;
-        String desc = WSLang.t("kingdom.defense.desc." + kindId()).replaceAll("§.", "");
-        for (FormattedCharSequence line : font.split(Component.literal(desc), W - 20)) {
-            if (y > top + 96) break;
+        for (FormattedCharSequence line : descLines()) {
             g.drawString(font, line, left + 10, y, 0xFFAAAAAA, false);
             y += 10;
         }
-        if (!s.variant.isEmpty()) {
-            for (FormattedCharSequence line : font.split(Component.literal(WSLang.t("kingdom.variant.desc." + s.variant).replaceAll("§.", "")), W - 20)) {
-                if (y > top + 100) break;
-                g.drawString(font, line, left + 10, y, 0xFF7FC8FF, false);
-                y += 10;
-            }
+        for (FormattedCharSequence line : variantLines()) {
+            g.drawString(font, line, left + 10, y, 0xFF7FC8FF, false);
+            y += 10;
         }
         // Amélioration
-        int uy = top + 104;
+        int uy = sepY();
         g.fill(left + 6, uy - 2, left + W - 6, uy - 1, 0x40FFFFFF);
         if (s.level == 1) {
             g.drawString(font, "§e" + WSLang.t("sheet.next_level"), left + 10, uy + 2, 0xFFFFFFFF);
@@ -200,6 +195,25 @@ public class DefenseSheetScreen extends Screen {
             g.drawString(font, "§7" + WSLang.t("sheet.soldiers", s.soldiers, s.soldiersMax), left + 10, top + H - 60, 0xFFFFFFFF);
         }
         super.render(g, mx, my, pt);
+    }
+
+    /** Lignes de description (8 au plus). */
+    private List<FormattedCharSequence> descLines() {
+        List<FormattedCharSequence> l = font.split(Component.literal(WSLang.t("kingdom.defense.desc." + kindId()).replaceAll("§.", "")), W - 20);
+        return l.size() > 8 ? l.subList(0, 8) : l;
+    }
+
+    /** Lignes de l'effet de la spécialisation (3 au plus). */
+    private List<FormattedCharSequence> variantLines() {
+        if (s.variant.isEmpty()) return List.of();
+        List<FormattedCharSequence> l = font.split(Component.literal(WSLang.t("kingdom.variant.desc." + s.variant).replaceAll("§.", "")), W - 20);
+        return l.size() > 3 ? l.subList(0, 3) : l;
+    }
+
+    /** Hauteur de la ligne de séparation : sous la dernière ligne de texte, jamais au-dessus de l'emplacement habituel. */
+    private int sepY() {
+        int textEnd = top + 48 + 10 * (descLines().size() + variantLines().size());
+        return Math.max(top + 104, textEnd + 4);
     }
 
     @Override

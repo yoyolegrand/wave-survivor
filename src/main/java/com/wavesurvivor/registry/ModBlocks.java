@@ -105,6 +105,10 @@ public class ModBlocks {
     public static final RegistryObject<Block> TOWN_CRYSTAL = BLOCKS.register("town_crystal",
             () -> new Block(BlockBehaviour.Properties.of().strength(-1.0f, 3600000.0f).noOcclusion().noLootTable()));
 
+    /** 2.1 — Cristal blanc de l'île-autel : bloc d'affichage uniquement (même modèle que le cristal de la Mairie). */
+    public static final RegistryObject<Block> ALTAR_CRYSTAL = BLOCKS.register("altar_crystal",
+            () -> new com.wavesurvivor.horde.rift.AltarCrystalBlock(BlockBehaviour.Properties.of().strength(-1.0f, 3600000.0f).noOcclusion().noLootTable()));
+
     /** Ruine « Reliquaire scellé » : sceau de la porte (incassable, s'ouvre avec une Clé scellée). */
     public static final RegistryObject<Block> RELIQUARY_SEAL = BLOCKS.register("reliquary_seal",
             () -> new com.wavesurvivor.arena.ReliquarySealBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DEEPSLATE)

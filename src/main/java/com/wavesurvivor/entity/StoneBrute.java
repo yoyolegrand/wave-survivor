@@ -196,11 +196,12 @@ public class StoneBrute extends IronGolem implements Enemy {
 
     public static AttributeSupplier.Builder createAttributes() {
         return IronGolem.createAttributes()
-                .add(Attributes.MAX_HEALTH, 80.0)
+                .add(Attributes.MAX_HEALTH, 120.0)
                 .add(Attributes.ATTACK_DAMAGE, 12.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.25)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0)
                 .add(Attributes.ARMOR, 8.0)
+                .add(Attributes.ARMOR_TOUGHNESS, 2.0)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 

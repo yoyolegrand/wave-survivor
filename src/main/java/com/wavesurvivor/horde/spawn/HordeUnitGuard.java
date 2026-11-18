@@ -55,7 +55,7 @@ public class HordeUnitGuard {
         now.setHealth(now.getMaxHealth());
         set(now, Attributes.ATTACK_DAMAGE, template.attackDamage);
         set(now, Attributes.MOVEMENT_SPEED, template.movementSpeed);
-        set(now, Attributes.KNOCKBACK_RESISTANCE, template.knockbackResistance);
+        if (template.knockbackResistance > 0) set(now, Attributes.KNOCKBACK_RESISTANCE, template.knockbackResistance);
         MobRegistry.remove(old.getUUID());
         MobRegistry.register(now, template);
     }

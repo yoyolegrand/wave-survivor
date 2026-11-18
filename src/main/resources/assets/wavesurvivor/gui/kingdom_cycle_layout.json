@@ -1,0 +1,187 @@
+{
+ "texture": "textures/gui/kingdom_cycle.png",
+ "textureSize": [
+  1024,
+  1024
+ ],
+ "uv": [
+  0,
+  0,
+  800,
+  520
+ ],
+ "screenSize": [
+  400,
+  260
+ ],
+ "zones": {
+  "title": {
+   "center": [
+    200,
+    18
+   ],
+   "key": "kingdom.cycle.title",
+   "scale": 1.0,
+   "color": "#FFE8A0"
+  },
+  "goal": {
+   "center": [
+    200,
+    40
+   ],
+   "key": "kingdom.cycle.goal",
+   "scale": 0.75,
+   "color": "#F2E6C8"
+  },
+  "calm_name": {
+   "center": [
+    112,
+    57
+   ],
+   "key": "kingdom.cycle.calm",
+   "scale": 1.0,
+   "color": "#A8D0F0"
+  },
+  "assault_name": {
+   "center": [
+    166,
+    170
+   ],
+   "key": "kingdom.cycle.assault",
+   "scale": 1.0,
+   "color": "#F07060"
+  },
+  "report_name": {
+   "center": [
+    56,
+    170
+   ],
+   "key": "kingdom.cycle.report",
+   "scale": 1.0,
+   "color": "#E6D2A0"
+  },
+  "monolith": {
+   "center": [
+    109,
+    146
+   ],
+   "key": "kingdom.cycle.monolith",
+   "scale": 0.7,
+   "color": "#9AFFF6"
+  },
+  "gate": {
+   "center": [
+    172,
+    121
+   ],
+   "key": "kingdom.cycle.gate",
+   "scale": 0.7,
+   "color": "#FF9A6A"
+  },
+  "step1_title": {
+   "topLeft": [
+    252,
+    54
+   ],
+   "width": 132,
+   "key": "kingdom.cycle.calm.step",
+   "scale": 0.85,
+   "color": "#A8D0F0"
+  },
+  "step1_text": {
+   "topLeft": [
+    229,
+    68
+   ],
+   "width": 157,
+   "key": "kingdom.cycle.calm.desc",
+   "scale": 0.65
+  },
+  "step2_title": {
+   "topLeft": [
+    252,
+    106
+   ],
+   "width": 132,
+   "key": "kingdom.cycle.assault.step",
+   "scale": 0.85,
+   "color": "#F07060"
+  },
+  "step2_text": {
+   "topLeft": [
+    229,
+    120
+   ],
+   "width": 157,
+   "key": "kingdom.cycle.assault.desc",
+   "scale": 0.65
+  },
+  "step3_title": {
+   "topLeft": [
+    252,
+    158
+   ],
+   "width": 132,
+   "key": "kingdom.cycle.report.step",
+   "scale": 0.85,
+   "color": "#E6D2A0"
+  },
+  "step3_text": {
+   "topLeft": [
+    229,
+    172
+   ],
+   "width": 157,
+   "key": "kingdom.cycle.report.desc",
+   "scale": 0.65
+  },
+  "victory_title": {
+   "topLeft": [
+    72,
+    212
+   ],
+   "width": 64,
+   "key": "kingdom.cycle.victory",
+   "scale": 0.85,
+   "color": "#F0C660"
+  },
+  "victory_text": {
+   "topLeft": [
+    72,
+    223
+   ],
+   "width": 64,
+   "key": "kingdom.cycle.victory.desc",
+   "scale": 0.6
+  },
+  "defeat_title": {
+   "topLeft": [
+    208,
+    212
+   ],
+   "width": 66,
+   "key": "kingdom.cycle.defeat",
+   "scale": 0.85,
+   "color": "#F07060"
+  },
+  "defeat_text": {
+   "topLeft": [
+    208,
+    223
+   ],
+   "width": 66,
+   "key": "kingdom.cycle.defeat.desc",
+   "scale": 0.6
+  },
+  "button": {
+   "rect": [
+    286,
+    220,
+    390,
+    244
+   ],
+   "key": "kingdom.cycle.ok",
+   "scale": 1.0
+  }
+ }
+}

@@ -223,6 +223,12 @@ public class ModEntities {
                     .build("archonte"));
 
     /** Néantide : créature du néant insectoïde (modèle sur mesure, haute résolution). */
+    /** 2.1 — Brise-pont : ronge les ponts des îlots de la Faille (taille d'une araignée). */
+    public static final RegistryObject<EntityType<com.wavesurvivor.entity.BrisePont>> BRISE_PONT = ENTITIES.register("brise_pont",
+            () -> EntityType.Builder.<com.wavesurvivor.entity.BrisePont>of(com.wavesurvivor.entity.BrisePont::new, MobCategory.MONSTER)
+                    .sized(1.4f, 0.9f)
+                    .clientTrackingRange(10)
+                    .build("brise_pont"));
     /** 2.0 — Monstres de la Faille (modèles de Claude chat) : Géodon, Ancreur, Bolide. */
     public static final RegistryObject<EntityType<com.wavesurvivor.entity.Geodon>> GEODON = ENTITIES.register("geodon",
             () -> EntityType.Builder.<com.wavesurvivor.entity.Geodon>of(com.wavesurvivor.entity.Geodon::new, MobCategory.MONSTER)
@@ -274,6 +280,7 @@ public class ModEntities {
         event.put(STONE_BRUTE.get(), com.wavesurvivor.entity.StoneBrute.createAttributes().build());
         event.put(NEANTIDE.get(), com.wavesurvivor.entity.Neantide.createAttributes().build());
         event.put(GEODON.get(), com.wavesurvivor.entity.Geodon.createAttributes().build());
+        event.put(BRISE_PONT.get(), com.wavesurvivor.entity.BrisePont.createAttributes().build());
         event.put(ANCREUR.get(), com.wavesurvivor.entity.Ancreur.createAttributes().build());
         event.put(BOLIDE.get(), com.wavesurvivor.entity.Bolide.createAttributes().build());
         event.put(DEVOREUR.get(), com.wavesurvivor.entity.RiftTitanEntity.createAttributes().build());

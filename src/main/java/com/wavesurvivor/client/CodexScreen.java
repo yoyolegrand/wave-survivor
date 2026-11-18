@@ -23,11 +23,11 @@ public class CodexScreen extends Screen {
 
     static final String[] PAGES = {
             "start", "classic", "frost", "desert", "breaches", "blessings", "difficulty", "daily", "boss", "bossrush", "endless", "invasion",
-            "rift", "rift_creatures", "kingdom", "objectives", "treasury", "monolith", "defenses", "workshop", "tools",
+            "rift", "rift_creatures", "rift_islets", "kingdom", "objectives", "treasury", "monolith", "defenses", "workshop", "tools",
             "roles", "vocations", "alchemy", "omens", "relics", "pouch", "vestige", "shrine", "crafting", "arenas", "ruins", "renaissance", "stats", "interface", "editor"
     };
     private static final String[] ICONS = {"📖", "⚔", "❄", "🏜", "☄", "✚", "🎲", "◷", "☠", "♔", "♾", "🔔",
-            "🌀", "◈", "♛", "⚑", "◆", "🏛", "🛡", "⚒", "➤",
+            "🌀", "◈", "❖", "♛", "⚑", "◆", "🏛", "🛡", "⚒", "➤",
             "♟", "★", "⚗", "👁", "✦", "👝", "🧭", "✧", "⚒", "⛰", "⛪", "☼", "📊", "⌨", "✎"};
     private static final String[] WORKSHOP_SPECS = {"forge", "armory", "mechanic", "foundry"};
     private static final String[] HERITAGE_BRANCHES = {"survivor", "merchant", "lord"};
@@ -106,7 +106,24 @@ public class CodexScreen extends Screen {
 
     // ─── Contenu ───
 
+    private final List<Button> kingdomButtons = new ArrayList<>();
+
+    /** 2.1 — Page « Mode Kingdom » : écran du cycle et « Revoir le tuto ». */
+    private void kingdomButtons() {
+        for (Button b : kingdomButtons) removeWidget(b);
+        kingdomButtons.clear();
+        if (!"kingdom".equals(PAGES[page])) return;
+        int bw = 96, bx = left + panelW - 8 - bw * 2 - 4;
+        kingdomButtons.add(addRenderableWidget(Button.builder(Component.literal(WSLang.t("kingdom.tuto.codex_cycle")),
+                b -> Minecraft.getInstance().setScreen(new KingdomCycleScreen(this))).bounds(bx, top + 24, bw, 14).build()));
+        kingdomButtons.add(addRenderableWidget(Button.builder(Component.literal(WSLang.t("kingdom.tuto.codex_reset")),
+                b -> { com.wavesurvivor.network.NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.KingdomTutoPackets.Action("reset")); b.active = false; })
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(WSLang.t("kingdom.tuto.codex_reset_tip"))))
+                .bounds(bx + bw + 4, top + 24, bw, 14).build()));
+    }
+
     private void rebuild() {
+        kingdomButtons();
         List<String> raw = content(PAGES[page]);
         lines = new ArrayList<>();
         for (String para : raw) {

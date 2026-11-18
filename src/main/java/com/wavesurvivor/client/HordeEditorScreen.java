@@ -752,11 +752,18 @@ public class HordeEditorScreen extends Screen {
         int x = left + 10, y = top + 48;
         // Mode Kingdom : 2 sous-onglets (Horde / Royaume) pour que tout tienne dans le panneau
         if (kingdom()) {
-            button(x, y - 2, 100, (generalSub == 0 ? "§e§l" : "§7") + t("ui.kgd.sub_horde"), () -> { generalSub = 0; init(); });
-            button(x + 104, y - 2, 100, (generalSub == 1 ? "§e§l" : "§7") + t("ui.kgd.sub_kingdom"), () -> { generalSub = 1; init(); });
-            button(x + 208, y - 2, 100, (generalSub == 2 ? "§e§l" : "§7") + t("ui.kgd.sub_gates"), () -> { generalSub = 2; init(); });
-            button(x + 312, y - 2, 100, (generalSub == 3 ? "§e§l" : "§7") + t("ui.kgd.sub_paths"), () -> { generalSub = 3; init(); });
+            // 5 sous-onglets (2.1 : Tutoriel) répartis sur la largeur du panneau
+            String[] subs = {"ui.kgd.sub_horde", "ui.kgd.sub_kingdom", "ui.kgd.sub_gates", "ui.kgd.sub_paths", "ui.kgd.sub_tuto"};
+            int sbw = Math.min(100, (W - 20 - 4 * (subs.length - 1)) / subs.length);
+            for (int si = 0; si < subs.length; si++) {
+                final int sub = si;
+                button(x + si * (sbw + 4), y - 2, sbw, (generalSub == si ? "§e§l" : "§7") + t(subs[si]), () -> { generalSub = sub; init(); });
+            }
             y += 24;
+            if (generalSub == 4) {
+                buildKingdomTuto(cd, x, y);
+                return;
+            }
             if (generalSub == 1) {
                 buildKingdomSettings(cd, x, y);
                 return;
@@ -1001,6 +1008,24 @@ public class HordeEditorScreen extends Screen {
         if (riftMode) labelWrap(x + 158, y + 3, t("ui.rift.hint"), W - 190);
         else if (invasionMode) labelWrap(x + 158, y + 3, t("ui.inv.hint"), W - 190);
         else label(x + 158, y + 3, kingdom ? t("ui.kgd.see_sub") : t("ui.kingdom.hint"));
+    }
+
+    /** 2.1 — Sous-onglet « Tutoriel » : accompagnement des joueurs qui découvrent ce Kingdom (docs/TUTO_KINGDOM.md). */
+    private void buildKingdomTuto(JsonObject cd, int x, int y) {
+        JsonObject k = HordeJson.obj(cd, "kingdom");
+        label(x, y, "§6§l" + t("ui.kgd.sec_tuto"));
+        y += 13;
+        toggle(x, y, 200, t("ui.kgd.tuto_on"), k, "tutorial", true);
+        y += 16;
+        labelWrap(x, y, "§7" + t("ui.kgd.tuto_hint"), W - 30);
+        y += 34;
+        toggle(x, y, 200, t("ui.kgd.tuto_gentle"), k, "tutorialGentleStart", true);
+        flow(x + 210, y);
+        fl(t("ui.kgd.tuto_gentle_max"));
+        fInt(32, HordeJson.num(k, "tutorialGentleMaxSeconds", 600), v -> k.addProperty("tutorialGentleMaxSeconds", Math.max(60, Math.min(3600, v))));
+        fl(t("ui.kgd.tuto_seconds"));
+        y += 16;
+        labelWrap(x, y, "§7" + t("ui.kgd.tuto_gentle_hint"), W - 30);
     }
 
     /** Sous-onglet « ♛ Royaume » : tous les réglages du mode Kingdom, en 5 blocs titrés qui tiennent dans le panneau. */
@@ -1274,6 +1299,7 @@ public class HordeEditorScreen extends Screen {
             });
         }
         y += 20;
+        if (!entityLite) {
         flow(x, y);
         if (isMob) {
             fl(kt("ui.nombre", "ui.kgd.weight"));
@@ -1289,8 +1315,9 @@ public class HordeEditorScreen extends Screen {
             fInt(26, HordeJson.num(m, "count", 1), v -> m.addProperty("count", Math.max(0, v)));
         }
         y += 18;
+        }
         // Mode Kingdom : Gardien des Portes + rôle de siège (Bélier / Sapeur / Grimpeur)
-        if (isMob && (kingdom() || (rift() && riftPhase == 1))) {
+        if (isMob && !entityLite && (kingdom() || (rift() && riftPhase == 1))) {
             flow(x, y);
             boolean isGuardian = HordeJson.bool(m, "kingdom_guardian", false);
             fBtn(74, (isGuardian ? "§6§l⛨ " : "§8⛨ ") + com.wavesurvivor.i18n.WSLang.t("ui.kgd.guardian"), () -> {
@@ -1310,7 +1337,7 @@ public class HordeEditorScreen extends Screen {
             y += 18;
         }
         // Mode Kingdom : Portes d'où sort cette unité (toutes, ou une sélection de Portes numérotées)
-        if (kingdom()) {
+        if (kingdom() && !entityLite) {
             java.util.Set<Integer> sel = parseGates(HordeJson.str(m, "gates", ""));
             flow(x, y);
             fl(t("ui.kgd.unit_gates"));
@@ -1345,6 +1372,7 @@ public class HordeEditorScreen extends Screen {
         fDbl(30, HordeJson.dbl(m, "scale", 1.0), v -> m.addProperty("scale", Math.max(0.1, Math.min(10.0, v))));
         if (!com.wavesurvivor.compat.PehkuiCompat.isLoaded()) fl(t("ui.scale_needs_pehkui"));
         y += 22;
+        if (!entityLite) {
         // Briseur de Monolithe : ignore les joueurs, ne vise que le Monolithe (sans créer d'entité custom)
         toggle(x, y, 190, t("ui.unit.targets_altar"), m, "targets_altar", false);
         label(x + 196, y + 4, t("ui.unit.targets_altar_hint"));
@@ -1356,6 +1384,7 @@ public class HordeEditorScreen extends Screen {
         fDbl(30, HordeJson.dbl(m, "building_damage", 0), v -> m.addProperty("building_damage", Math.max(0, v)));
         fl(t("ui.unit.building_hint"));
         y += 20;
+        }
         // Compétences de l'unité : ◀ n/N ▶ ✎ (réglages propres) ✖ · ＋ menu déroulant (recherche + description)
         JsonArray usk = m.has("skills") && m.get("skills").isJsonArray() ? m.getAsJsonArray("skills") : new JsonArray();
         flow(x, y);
@@ -1567,10 +1596,12 @@ public class HordeEditorScreen extends Screen {
         String spOn = phased ? RIFT_PH[riftPhase] + "SpecialOn" : "useSpecialWaves";
         String spCh = phased ? RIFT_PH[riftPhase] + "SpecialChance" : "specialWaveChance";
         toggle(listX(), y0, 134, com.wavesurvivor.i18n.WSLang.t("ui.speciales_5feb"), spTgt, spOn, false);
-        label(detailX(), y0 + 4, rift() ? t("ui.rift.special_chance_" + riftPhase) : kt("ui.chance_qu_une_vague_soit_speciale", "ui.kgd.special_chance"));
-        intBox(detailX() + 176, y0 + 1, 26, HordeJson.num(spTgt, spCh, 35),
+        String spLbl = rift() ? t("ui.rift.special_chance_" + riftPhase) : kt("ui.chance_qu_une_vague_soit_speciale", "ui.kgd.special_chance");
+        label(detailX(), y0 + 4, spLbl);
+        int spX = detailX() + Math.max(176, font.width(spLbl) + 6);   // la case suit le texte (libellés longs de la Faille)
+        intBox(spX, y0 + 1, 26, HordeJson.num(spTgt, spCh, 35),
                 v -> spTgt.addProperty(spCh, Math.max(0, Math.min(100, v))));
-        label(detailX() + 206, y0 + 4, "%");
+        label(spX + 30, y0 + 4, "%");
 
         int ly = y0 + 22;
         specialList.place(listX(), ly, 134, rowsFrom(ly));
@@ -1871,7 +1902,7 @@ public class HordeEditorScreen extends Screen {
         flowWrap = true;   // les lignes trop longues passent à la ligne au lieu de déborder du panneau
         JsonObject r = HordeJson.obj(cd(), "rift");
         // 5 sous-onglets de même largeur, sur toute la largeur du panneau
-        String[] subs = {"ui.rift.sub_start", "ui.rift.sub_siege", "ui.rift.sub_titan", "ui.rift.sub_skills", "ui.rift.sub_battle", "ui.rift.sub_meteors"};
+        String[] subs = {"ui.rift.sub_start", "ui.rift.sub_siege", "ui.rift.sub_titan", "ui.rift.sub_skills", "ui.rift.sub_battle", "ui.rift.sub_meteors", "ui.rift.sub_islets"};
         int bw = (W - 20 - 4 * (subs.length - 1)) / subs.length;
         for (int i = 0; i < subs.length; i++) {
             final int k = i;
@@ -1885,6 +1916,7 @@ public class HordeEditorScreen extends Screen {
             case 3 -> buildRiftSkills(r, x, y);
             case 4 -> buildRiftBattle(r, x, y);
             case 5 -> buildRiftMeteors(r, x, y);
+            case 6 -> buildRiftIslets(r, x, y);
             default -> buildRiftStart(r, x, y);
         }
     }
@@ -2027,6 +2059,302 @@ public class HordeEditorScreen extends Screen {
         y += 22;
         y += hintH(x, y, t("ui.rift.hint_resources"));
         hint(x, y + 4, t("ui.rift.hint_siege"));
+    }
+
+    /** Faille — page « Îlots » (2.1) : îlots du Siège, pont, île minière. */
+    private static int isletSub = 0;
+
+    /** Faille — page « Îlots » : 5 sous-pages (général / pont / Brise-pont, île minière, île-autel, Marchand, île au coffre). */
+    private void buildRiftIslets(JsonObject r, int x, int y) {
+        String[] subs = {"ui.rift.isub_general", "ui.rift.isub_mine", "ui.rift.isub_altar", "ui.rift.isub_merchant", "ui.rift.isub_chest"};
+        int bw = (W - 20 - 4 * (subs.length - 1)) / subs.length;
+        for (int i = 0; i < subs.length; i++) {
+            final int k = i;
+            button(x + i * (bw + 4), y - 2, bw, (isletSub == i ? "§d§l" : "§8") + fitText(t(subs[i]), bw - 8), () -> { isletSub = k; init(); });
+        }
+        y += 20;
+        switch (isletSub) {
+            case 1 -> buildIsletMine(r, x, y);
+            case 2 -> buildIsletAltar(r, x, y);
+            case 3 -> buildIsletMerchant(r, x, y);
+            case 4 -> buildIsletChest(r, x, y);
+            default -> buildIsletGeneral(r, x, y);
+        }
+    }
+
+    /** Bouton « Côté : … » (fait défiler les côtés autorisés : jamais l'est ni le sud). */
+    private void sideButton(JsonObject r, String key, String def) {
+        String side = HordeJson.str(r, key, def);
+        button(fx, fy - 2, 110, t("ui.rift.islet_side") + t("ui.rift.side." + side), () -> {
+            String[] sides = {"north", "west", "northwest", "southwest", "northeast"};
+            int k = 0;
+            for (int j = 0; j < sides.length; j++) if (sides[j].equalsIgnoreCase(side)) k = j;
+            r.addProperty(key, sides[(k + 1) % sides.length]);
+            changed();
+            init();
+        });
+    }
+
+    private void buildIsletGeneral(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_islets");
+        flow(x, y);
+        fToggle(120, t("ui.rift.islets_on"), r, "isletsEnabled", true);
+        fl(t("ui.rift.islet_gap"));
+        fInt(26, HordeJson.num(r, "isletGap", 27), v -> r.addProperty("isletGap", Math.max(8, Math.min(60, v))));
+        fl(t("ui.rift.calm_solo"));
+        fInt(26, HordeJson.num(r, "calmBonusSolo", 60), v -> r.addProperty("calmBonusSolo", Math.max(0, Math.min(600, v))));
+        fl(t("ui.rift.calm_duo"));
+        fInt(26, HordeJson.num(r, "calmBonusDuo", 30), v -> r.addProperty("calmBonusDuo", Math.max(0, Math.min(600, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_bridge");
+        flow(x, y);
+        fl(t("ui.rift.bridge_wood"));
+        fInt(26, HordeJson.num(r, "bridgeWood", 20), v -> r.addProperty("bridgeWood", Math.max(0, Math.min(999, v))));
+        fl(t("ui.rift.bridge_stone"));
+        fInt(26, HordeJson.num(r, "bridgeStone", 20), v -> r.addProperty("bridgeStone", Math.max(0, Math.min(999, v))));
+        fl(t("ui.rift.bridge_hp"));
+        fInt(36, HordeJson.num(r, "bridgeSegmentHp", 300), v -> r.addProperty("bridgeSegmentHp", Math.max(20, Math.min(20000, v))));
+        fl(t("ui.rift.bridge_repair"));
+        fInt(26, HordeJson.num(r, "bridgeRepairStone", 16), v -> r.addProperty("bridgeRepairStone", Math.max(1, Math.min(64, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_breaker");
+        flow(x, y);
+        fToggle(120, t("ui.rift.breaker_on"), r, "breakerEnabled", true);
+        fl(t("ui.rift.breaker_per"));
+        fInt(22, HordeJson.num(r, "breakerMin", 1), v -> r.addProperty("breakerMin", Math.max(0, Math.min(6, v))));
+        fl("–");
+        fInt(22, HordeJson.num(r, "breakerPer", 2), v -> r.addProperty("breakerPer", Math.max(0, Math.min(6, v))));
+        fl(t("ui.rift.breaker_max"));
+        fInt(22, HordeJson.num(r, "breakerMax", 3), v -> r.addProperty("breakerMax", Math.max(0, Math.min(12, v))));
+        flow(x, next());
+        fl(t("ui.rift.breaker_gnaw"));
+        fInt(26, HordeJson.num(r, "breakerGnawSeconds", 15), v -> r.addProperty("breakerGnawSeconds", Math.max(3, Math.min(120, v))));
+        fl(t("ui.rift.breaker_hp"));
+        fInt(30, HordeJson.num(r, "breakerHp", 40), v -> r.addProperty("breakerHp", Math.max(4, Math.min(2000, v))));
+        hint(x, next() + 4, t("ui.rift.hint_islets"));
+    }
+
+    private void buildIsletMine(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_mine");
+        flow(x, y);
+        fToggle(120, t("ui.rift.mine_on"), r, "isletMine", true);
+        sideButton(r, "isletMineSide", "north");
+        flow(x, next());
+        fl(t("ui.rift.mine_regrow"));
+        fInt(26, HordeJson.num(r, "mineRegrow", 50), v -> r.addProperty("mineRegrow", Math.max(0, Math.min(100, v))));
+        fl(t("ui.rift.mine_regrow_miner"));
+        fInt(26, HordeJson.num(r, "mineRegrowMiner", 75), v -> r.addProperty("mineRegrowMiner", Math.max(0, Math.min(100, v))));
+        fl(t("ui.rift.main_share"));
+        fInt(26, HordeJson.num(r, "mainDepositShare", 40), v -> r.addProperty("mainDepositShare", Math.max(0, Math.min(100, v))));
+        flow(x, next());
+        fToggle(110, t("ui.rift.mine_guards"), r, "mineGuards", true);
+        fl(t("ui.rift.mine_guards_n"));
+        fInt(22, HordeJson.num(r, "mineGuardsPerPoint", 2), v -> r.addProperty("mineGuardsPerPoint", Math.max(0, Math.min(6, v))));
+        fl(t("ui.rift.amethyst_chance"));
+        fInt(26, HordeJson.num(r, "amethystDropChance", 12), v -> r.addProperty("amethystDropChance", Math.max(0, Math.min(100, v))));
+        fl(t("ui.rift.amethyst_max"));
+        fInt(22, HordeJson.num(r, "amethystDropMax", 1), v -> r.addProperty("amethystDropMax", Math.max(1, Math.min(16, v))));
+        hint(x, next() + 4, t("ui.rift.hint_mine"));
+    }
+
+    private void buildIsletAltar(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_altar");
+        flow(x, y);
+        fToggle(120, t("ui.rift.altar_on"), r, "isletAltar", true);
+        sideButton(r, "isletAltarSide", "west");
+        flow(x, next());
+        fl(t("ui.rift.altar_capture"));
+        fInt(26, HordeJson.num(r, "altarCaptureSeconds", 30), v -> r.addProperty("altarCaptureSeconds", Math.max(5, Math.min(600, v))));
+        fl(t("ui.rift.altar_retake"));
+        fInt(26, HordeJson.num(r, "altarRetakeSeconds", 20), v -> r.addProperty("altarRetakeSeconds", Math.max(5, Math.min(600, v))));
+        fl(t("ui.rift.altar_raid"));
+        fInt(22, HordeJson.num(r, "altarRaidSize", 6), v -> r.addProperty("altarRaidSize", Math.max(0, Math.min(24, v))));
+        flow(x, next());
+        fl(t("ui.rift.altar_rampart"));
+        fInt(22, HordeJson.num(r, "altarRampartPct", 1), v -> r.addProperty("altarRampartPct", Math.max(0, Math.min(20, v))));
+        fl(t("ui.rift.altar_arsenal"));
+        fInt(26, HordeJson.num(r, "altarArsenalPct", 20), v -> r.addProperty("altarArsenalPct", Math.max(0, Math.min(200, v))));
+        fl(t("ui.rift.altar_prosperity"));
+        fInt(26, HordeJson.num(r, "altarProsperityPct", 25), v -> r.addProperty("altarProsperityPct", Math.max(0, Math.min(200, v))));
+        hint(x, next() + 4, t("ui.rift.hint_altar"));
+    }
+
+    /** Page de la liste des articles du Marchand (sous-page Îlots › Marchand). */
+    private int merchantPage = 0;
+
+    /** Articles du Marchand : ceux de la horde, sinon une copie des articles de base (anciens prix / stocks repris). */
+    private static com.google.gson.JsonArray merchantItems(JsonObject r) {
+        if (r.has("merchantItems") && r.get("merchantItems").isJsonArray()) return r.getAsJsonArray("merchantItems");
+        com.google.gson.JsonArray a = new com.google.gson.JsonArray();
+        for (int i = 0; i < com.wavesurvivor.horde.rift.VoidMerchant.BASE_ITEM.length; i++) {
+            JsonObject o = new JsonObject();
+            o.addProperty("item", com.wavesurvivor.horde.rift.VoidMerchant.BASE_ITEM[i]);
+            o.addProperty("count", com.wavesurvivor.horde.rift.VoidMerchant.BASE_COUNT[i]);
+            o.addProperty("price", legacyInt(r, "merchantPrices", i, com.wavesurvivor.horde.rift.VoidMerchant.BASE_PRICE[i]));
+            o.addProperty("stock", legacyInt(r, "merchantStock", i, com.wavesurvivor.horde.rift.VoidMerchant.BASE_STOCK[i]));
+            a.add(o);
+        }
+        return a;
+    }
+
+    /** Valeur n° i d'un ancien tableau d'entiers de la config (défaut si absent). */
+    private static int legacyInt(JsonObject r, String key, int i, int def) {
+        if (r.has(key) && r.get(key).isJsonArray()) {
+            com.google.gson.JsonArray a = r.getAsJsonArray(key);
+            if (i < a.size() && a.get(i).isJsonPrimitive()) return a.get(i).getAsInt();
+        }
+        return def;
+    }
+
+    /** Nom affiché d'un article (articles de base : leur libellé ; sinon le nom de l'objet). */
+    private String merchantName(String id) {
+        String[] base = com.wavesurvivor.horde.rift.VoidMerchant.BASE_ITEM;
+        for (int k = 0; k < base.length; k++) if (base[k].equals(id)) return t("ui.rift.mitem." + k);
+        ItemStack st = LootItems.resolve(id, 1);
+        return st.isEmpty() ? "§c" + id : st.getHoverName().getString();
+    }
+
+    private void buildIsletMerchant(JsonObject r, int x, int y) {
+        y = sec(x, y, "ui.rift.sec_merchant");
+        flow(x, y);
+        fToggle(120, t("ui.rift.merchant_on"), r, "isletMerchant", true);
+        sideButton(r, "isletMerchantSide", "northwest");
+        flow(x, next());
+        fl(t("ui.rift.merchant_calm"));
+        fInt(22, HordeJson.num(r, "merchantCalm", 2), v -> r.addProperty("merchantCalm", Math.max(1, Math.min(20, v))));
+        fl(t("ui.rift.merchant_limit"));
+        fInt(22, HordeJson.num(r, "merchantLimit", 4), v -> r.addProperty("merchantLimit", Math.max(0, Math.min(64, v))));
+        y = sec(x, next() + 2, "ui.rift.sec_merchant_items");
+        // Liste libre : nom (clic = changer d'objet), quantité, prix (améthyste), stock, retirer. Toute modification écrit la liste
+        // dans la horde ; sans liste, le Marchand vend les articles de base.
+        com.google.gson.JsonArray items = merchantItems(r);
+        final int ROWH = 18, colW = (W - 24) / 2, nameW = colW - 156;
+        int rowsFit = Math.max(2, (top + H - 46 - y) / ROWH);
+        int perPage = rowsFit * 2, pages = Math.max(1, (items.size() + perPage - 1) / perPage);
+        merchantPage = Math.max(0, Math.min(merchantPage, pages - 1));
+        Runnable save = () -> { r.add("merchantItems", items); changed(); };
+        for (int k = 0; k < perPage; k++) {
+            int i = merchantPage * perPage + k;
+            if (i >= items.size()) break;
+            JsonObject o = items.get(i).getAsJsonObject();
+            int cx = x + (k / rowsFit) * (colW + 8), ry = y + (k % rowsFit) * ROWH;
+            String nm = merchantName(HordeJson.str(o, "item", ""));
+            button(cx, ry, nameW, fitText(nm, nameW - 6), () -> openPicker(t("ui.rift.m_pick"), id -> {
+                o.addProperty("item", id);
+                save.run();
+                init();
+            }));
+            int fx0 = cx + nameW + 4;
+            label(fx0, ry + 4, "§7×");
+            intBox(fx0 + 8, ry, 20, HordeJson.num(o, "count", 1), v -> { o.addProperty("count", Math.max(1, Math.min(64, v))); save.run(); });
+            label(fx0 + 32, ry + 4, "§d✦");
+            intBox(fx0 + 42, ry, 26, HordeJson.num(o, "price", 5), v -> { o.addProperty("price", Math.max(0, Math.min(999, v))); save.run(); });
+            label(fx0 + 72, ry + 4, "§7" + t("ui.rift.mstock"));
+            int sw = font.width(t("ui.rift.mstock")) + 4;
+            intBox(fx0 + 72 + sw, ry, 24, HordeJson.num(o, "stock", 0), v -> { o.addProperty("stock", Math.max(-99, Math.min(99, v))); save.run(); });
+            final int del = i;
+            button(cx + colW - 16, ry, 16, "§c✖", () -> { items.remove(del); save.run(); init(); });
+        }
+        int by = y + rowsFit * ROWH + 2;
+        if (items.size() < com.wavesurvivor.horde.rift.VoidMerchant.MAX) {
+            button(x, by, 90, "§a+ " + t("ui.rift.m_add"), () -> openPicker(t("ui.rift.m_pick"), id -> {
+                JsonObject o = new JsonObject();
+                o.addProperty("item", id);
+                o.addProperty("count", 1);
+                o.addProperty("price", 5);
+                o.addProperty("stock", 0);
+                items.add(o);
+                save.run();
+                merchantPage = (items.size() - 1) / perPage;
+                init();
+            }));
+        }
+        button(x + 94, by, 120, "§e↺ " + t("ui.rift.m_reset"), () -> {
+            r.remove("merchantItems");
+            r.remove("merchantPrices");
+            r.remove("merchantStock");
+            merchantPage = 0;
+            changed();
+            init();
+        });
+        if (pages > 1) {
+            button(x + 218, by, 18, "◀", () -> { merchantPage--; init(); }).active = merchantPage > 0;
+            label(x + 240, by + 4, "§7" + (merchantPage + 1) + "/" + pages);
+            button(x + 262, by, 18, "▶", () -> { merchantPage++; init(); }).active = merchantPage < pages - 1;
+        }
+        hintH(x, by + 22, t("ui.rift.hint_merchant"));
+    }
+
+    /** Fiche allégée (gardiens de l'île au coffre) : sans nombre, Portes ni options de bâtiments. */
+    private boolean entityLite = false;
+    /** Île au coffre : fiche affichée (−1 = Gardien du trésor, n = gardien d'élite n). */
+    private static int chestSel = -1;
+
+    /** Fiche du Gardien du trésor (créée depuis le défaut si la horde n'en a pas encore). */
+    private static JsonObject chestGuardian(JsonObject r) {
+        if (!r.has("chestGuardian") || !r.get("chestGuardian").isJsonObject())
+            r.add("chestGuardian", com.google.gson.JsonParser.parseString(com.wavesurvivor.horde.rift.ChestIsletDefaults.GUARDIAN).getAsJsonObject());
+        return r.getAsJsonObject("chestGuardian");
+    }
+
+    /** Fiches des gardiens d'élite (créées depuis les défauts si la horde n'en a pas encore). */
+    private static JsonArray chestElites(JsonObject r) {
+        if (!r.has("chestElites") || !r.get("chestElites").isJsonArray())
+            r.add("chestElites", com.google.gson.JsonParser.parseString(com.wavesurvivor.horde.rift.ChestIsletDefaults.ELITES).getAsJsonArray());
+        return r.getAsJsonArray("chestElites");
+    }
+
+    private void buildIsletChest(JsonObject r, int x, int y) {
+        flow(x, y);
+        fToggle(100, t("ui.rift.chest_on"), r, "isletChest", true);
+        fl(t("ui.rift.chest_calm"));
+        fInt(20, HordeJson.num(r, "chestCalmMin", 2), v -> r.addProperty("chestCalmMin", Math.max(1, Math.min(20, v))));
+        fl("–");
+        fInt(20, HordeJson.num(r, "chestCalmMax", 4), v -> r.addProperty("chestCalmMax", Math.max(1, Math.min(20, v))));
+        fl(t("ui.rift.chest_gap"));
+        fInt(24, HordeJson.num(r, "chestGap", 22), v -> r.addProperty("chestGap", Math.max(8, Math.min(60, v))));
+        fl(t("ui.rift.chest_guards"));
+        fInt(20, HordeJson.num(r, "chestGuardMin", 3), v -> r.addProperty("chestGuardMin", Math.max(0, Math.min(12, v))));
+        fl("–");
+        fInt(20, HordeJson.num(r, "chestGuardMax", 5), v -> r.addProperty("chestGuardMax", Math.max(0, Math.min(12, v))));
+        y = next();
+        // Choix de la fiche : Gardien du trésor, gardiens d'élite (un au hasard par place), ajouter / retirer / défauts
+        JsonObject guardian = chestGuardian(r);
+        JsonArray elites = chestElites(r);
+        if (chestSel >= elites.size()) chestSel = -1;
+        flow(x, y);
+        fBtn(Math.min(118, font.width(HordeJson.displayName(guardian)) + 20), (chestSel < 0 ? "§6§l★ " : "§7★ ") + fitText(HordeJson.displayName(guardian), 96),
+                () -> { chestSel = -1; init(); });
+        for (int i = 0; i < elites.size(); i++) {
+            final int k = i;
+            String nm = HordeJson.displayName(elites.get(i).getAsJsonObject());
+            fBtn(Math.min(96, font.width(nm) + 14), (chestSel == i ? "§e§l" : "§7") + fitText(nm, 82), () -> { chestSel = k; init(); });
+        }
+        if (elites.size() < 8) fBtn(22, "§a+", () -> {
+            elites.add(HordeJson.newMob());
+            chestSel = elites.size() - 1;
+            changed();
+            init();
+        }).setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(t("ui.rift.chest_add_elite"))));
+        if (chestSel >= 0) fBtn(18, "§c✖", () -> {
+            if (chestSel >= 0 && chestSel < elites.size()) elites.remove(chestSel);
+            chestSel = -1;
+            changed();
+            init();
+        }).setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(t("ui.rift.chest_del_elite"))));
+        fBtn(22, "§e↺", () -> {
+            r.remove("chestGuardian");
+            r.remove("chestElites");
+            chestSel = -1;
+            changed();
+            init();
+        }).setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(t("ui.rift.chest_reset"))));
+        y = next() - 2;
+        JsonObject m = chestSel < 0 ? guardian : elites.get(chestSel).getAsJsonObject();
+        entityLite = true;
+        try {
+            buildEntityForm(m, false, x, y);
+        } finally {
+            entityLite = false;
+        }
     }
 
     /** Aide en bas de page ; renvoie la hauteur utilisée (0 si elle ne tient pas). */
@@ -3910,7 +4238,30 @@ public class HordeEditorScreen extends Screen {
             changed();
             init();
         });
-        label(x + 146, fy + 3, com.wavesurvivor.i18n.WSLang.t("ui.clic_changer_de_type"));
+        // 2.1 — Déclencheur : minuteur du Chaos (hasard), minuteur perso, par Calme, par Assaut / vague ; quantité
+        flow(x + 146, fy);
+        String trig = HordeJson.str(ev, "trigger", "");
+        String[] TRIGS = {"", "timer", "calm", "assault"};
+        int ti = Math.max(0, java.util.Arrays.asList(TRIGS).indexOf(trig.toLowerCase(java.util.Locale.ROOT)));
+        Button tb = fBtn(104, t("ui.chaos.trig." + (ti == 0 ? "chaos" : TRIGS[ti])), () -> {
+            ev.addProperty("trigger", TRIGS[(java.util.Arrays.asList(TRIGS).indexOf(HordeJson.str(ev, "trigger", "").toLowerCase(java.util.Locale.ROOT)) + 1 + TRIGS.length) % TRIGS.length]);
+            changed();
+            init();
+        });
+        tb.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(t("ui.chaos.trig.tip"))));
+        if (ti == 1) {
+            fInt(24, HordeJson.num(ev, "trigMin", 30), v -> ev.addProperty("trigMin", Math.max(5, Math.min(3600, v))));
+            fl("–");
+            fInt(24, HordeJson.num(ev, "trigMax", 60), v -> ev.addProperty("trigMax", Math.max(5, Math.min(3600, v))));
+            fl("s");
+        } else if (ti >= 2) {
+            fl(t("ui.chaos.trig.every"));
+            fInt(20, HordeJson.num(ev, "trigEvery", 1), v -> ev.addProperty("trigEvery", Math.max(1, Math.min(20, v))));
+        }
+        if (ti >= 1) {
+            fl("×");
+            fInt(20, HordeJson.num(ev, "trigCount", 1), v -> ev.addProperty("trigCount", Math.max(1, Math.min(10, v))));
+        }
         fy += 18;
         label(x, fy + 3, com.wavesurvivor.i18n.WSLang.t("ui.message"));
         text(x + 44, fy, 212, HordeJson.str(ev, "message", ""), v -> ev.addProperty("message", v));
@@ -4382,7 +4733,7 @@ public class HordeEditorScreen extends Screen {
         renderIconSlots(g, mx, my);
         if (tab == T_MOBS && at(mobs(), selMob) != null) {
             JsonObject m = at(mobs(), selMob);
-            if (!customEntities.contains(HordeJson.str(m, "entity_type", ""))) {
+            if (!rift() && !customEntities.contains(HordeJson.str(m, "entity_type", ""))) {   // Faille : la rangée des phases occupe cette place
                 g.drawString(font, "§8vanilla", detailX() + 238, top + 49, 0xFFFFFFFF);
             }
         }

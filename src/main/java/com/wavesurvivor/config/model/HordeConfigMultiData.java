@@ -354,6 +354,18 @@ public class HordeConfigMultiData {
      * La Faille (2.0) : réglages d'une horde de mode « rift ». Le portail s'ouvre près de l'autel (animation d'ouverture la première fois),
      * les joueurs qui le franchissent arrivent sur une île flottante dans une dimension dédiée.
      */
+    /** Article du Marchand du Néant : objet (identifiant de config, clés de coffre comprises), quantité, prix en améthyste,
+     *  stock (0 = illimité avec limite par joueur et par Calme, n = n par Calme pour l'équipe, −n = n par partie). */
+    public static class MerchantItem {
+        @SerializedName("item") public String item = "";
+        @SerializedName("count") public int count = 1;
+        @SerializedName("price") public int price = 5;
+        @SerializedName("stock") public int stock = 0;
+
+        public MerchantItem() {}
+        public MerchantItem(String item, int count, int price, int stock) { this.item = item; this.count = count; this.price = price; this.stock = stock; }
+    }
+
     public static class RiftSettings {
         /** Multiplicateur de durée de l'animation d'ouverture (1 = 6,5 s ; 0,5 = deux fois plus rapide). */
         @SerializedName("openingSpeed") public double openingSpeed = 1.0;
@@ -477,6 +489,81 @@ public class HordeConfigMultiData {
         @SerializedName("titanIslandBreak") public boolean titanIslandBreak = true;
         /** 2.1 — Cassure « organique » (contour en morsure, bord qui s'effrite, fissures de magma, débris) ; false = ancien découpage rectangle × anneau. */
         @SerializedName("titanBreakOrganic") public boolean titanBreakOrganic = true;
+        /** 2.1 — ÎLOTS du Siège (fiche docs/faille/v2_1_ilots/FICHE_2_1_0.md) : posés à la fin de l'agrandissement de l'île, à « isletGap »
+         *  blocs du bord, jamais côté forteresse (est) ni côté Titan (sud). Côtés : north, west, northwest, southwest, northeast. */
+        @SerializedName("isletsEnabled") public boolean isletsEnabled = true;
+        @SerializedName("isletGap") public int isletGap = 27;
+        @SerializedName("isletMine") public boolean isletMine = true;
+        @SerializedName("isletMineSide") public String isletMineSide = "north";
+        /** Île-autel : côté, temps de capture (s, seul ; plus vite à plusieurs), temps de reprise par les monstres (s), raid à chaque Assaut,
+         *  bonus Rempart (% des PV du Monolithe toutes les 10 s), Arsenal (% de dégâts des engins), Prospérité (% de ressources). */
+        @SerializedName("isletAltar") public boolean isletAltar = true;
+        @SerializedName("isletAltarSide") public String isletAltarSide = "west";
+        @SerializedName("altarCaptureSeconds") public int altarCaptureSeconds = 30;
+        @SerializedName("altarRetakeSeconds") public int altarRetakeSeconds = 20;
+        @SerializedName("altarRaidSize") public int altarRaidSize = 6;
+        @SerializedName("altarRaidMobs") public java.util.List<String> altarRaidMobs = new java.util.ArrayList<>(java.util.List.of("minecraft:zombie", "minecraft:husk", "minecraft:skeleton", "minecraft:vindicator"));
+        @SerializedName("altarRampartPct") public int altarRampartPct = 1;
+        @SerializedName("altarArsenalPct") public int altarArsenalPct = 20;
+        @SerializedName("altarProsperityPct") public int altarProsperityPct = 25;
+        /** Marchand du Néant : côté de son îlot, Calme du Siège où il arrive, limite par joueur et par Calme des consommables (0 = illimité),
+         *  prix en améthyste et stock des 12 articles (Fiole, Pomme dorée, Élixirs résistance / force, Pierre de rappel, Kit de pont,
+         *  Kit d'engin, Lanterne de vigie, Clé du Titan, Poussière de Faille ×4, Relance de bénédiction, Éclat de Faille).
+         *  Stock : 0 = illimité (limite par joueur), n = n par Calme pour toute l'équipe, −n = n par partie. */
+        /** Île au coffre : une fois par partie, pendant un Calme du Siège tiré entre chestCalmMin et chestCalmMax ; gardiens d'élite
+         *  (PV en % de la normale) + Gardien du trésor (type, PV) ; coffre roulette « Coffre des Ruines », 1 tirage gratuit par joueur. */
+        /** Brise-pont : pendant chaque Assaut du Siège, breakerMin à breakerPer par pont construit (breakerMax en même temps au plus) ;
+         *  un segment rongé s'effondre en breakerGnawSeconds secondes ; PV. */
+        @SerializedName("breakerEnabled") public boolean breakerEnabled = true;
+        @SerializedName("breakerMin") public int breakerMin = 1;
+        @SerializedName("breakerPer") public int breakerPer = 2;
+        @SerializedName("breakerMax") public int breakerMax = 3;
+        @SerializedName("breakerGnawSeconds") public int breakerGnawSeconds = 15;
+        @SerializedName("breakerHp") public int breakerHp = 40;
+        @SerializedName("isletChest") public boolean isletChest = true;
+        @SerializedName("chestCalmMin") public int chestCalmMin = 2;
+        @SerializedName("chestCalmMax") public int chestCalmMax = 4;
+        @SerializedName("chestGap") public int chestGap = 22;
+        @SerializedName("chestGuardMin") public int chestGuardMin = 3;
+        @SerializedName("chestGuardMax") public int chestGuardMax = 5;
+        @SerializedName("chestGuardHpPct") public int chestGuardHpPct = 200;
+        @SerializedName("chestGuardMobs") public java.util.List<String> chestGuardMobs = new java.util.ArrayList<>(java.util.List.of("minecraft:wither_skeleton", "minecraft:vindicator", "minecraft:stray", "minecraft:husk"));
+        @SerializedName("chestBossMob") public String chestBossMob = "rift_gardien_tresor";   // 2.1 : entité custom livrée (éditeur d'entités)
+        @SerializedName("chestBossHp") public int chestBossHp = 200;
+        /** 2.1 — Gardien du trésor : fiche de monstre complète (éditeur › Faille › Îlots › Île au coffre). Absente = défaut. */
+        @SerializedName("chestGuardian") public HordeEntity chestGuardian = null;
+        /** 2.1 — Gardiens d'élite : fiches de monstres (un au hasard par place de garde). Absente = défauts. */
+        @SerializedName("chestElites") public java.util.List<HordeEntity> chestElites = null;
+        @SerializedName("isletMerchant") public boolean isletMerchant = true;
+        @SerializedName("isletMerchantSide") public String isletMerchantSide = "northwest";
+        @SerializedName("merchantCalm") public int merchantCalm = 2;
+        @SerializedName("merchantLimit") public int merchantLimit = 4;
+        @SerializedName("merchantPrices") public java.util.List<Integer> merchantPrices = new java.util.ArrayList<>(java.util.List.of(3, 4, 5, 5, 4, 3, 6, 4, 24, 30, 12, 120));
+        @SerializedName("merchantStock") public java.util.List<Integer> merchantStock = new java.util.ArrayList<>(java.util.List.of(0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, -1));
+        /**
+         * 2.1 — Articles du Marchand du Néant (liste libre, éditeur › Faille › Îlots › Marchand). Absente = les 12 articles de base
+         * (avec les anciens prix / stocks merchantPrices / merchantStock s'ils ont été réglés). « titan_key » = Clé du Titan.
+         */
+        @SerializedName("merchantItems") public java.util.List<MerchantItem> merchantItems = null;
+        /** Pont : coût au Monolithe (bois + pierre du trésor), PV de chacun des 5 segments, pierre (objets en main) pour réparer un segment. */
+        @SerializedName("bridgeWood") public int bridgeWood = 20;
+        @SerializedName("bridgeStone") public int bridgeStone = 20;
+        @SerializedName("bridgeSegmentHp") public int bridgeSegmentHp = 300;
+        @SerializedName("bridgeRepairStone") public int bridgeRepairStone = 16;
+        /** Île minière : repousse des filons à chaque Calme (%, Mineur présent), gardes au début de chaque Calme. */
+        @SerializedName("mineRegrow") public int mineRegrow = 50;
+        @SerializedName("mineRegrowMiner") public int mineRegrowMiner = 75;
+        @SerializedName("mineGuards") public boolean mineGuards = true;
+        @SerializedName("mineGuardsPerPoint") public int mineGuardsPerPoint = 2;
+        @SerializedName("mineGuardMobs") public java.util.List<String> mineGuardMobs = new java.util.ArrayList<>(java.util.List.of("minecraft:zombie", "minecraft:skeleton", "minecraft:spider", "minecraft:husk"));
+        /** Part (%) des gisements de l'île principale quand l'île minière est là (émeraude, améthyste et Essence : île minière seulement). */
+        @SerializedName("mainDepositShare") public int mainDepositShare = 40;
+        /** Améthyste lâchée par les monstres de la Faille (chance en %, quantité max). */
+        @SerializedName("amethystDropChance") public int amethystDropChance = 12;
+        @SerializedName("amethystDropMax") public int amethystDropMax = 1;
+        /** Calme plus long dès qu'un îlot est actif (secondes) : en solo, à 2 ; rien à 3 joueurs et plus. */
+        @SerializedName("calmBonusSolo") public int calmBonusSolo = 60;
+        @SerializedName("calmBonusDuo") public int calmBonusDuo = 30;
         /** Récompenses de fin : PR bonus si le Titan est tué, Reliquaires scellés pour chaque participant, bonus du podium (top 1 / 2 / 3, aux éliminations). */
         @SerializedName("titanPrBonus") public int titanPrBonus = 30;
         @SerializedName("rewardReliquaries") public int rewardReliquaries = 1;
@@ -711,6 +798,12 @@ public class HordeConfigMultiData {
         @SerializedName("breachPercent") public double breachPercent = 35;
         /** Boss final : la dernière Porte libère le boss final de la horde. */
         @SerializedName("finalBoss") public boolean finalBoss = true;
+        /** 2.1 — Tuto : un joueur qui lance ce Kingdom pour la première fois est accompagné (écran du cycle, bandeaux, liste « À faire »…). */
+        @SerializedName("tutorial") public boolean tutorial = true;
+        /** Tuto : premier Calme sans chrono (l'Assaut démarre quand tout le monde est Prêt). */
+        @SerializedName("tutorialGentleStart") public boolean tutorialGentleStart = true;
+        /** Tuto : sécurité du premier Calme sans chrono (secondes) : l'Assaut démarre quand même après ce délai. */
+        @SerializedName("tutorialGentleMaxSeconds") public int tutorialGentleMaxSeconds = 600;
         /** Thème visuel des Portes : auto, abyss, fire, bone, end, ocean, arcane. */
         @SerializedName("portalTheme") public String portalTheme = "auto";
         /** Style des Portes : "blocks" (structure en vrais blocs, solide) ou "visual" (ancienne Porte entièrement dessinée). */

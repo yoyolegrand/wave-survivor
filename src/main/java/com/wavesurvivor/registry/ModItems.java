@@ -180,8 +180,34 @@ public class ModItems {
             () -> new com.wavesurvivor.item.FallenSeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final RegistryObject<Item> FALLEN_SERAPH_BOOTS = ITEMS.register("fallen_seraph_boots",
             () -> new com.wavesurvivor.item.FallenSeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
+    // 2.1 — Armure de la Faille (évolutive : paliers I à III, puis Bénie ou Corrompue ; état dans le NBT « RiftArmor »)
+    public static final RegistryObject<Item> RIFT_HELMET = ITEMS.register("rift_helmet",
+            () -> new com.wavesurvivor.item.RiftArmorItem(net.minecraft.world.item.ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> RIFT_CHESTPLATE = ITEMS.register("rift_chestplate",
+            () -> new com.wavesurvivor.item.RiftArmorItem(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> RIFT_LEGGINGS = ITEMS.register("rift_leggings",
+            () -> new com.wavesurvivor.item.RiftArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> RIFT_BOOTS = ITEMS.register("rift_boots",
+            () -> new com.wavesurvivor.item.RiftArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
 
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
+    /** 2.1 — Objets du Marchand du Néant (îlot de la Faille). */
+    public static final RegistryObject<Item> FIOLE_NEANT = ITEMS.register("fiole_neant",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.FIOLE));
+    public static final RegistryObject<Item> ELIXIR_RESISTANCE = ITEMS.register("elixir_resistance",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.RESISTANCE));
+    public static final RegistryObject<Item> ELIXIR_FORCE = ITEMS.register("elixir_force",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.FORCE));
+    public static final RegistryObject<Item> PIERRE_RAPPEL = ITEMS.register("pierre_rappel",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.RAPPEL));
+    public static final RegistryObject<Item> KIT_PONT = ITEMS.register("kit_pont",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.KIT_PONT));
+    public static final RegistryObject<Item> KIT_ENGIN = ITEMS.register("kit_engin",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.KIT_ENGIN));
+    public static final RegistryObject<Item> LANTERNE_VIGIE = ITEMS.register("lanterne_vigie",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.VIGIE));
+    public static final RegistryObject<Item> RELANCE_BENEDICTION = ITEMS.register("relance_benediction",
+            () -> new com.wavesurvivor.item.VoidMerchantItem(com.wavesurvivor.item.VoidMerchantItem.Kind.RELANCE));
     /** 2.0 — Éclat de Faille (Titan vaincu) : monte une relique au niveau IV à la Forge. */
     public static final RegistryObject<Item> RIFT_SHARD = ITEMS.register("rift_shard",
             () -> new com.wavesurvivor.item.RiftShardItem(new Item.Properties()));
@@ -276,6 +302,8 @@ public class ModItems {
     public static final RegistryObject<Item> NEANTIDE_SPAWN_EGG = ITEMS.register("neantide_spawn_egg",
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.NEANTIDE, 0x1A1030, 0xBA5CFF, new Item.Properties()));
     /** 2.0 — Œufs d'apparition des monstres de la Faille. */
+    public static final RegistryObject<Item> BRISE_PONT_SPAWN_EGG = ITEMS.register("brise_pont_spawn_egg",
+            () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.BRISE_PONT, 0x231A33, 0x45F2FF, new Item.Properties()));
     public static final RegistryObject<Item> GEODON_SPAWN_EGG = ITEMS.register("geodon_spawn_egg",
             () -> new net.minecraftforge.common.ForgeSpawnEggItem(ModEntities.GEODON, 0x1B1428, 0xC37BFF, new Item.Properties()));
     public static final RegistryObject<Item> ANCREUR_SPAWN_EGG = ITEMS.register("ancreur_spawn_egg",
@@ -462,6 +490,7 @@ public class ModItems {
                         output.accept(STONE_BRUTE_SPAWN_EGG.get());
                         output.accept(NEANTIDE_SPAWN_EGG.get());
                         output.accept(GEODON_SPAWN_EGG.get());
+                        output.accept(BRISE_PONT_SPAWN_EGG.get());
                         output.accept(ANCREUR_SPAWN_EGG.get());
                         output.accept(BOLIDE_SPAWN_EGG.get());
                         output.accept(ECLAT_NEANT_SPAWN_EGG.get());
@@ -563,9 +592,21 @@ public class ModItems {
                         output.accept(FALLEN_SERAPH_CHESTPLATE.get());
                         output.accept(FALLEN_SERAPH_LEGGINGS.get());
                         output.accept(FALLEN_SERAPH_BOOTS.get());
+                        output.accept(RIFT_HELMET.get());
+                        output.accept(RIFT_CHESTPLATE.get());
+                        output.accept(RIFT_LEGGINGS.get());
+                        output.accept(RIFT_BOOTS.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(RIFT_SHARD.get());
+                        output.accept(FIOLE_NEANT.get());
+                        output.accept(ELIXIR_RESISTANCE.get());
+                        output.accept(ELIXIR_FORCE.get());
+                        output.accept(PIERRE_RAPPEL.get());
+                        output.accept(KIT_PONT.get());
+                        output.accept(KIT_ENGIN.get());
+                        output.accept(LANTERNE_VIGIE.get());
+                        output.accept(RELANCE_BENEDICTION.get());
                         output.accept(SIEGE_CATAPULT_ITEM.get());
                         output.accept(SIEGE_BALLISTA_ITEM.get());
                         output.accept(KINGDOM_RAMPART_ITEM.get());

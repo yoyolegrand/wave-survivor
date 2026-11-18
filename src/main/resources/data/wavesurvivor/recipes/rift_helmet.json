@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_helmet"
+    },
+    {
+      "item": "wavesurvivor:poussiere_faille"
+    },
+    {
+      "item": "wavesurvivor:poussiere_faille"
+    },
+    {
+      "item": "wavesurvivor:poussiere_faille"
+    },
+    {
+      "item": "wavesurvivor:poussiere_faille"
+    },
+    {
+      "item": "wavesurvivor:poussiere_faille"
+    },
+    {
+      "item": "wavesurvivor:poussiere_faille"
+    },
+    {
+      "item": "wavesurvivor:poussiere_faille"
+    },
+    {
+      "item": "wavesurvivor:poussiere_faille"
+    }
+  ],
+  "result": {
+    "item": "wavesurvivor:rift_helmet",
+    "count": 1
+  }
+}

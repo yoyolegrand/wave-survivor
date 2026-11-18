@@ -1,6 +1,79 @@
 # Changelog
 
-## 2.0.1 — Rift polish
+## 2.1.0 — The Rift Expands
+
+> 🏝 **Islets drift around the Rift island during the Siege.** Buy bridges to reach them: 🪨 a **Mining Islet** full of veins, 🔮 an **Altar Islet** to capture for a team bonus, 🌑 the **Void Merchant** and his shop paid in amethyst, and once per run ✪ a **Chest Islet** that rises from the void with a chained treasure. Watch your bridges: 🕷 **Bridgebreakers** climb from the void to gnaw them.
+>
+> 🛡 Forge the evolving **Rift Armor** and choose its fate: **Blessed** or **Corrupted**. 🎓 New to the Kingdom? A **tutorial** now guides you through your first game. And the Rift has a brand new **tear in the sky** and an island that **breaks for real** under the Titan's charge.
+
+---
+
+### 🌉 Islets and bridges
+- 🏝 When the island has finished growing, **islets appear around it** (never on the fortress side or the Titan side). Each islet's side can be set in the editor.
+- 🌉 **Bridges are bought at the Monolith** (Defenses › Engines) with treasury wood and stone, and **build themselves** in about 10 s: glowing ghost blocks float down and settle, with violet crystal lanterns on posts and hanging under the deck.
+- 💔 A bridge has **5 sections with HP**: a section at 0 HP **collapses** into the void. Right-click with **16 stone** near the gap to rebuild it (same animation), or use a **Bridge Kit**.
+- 🧱 Stuck on an islet? You can **place blocks** between the islet and the island (and break the ones you placed).
+- ⌛ While an islet is active, **Calms are longer**: +60 s solo, +30 s for two players.
+- 💾 Islets, bridges, sections, veins, the altar, the Merchant and the Chest Islet are all **saved and resumed**.
+
+### 🪨 Mining Islet
+- ⛏ A decorative mine at the back (mound, propped gallery, rails, loaded minecart, barrels), an amethyst geode and ores in the cliffs underneath.
+- 💎 **8 permanent veins**: 4 iron, 2 emerald, an **amethyst geode** and **Essence crystals**, with a minimum pickaxe like deposits. Loot goes to the treasury.
+- 🌱 Every Siege Calm, **half the depleted veins grow back** (75% with a **Miner**), and light **guards** return.
+- ⚖ The main island keeps **40% of its deposits**, without emerald or amethyst. Rift monsters now also drop a little **amethyst**.
+
+### 🔮 Altar Islet
+- 🟣 A checkered platform with a glowing **capture circle**, a golden altar, a floating crystal and 4 dark pillars.
+- ⏱ **Stand in the circle** to capture it (about 30 s solo, faster in a group): the pillars light up one by one. A monster in the circle **freezes** the capture.
+- ✨ Once captured, a **light column** rises and the team **picks a bonus** on a **3-card screen**: 🛡 **Rampart** (the Monolith regains 1% HP every 10 s), 🏹 **Arsenal** (siege engines +20% damage) or 💰 **Prosperity** (+25% stone, wood, iron, emeralds and amethyst). Closed it too fast? Step into the circle, right-click anywhere in it, or click the link in the chat to reopen it.
+- 💠 The altar's crystals are now white and animated, and light up once the altar is captured.
+- ⚔ **Every Assault, monsters march on the altar**: left alone in the circle, they **retake it** and the bonus is lost. Recapture it to choose again. After the Siege, the bonus stays until the end of the Rift.
+
+### 🌑 The Void Merchant
+- 🏪 A hooded merchant arrives on his islet at the **2nd Siege Calm**: a stall under a violet awning, shelves, a counter and a huge floating amethyst crystal.
+- 🛒 **His own shop**, paid in **amethyst shards**: stock refreshed every Calm, 4 of each consumable per player per Calm. Closed behind a **shield** during Assaults and during the Titan fight, open during the Counter-offensive.
+- 🎁 **8 new items**: 🧪 **Void Vial** (heals 8 hearts), **Elixirs of Resistance and Strength** (2 min), 🌀 **Recall Stone** (back to the Monolith), 🔧 **Bridge Kit**, ⚙ **Engine Kit** (+50% engine HP), 🏮 **Watch Lantern** (nearby monsters glow for 30 s, even through blocks) and 🎟 **Blessing Reroll**.
+- 🗝 He also sells golden apples, Titan Keys, Rift Dust and one Rift Shard per run. His shop is fully editable: add or remove items, set quantity, price and stock.
+
+### ✪ Chest Islet
+- 🏚 **Once per run**, during a random Siege Calm, a ruined island **rises from the void**, linked by a free **crystal bridge**.
+- ⛓ A huge dark-wood chest with golden ornaments is **chained to 4 pillars**. Step on the island and **elite guardians** plus a **Treasure Guardian** (with a boss bar) awaken. The guardians stay on the island and fight. The Treasure Guardian and every elite have a **full monster sheet** in the editor (type, name, HP, damage, speed, size, skills, equipment, loot). Each guardian slain breaks a chain.
+- 🎰 When the last chain breaks, the **Ruins Chest** roulette appears: **1 free draw per player**, no key needed (emeralds, amethyst, Rift Dust, Sealed Key, Sealed Reliquary, a small chance of a Rift Shard; Luck counts).
+- 🌫 It **drifts away at the next Assault**: an unopened chest is lost, and players still on it are brought back.
+
+### 🩸 Rift Effect
+- 🟣 A new debuff: every hit from a Rift enemy (Rift creatures, and any monster inside the Rift) has a **5% chance** to apply the **Rift Effect**: **−10% healing received per level** (potions, Regeneration, natural regeneration, healing spells). It stacks up to 5 levels, and each new stack adds 5 s (max 30 s). Its tooltip shows the healing loss.
+
+### ⚔ New Rift encounters
+- 🌊 A **special wave for every act**: **Shard Tide** (Horde), **Brute Column** (Siege), **Neantide Swarm** (Counter-offensive) and **Titan's Guard** (Titan).
+- 🗿 A **Siege boss**: the **Rift Colossus** rises at the last Siege assault. Stronger than the Horde's Rift Lord, it charges, slams the ground and summons Rootlings.
+- 🌳 The Rift's **trees and ore deposits** are now regular Chaos events of the horde: a crystal tree, a Void rock pile, an iron vein and an amethyst geode, all editable.
+
+### ⏱ Chaos triggers (every horde)
+- 🎛 Every Chaos event now has a **trigger**: the usual random **Chaos timer**, its **own timer** (min–max seconds), **every N Calms** (or pauses between waves) or **every N Assaults** (or waves), with a **quantity** per trigger.
+- ✅ Events with their own trigger are never drawn at random and work even with Chaos turned off. Works in classic hordes, Kingdom and the Rift.
+
+### 🕷 Bridgebreaker
+- 🦂 A **new Rift creature** the size of a spider: dark violet carapace plates, cyan veins, crystal spines and a glowing weak spot on its back.
+- 🔊 During Assaults, a violet glow and a **scraping sound** under a bridge announce it. It **climbs from the void**, clings to the deck and **gnaws**: cracks spread, the section collapses in about 15 s, then it moves on to the next one.
+- 🎯 **Hit its back** (from behind or from above) for **double damage**, and **knock it into the void** for an instant kill. The Watch Lantern makes it glow.
+
+### 🛡 Rift Armor
+- 🔷 A new **evolving armor**: craft an iron piece with **8 Rift Dust** to get the **Cracked** Rift Armor (Tier I, netherite durability).
+- ⚒ Upgrade it to **Awakened** (Tier II) and **Anchored** (Tier III) at the **Forge** (Rebirth screen, new Armor button). Its crystals light up and new parts grow; enchantments and durability are kept.
+- ✨ At Tier III, make a **final choice** at the Shrine (Crafting tab): **Blessed** (more armor and health, golden crown) or **Corrupted** (more damage and attack speed, horns and spines), three levels each.
+- 🧩 Full set bonuses: **Rift Anchor** caps the Rift Effect and reduces damage from Rift enemies, then unlocks the **Rift Wave** (pushes and slows enemies when you drop below 35% health). **Rift Grace** (Blessed) grants immunity to the Rift Effect, more healing and a healing Wave for allies. **Rift Hunger** (Corrupted) makes the Wave hurt and wither, and adds life steal.
+- 🔮 With Iron's Spells: ender spell power, plus holy or blood spell power and max mana depending on the branch.
+- 🤺 Works with Epic Fight and armor stands.
+
+### 🎓 Kingdom tutorial
+- 🗺 A new **Tutorial** option per Kingdom (on by default): a player starting a Kingdom for the first time is guided through the whole game. Players who already played it see nothing new.
+- 🖼 **The Kingdom Cycle** screen opens at launch (Calm → Assault → Report, how to win and how to lose), and can be reopened from the Codex and the Survivor's Journal.
+- 📣 A banner and a screen tint at every phase change, so you never miss a Calm or an Assault.
+- 📋 A **To-do list** under the treasury, updated live: Calm objectives with their timer, the 3 steps to open a Gate (catalyst → Guardians → Gate) with a direction arrow, repairs with their quote, coins to spend, Ready. During the Assault: Monolith HP, Gates left, enemies alive, closest threat.
+- 💡 **Tips** the first time you meet each mechanic, and 1–2 pieces of **advice** in the Assault report.
+- ⏳ The **first Calm has no timer**: the first Assault starts when everyone presses **Ready** (G, or the key you chose in Controls).
+- 🔁 `/ws tuto reset`, a **Replay the tutorial** button in the Codex, and a client option (`kingdomTutorial: false`) to turn it off.
 
 ### 🌌 A new Rift in the sky
 - 🌀 The Rift is now a **jagged tear** onto a dark, starry void, with an irregular glowing rim, surrounded by a **slowly turning dust vortex** (one turn every 4 minutes) that breathes gently.
@@ -14,8 +87,36 @@
 - ☄ A few **rock fragments** stay floating in the void beyond the break.
 - ⚙ The old cut is still available with `titanBreakOrganic: false` in the Rift settings.
 
-### 🤺 Epic Fight
-- 🗡 The **Scythe of Taint** now sits properly on the back when it is put away.
+### ✏ Editor and Codex
+- 🗂 A new **Rift › Islets** tab with five pages (islets and bridges, Mining Islet, Altar Islet, Merchant with a free item list, Chest Islet and its Guardian), plus Bridgebreaker settings.
+- 📖 A new **Rift Islets** Codex page.
+- 🛡 **Safer horde sharing**: imported files are checked (only horde data is accepted, size limits), Rift and Invasion hordes are labelled correctly, and Rift exports now list Pehkui as required.
+
+### 🔧 Fixes
+- ⛓ **Anchorer**: its anchor now really chains the nearest player wherever you are (it did nothing far from the world centre), the chained player gets **Slowness V** and a visible chain links them to the anchor: **one hit** on the chain or the anchor breaks it.
+- 🗝 **Keys dropped by monsters** now always match the roulette chests that appear during the pauses of the current game (no more Reliquary keys in the Rift with no chest to open).
+- 🔥 **Offering Brazier** (Kingdom): now accepts every resource too (wood, planks, stone, iron, coins). Enchanted items, mod items and keys are still refused.
+- 📋 Defense sheet: the specialization line no longer overlaps the separator.
+- 🪨 **Rift Stone Brute**: more HP (130), knockback resistance and armor toughness. The **Anchorer** can't be knocked back while its anchor is raised or planted.
+- 💪 Horde monsters with no knockback resistance set in the editor now keep their own (Stone Brute, Anchorer, Ravager…) instead of dropping to 0.
+- 🗝 **Titan Chest**: more Rift Dust (10–14, or 20–24 on a rare roll), since monsters now drop some too.
+- 🏹 **Celestial ballistae** no longer need arrows: 16 shots, a short reload, and again.
+- 🌀 **Leaving the Rift** always brings you back in front of the Monolith that opened it, even after the Rift has closed (no more landing at a random spot).
+- 📂 After exporting a horde, a chat link opens the export folder (singleplayer / LAN host).
+- 🌀 Rift portals no longer drop you at the wrong coordinates (in the ocean) when you walk through them.
+- 🙏 **Blessings** are kept when you reload a saved game (horde, Kingdom or Rift) instead of being wiped before you click "Resume", and you are no longer offered the same Calm's blessing twice.
+- 🕷 The Bridgebreaker no longer gets stuck (and suffocates) inside blocks next to the island.
+- ✏ Editor: Rift special-wave chance field no longer overlaps its label.
+- 🏝 The Chest Islet now always shows up during the Siege (its Calm is picked among the Calms that actually exist).
+- ⚖ **Rift difficulty** now really applies: the level and mutators picked at the altar were lost when the Rift opened and at every phase change (monsters had Normal stats in Nightmare). They now last the whole Rift, and the **Titan** gets the boss HP and boss damage multipliers too.
+- 🗿 Titan: its charge (quake and island break) deals **half** the damage to buildings, and there are a few more seconds before its entrance cutscene.
+- 🎁 **Multiplayer Rift**: every participant now gets the end rewards (PR, Rift Shards, reliquaries, Titan loot and a Titan Key), even if they were dead and waiting to come back at that moment.
+- 📦 Roulette chests in the Rift now **disappear between waves** in multiplayer, instead of piling up next to each other.
+- ✨ Roulette chest particles no longer show up at the **world spawn** in the Overworld while a Rift is running.
+- ⚔ Kill counts (Kingdom Assault report, Rift podium) now credit kills made by your summons and pets, and kills by fire or falls right after your hit.
+- 💀 Rift difficulty also scales the Mining Islet guards (number, HP, damage), the Chest Islet guardians (number) and the Counter-offensive reinforcements (number). Catalysts are unchanged.
+- 🗿 Iron golems no longer attack the Town Hall crystal above the Monolith.
+- 🗡 Epic Fight: the **Scythe of Taint** now sits properly on the back when it is put away.
 
 ## 2.0.0 — The Rift
 

@@ -360,6 +360,12 @@ public class AltarDefense {
         return true;
     }
 
+    /** PV max du Monolithe actif (0 sans partie). */
+    public static float monolithMaxHp() {
+        Session s = SESSION;
+        return s == null ? 0f : s.maxHp;
+    }
+
     /** Mode Kingdom (sanctuaire de réparation) : soigne le Monolithe actif. */
     public static void healMonolith(float amount) {
         Session s = SESSION;
@@ -523,6 +529,7 @@ public class AltarDefense {
             else if (type == 92) com.wavesurvivor.horde.kingdom.vocation.VocationFx.recycleGear(player);  // Récupérateur : équipement
             else if (type == 93) com.wavesurvivor.horde.kingdom.KingdomRoleExtras.rerollContract(player); // Chasseur : changer de contrat
             else if (type == 90) com.wavesurvivor.horde.kingdom.KingdomRoleExtras.recoverHorn(player); // cor du Commandant
+            else if (type >= 94 && type <= 96) com.wavesurvivor.horde.rift.RiftIslets.buyBridge(player, type - 94); // 2.1 : pont vers un îlot de la Faille
             else com.wavesurvivor.horde.kingdom.KingdomDefenses.buy(player, type);
             sendShopState(player, false);
             return;

@@ -71,6 +71,14 @@ public class RouletteChestManager {
         }
     }
 
+    /** Dimension d'origine connue de chaque coffre (posé par le mod) : évite de le chercher dans une autre dimension. */
+    private static final Map<BlockPos, net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level>> IDLE_HOME = new ConcurrentHashMap<>();
+
+    public static void registerIdle(BlockPos pos, RouletteChestConfig config, ServerLevel level) {
+        if (level != null) IDLE_HOME.put(pos.immutable(), level.dimension());
+        registerIdle(pos, config);
+    }
+
     public static void registerIdle(BlockPos pos, RouletteChestConfig config) {
         IDLE.put(pos.immutable(), config);
         WaveSurvivorMod.LOGGER.info("[Roulette] Coffre '{}' enregistré à {}", config.chestName(), pos);
@@ -79,6 +87,7 @@ public class RouletteChestManager {
     public static void unregister(BlockPos pos) {
         RouletteChestConfig removed = IDLE.remove(pos.immutable());
         IDLE_LEVEL.remove(pos.immutable());
+        IDLE_HOME.remove(pos.immutable());
         ACTIVE.remove(pos.immutable());
         QUEUE.remove(pos.immutable());
         if (removed != null) {
@@ -193,8 +202,16 @@ public class RouletteChestManager {
 
     /** Cherche le level dans lequel se trouve la pos (via chargement de chunk). */
     private static ServerLevel findLevelFor(MinecraftServer server, BlockPos pos) {
+        // 2.1 — avant : la 1re dimension où le chunk était chargé. Les coffres de la Faille (vers 0,0) étaient alors
+        // attribués à l'Overworld (chunks du spawn chargés) : particules au spawn du monde. On utilise la dimension
+        // d'origine, sinon une dimension où un coffre existe vraiment à cette position.
+        var home = IDLE_HOME.get(pos);
+        if (home != null) {
+            ServerLevel lvl = server.getLevel(home);
+            return lvl != null && lvl.isLoaded(pos) ? lvl : null;
+        }
         for (ServerLevel lvl : server.getAllLevels()) {
-            if (lvl.isLoaded(pos)) return lvl;
+            if (lvl.isLoaded(pos) && lvl.getBlockEntity(pos) instanceof net.minecraft.world.Container) return lvl;
         }
         return null;
     }
@@ -297,12 +314,19 @@ public class RouletteChestManager {
                                         RouletteChestConfig config, ItemStack itemInHand) {
         // Animation en cours : le tirage est validé maintenant et mis en file (spam de clés possible)
         boolean busy = ACTIVE.containsKey(pos.immutable());
+        // 2.1 — île au coffre : le grand coffre reste enchaîné tant que les gardiens vivent
+        if (com.wavesurvivor.horde.rift.RiftChestIslet.locked(pos)) {
+            player.displayClientMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t("rift.chest.locked")), true);
+            return true;
+        }
 
         // Clé en main (prioritaire) ou, à défaut, clé prise dans une Bourse à clés du joueur (accroupi : toutes celles du bon type)
         boolean heldKey = com.wavesurvivor.horde.roulette.KeyPouch.isKey(itemInHand);
         int keys;
         boolean fromPouch = false;
-        if (heldKey) {
+        if (com.wavesurvivor.horde.rift.RiftChestIslet.takeFreeDraw(player, config, pos)) {
+            keys = 1;   // 2.1 — île au coffre : 1 tirage gratuit par joueur, sans clé
+        } else if (heldKey) {
             if (!keyMatches(itemInHand, config)) {
                 player.sendSystemMessage(Component.literal(com.wavesurvivor.i18n.WSLang.t(config.messages().noKey()).replace("{key}", RouletteKeyItem.keyDisplayName(config.keyName()))));
                 return true;

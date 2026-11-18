@@ -214,7 +214,8 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
                 g.fill(x + 9, ry - 1, x + 11, ry + CRAFT_ROW_H - 2, th[5]);
             }
             boolean ok = CraftRecipes.canAfford(player, c);
-            String nm = CraftRecipes.result(c).getHoverName().getString();
+            String nm = c.upgrade() ? WSLang.t("rift_armor." + c.branch(), com.wavesurvivor.item.RiftArmor.roman(c.level())).replaceAll("§.", "")
+                    : CraftRecipes.result(c).getHoverName().getString();
             g.drawString(font, fit(nm, 66), x + 14, ry + 1, ok ? (cons ? 0xFFF2C14E : 0xFFD06BFF) : 0xFF8A8A92, false);
         }
         if (list.size() > CRAFT_ROWS) {
@@ -231,7 +232,7 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
         boolean cons = !"profaned".equals(c.align());
         g.fill(x + 94, py + 20, x + 169, py + 86, th[0]);
         g.fill(x + 95, py + 21, x + 168, py + 85, th[4]);
-        ItemStack res = CraftRecipes.result(c);
+        ItemStack res = CraftRecipes.preview(player, c);
         g.fill(x + 98, py + 24, x + 118, py + 44, th[5]);
         g.fill(x + 99, py + 25, x + 117, py + 43, th[6]);
         g.renderItem(res, x + 100, py + 26);
@@ -246,7 +247,9 @@ public class SeraphShrineScreen extends AbstractContainerScreen<SeraphShrineMenu
             String line = (have >= k.count() ? "§a" : "§c") + Math.min(have, 999) + "/" + k.count() + " §7" + (ic.isEmpty() ? k.item() : ic.getHoverName().getString());
             small(g, fit(line, 118), x + 98, ly, 0.7f, false, 68);
         }
-        drawButton(g, x + 100, py + 90, 64, 14, WSLang.t("shrine.craft_make"), CraftRecipes.canAfford(player, c));
+        if (c.upgrade() && CraftRecipes.target(player, c).isEmpty())   // aucune pièce au bon état (ou déjà de l'autre branche)
+            small(g, fit(WSLang.t("rift_armor.no_target"), 100), x + 98, py + 58 + Math.min(4, c.cost().size()) * 7, 0.7f, false, 68);
+        drawButton(g, x + 100, py + 90, 64, 14, WSLang.t(c.upgrade() ? "rift_armor.shrine_btn" : "shrine.craft_make"), CraftRecipes.canAfford(player, c));
         // Info-bulle de l'objet fabriqué
         if (mx >= x + 98 && mx < x + 118 && my >= py + 24 && my < py + 44 && !res.isEmpty()) tipItem = res;
     }

@@ -68,6 +68,17 @@ public final class HordeDifficulty {
                 active.id, mult.monsterHealth, mult.monsterCount, mult.bossHealth, mult.rewards);
     }
 
+    /** Remet un niveau en place sans annonce (Faille : la difficulté de la partie survit aux changements de phase). */
+    public static synchronized void restore(Difficulty d) {
+        if (d == null) return;
+        active = d;
+        mult = load().get(d);
+    }
+
+    /** Multiplicateurs de boss du niveau actif (1 hors partie) : Titan de la Faille. */
+    public static double bossHealthMult() { Mult x = m(); return x == null ? 1.0 : x.bossHealth; }
+    public static double bossDamageMult() { Mult x = m(); return x == null ? 1.0 : x.bossDamage; }
+
     /** Fin de horde. */
     public static synchronized void clear() {
         active = null;

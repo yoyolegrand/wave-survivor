@@ -156,6 +156,10 @@ public class AltarManager {
                 com.wavesurvivor.horde.difficulty.HordeProgress.explain(player, horde);
                 return;
             }
+            String allowedR = horde.configData != null ? horde.configData.difficulties : "";
+            com.wavesurvivor.horde.difficulty.Difficulty dR = com.wavesurvivor.horde.difficulty.Difficulty.byId(difficulty);
+            if (dR == null || !com.wavesurvivor.horde.difficulty.Difficulty.allowed(allowedR).contains(dR)) dR = com.wavesurvivor.horde.difficulty.Difficulty.defaultFor(allowedR);
+            com.wavesurvivor.horde.rift.RiftManager.setChoice(dR == null ? "" : dR.id, mutators);
             if (!com.wavesurvivor.horde.rift.RiftManager.open(player, level, pos, horde)) level.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0f, 0.5f);
             return;
         }

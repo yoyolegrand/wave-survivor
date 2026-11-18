@@ -47,10 +47,12 @@ public class KingdomReport {
     public static void stop() { on = false; }
 
     static void onGain(KingdomTreasury.Res r, int n) {
+        if (KingdomManager.cycle() > 0 || KingdomManager.phase() == KingdomManager.Phase.ASSAULT) KingdomTuto.tipAll("treasury");   // 2.1 — tuto
         if (on && n > 0) GAINED[r.ordinal()] += n;
     }
 
     static void onStructureDamage(float d) {
+        KingdomTuto.tipAll("building_damaged");   // 2.1 — tuto : astuce au premier bâtiment abîmé
         if (on && d > 0) structDamage += d;
     }
 
@@ -65,7 +67,7 @@ public class KingdomReport {
         if (m.getPersistentData().getBoolean("ws_kingdom_soldier") || m instanceof com.wavesurvivor.entity.KingdomSoldier
                 || m instanceof com.wavesurvivor.entity.BrecheEntity) return;
         if (!(m instanceof net.minecraft.world.entity.monster.Enemy) && com.wavesurvivor.horde.spawn.MobRegistry.get(m.getUUID()) == null) return;
-        Entity src = e.getSource().getEntity();
+        Entity src = com.wavesurvivor.horde.rewards.KillTracker.creditedKiller(m, e.getSource());
         if (src instanceof ServerPlayer p) {
             PLAYER_KILLS.merge(p.getUUID(), 1, Integer::sum);
             NAMES.put(p.getUUID(), p.getGameProfile().getName());
@@ -108,5 +110,7 @@ public class KingdomReport {
             lines.add(WSLang.c("kingdom.report.mvp", NAMES.getOrDefault(sorted.get(0).getKey(), "?"), sorted.get(0).getValue()));
         }
         for (ServerPlayer p : level.players()) for (Component c : lines) p.sendSystemMessage(c);
+        // 2.1 — tuto : 1 ou 2 conseils pour les joueurs accompagnés
+        KingdomTuto.advice(structLost, total > 0 ? playerKills / (double) total : 0, total);
     }
 }

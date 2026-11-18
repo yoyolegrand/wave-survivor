@@ -217,6 +217,9 @@ final class RiftTitan {
 
     static float maxHp() { return maxHp; }
 
+    /** Dégâts du Titan aux joueurs × « dégâts de boss » de la difficulté (bâtiments inchangés). */
+    private static double dmgMul() { return com.wavesurvivor.horde.difficulty.HordeDifficulty.bossDamageMult(); }
+
     // ─── Apparition ───
 
     /** Distance (vers le sud) entre le centre de l'île et le Titan : l'île + une marge (réglable, 12 par défaut) + la demi-largeur du Titan agrandi. */
@@ -241,7 +244,8 @@ final class RiftTitan {
         baseX = RiftManager.CENTER.getX() + 0.5;
         baseZ = RiftManager.CENTER.getZ() + distance(settings, sr) + 0.5;   // au SUD de l'île : à portée des engins de siège
         baseY = RiftManager.CENTER.getY() - 8;
-        maxHp = (float) (settings.titanHp * (1.0 + 0.6 * Math.max(0, players - 1)));
+        maxHp = (float) (settings.titanHp * (1.0 + 0.6 * Math.max(0, players - 1))
+                * com.wavesurvivor.horde.difficulty.HordeDifficulty.bossHealthMult());   // difficulté : PV de boss
         mob.setNoAi(true);
         mob.setNoGravity(true);
         // Évite le gros lag : un Titan géant testait sans cesse des milliers de blocs autour de lui (« dans un mur ? »), ce qui chargeait
@@ -541,7 +545,7 @@ final class RiftTitan {
             l.playSound(null, m, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
             com.wavesurvivor.altar.AltarDefense.externalHit(l, rs.titanMonolithDamage);
             for (ServerPlayer p : alive(l)) {
-                if (Math.hypot(p.getX() - m.getX() - 0.5, p.getZ() - m.getZ() - 0.5) <= 3.5) p.hurt(l.damageSources().explosion(null, titan), 10f);
+                if (Math.hypot(p.getX() - m.getX() - 0.5, p.getZ() - m.getZ() - 0.5) <= 3.5) p.hurt(l.damageSources().explosion(null, titan), (float) ((10f) * dmgMul()));
                 ShakePacket.send(p, 30, 1.0f);
             }
             announce(l, "§c§l⚠ " + com.wavesurvivor.i18n.WSLang.t("rift.t.fist_hit"));
@@ -916,7 +920,7 @@ final class RiftTitan {
             if (d <= radius * 5) ShakePacket.send(p, radius > 7 ? 50 : 24, (float) Math.max(0.3, (radius > 7 ? 2.0 : 1.2) - d / (radius * 5)));
         }
         for (ServerPlayer p : alive(l)) {
-            if (Math.hypot(p.getX() - x, p.getZ() - z) <= hit && Math.abs(p.getY() - y) < 4) p.hurt(l.damageSources().explosion(null, titan), (float) Math.max(1, m.damage));
+            if (Math.hypot(p.getX() - x, p.getZ() - z) <= hit && Math.abs(p.getY() - y) < 4) p.hurt(l.damageSources().explosion(null, titan), (float) (((float) Math.max(1, m.damage)) * dmgMul()));
         }
         for (Display.BlockDisplay d : m.parts) dropMeteorPart(d, "impact");
         if (m.buildDamage > 0) hitBuildings(l, at, (int) Math.ceil(radius), m.buildDamage);
@@ -1087,7 +1091,7 @@ final class RiftTitan {
                     if (Math.abs(d - r) > 1.3 || p.getZ() > oz + 1 || Math.abs(p.getY() - gy) > 4) continue;
                     hit.add(p.getUUID());
                     if (!p.onGround()) continue;   // en l'air : on a sauté par-dessus
-                    p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.titanStompDamage));
+                    p.hurt(l.damageSources().explosion(null, titan), (float) ((Math.max(1, rs.titanStompDamage)) * dmgMul()));
                     p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 4, false, true));
                     if (com.wavesurvivor.item.RiftRelics.shockImmune(p)) continue;   // aucun recul (Faille 3 pièces, Ceinture de Plomb…)
                     p.setDeltaMovement(p.getDeltaMovement().add(0, 0.55, 0));
@@ -1276,7 +1280,7 @@ final class RiftTitan {
             double d = pl.position().distanceTo(p);
             if (d < 40) ShakePacket.send(pl, 35, (float) Math.max(0.4, 1.6 - d / 40));
             if (!pl.isSpectator() && pl.isAlive() && d <= 5.5) {
-                pl.hurt(l.damageSources().explosion(null, titan), (float) Math.max(1, rs.titanRockDamage));
+                pl.hurt(l.damageSources().explosion(null, titan), (float) (((float) Math.max(1, rs.titanRockDamage)) * dmgMul()));
                 if (com.wavesurvivor.item.RiftRelics.shockImmune(pl)) continue;
                 double dx = pl.getX() - p.x, dz = pl.getZ() - p.z, len = Math.max(0.5, Math.hypot(dx, dz));
                 pl.setDeltaMovement(dx / len, 0.6, dz / len);
@@ -1335,7 +1339,7 @@ final class RiftTitan {
                             if (pp.distanceTo(from.add(d.scale(tt))) > 1.9) continue;
                             var hit = l.clip(new ClipContext(from, p.getEyePosition(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, titan));
                             if (hit.getType() != HitResult.Type.MISS && hit.getLocation().distanceTo(p.getEyePosition()) > 1.5) continue; // à couvert
-                            p.hurt(l.damageSources().magic(), (float) Math.max(1, rs.titanBeamDamage));
+                            p.hurt(l.damageSources().magic(), (float) (((float) Math.max(1, rs.titanBeamDamage)) * dmgMul()));
                             p.setSecondsOnFire(4);
                         }
                     }
@@ -1610,13 +1614,13 @@ final class RiftTitan {
             ShakePacket.send(p, 90, 1.8f);
             if (p.isSpectator() || !p.isAlive()) continue;
             if (p.getX() >= zone[0] && p.getX() <= zone[1] && p.getZ() >= zone[2] && p.getZ() <= zone[3]) {
-                p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.titanChargeDamage));
+                p.hurt(l.damageSources().explosion(null, titan), (float) ((Math.max(1, rs.titanChargeDamage)) * dmgMul()));
                 p.setDeltaMovement(0, 0.9, -1.7);   // repoussé vers le Monolithe
                 p.hurtMarked = true;
             }
         }
         // Les bâtiments pris dans la zone sont écrasés
-        hitRect(l, zone[0], zone[1], zone[2], zone[3], Math.max(1, rs.titanBuildDamage));
+        hitRect(l, zone[0], zone[1], zone[2], zone[3], Math.max(1, rs.titanBuildDamage * 0.5f));   // charge (séisme) : dégâts aux bâtiments divisés par 2
         breakSector(l, now);
         charge = 3;
         chargeAt = now + Math.max(2, rs.titanChargeStun) * 20L + stunBonus;
@@ -1669,7 +1673,7 @@ final class RiftTitan {
             if (box == null) return;
             announce(l, "§6§l" + com.wavesurvivor.i18n.WSLang.t("rift.titan.island_break"));
             l.playSound(null, BlockPos.containing(chargeX, c.getY(), zone[3]), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 8f, 0.3f);
-            hitRect(l, box[0], box[1], box[2], box[3], Math.max(1, rs.titanBuildDamage * 4f));
+            hitRect(l, box[0], box[1], box[2], box[3], Math.max(1, rs.titanBuildDamage * 2f));
             return;
         }
         int sr = siegeRadius, depth = Math.max(2, Math.min(sr / 2, rs.titanBreakDepth));
@@ -1688,7 +1692,7 @@ final class RiftTitan {
         final int[] falling = {0};
         for (int[] col : cols) RiftManager.later(l.getServer(), 4 + col[2] + RNG.nextInt(4), () -> collapseColumn(l, col[0], col[1], falling));
         // Les bâtiments posés sur ce bord s'écroulent avec lui
-        hitRect(l, zone[0], zone[1], c.getZ() + sr - depth, c.getZ() + sr + 3, Math.max(1, rs.titanBuildDamage * 4f));
+        hitRect(l, zone[0], zone[1], c.getZ() + sr - depth, c.getZ() + sr + 3, Math.max(1, rs.titanBuildDamage * 2f));
     }
 
     /** Une colonne de l'île tombe : les blocs du dessus chutent (blocs qui tombent), le reste disparaît dans l'abîme. */
@@ -1736,7 +1740,7 @@ final class RiftTitan {
                     double d = Math.hypot(p.getX() - s[0], p.getZ() - s[1]);
                     if (d < 40) ShakePacket.send(p, 20, 1.0f);
                     if (!p.isSpectator() && p.isAlive() && d <= 5.2 && Math.abs(p.getY() - c.getY()) < 5) {
-                        p.hurt(l.damageSources().explosion(null, titan), Math.max(1, rs.titanMeleeDamage));
+                        p.hurt(l.damageSources().explosion(null, titan), (float) ((Math.max(1, rs.titanMeleeDamage)) * dmgMul()));
                         if (com.wavesurvivor.item.RiftRelics.shockImmune(p)) continue;
                         double dx = p.getX() - s[0], dz = p.getZ() - s[1], len = Math.max(0.5, Math.hypot(dx, dz));
                         p.setDeltaMovement(dx / len * 1.0, 0.6, dz / len * 1.0);
@@ -1988,7 +1992,7 @@ final class RiftTitan {
             l.playSound(null, t, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 6f, 0.5f);
             hitBuildings(l, t, (int) Math.ceil(r), Math.max(1, rs.titanBuildDamage));
             for (ServerPlayer p : alive(l)) {
-                if (Math.hypot(p.getX() - t.getX() - 0.5, p.getZ() - t.getZ() - 0.5) <= r) p.hurt(l.damageSources().explosion(null, titan), 10f);
+                if (Math.hypot(p.getX() - t.getX() - 0.5, p.getZ() - t.getZ() - 0.5) <= r) p.hurt(l.damageSources().explosion(null, titan), (float) ((10f) * dmgMul()));
                 ShakePacket.send(p, 25, 1.0f);
             }
         });

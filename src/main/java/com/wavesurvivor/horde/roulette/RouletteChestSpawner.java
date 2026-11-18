@@ -34,7 +34,8 @@ public class RouletteChestSpawner {
     private static final String HOLOGRAM_TAG = "roulette_hologram";
 
     /** Positions des coffres actuellement spawn (pour cleanup facile). */
-    private static final List<BlockPos> ACTIVE_CHESTS = new ArrayList<>();
+    private record Placed(ResourceKey<Level> dim, BlockPos pos) {}
+    private static final List<Placed> ACTIVE_CHESTS = new ArrayList<>();
 
     /** Spawn tous les coffres configurés pour cette horde. */
     public static void spawnAll(String hordeName, MinecraftServer server) {
@@ -90,7 +91,7 @@ public class RouletteChestSpawner {
                 container.setCustomName(Component.literal(cfg.chestName()));
                 container.setChanged();
             }
-            RouletteChestManager.registerIdle(pos, cfg);
+            RouletteChestManager.registerIdle(pos, cfg, level);
             spawnHologram(level, pos, cfg);
             return true;
         } catch (Exception e) {
@@ -120,12 +121,13 @@ public class RouletteChestSpawner {
             }
 
             // Enregistre dans le manager pour tick particules + right-click
-            RouletteChestManager.registerIdle(pos, cfg);
+            RouletteChestManager.registerIdle(pos, cfg, level);
 
             // Spawn hologramme (armor_stand invisible avec name)
             spawnHologram(level, pos, cfg);
 
-            ACTIVE_CHESTS.add(pos.immutable());
+            ACTIVE_CHESTS.add(new Placed(level.dimension(), pos.immutable()));
+            GameChestKeys.placed(cfg.configKey());   // clés lâchées par les monstres : coffres de la partie
             return true;
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[RouletteSpawner] Erreur spawnOne @ {} : {}", pos, e.getMessage());
@@ -157,10 +159,14 @@ public class RouletteChestSpawner {
         int chestsRemoved = 0;
         int holoRemoved = 0;
 
-        for (BlockPos pos : new ArrayList<>(ACTIVE_CHESTS)) {
-            for (ServerLevel level : server.getAllLevels()) {
-                if (!level.isLoaded(pos)) continue;
-
+        // 2.1 — chaque coffre est retiré dans SA dimension. Avant : la 1re dimension où le chunk était chargé
+        // (souvent l'Overworld au spawn, en coop) → les coffres de la Faille restaient et s'empilaient de vague en vague.
+        for (Placed pl : new ArrayList<>(ACTIVE_CHESTS)) {
+            BlockPos pos = pl.pos();
+            ServerLevel level = server.getLevel(pl.dim());
+            if (level == null) { RouletteChestManager.unregister(pos); continue; }
+            level.getChunkAt(pos);   // charge le chunk si personne n'est à côté (le coffre doit disparaître quand même)
+            {
                 // Retire l'hologramme (armor_stand tagué) dans un cube 1×2×1
                 AABB box = new AABB(pos.getX(), pos.getY(), pos.getZ(),
                         pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1);
@@ -179,7 +185,6 @@ public class RouletteChestSpawner {
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
                     chestsRemoved++;
                 }
-                break;
             }
         }
 

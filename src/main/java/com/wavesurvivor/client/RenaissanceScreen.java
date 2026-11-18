@@ -360,11 +360,15 @@ public class RenaissanceScreen extends Screen {
         var mcp = Minecraft.getInstance().player;
         if (mcp == null) return;
         var inv = mcp.getInventory().items;
-        forgeSig = com.wavesurvivor.item.RelicForge.relicsIn(inv).toString() + com.wavesurvivor.item.RelicEquip.CLIENT.size()
-                + "|" + com.wavesurvivor.item.RelicForge.dustIn(inv);
-        // Sous-vues : Améliorer / Fusionner (/ Équipement sans Curios)
+        forgeSig = forgeSignature(mcp);
+        // Sous-vues : Améliorer / Fusionner (/ Équipement sans Curios) / Armure de la Faille (2.1)
         boolean noCurios = !com.wavesurvivor.item.RelicEffects.curiosAvailable();
-        int sw = noCurios ? 80 : 120;
+        int nSub = noCurios ? 4 : 3;
+        int sw = (PANEL_W - 176 - 16 - 2 * (nSub - 1)) / nSub;   // à gauche du bouton Poussières → Éclat
+        Button ra = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.sub_rift")),
+                b -> { forgeSub = 3; scroll = 0; rebuild(); }).bounds(left + 8 + (nSub - 1) * (sw + 2), top + 42, sw, 14)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.rift_armor")))).build());
+        ra.active = forgeSub != 3;
         Button up = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.sub_upgrade")),
                 b -> { forgeSub = 0; scroll = 0; rebuild(); }).bounds(left + 8, top + 42, sw, 14).build());
         Button fu = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.sub_fuse")),
@@ -378,6 +382,7 @@ public class RenaissanceScreen extends Screen {
             if (forgeSub == 2) { buildEquipWidgets(inv); return; }
         } else if (forgeSub == 2) forgeSub = 0;
         if (forgeSub == 1) { buildFusionWidgets(inv); return; }
+        if (forgeSub == 3) { buildRiftWidgets(mcp); return; }
         // 2.0 — 48 Poussières de Faille → 1 Éclat de Faille
         int dust = com.wavesurvivor.item.RelicForge.dustIn(inv);
         Button db = addRenderableWidget(Button.builder(Component.literal(com.wavesurvivor.i18n.WSLang.t("forge.dust_btn", com.wavesurvivor.item.RelicForge.DUST_PER_SHARD, dust)),
@@ -413,8 +418,79 @@ public class RenaissanceScreen extends Screen {
     private void tickForge() {
         if (tab != 2) return;
         var mcp = Minecraft.getInstance().player;
-        if (mcp != null && !(com.wavesurvivor.item.RelicForge.relicsIn(mcp.getInventory().items).toString()
-                + com.wavesurvivor.item.RelicEquip.CLIENT.size() + "|" + com.wavesurvivor.item.RelicForge.dustIn(mcp.getInventory().items)).equals(forgeSig)) rebuild();
+        if (mcp != null && !forgeSignature(mcp).equals(forgeSig)) rebuild();
+    }
+
+    private static String forgeSignature(net.minecraft.world.entity.player.Player mcp) {
+        var inv = mcp.getInventory().items;
+        return com.wavesurvivor.item.RelicForge.relicsIn(inv).toString() + com.wavesurvivor.item.RelicEquip.CLIENT.size()
+                + "|" + com.wavesurvivor.item.RelicForge.dustIn(inv) + "|" + com.wavesurvivor.item.RiftArmor.sig(mcp)
+                + "|" + com.wavesurvivor.craft.CraftRecipes.count(mcp, "minecraft:diamond")
+                + "/" + com.wavesurvivor.craft.CraftRecipes.count(mcp, "minecraft:netherite_ingot")
+                + "/" + com.wavesurvivor.craft.CraftRecipes.count(mcp, "wavesurvivor:rift_shard");
+    }
+
+    // ─── 2.1 : Armure de la Faille (paliers II et III) ───
+
+    private final List<Integer> riftRows = new ArrayList<>();
+
+    private void buildRiftWidgets(net.minecraft.world.entity.player.Player mcp) {
+        riftRows.clear();
+        riftRows.addAll(com.wavesurvivor.item.RiftArmor.slots(mcp));
+        scroll = Math.max(0, Math.min(scroll, Math.max(0, riftRows.size() - VISIBLE_ROWS)));
+        int y = top + 62;
+        for (int i = scroll; i < Math.min(riftRows.size(), scroll + VISIBLE_ROWS); i++) {
+            final int code = riftRows.get(i);
+            ItemStack st = com.wavesurvivor.item.RiftArmor.bySlot(mcp, code);
+            var cost = com.wavesurvivor.item.RiftArmor.tierCost(st);
+            String lbl = cost != null ? com.wavesurvivor.i18n.WSLang.t("forge.rift_armor.upgrade", com.wavesurvivor.item.RiftArmor.roman(com.wavesurvivor.item.RiftArmor.tier(st) + 1))
+                    : com.wavesurvivor.i18n.WSLang.t("forge.btn_max");
+            Button b = addRenderableWidget(Button.builder(Component.literal(lbl),
+                    bt -> NetworkHandler.CHANNEL.sendToServer(new com.wavesurvivor.network.RelicForgePacket("riftarmor", String.valueOf(code))))
+                    .bounds(left + PANEL_W - 104, y, 96, 18).build());
+            b.active = cost != null && com.wavesurvivor.item.RiftArmor.canPay(mcp, cost);
+            y += ROW_H;
+        }
+    }
+
+    private List<Component> renderRiftArmor(GuiGraphics g, int mx, int my) {
+        List<Component> tip = null;
+        var mcp = Minecraft.getInstance().player;
+        if (mcp == null) return null;
+        if (riftRows.isEmpty()) g.drawCenteredString(font, com.wavesurvivor.i18n.WSLang.t("forge.rift_armor.empty"), width / 2, top + 90, 0xFF888888);
+        int y = top + 62;
+        for (int i = scroll; i < Math.min(riftRows.size(), scroll + VISIBLE_ROWS); i++) {
+            ItemStack st = com.wavesurvivor.item.RiftArmor.bySlot(mcp, riftRows.get(i));
+            if (st.isEmpty()) { y += ROW_H; continue; }
+            g.fill(left + 6, y - 2, left + PANEL_W - 6, y + ROW_H - 4, 0x3040E0D0);
+            g.renderItem(st, left + 10, y);
+            String name = st.getHoverName().getString() + " §7· " + com.wavesurvivor.item.RiftArmor.tierName(st);
+            if (font.width(name) > PANEL_W - 150) name = font.plainSubstrByWidth(name, PANEL_W - 154) + "…";
+            g.drawString(font, "§f" + name, left + 30, y + 1, 0xFFFFFFFF, false);
+            var cost = com.wavesurvivor.item.RiftArmor.tierCost(st);
+            StringBuilder sb = new StringBuilder();
+            if (cost != null) {
+                for (var k : cost) {
+                    int have = com.wavesurvivor.craft.CraftRecipes.count(mcp, k.item());
+                    ItemStack ic = com.wavesurvivor.craft.CraftRecipes.icon(k.item());
+                    if (sb.length() > 0) sb.append("§7, ");
+                    sb.append(have >= k.count() ? "§a" : "§c").append(Math.min(have, 999)).append("/").append(k.count()).append(" §7")
+                            .append(ic.isEmpty() ? k.item() : ic.getHoverName().getString());
+                }
+            } else if (com.wavesurvivor.item.RiftArmor.branch(st) == com.wavesurvivor.item.RiftArmor.Branch.BASE || com.wavesurvivor.item.RiftArmor.level(st) < 3) {
+                sb.append("§8→ ").append(com.wavesurvivor.i18n.WSLang.t("rift_armor.next.shrine"));   // la suite se fait au Sanctuaire
+            }
+            String line = sb.toString();
+            if (font.width(line) > PANEL_W - 150) line = font.plainSubstrByWidth(line, PANEL_W - 154) + "…";
+            g.drawString(font, line, left + 30, y + 10, 0xFFFFFFFF, false);
+            if (mx >= left + 10 && mx < left + 26 && my >= y && my < y + 16) tip = new ArrayList<>(Screen.getTooltipFromItem(Minecraft.getInstance(), st));
+            y += ROW_H;
+        }
+        if (riftRows.size() > VISIBLE_ROWS) {
+            g.drawCenteredString(font, com.wavesurvivor.i18n.WSLang.t("ui.molette") + (scroll + 1) + "-"
+                    + Math.min(riftRows.size(), scroll + VISIBLE_ROWS) + " / " + riftRows.size(), width / 2, top + PANEL_H - 12, 0xFFFFFFFF);
+        }
+        return tip;
     }
 
     /** Forge : 0 = améliorer, 1 = fusionner, 2 = équipement (sans Curios). */
@@ -531,6 +607,7 @@ public class RenaissanceScreen extends Screen {
     private List<Component> renderForge(GuiGraphics g, int mx, int my) {
         if (forgeSub == 1) return renderFusions(g, mx, my);
         if (forgeSub == 2) return renderEquip(g, mx, my);
+        if (forgeSub == 3) return renderRiftArmor(g, mx, my);
         List<Component> tip = null;
         var mcp = Minecraft.getInstance().player;
         if (mcp == null) return null;

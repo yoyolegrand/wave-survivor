@@ -466,6 +466,7 @@ public class HordeManager {
     /** @param resourceOnly Calme : seuls les événements de ressources (gisement, arbre) sont tirés. */
     public void kingdomChaosTick(MinecraftServer srv, boolean resourceOnly) {
         if (activeHorde == null || activeHorde.configData == null) return;
+        if (srv.getTickCount() % 20 == 0) tickOwnTimers(srv);   // 2.1 : minuteurs perso (même Chaos désactivé)
         HordeConfigMultiData.ConfigDataInner cfg = activeHorde.configData;
         if (!cfg.chaosEnabled || cfg.chaosEvents == null || cfg.chaosEvents.isEmpty()) return;
         if (nextChaosTick < 0) scheduleNextChaos(srv);
@@ -596,6 +597,7 @@ public class HordeManager {
             if (state == State.IDLE) return;
         }
 
+        if (now % 20 == 0 && !com.wavesurvivor.horde.kingdom.KingdomManager.isActive()) tickOwnTimers(srv);   // 2.1 : minuteurs perso
         if (cfg.chaosEnabled && cfg.chaosEvents != null && !cfg.chaosEvents.isEmpty()
                 && now >= nextChaosTick && state == State.RUNNING && !com.wavesurvivor.horde.bossrush.BossRush.active()) {
             triggerRandomChaos(cfg, srv);
@@ -697,6 +699,7 @@ public class HordeManager {
 
             if (com.wavesurvivor.horde.bossrush.BossRush.active()) com.wavesurvivor.horde.bossrush.BossRush.onStageStart(srv, currentWave); // Boss Rush : pas de monstres, seulement le boss
             else spawnWave(currentWave, cfg);
+            if (!com.wavesurvivor.horde.bossrush.BossRush.active()) onAssaultStartTriggers(srv, currentWave);   // 2.1 : événements « par vague »
             com.wavesurvivor.horde.renaissance.Heritage.onWaveStart(srv); // Héritage : Survivant 2
             SpecialWave chosenSpecial = com.wavesurvivor.horde.bossrush.BossRush.active() ? null : pickSpecialWave(cfg, currentWave);
             if (chosenSpecial != null) {
@@ -748,6 +751,67 @@ public class HordeManager {
         }
     }
 
+    // ─── 2.1 : déclencheurs propres des événements du Chaos ───
+
+    /** Calmes / pauses écoulés depuis le début de la partie (déclencheur « par Calme »). */
+    private int calmCount = 0;
+    /** Prochain déclenchement des événements à minuteur perso. */
+    private final java.util.IdentityHashMap<ChaosEvent, Long> ownTimers = new java.util.IdentityHashMap<>();
+
+    /** Début d'un Assaut (Kingdom, Siège) ou d'une vague (classique) : événements « par Assaut ». */
+    public void onAssaultStartTriggers(MinecraftServer srv, int assault) {
+        fireTriggered(srv, "assault", Math.max(1, assault));
+    }
+
+    /** Déclenche les événements du mode donné dont le tour est venu (1 fois tous les trigEvery), trigCount fois chacun. */
+    private void fireTriggered(MinecraftServer srv, String mode, int index) {
+        if (srv == null || activeHorde == null || activeHorde.configData == null || activeHorde.configData.chaosEvents == null) return;
+        if (com.wavesurvivor.horde.bossrush.BossRush.active()) return;
+        int k = 0;
+        for (ChaosEvent ev : activeHorde.configData.chaosEvents) {
+            if (ev == null || !mode.equalsIgnoreCase(ev.trigger)) continue;
+            int every = Math.max(1, ev.trigEvery);
+            if ((index - 1) % every != 0) continue;
+            k = fireOwn(srv, ev, k);
+        }
+    }
+
+    /** Fait apparaître un événement trigCount fois (une apparition toutes les 3 s) ; renvoie le décalage suivant. */
+    private int fireOwn(MinecraftServer srv, ChaosEvent ev, int k) {
+        int n = Math.max(1, Math.min(10, ev.trigCount));
+        for (int i = 0; i < n; i++) {
+            final ChaosEvent e = ev;
+            int delay = 20 + (k++) * 60;
+            com.wavesurvivor.horde.skill.DelayedActionScheduler.schedule(srv, delay, () -> {
+                if (!isRunning() || activeHorde == null || activeHorde.configData == null) return;
+                ServerLevel lvl = resolveLevel(activeHorde.configData);
+                if (lvl == null) return;
+                BlockPos c;
+                if (com.wavesurvivor.horde.kingdom.KingdomManager.isActive())   // ressources dans le royaume, le reste entre le claim et les Portes
+                    c = isResourceEvent(e) ? com.wavesurvivor.horde.kingdom.KingdomManager.center() : com.wavesurvivor.horde.kingdom.KingdomManager.chaosCenter();
+                else c = getSpawnCenter(activeHorde.configData);
+                if (c != null) ChaosApplier.apply(e, lvl, c, srv);
+            }, "chaos trigger");
+        }
+        return k;
+    }
+
+    /** Minuteurs perso (chaque seconde, pendant toute la partie : vagues, pauses, Assauts et Calmes). */
+    private void tickOwnTimers(MinecraftServer srv) {
+        if (activeHorde == null || activeHorde.configData == null || activeHorde.configData.chaosEvents == null) return;
+        if (com.wavesurvivor.horde.bossrush.BossRush.active()) return;
+        long now = srv.getTickCount();
+        for (ChaosEvent ev : activeHorde.configData.chaosEvents) {
+            if (ev == null || !"timer".equalsIgnoreCase(ev.trigger)) continue;
+            int min = Math.max(5, ev.trigMin), max = Math.max(min, ev.trigMax);
+            Long at = ownTimers.get(ev);
+            if (at == null) { ownTimers.put(ev, now + (min + RNG.nextInt(max - min + 1)) * 20L); continue; }
+            if (now < at) continue;
+            fireOwn(srv, ev, 0);
+            ownTimers.put(ev, now + (min + RNG.nextInt(max - min + 1)) * 20L);
+        }
+    }
+
     private void scheduleNextChaos(MinecraftServer srv) {
         if (activeHorde == null || activeHorde.configData == null) return;
         HordeConfigMultiData.ConfigDataInner cfg = activeHorde.configData;
@@ -769,9 +833,11 @@ public class HordeManager {
      */
     public void spawnGuaranteedResources(MinecraftServer srv) {
         if (srv == null || activeHorde == null || activeHorde.configData == null || activeHorde.configData.chaosEvents == null) return;
+        calmCount++;
+        fireTriggered(srv, "calm", calmCount);
         int k = 0;
         for (ChaosEvent ev : activeHorde.configData.chaosEvents) {
-            if (ev == null || !isResourceEvent(ev) || ev.guaranteed <= 0) continue;
+            if (ev == null || !isResourceEvent(ev) || ev.guaranteed <= 0 || ev.ownTrigger()) continue;
             int n = Math.min(5, ev.guaranteed);
             // Seigneur 7 (Kingdom) : ressources de Calme +20 % (une ressource de plus avec 20 % de chance par ressource garantie)
             if (com.wavesurvivor.horde.kingdom.KingdomManager.isActive() && com.wavesurvivor.horde.renaissance.Heritage.anyone(srv, com.wavesurvivor.horde.renaissance.Heritage.Branch.LORD, 7)
@@ -794,6 +860,12 @@ public class HordeManager {
     private void triggerRandomChaos(HordeConfigMultiData.ConfigDataInner cfg, MinecraftServer srv, boolean resourceOnly) {
         List<ChaosEvent> events = cfg.chaosEvents;
         if (events == null || events.isEmpty()) return;
+        {   // 2.1 : les événements à déclencheur propre (minuteur perso, par Calme, par Assaut) ne sont pas tirés au hasard
+            List<ChaosEvent> pool = new java.util.ArrayList<>();
+            for (ChaosEvent ev : events) if (ev != null && !ev.ownTrigger()) pool.add(ev);
+            if (pool.isEmpty()) return;
+            events = pool;
+        }
         if (resourceOnly) {
             // Calme : ressources, et les événements marqués « calme » (soleil de plomb, nuée, crue de l'oasis…)
             List<ChaosEvent> res = new java.util.ArrayList<>();
@@ -1036,6 +1108,7 @@ public class HordeManager {
         com.wavesurvivor.horde.bossrush.BossRush.clear();
         com.wavesurvivor.horde.endless.Endless.clear();
         com.wavesurvivor.horde.frost.StormManager.clearAll();
+        com.wavesurvivor.horde.roulette.GameChestKeys.clear();
         com.wavesurvivor.horde.quake.QuakeManager.clearAll();
         com.wavesurvivor.horde.chaos.DesertEvents.clearAll(server); // 1.9 : mirages, soleil de plomb, Fiole armée
         com.wavesurvivor.horde.skill.IceFx.clearAll(); // fissures, rochers, pics… encore à l'écran
@@ -1046,6 +1119,8 @@ public class HordeManager {
         this.nextActionTick = -1L;
         this.waveStartedAtTick = -1L;
         this.nextChaosTick = -1L;
+        this.calmCount = 0;
+        this.ownTimers.clear();
         this.overrideSpawnPos = null;
         this.overrideSpawnDim = null;
         this.forcedSpecialWave = null;

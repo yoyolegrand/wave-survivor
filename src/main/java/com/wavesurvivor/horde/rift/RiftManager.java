@@ -53,6 +53,8 @@ public final class RiftManager {
     public static final ResourceKey<Level> RIFT_DIM = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(WaveSurvivorMod.MODID, "rift"));
     /** Étiquette du joueur : « dimension|x|y|z » de l'endroit où il était en entrant (pour le renvoyer au même endroit). */
     private static final String RETURN_TAG = "ws_rift_return";
+    /** 2.1 : Monolithe (autel) qui a ouvert la Faille, noté sur le joueur à l'entrée : la sortie y ramène même si la Faille a été fermée entre-temps. */
+    private static final String ALTAR_TAG = "ws_rift_altar";
     /** Centre de l'île de départ, dans la dimension de la Faille. */
     public static final BlockPos CENTER = new BlockPos(0, 100, 0);
     /** Le Monolithe de l'île : un bloc d'autel posé au centre (sa défense et sa boutique fonctionnent comme dans une horde). */
@@ -67,7 +69,7 @@ public final class RiftManager {
     private static RiftGate gate;
 
     // ─── Déroulement (jalon 2 : phase Horde) ───
-    private enum Phase { NONE, PORTAL, LOBBY, HORDE, INTERLUDE, SIEGE, COUNTER, TITAN, ENDING }
+    enum Phase { NONE, PORTAL, LOBBY, HORDE, INTERLUDE, SIEGE, COUNTER, TITAN, ENDING }
     private static Phase phase = Phase.NONE;
     /** 2.0 — Ciel de la Faille : phase envoyée aux clients (horde, siege, contre, titan, victoire), victoire obtenue, forçage de test. */
     private static String sky = "horde";
@@ -78,6 +80,8 @@ public final class RiftManager {
     /** Joueurs inscrits au départ de la Horde (les autres, arrivés en cours de route, attendent la vague suivante). */
     private static final Set<UUID> registered = new HashSet<>();
     private static final Set<UUID> waiting = new HashSet<>();
+    /** 2.1 — tous les joueurs ayant combattu dans cette Faille (jamais vidé avant la fin) : récompenses en coop. */
+    private static final Set<UUID> joined = new HashSet<>();
     private static final Map<UUID, Long> reviveAt = new HashMap<>();
     private static final Map<UUID, GameType> prevMode = new HashMap<>();
     private static HordeConfigMultiData.ConfigDataInner spawnCfg;
@@ -85,6 +89,22 @@ public final class RiftManager {
     /** Siège sur le moteur du Kingdom : mode et réglages d'origine de la horde, rétablis à la fin de la phase. */
     /** Reprise d'une Faille sauvegardée : points de reprise à rejouer (null hors reprise). */
     private static RiftSession resuming;
+    /** Difficulté et mutateurs choisis à l'autel : gardés pour toute la Faille (chaque phase relance une horde qui les effaçait). */
+    private static String keepDiff = "", keepMuts = "";
+
+    /** Choix de l'écran de l'autel, juste avant {@link #open}. */
+    public static void setChoice(String diff, String muts) {
+        keepDiff = diff == null ? "" : diff;
+        keepMuts = muts == null ? "" : muts;
+    }
+
+    /** Difficulté / mutateurs de la partie remis en place s'ils ont été effacés par un changement de phase. */
+    private static void ensureRules(MinecraftServer server) {
+        com.wavesurvivor.horde.difficulty.Difficulty d = com.wavesurvivor.horde.difficulty.Difficulty.byId(keepDiff);
+        if (d != null && com.wavesurvivor.horde.difficulty.HordeDifficulty.active() != d) com.wavesurvivor.horde.difficulty.HordeDifficulty.restore(d);
+        if (!keepMuts.isEmpty() && !com.wavesurvivor.horde.mutator.HordeMutators.any())
+            com.wavesurvivor.horde.mutator.HordeMutators.restoreQuiet(server, com.wavesurvivor.horde.mutator.Mutator.parse(keepMuts));
+    }
     private static String modeBackup;
     private static HordeConfigMultiData.KingdomSettings kingdomBackup;
     private static boolean kingdomOverride;
@@ -163,6 +183,7 @@ public final class RiftManager {
         startAt = -1;
         endAt = -1;
         registered.clear();
+        joined.clear();
         waiting.clear();
         reviveAt.clear();
         prevMode.clear();
@@ -179,6 +200,8 @@ public final class RiftManager {
         if (p.level().dimension() != RIFT_DIM) {
             p.getPersistentData().putString(RETURN_TAG, p.level().dimension().location() + "|" + p.getBlockX() + "|" + p.getBlockY() + "|" + p.getBlockZ());
         }
+        if (world != null && home != null)
+            p.getPersistentData().putString(ALTAR_TAG, world.dimension().location() + "|" + home.getX() + "|" + home.getY() + "|" + home.getZ());
         double[] at = arrival();
         p.teleportTo(rd, at[0], CENTER.getY() + 1, at[1], 0f, 0f);
         p.fallDistance = 0;
@@ -265,7 +288,8 @@ public final class RiftManager {
         if (h == null || h.configData == null) return;
         var cd = h.configData;
         if (cd.chaosEvents == null) cd.chaosEvents = new ArrayList<>();
-        for (var ev : cd.chaosEvents) if (HordeManager.isResourceEvent(ev) && ev.guaranteed > 0) return;
+        // 2.1 : la horde a ses propres arbres / gisements (visibles et modifiables dans l'onglet Chaos) : rien n'est ajouté
+        for (var ev : cd.chaosEvents) if (HordeManager.isResourceEvent(ev)) return;
         int trees = 0, ores = 0;
         var cfg = WaveSurvivorMod.getConfig();
         if (cfg != null && cfg.hordeConfigMulti != null) {
@@ -339,6 +363,7 @@ public final class RiftManager {
             RiftFortress.clearTargets(rd);
             RiftFortress.reset();
             RiftEngines.clear();
+            RiftIslets.clear(rd);   // 2.1 : îlots (filons, gardes) ; leurs blocs partent avec l'île
             clearIsland(rd);
         }
         DUE_KEYS.clear();
@@ -353,10 +378,16 @@ public final class RiftManager {
         }
         releaseChunks(rd);
         registered.clear();
+        joined.clear();
         waiting.clear();
         reviveAt.clear();
         prevMode.clear();
         active = false;
+        keepDiff = keepMuts = "";
+        if (!HordeManager.get().isRunning()) {   // fin de la Faille : plus de difficulté ni de mutateurs actifs
+            com.wavesurvivor.horde.difficulty.HordeDifficulty.clear();
+            com.wavesurvivor.horde.mutator.HordeMutators.clear();
+        }
         horde = null;
         world = null;
         home = null;
@@ -368,24 +399,39 @@ public final class RiftManager {
         ServerLevel dest = server.overworld();
         BlockPos to = null;
         String tag = p.getPersistentData().getString(RETURN_TAG);
-        if (home != null && world != null) {
-            // Toujours au Monolithe (autel) qui a ouvert cette Faille, devant lui, sur le sol — jamais aux coordonnées de la dimension
-            dest = world;
-            int x = home.getX(), z = home.getZ() + 3;
-            to = new BlockPos(x, dest.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1, z);
-        } else if (!tag.isEmpty()) {   // Faille déjà fermée (reconnexion) : là où le joueur était en entrant
-            String[] a = tag.split("\\|");
-            try {
-                ServerLevel l = server.getLevel(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(a[0])));
-                if (l != null) dest = l;
-                to = new BlockPos(Integer.parseInt(a[1]), Integer.parseInt(a[2]), Integer.parseInt(a[3]));
-            } catch (Exception ignored) { /* étiquette illisible : point de réapparition */ }
+        String altarTag = p.getPersistentData().getString(ALTAR_TAG);
+        String via;
+        ServerLevel altarLevel = world;
+        BlockPos altar = home;
+        if ((altarLevel == null || altar == null) && !altarTag.isEmpty()) {   // Faille fermée entre-temps : Monolithe noté à l'entrée
+            BlockPos[] at = new BlockPos[1];
+            ServerLevel l = parseTag(server, altarTag, at);
+            if (l != null && at[0] != null) { altarLevel = l; altar = at[0]; }
         }
-        if (to == null) to = home != null && world != null ? home : dest.getSharedSpawnPos();
+        if (altar != null && altarLevel != null) {
+            // Toujours au Monolithe (autel) qui a ouvert cette Faille, devant lui, sur le sol — jamais aux coordonnées de la dimension
+            dest = altarLevel;
+            int x = altar.getX(), z = altar.getZ() + 3;
+            dest.getChunk(x >> 4, z >> 4);   // chunk chargé : sinon la hauteur du sol vaut le fond du monde
+            to = new BlockPos(x, dest.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1, z);
+            via = "monolithe";
+        } else if (!tag.isEmpty()) {   // pas de Monolithe connu : là où le joueur était en entrant
+            BlockPos[] at = new BlockPos[1];
+            ServerLevel l = parseTag(server, tag, at);
+            if (l != null) dest = l;
+            to = at[0];
+            if (to != null) dest.getChunk(to.getX() >> 4, to.getZ() >> 4);
+            via = "entrée";
+        } else {
+            via = "spawn du monde";
+        }
+        if (to == null) to = dest.getSharedSpawnPos();
+        WaveSurvivorMod.LOGGER.info("[Faille] Sortie de {} : {} {} ({})", p.getGameProfile().getName(), dest.dimension().location(), to, via);
         // Le joueur est entré en touchant l'ovale du portail, qui se referme en pierre : on le ressort devant la façade, jamais dedans
         if (home == null && gate != null && gate.gateLevel() == dest && to.distSqr(gate.origin) <= 20 * 20) to = gate.frontSpot();
         to = safeSpot(dest, to);
         p.getPersistentData().remove(RETURN_TAG);
+        p.getPersistentData().remove(ALTAR_TAG);
         restoreMode(p);
         p.teleportTo(dest, to.getX() + 0.5, to.getY() + 1, to.getZ() + 0.5, p.getYRot(), 0f);
         p.fallDistance = 0;
@@ -402,6 +448,8 @@ public final class RiftManager {
      */
     public static boolean freeBuild(BlockPos pos, boolean breaking) {
         if (!active) return false;
+        // 2.1 : sur un îlot et entre l'île et un îlot, on peut poser des blocs (rentrer d'un îlot coincé) et casser ceux qu'on a posés
+        if (RiftIslets.inBuildZone(pos)) return !breaking || PLAYER_PLACED.contains(pos.asLong());
         boolean late = phase == Phase.COUNTER || phase == Phase.TITAN
                 || (phase == Phase.INTERLUDE && (nextPhase == Phase.COUNTER || nextPhase == Phase.TITAN));
         if (!late) return false;
@@ -422,6 +470,18 @@ public final class RiftManager {
     }
 
     /** Évite d'arriver dans un bloc plein : si les pieds ou la tête sont coincés, on remonte à la surface la plus proche. */
+    /** Étiquette « dimension|x|y|z » → monde (null si inconnu) et position dans {@code out[0]}. */
+    private static ServerLevel parseTag(MinecraftServer server, String tag, BlockPos[] out) {
+        try {
+            String[] a = tag.split("\\|");
+            out[0] = new BlockPos(Integer.parseInt(a[1]), Integer.parseInt(a[2]), Integer.parseInt(a[3]));
+            return server.getLevel(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(a[0])));
+        } catch (Exception e) {
+            out[0] = null;
+            return null;
+        }
+    }
+
     private static BlockPos safeSpot(ServerLevel l, BlockPos to) {
         BlockPos feet = to.above(), head = to.above(2);
         boolean free = l.getBlockState(feet).getCollisionShape(l, feet).isEmpty() && l.getBlockState(head).getCollisionShape(l, head).isEmpty()
@@ -487,6 +547,7 @@ public final class RiftManager {
             int d = (int) Math.ceil(RiftTitan.distance(rs, siegeFinal));
             forceRect(l, -64, 64, d - 64, d + 64);
         }
+        for (int[] a : RiftIslets.forceAreas(rs, siegeFinal)) forceRect(l, a[0], a[1], a[2], a[3]);   // 2.1 : îlots et ponts
     }
 
     private static void forceRect(ServerLevel l, int x0, int x1, int z0, int z1) {
@@ -506,7 +567,13 @@ public final class RiftManager {
     // ─── Déroulement : portail → attente → Horde → fin ───
 
     /** Réglages de la Faille en cours (cadences des engins). */
-    static HordeConfigMultiData.RiftSettings settingsPublic() { return settings(); }
+    public static HordeConfigMultiData.RiftSettings settingsPublic() { return settings(); }
+
+    /** Phase en cours (îlots du Siège, 2.1). */
+    static Phase phasePublic() { return phase; }
+
+    /** Rayon final de l'île au Siège (îlots, commandes de test). */
+    static int siegeFinalPublic() { return siegeFinal; }
 
     /** Un coup reçu par une boîte de contact du Titan est porté au Titan (appelé par TitanHitboxEntity). */
     public static boolean hurtTitan(net.minecraft.world.damagesource.DamageSource source, float amount) {
@@ -742,6 +809,7 @@ public final class RiftManager {
             if (!anyAlive) { defeat(server, rd); return; }
         }
         RiftEngines.tick(rd);
+        RiftIslets.tick(rd, now);   // 2.1 : ponts des îlots qui se construisent
         if (now % 600 == 0) captureSession(server, false);   // point de reprise toutes les 30 s
         switch (phase) {
             case PORTAL -> {
@@ -778,6 +846,7 @@ public final class RiftManager {
                         if (!RiftIsland.ring(rd, growCur, to, growTarget)) RiftFortress.islandRing(rd, growCur, to);
                         growCur = to;
                         radius = to;
+                        if (to == growTarget) RiftIslets.onGrowthDone(rd, siegeFinal);   // 2.1 : l'île a fini de grandir, les îlots apparaissent
                         growNextAt = now + 4;   // 2.0 : île deux fois plus rapide (anneau toutes les 4 ticks)
                         for (ServerPlayer p : rd.players()) com.wavesurvivor.network.ShakePacket.send(p, 10, 0.5f);
                         rd.playSound(null, CENTER, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 3f, 0.5f);
@@ -807,13 +876,23 @@ public final class RiftManager {
     }
 
     private static void startHorde(MinecraftServer server, ServerLevel rd) {
+        // 2.1 — un joueur mort (en attente de retour, donc spectateur) au lancement reste inscrit
+        Set<UUID> prev = new HashSet<>(registered);
         registered.clear();
-        for (ServerPlayer p : rd.players()) if (!p.isSpectator() && p.isAlive()) registered.add(p.getUUID());
+        for (ServerPlayer p : rd.players()) {
+            UUID id = p.getUUID();
+            if (waiting.contains(id)) continue;
+            if ((!p.isSpectator() && p.isAlive()) || prev.contains(id) || reviveAt.containsKey(id)) registered.add(id);
+        }
+        joined.addAll(registered);
         if (registered.isEmpty() || horde == null || horde.configData == null) { startAt = -1; return; }
         if (resuming != null && resuming.phase != 1) { resumeLate(server, rd); return; }   // reprise au Siège / à la Contre-offensive
         if (resuming != null) {   // reprise de la Horde : même difficulté et mêmes mutateurs
             com.wavesurvivor.horde.difficulty.HordeDifficulty.setPending(com.wavesurvivor.horde.difficulty.Difficulty.byId(resuming.difficulty));
             com.wavesurvivor.horde.mutator.HordeMutators.setPending(com.wavesurvivor.horde.mutator.Mutator.parse(resuming.mutators));
+        } else {   // nouvelle partie : niveau et mutateurs choisis à l'autel
+            com.wavesurvivor.horde.difficulty.HordeDifficulty.setPending(com.wavesurvivor.horde.difficulty.Difficulty.byId(keepDiff));
+            com.wavesurvivor.horde.mutator.HordeMutators.setPending(com.wavesurvivor.horde.mutator.Mutator.parse(keepMuts));
         }
         // L'île est plus petite que le rayon d'apparition habituel : on le limite le temps de la partie
         spawnCfg = horde.configData;
@@ -925,9 +1004,16 @@ public final class RiftManager {
             if (p == null || p.level().dimension() != RIFT_DIM) continue;
             restoreMode(p);
             registered.add(id);
+            joined.add(id);
             respawnOnIsland(p, rd);
             p.sendSystemMessage(Component.literal(WSLang.t("rift.joined")));
         }
+    }
+
+    /** 2.1 — joueurs à récompenser à la fin de la Faille (Coffre du Titan) ; vide si aucune Faille n'est en cours. */
+    public static List<ServerPlayer> rewardPlayers(ServerLevel rd) {
+        if (!active || rd == null) return List.of();
+        return participants(rd.getServer(), rd);
     }
 
     private static int playerCount(ServerLevel rd) {
@@ -988,6 +1074,7 @@ public final class RiftManager {
         }
         java.util.Map<UUID, Integer> keptKills = new HashMap<>(com.wavesurvivor.horde.rewards.KillTracker.snapshotKills());
         boolean ok = HordeManager.get().startAtQuiet(horde, server, MONOLITH, RIFT_DIM.location().toString());
+        if (ok) ensureRules(server);   // le Siège relance une horde : même difficulté, mêmes mutateurs
         if (ok && resuming == null) com.wavesurvivor.horde.rewards.KillTracker.restore(keptKills);
         if (!ok) {
             restoreSpawnRadius();
@@ -997,9 +1084,12 @@ public final class RiftManager {
         }
         siegeHordeOn = true;
         RiftFortress.openPortcullis(rd, siegeFinal);   // la herse s'ouvre : les ennemis sortent de la forteresse
+        boolean wasResume = resuming != null;
+        if (!wasResume) RiftIslets.onGrowthDone(rd, siegeFinal);   // 2.1 : sans effet si les îlots sont déjà posés
         if (resuming != null) {   // reprise : trésor, rôles, défenses et assaut atteint ; Contre-offensive : on enchaîne directement
             RiftSession s = resuming;
             resuming = null;
+            RiftIslets.restore(rd, s.islets, siegeFinal);   // 2.1 : îlots, ponts et filons
             com.wavesurvivor.horde.rewards.KillTracker.restore(s.kills);
             if (!s.kingdom.isEmpty()) com.wavesurvivor.horde.kingdom.KingdomManager.restoreState(s.kingdom, server);
             RiftEngines.restore(rd, s.engines);   // engins de siège reposés
@@ -1010,6 +1100,7 @@ public final class RiftManager {
             }
             tellAll(rd, WSLang.t("rift.session.resumed", s.wave));
         }
+        RiftIslets.onSiegeStart(rd, wasResume);   // 2.1 : filons de l'île minière et gardes
         lastWave = HordeManager.get().getCurrentWave();
         lastState = null;
         tellAll(rd, WSLang.t("rift.siege_go"));
@@ -1107,6 +1198,7 @@ public final class RiftManager {
         s.fortress = RiftFortress.currentId();
         s.kingdom = kingdom;
         s.engines = RiftEngines.save(server.getLevel(RIFT_DIM));
+        s.islets = RiftIslets.save();   // 2.1
         var diff = com.wavesurvivor.horde.difficulty.HordeDifficulty.active();
         s.difficulty = diff == null ? "" : diff.id;
         s.mutators = com.wavesurvivor.horde.mutator.Mutator.join(com.wavesurvivor.horde.mutator.HordeMutators.active());
@@ -1177,11 +1269,13 @@ public final class RiftManager {
         startAt = now + 100;
         endAt = -1;
         registered.clear();
+        joined.clear();
         waiting.clear();
         reviveAt.clear();
         prevMode.clear();
         gate = null;
         resuming = copy;
+        setChoice(copy.difficulty, copy.mutators);
         for (ServerPlayer p : new ArrayList<>(server.getPlayerList().getPlayers())) enter(p);
         WaveSurvivorMod.LOGGER.info("[Faille] Reprise de '{}' (phase {}, vague/assaut {}).", copy.horde, copy.phase, copy.wave);
         return true;
@@ -1262,7 +1356,7 @@ public final class RiftManager {
             tellAll(rd, WSLang.t("rift.core_down"));
             nextPhase = rs.titanEnabled ? Phase.TITAN : Phase.NONE;
             phase = Phase.INTERLUDE;
-            interludeAt = now + 100;
+            interludeAt = now + 200;   // 10 s avant la cinématique du Titan
             return;
         }
         // Renforts : les ennemis continuent d'arriver de la forteresse
@@ -1273,6 +1367,7 @@ public final class RiftManager {
             if (near < 35) {
                 var tpl = counterPool.get(RNG.nextInt(counterPool.size()));
                 int count = Math.max(2, tpl.baseCount + tpl.countIncrement) + playerCount(rd);
+                count = Math.max(1, (int) Math.round(count * com.wavesurvivor.horde.difficulty.HordeDifficulty.countMultiplier()));   // 2.1 : selon la difficulté
                 com.wavesurvivor.horde.spawn.HordeSpawner.spawnMobs(rd, tpl, RiftFortress.spawnPoint(siegeFinal), 5, count, playerCount(rd));
             }
         }
@@ -1375,8 +1470,7 @@ public final class RiftManager {
             WaveSurvivorMod.LOGGER.warn("[Faille] Récompenses de fin : {}", ex.getMessage());
         }
         if (RiftTitan.isDead() || settings().titanEnabled) {
-            for (ServerPlayer p : rd.players()) {
-                if (p.isSpectator()) continue;
+            for (ServerPlayer p : participants(server, rd)) {   // 2.1 : tous les participants, même en attente de retour
                 net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.EMERALD, 16));
                 net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.AMETHYST_SHARD, 12));
                 net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CRYING_OBSIDIAN, 4));
@@ -1405,7 +1499,9 @@ public final class RiftManager {
     /** Joueurs ayant participé : inscrits à la Faille et encore connectés, plus ceux présents sur l'île. */
     private static List<ServerPlayer> participants(MinecraftServer server, ServerLevel rd) {
         List<ServerPlayer> out = new ArrayList<>();
-        for (UUID id : registered) {
+        Set<UUID> ids = new java.util.LinkedHashSet<>(registered);
+        ids.addAll(joined);   // 2.1 : aussi ceux qui ont combattu plus tôt (mort au mauvais moment, phase relancée…)
+        for (UUID id : ids) {
             ServerPlayer p = server.getPlayerList().getPlayer(id);
             if (p != null) out.add(p);
         }
@@ -1551,8 +1647,31 @@ public final class RiftManager {
         Long last = PORTAL_CD.get(p.getUUID());
         if (last != null && now - last < 30) return;
         PORTAL_CD.put(p.getUUID(), now);
-        if (exitOpen()) sendHome(p);
-        else backToMonolith(p);
+        // Téléport différé au tick suivant : appelé pendant le traitement du mouvement du client, un téléport immédiat
+        // serait écrasé par la position envoyée par le client (sortie aux coordonnées de la Faille, dans l'océan…)
+        UUID id = p.getUUID();
+        MinecraftServer server = p.getServer();
+        later(() -> {
+            ServerPlayer q = server.getPlayerList().getPlayer(id);
+            if (q == null || !q.isAlive() || q.level().dimension() != RIFT_DIM) return;
+            if (exitOpen()) sendHome(q);
+            else if (active) backToMonolith(q);
+        });
+    }
+
+    /** Actions à faire au début du tick serveur suivant (téléports demandés depuis un contact de bloc). */
+    private static final List<Runnable> NEXT_TICK = new ArrayList<>();
+
+    static void later(Runnable r) { NEXT_TICK.add(r); }
+
+    /** Entrée par le portail (contact de bloc) : différée au tick suivant, pour la même raison que la sortie. */
+    public static void enterLater(ServerPlayer p) {
+        UUID id = p.getUUID();
+        MinecraftServer server = p.getServer();
+        later(() -> {
+            ServerPlayer q = server.getPlayerList().getPlayer(id);
+            if (q != null && q.isAlive() && q.level().dimension() != RIFT_DIM) enter(q);
+        });
     }
 
     /** Filet de sécurité : un joueur dont les pieds ou la tête sont dans un bloc de portail le traverse, même si le jeu n'a pas signalé le contact. */
@@ -1614,11 +1733,19 @@ public final class RiftManager {
 
     @SubscribeEvent
     public void onTick(TickEvent.ServerTickEvent e) {
+        if (e.phase == TickEvent.Phase.START && !NEXT_TICK.isEmpty()) {
+            List<Runnable> run = new ArrayList<>(NEXT_TICK);
+            NEXT_TICK.clear();
+            for (Runnable r : run) {
+                try { r.run(); } catch (Exception ex) { WaveSurvivorMod.LOGGER.warn("[Faille] Téléport différé : {}", ex.getMessage()); }
+            }
+        }
         if (e.phase == TickEvent.Phase.END && RiftFortress.testing()) {   // pose de test (/ws rift fortress <id>)
             ServerLevel trd = e.getServer().getLevel(RIFT_DIM);
             if (trd != null) RiftFortress.testTick(trd, e.getServer().getTickCount());
         }
         if (e.phase != TickEvent.Phase.END || !active) return;
+        if (phase != Phase.PORTAL && phase != Phase.LOBBY) ensureRules(e.getServer());
         if (gate != null && gate.isRunning()) gate.tick();
         else if (gate != null) gate.tickOpen(e.getServer().getTickCount());
         MinecraftServer server = e.getServer();
@@ -1663,6 +1790,13 @@ public final class RiftManager {
         HordeConfigMultiData.RiftSettings s = settings();
         int min = Math.max(0, s.emeraldMin), max = Math.max(min, s.emeraldMax);
         int n = min == max ? min : min + e.getEntity().getRandom().nextInt(max - min + 1);
+        // 2.1 : un peu d'améthyste (monnaie du Marchand du Néant), plus rare que sur l'île minière
+        if (s.amethystDropChance > 0 && e.getEntity().getRandom().nextInt(100) < s.amethystDropChance) {
+            int a = RiftIslets.prosper(1 + e.getEntity().getRandom().nextInt(Math.max(1, s.amethystDropMax)));
+            e.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(e.getEntity().level(), e.getEntity().getX(), e.getEntity().getY(), e.getEntity().getZ(),
+                    new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.AMETHYST_SHARD, a)));
+        }
+        n = RiftIslets.prosper(n);   // 2.1 — Prospérité : +25 % d'émeraudes
         if (n <= 0) return;
         e.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(e.getEntity().level(), e.getEntity().getX(), e.getEntity().getY(), e.getEntity().getZ(),
                 new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.EMERALD, n)));
@@ -1796,6 +1930,9 @@ public final class RiftManager {
     /** Après une mort, le vanilla le fait réapparaître ailleurs : on oublie le retour mémorisé. */
     @SubscribeEvent
     public void onRespawn(PlayerEvent.PlayerRespawnEvent e) {
-        if (e.getEntity() instanceof ServerPlayer p && p.level().dimension() != RIFT_DIM) p.getPersistentData().remove(RETURN_TAG);
+        if (e.getEntity() instanceof ServerPlayer p && p.level().dimension() != RIFT_DIM) {
+            p.getPersistentData().remove(RETURN_TAG);
+            p.getPersistentData().remove(ALTAR_TAG);
+        }
     }
 }

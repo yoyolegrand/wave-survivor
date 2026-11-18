@@ -67,6 +67,108 @@
     "blood_altar": { "healthCost": 8, "xp": 120, "cooldownSeconds": 30 }
   },
   "equipment": {
+    "rift_set": {
+      "tierArmor": {
+        "1": [
+          2,
+          6,
+          5,
+          2
+        ],
+        "2": [
+          3,
+          8,
+          6,
+          3
+        ],
+        "3": [
+          3,
+          8,
+          6,
+          3
+        ]
+      },
+      "tierToughness": {
+        "1": 0,
+        "2": 2,
+        "3": 3
+      },
+      "tierKnockback": {
+        "1": 0,
+        "2": 0,
+        "3": 0.1
+      },
+      "riftEffectCap": {
+        "1": 4,
+        "2": 3,
+        "3": 2
+      },
+      "riftDamageReductionPercent": {
+        "1": 0,
+        "2": 10,
+        "3": 15
+      },
+      "waveBelowPercent": 35,
+      "waveRadius": 4,
+      "waveKnockback": 1.2,
+      "waveSlownessSeconds": 3,
+      "waveCooldownSeconds": 45,
+      "enderSpellPowerPercent": 6,
+      "blessed": {
+        "armorPerPiece": [
+          0.5,
+          0.75,
+          1.0
+        ],
+        "healthPerPiece": [
+          0.5,
+          1,
+          1.5
+        ],
+        "healingReceivedPercent": [
+          5,
+          10,
+          15
+        ],
+        "waveAllyRadius": 6,
+        "waveAllyHeal": 4,
+        "holySpellPowerPercent": 6,
+        "maxMana": 25
+      },
+      "corrupted": {
+        "armorPerPiece": [
+          0.25,
+          0.5,
+          0.5
+        ],
+        "damagePercentPerPiece": [
+          1.25,
+          2.5,
+          3.75
+        ],
+        "attackSpeedPercentPerPiece": [
+          0,
+          1.25,
+          1.25
+        ],
+        "healthPerPiece": [
+          0,
+          0,
+          -1
+        ],
+        "lifestealPercent": [
+          0,
+          3,
+          5
+        ],
+        "waveDamage": 4,
+        "waveWitherSeconds": 3,
+        "waveCooldownSeconds": 30,
+        "bloodSpellPowerPercent": 6,
+        "maxMana": 25
+      },
+      "_comment": "Armure de la Faille. Vie en PV (2 = un cœur), par pièce. Tableaux de branche = niveaux I, II, III. Les bonus d'ensemble se calculent sur le palier/niveau le plus bas des 4 pièces."
+    },
     "_comment": "Équipement de l'Artisanat. Pourcentages en %, durées en secondes, vie en PV (2 = un cœur).",
     "dawn_blade": { "undeadBonusPercent": 50, "killStrengthSeconds": 5 },
     "blessed_arrow": { "fireSeconds": 5, "knockback": 1.5 },
@@ -119,5 +221,76 @@
       "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 5 }, { "item": "minecraft:netherite_leggings", "count": 1 } ] },
     { "id": "fallen_seraph_boots", "result": "wavesurvivor:fallen_seraph_boots", "count": 1, "align": "profaned",
       "cost": [ { "item": "wavesurvivor:taint_fragment", "count": 3 }, { "item": "minecraft:netherite_boots", "count": 1 } ] }
-  ]
+  ],
+  "riftArmorUpgrades": {
+    "_comment": "Améliorations de l'Armure de la Faille (coût PAR PIÈCE). tiers : à la Forge (écran Renaissance). branches : onglet Artisanat du Sanctuaire. extraChestplate : en plus pour le plastron.",
+    "tiers": {
+      "2": [
+        {
+          "item": "wavesurvivor:poussiere_faille",
+          "count": 12
+        },
+        {
+          "item": "minecraft:diamond",
+          "count": 2
+        }
+      ],
+      "3": [
+        {
+          "item": "wavesurvivor:poussiere_faille",
+          "count": 16
+        },
+        {
+          "item": "minecraft:netherite_ingot",
+          "count": 1
+        }
+      ],
+      "3_extraChestplate": [
+        {
+          "item": "wavesurvivor:rift_shard",
+          "count": 1
+        }
+      ]
+    },
+    "blessed": {
+      "1": [
+        {
+          "item": "wavesurvivor:grace_fragment",
+          "count": 4
+        }
+      ],
+      "2": [
+        {
+          "item": "wavesurvivor:grace_fragment",
+          "count": 8
+        }
+      ],
+      "3": [
+        {
+          "item": "wavesurvivor:grace_heart",
+          "count": 1
+        }
+      ]
+    },
+    "corrupted": {
+      "1": [
+        {
+          "item": "wavesurvivor:taint_fragment",
+          "count": 4
+        }
+      ],
+      "2": [
+        {
+          "item": "wavesurvivor:taint_fragment",
+          "count": 8
+        }
+      ],
+      "3": [
+        {
+          "item": "wavesurvivor:taint_heart",
+          "count": 1
+        }
+      ]
+    }
+  }
 }

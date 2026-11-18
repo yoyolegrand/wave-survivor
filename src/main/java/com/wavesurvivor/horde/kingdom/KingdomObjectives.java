@@ -387,6 +387,36 @@ public final class KingdomObjectives {
         for (ServerPlayer p : level.players()) p.displayClientMessage(bar, true);
     }
 
+    /** 2.1 — Tuto : objectif du Calme en cours vu par un joueur (null s'il n'y en a pas) : type, cible la plus proche, compteurs, secondes restantes. */
+    record TutoView(Type type, BlockPos target, int a, int b, int secs) {}
+
+    static TutoView tutoView(ServerPlayer p, long now) {
+        if (level == null || active == null || done) return null;
+        int secs = (int) Math.max(0, (endAt - now) / 20);
+        return switch (active) {
+            case CONVOY -> {
+                Entity e = level.getEntity(convoy);
+                yield e == null ? null : new TutoView(active, e.blockPosition(), e instanceof LivingEntity le ? Math.round(le.getHealth()) : 0, 0, secs);
+            }
+            case CHAMPION -> {
+                Entity e = level.getEntity(champion);
+                yield e == null || !e.isAlive() ? null : new TutoView(active, e.blockPosition(), 0, 0, secs);
+            }
+            case TREASURE -> chest == null || treasureFound ? null : new TutoView(active, chest, 0, 0, secs);
+            case PURIFY -> {
+                BlockPos best = null;
+                double bd = Double.MAX_VALUE;
+                for (UUID id : FOYERS) {
+                    Entity e = level.getEntity(id);
+                    if (e == null || !e.isAlive()) continue;
+                    double d = e.distanceToSqr(p);
+                    if (d < bd) { bd = d; best = e.blockPosition(); }
+                }
+                yield best == null ? null : new TutoView(active, best, foyerPurified, foyerTotal, secs);
+            }
+        };
+    }
+
     // ─── Fin ───
 
     /**

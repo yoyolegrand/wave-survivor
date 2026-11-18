@@ -250,6 +250,26 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, RiftSkyPacket.class,
                 RiftSkyPacket::encode, RiftSkyPacket::decode, RiftSkyPacket::handle);
 
+        // Bonus de l'île-autel : écran à 3 cartes (2.1)
+        CHANNEL.registerMessage(id++, AltarBonusPackets.Open.class,
+                AltarBonusPackets.Open::encode, AltarBonusPackets.Open::decode, AltarBonusPackets.Open::handle);
+        CHANNEL.registerMessage(id++, AltarBonusPackets.Choose.class,
+                AltarBonusPackets.Choose::encode, AltarBonusPackets.Choose::decode, AltarBonusPackets.Choose::handle);
+        // Boutique du Marchand du Néant (2.1)
+        CHANNEL.registerMessage(id++, VoidMerchantPackets.Open.class,
+                VoidMerchantPackets.Open::encode, VoidMerchantPackets.Open::decode, VoidMerchantPackets.Open::handle);
+        CHANNEL.registerMessage(id++, VoidMerchantPackets.Buy.class,
+                VoidMerchantPackets.Buy::encode, VoidMerchantPackets.Buy::decode, VoidMerchantPackets.Buy::handle);
+        // Export de horde terminé : lien vers le dossier (2.1)
+        CHANNEL.registerMessage(id++, HordeExchangePackets.Exported.class,
+                HordeExchangePackets.Exported::encode, HordeExchangePackets.Exported::decode, HordeExchangePackets.Exported::handle);
+
+        // Tuto du Kingdom (2.1)
+        CHANNEL.registerMessage(id++, KingdomTutoPackets.Hud.class,
+                KingdomTutoPackets.Hud::encode, KingdomTutoPackets.Hud::decode, KingdomTutoPackets.Hud::handle);
+        CHANNEL.registerMessage(id++, KingdomTutoPackets.Action.class,
+                KingdomTutoPackets.Action::encode, KingdomTutoPackets.Action::decode, KingdomTutoPackets.Action::handle);
+
         WaveSurvivorMod.LOGGER.info("[Network] Channel 'main' enregistré (protocol v{}, {} packets)",
                 PROTOCOL_VERSION, id);
     }

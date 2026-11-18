@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=true": {
+      "model": "wavesurvivor:block/altar_crystal_on"
+    },
+    "lit=false": {
+      "model": "wavesurvivor:block/altar_crystal_off"
+    }
+  }
+}

@@ -294,6 +294,7 @@ public final class KingdomOmens {
     /** Choix d'un présage (codes 80-82 de la boutique) ; recliquer un présage déjà choisi le retire (si on peut en avoir plusieurs). */
     public static void choose(ServerPlayer p, int i) {
         if (!augurInCalm(p) || i < 0 || i >= OPTIONS.size()) return;
+        KingdomTuto.tip(p, "omen");   // 2.1 — tuto
         Omen pick = OPTIONS.get(i);
         int max = maxPicks();
         if (CHOSEN.contains(pick)) {

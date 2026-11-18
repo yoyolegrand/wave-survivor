@@ -18,9 +18,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLPaths;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -31,14 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 /**
- * IMPORT / EXPORT DE HORDES (classiques et Kingdom).
+ * IMPORT / EXPORT DE HORDES (classiques, Kingdom, Invasion, Faille). Format et lecture sécurisée : {@link HordeArchive}.
  *  - EXPORT : un seul fichier .zip dans config/wavesurvivor/export/, léger (compressé) et lisible (JSON) :
  *      manifest.json (nom, type, description, vagues, boss, mods requis, auteur, version, date),
  *      horde.json (config complète), entities.json (entités et compétences custom utilisées),
@@ -54,9 +47,6 @@ public final class HordeExchange {
     private HordeExchange() {}
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static final Pattern RES_ID = Pattern.compile("^([a-z0-9_.-]+):[a-z0-9_./-]+$");
-    /** Espaces de noms qui ne demandent aucun mod en plus. */
-    private static final Set<String> BUILTIN = Set.of("minecraft", "wavesurvivor", "forge", "custom");
 
     public static final int MODE_NEW = 0, MODE_REPLACE = 1, MODE_KEEP_BOTH = 2;
 
@@ -112,32 +102,14 @@ public final class HordeExchange {
         Set<String> all = new LinkedHashSet<>(strings);
         collectStrings(entitiesJson, all);
         collectStrings(chestArr, all);
-        JsonObject cd = horde.has("configData") && horde.get("configData").isJsonObject() ? horde.getAsJsonObject("configData") : new JsonObject();
-        JsonObject man = new JsonObject();
-        man.addProperty("format", 1);
-        man.addProperty("name", str(horde, "hordeName"));
-        man.addProperty("type", "kingdom".equalsIgnoreCase(str(cd, "mode")) ? "kingdom" : "classic");
-        man.addProperty("description", str(horde, "hordeDescription"));
-        man.addProperty("waves", cd.has("totalWaves") ? cd.get("totalWaves").getAsInt() : 0);
-        man.addProperty("bosses", cd.has("bossWaves") && cd.get("bossWaves").isJsonArray() ? cd.getAsJsonArray("bossWaves").size() : 0);
-        man.addProperty("entities", entArr.size());
-        man.addProperty("skills", skillArr.size());
-        man.addProperty("chests", chestArr.size());
-        JsonArray mods = new JsonArray();
-        for (String m : requiredMods(all)) mods.add(m);
-        man.add("mods", mods);
-        man.addProperty("author", p.getGameProfile().getName());
-        man.addProperty("modVersion", ModList.get().getModContainerById(WaveSurvivorMod.MODID)
-                .map(c -> c.getModInfo().getVersion().toString()).orElse("?"));
-        man.addProperty("date", LocalDate.now().toString());
+        JsonObject man = HordeArchive.manifest(horde, entArr.size(), skillArr.size(), chestArr.size(),
+                HordeArchive.requiredMods(all, HordeArchive.modeOf(horde)), p.getGameProfile().getName(),
+                ModList.get().getModContainerById(WaveSurvivorMod.MODID).map(c -> c.getModInfo().getVersion().toString()).orElse("?"),
+                LocalDate.now().toString());
 
         Path out = exportDir().resolve(safe(str(horde, "hordeName")) + ".zip");
-        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(out))) {
-            put(zip, "manifest.json", GSON.toJson(man));
-            put(zip, "horde.json", GSON.toJson(horde));
-            put(zip, "entities.json", GSON.toJson(entitiesJson));
-            put(zip, "chests.json", GSON.toJson(chestArr));
-            if (altar != null && !altar.isBlank()) put(zip, "altar.json", altar);
+        try {
+            HordeArchive.write(Files.newOutputStream(out), man, horde, entitiesJson, chestArr, altar);
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[Exchange] Export de '{}' échoué : {}", name, e.getMessage());
             p.sendSystemMessage(WSLang.c("exchange.export.failed", e.getMessage()));
@@ -145,46 +117,52 @@ public final class HordeExchange {
         }
         p.sendSystemMessage(WSLang.c("exchange.export.done", str(horde, "hordeName"), entArr.size(), skillArr.size(), chestArr.size()));
         p.sendSystemMessage(Component.literal("§7  " + out.toAbsolutePath()));
+        // lien cliquable vers le dossier (solo / hôte LAN)
+        com.wavesurvivor.network.NetworkHandler.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> p),
+                new com.wavesurvivor.network.HordeExchangePackets.Exported(exportDir().toAbsolutePath().toString()));
         return out;
-    }
-
-    private static void put(ZipOutputStream zip, String entry, String content) throws Exception {
-        zip.putNextEntry(new ZipEntry(entry));
-        zip.write(content.getBytes(StandardCharsets.UTF_8));
-        zip.closeEntry();
     }
 
     // ═══ LISTE DES IMPORTS ═══
 
-    /** Fiche d'un fichier du dossier import (lue dans son manifeste). */
+    /**
+     * Fiche d'un fichier du dossier import. {@code reject} non nul = fichier refusé (raison à afficher, import impossible) ;
+     * {@code warnings} = valeurs extrêmes (import possible).
+     */
     public record Entry(String file, String name, String type, String description, int waves, int bosses,
-                        int entities, int skills, int chests, List<String> missingMods, boolean conflict, String author) {}
+                        int entities, int skills, int chests, List<String> missingMods, boolean conflict, String author,
+                        List<HordeArchive.Msg> warnings, HordeArchive.Msg reject) {
+        public boolean rejected() { return reject != null; }
+    }
 
     public static List<Entry> list() {
         List<Entry> out = new ArrayList<>();
         try (Stream<Path> files = Files.list(importDir())) {
             for (Path f : files.filter(x -> x.toString().toLowerCase().endsWith(".zip")).sorted().toList()) {
-                try (ZipFile z = new ZipFile(f.toFile())) {
-                    JsonObject man = readJson(z, "manifest.json");
-                    JsonObject horde = readJson(z, "horde.json");
-                    if (horde == null) continue;
-                    if (man == null) man = new JsonObject();
+                String file = f.getFileName().toString();
+                try {
+                    HordeArchive.Contents c = HordeArchive.read(f);
+                    JsonObject man = c.manifest(), horde = c.horde();
                     String name = str(horde, "hordeName");
                     List<String> missing = new ArrayList<>();
-                    if (man.has("mods")) for (JsonElement m : man.getAsJsonArray("mods")) {
-                        if (!ModList.get().isLoaded(m.getAsString())) missing.add(m.getAsString());
-                    }
-                    out.add(new Entry(f.getFileName().toString(), name, str(man, "type").isEmpty() ? "classic" : str(man, "type"),
-                            str(horde, "hordeDescription"), num(man, "waves"), num(man, "bosses"), num(man, "entities"),
-                            num(man, "skills"), num(man, "chests"), missing, CustomHordeStore.exists(name), str(man, "author")));
-                } catch (Exception e) {
-                    WaveSurvivorMod.LOGGER.warn("[Exchange] Fichier d'import illisible {} : {}", f.getFileName(), e.getMessage());
+                    for (String m : c.mods()) if (!ModList.get().isLoaded(m)) missing.add(m);
+                    out.add(new Entry(file, name, c.type(), str(horde, "hordeDescription"), num(man, "waves"), num(man, "bosses"),
+                            num(man, "entities"), num(man, "skills"), num(man, "chests"), missing, CustomHordeStore.exists(name),
+                            str(man, "author"), HordeArchive.warnings(horde, c.entities()), null));
+                } catch (HordeArchive.Rejected r) {
+                    WaveSurvivorMod.LOGGER.warn("[Exchange] Fichier d'import refusé {} : {}", file, r.msg);
+                    out.add(new Entry(file, file, "", "", 0, 0, 0, 0, 0, List.of(), false, "", List.of(), r.msg));
                 }
             }
         } catch (Exception e) {
             WaveSurvivorMod.LOGGER.error("[Exchange] Lecture du dossier import échouée : {}", e.getMessage());
         }
         return out;
+    }
+
+    /** Raison de refus traduite (langue du serveur, pour le chat). */
+    public static String text(HordeArchive.Msg m) {
+        return WSLang.t(m.key(), m.args().toArray());
     }
 
     // ═══ IMPORT ═══
@@ -196,12 +174,19 @@ public final class HordeExchange {
             p.sendSystemMessage(WSLang.c("exchange.import.not_found", file));
             return null;
         }
-        try (ZipFile z = new ZipFile(f.toFile())) {
-            JsonObject horde = readJson(z, "horde.json");
-            if (horde == null) throw new IllegalStateException("horde.json manquant");
-            JsonObject ents = readJson(z, "entities.json");
-            JsonArray chests = readArray(z, "chests.json");
-            String altar = readText(z, "altar.json");
+        HordeArchive.Contents content;
+        try {
+            content = HordeArchive.read(f);   // tout est vérifié avant d'enregistrer quoi que ce soit
+        } catch (HordeArchive.Rejected r) {
+            WaveSurvivorMod.LOGGER.warn("[Exchange] Import de '{}' refusé : {}", file, r.msg);
+            p.sendSystemMessage(WSLang.c("exchange.import.rejected", file, text(r.msg)));
+            return null;
+        }
+        try {
+            JsonObject horde = content.horde();
+            JsonObject ents = content.entities();
+            JsonArray chests = content.chests();
+            String altar = content.altar();
             List<JsonObject> entities = objects(ents, "entities"), skills = objects(ents, "skills");
             List<JsonObject> chestList = new ArrayList<>();
             if (chests != null) for (JsonElement e : chests) if (e.isJsonObject()) chestList.add(e.getAsJsonObject());
@@ -328,46 +313,12 @@ public final class HordeExchange {
         }
     }
 
-    /** Mods nécessaires : espaces de noms des identifiants « mod:objet » rencontrés (hors Minecraft / Wave Survivor). */
-    private static List<String> requiredMods(Set<String> strings) {
-        Set<String> mods = new TreeSet<>();
-        for (String s : strings) {
-            var m = RES_ID.matcher(s.trim());
-            if (m.matches() && !BUILTIN.contains(m.group(1))) mods.add(m.group(1));
-        }
-        return new ArrayList<>(mods);
-    }
-
     private static List<JsonObject> objects(JsonObject o, String key) {
         List<JsonObject> out = new ArrayList<>();
         if (o != null && o.has(key) && o.get(key).isJsonArray()) {
             for (JsonElement e : o.getAsJsonArray(key)) if (e.isJsonObject()) out.add(e.getAsJsonObject());
         }
         return out;
-    }
-
-    private static String readText(ZipFile z, String entry) throws Exception {
-        ZipEntry e = z.getEntry(entry);
-        if (e == null) return null;
-        try (InputStream in = z.getInputStream(e)) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            in.transferTo(bos);
-            return bos.toString(StandardCharsets.UTF_8);
-        }
-    }
-
-    private static JsonObject readJson(ZipFile z, String entry) throws Exception {
-        String t = readText(z, entry);
-        if (t == null || t.isBlank()) return null;
-        JsonElement e = JsonParser.parseString(t);
-        return e.isJsonObject() ? e.getAsJsonObject() : null;
-    }
-
-    private static JsonArray readArray(ZipFile z, String entry) throws Exception {
-        String t = readText(z, entry);
-        if (t == null || t.isBlank()) return null;
-        JsonElement e = JsonParser.parseString(t);
-        return e.isJsonArray() ? e.getAsJsonArray() : null;
     }
 
     private static String str(JsonObject o, String k) {

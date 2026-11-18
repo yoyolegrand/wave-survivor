@@ -303,7 +303,7 @@ public final class KingdomDefenses {
         Def d = DEFS.remove(pos);
         if (d != null && !demolishing && KingdomTreasury.active() && KingdomManager.isActive()) {
             double ruin = Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.ruin_refund"); // talent Restaurateur : une ruine rend une part de son coût
-            if (ruin > 0) refundOf(d, ruin).forEach((res, n) -> { if (n > 0) KingdomTreasury.add(res, n); });
+            if (ruin > 0) refundOf(d, ruin).forEach((res, n) -> { if (n > 0) KingdomTreasury.refund(res, n); });
         }
         if (d != null && !demolishing && level != null && com.wavesurvivor.horde.rift.RiftManager.kingdomSiege()) {
             Long t = PLAYER_BREAK.remove(pos);
@@ -432,7 +432,7 @@ public final class KingdomDefenses {
             placeRuin(l, pos, r);
         }
         int gates = t.getInt("gates");
-        if (gates > 0 && KingdomTreasury.active()) KingdomTreasury.add(KingdomTreasury.Res.MONEY, gates * GATE_COST);
+        if (gates > 0 && KingdomTreasury.active()) KingdomTreasury.refund(KingdomTreasury.Res.MONEY, gates * GATE_COST);
     }
 
     // ─── Faille (2.0) : ruines réparables ───
@@ -884,6 +884,25 @@ public final class KingdomDefenses {
         p.sendSystemMessage(WSLang.c(broke ? "kingdom.repair_all_partial" : "kingdom.repair_all_done", fixed, hurt.size(), spent));
     }
 
+    /** 2.1 — Tuto : devis de « Tout réparer » sans rien faire : {défenses abîmées, coût total}. */
+    static int[] repairQuote(ServerPlayer p) {
+        int n = 0, chunks = 0;
+        for (Def d : DEFS.values()) {
+            float[] hp = KingdomClaim.hpOf(d.pos);
+            if (hp == null || hp[0] >= hp[1] - 0.5f) continue;
+            n++;
+            chunks += Math.min(4, (int) Math.ceil((hp[1] - hp[0]) / Math.max(1f, hp[1] * 0.25f)));
+        }
+        return new int[]{n, n == 0 ? 0 : chunks * repairCostFor(p)};
+    }
+
+    /** 2.1 — Tuto : prix de la défense la moins chère. */
+    static int cheapestBuy() {
+        int m = Integer.MAX_VALUE;
+        for (int b : BUY) m = Math.min(m, b);
+        return m;
+    }
+
     /** Coût d'une réparation de 25 % pour ce joueur (Bâtisseur, Pierre de Fondation). */
     static int repairCostFor(ServerPlayer p) {
         int c = KingdomRoles.present(KingdomRoles.Role.BUILDER) ? (int) Math.ceil(REPAIR_COST * 1.25 * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.repair_discount")))) : REPAIR_COST;
@@ -991,7 +1010,7 @@ public final class KingdomDefenses {
             case "open" -> { DefenseBlock.openStorage(p, pos); return; }
             case "demolish" -> {
                 var refund = refundOf(d);
-                if (KingdomTreasury.active()) refund.forEach((res, n) -> { if (n > 0) KingdomTreasury.add(res, n); });
+                if (KingdomTreasury.active()) refund.forEach((res, n) -> { if (n > 0) KingdomTreasury.refund(res, n); });
                 int total = refund.values().stream().mapToInt(Integer::intValue).sum();
                 level.sendParticles(ParticleTypes.CLOUD, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 20, 0.8, 0.8, 0.8, 0.02);
                 demolishing = true;

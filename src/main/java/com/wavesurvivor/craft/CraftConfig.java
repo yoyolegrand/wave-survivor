@@ -123,6 +123,12 @@ public final class CraftConfig {
         return HordeJson.dbl(sub(sub(cfg(), "equipment"), item), key, def);
     }
 
+    /** Objet JSON complet d'un équipement (« equipment.<objet> »), vide si absent (Armure de la Faille : tableaux par palier). */
+    public static JsonObject equip(String item) { return sub(sub(cfg(), "equipment"), item); }
+
+    /** Section racine du fichier (ex. « riftArmorUpgrades »), vide si absente. */
+    public static JsonObject section(String key) { return sub(cfg(), key); }
+
     /** Liste de textes d'« equipment.<clé> » (ex. mots-clés de noms de morts-vivants). */
     public static List<String> equipStrings(String key) {
         List<String> out = new ArrayList<>();
@@ -136,8 +142,15 @@ public final class CraftConfig {
     /** Un ingrédient : objet « mod:id » ou tag « #mod:tag ». */
     public record Cost(String item, int count) {}
 
-    /** Une fabrication : align = « consecrated » ou « profaned ». */
-    public record Craft(String id, String result, int count, String align, List<Cost> cost) {}
+    /**
+     * Une fabrication : align = « consecrated » ou « profaned ». kind = « craft » (objet neuf) ou « upgrade » (2.1 : une pièce
+     * de l'Armure de la Faille évolue dans une branche, NBT et enchantements gardés ; branch = blessed / corrupted, level = 1 à 3).
+     */
+    public record Craft(String id, String result, int count, String align, List<Cost> cost, String kind, String branch, int level) {
+        public Craft(String id, String result, int count, String align, List<Cost> cost) { this(id, result, count, align, cost, "craft", "", 0); }
+
+        public boolean upgrade() { return "upgrade".equals(kind); }
+    }
 
     public static List<Craft> crafts() {
         List<Craft> out = new ArrayList<>();
@@ -157,6 +170,15 @@ public final class CraftConfig {
                 }
             }
             out.add(new Craft(id, result, Math.max(1, HordeJson.num(o, "count", 1)), HordeJson.str(o, "align", "consecrated"), cost));
+        }
+        // 2.1 — Armure de la Faille : un niveau de branche = une entrée « amélioration » (coûts : riftArmorUpgrades)
+        for (String br : new String[]{"blessed", "corrupted"}) {
+            for (int lv = 1; lv <= 3; lv++) {
+                List<Cost> cost = com.wavesurvivor.item.RiftArmor.branchCost(com.wavesurvivor.item.RiftArmor.Branch.of(br), lv);
+                if (cost.isEmpty()) continue;
+                out.add(new Craft("rift_" + br + "_" + lv, "wavesurvivor:rift_chestplate", 1,
+                        br.equals("blessed") ? "consecrated" : "profaned", cost, "upgrade", br, lv));
+            }
         }
         return out;
     }

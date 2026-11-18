@@ -58,8 +58,7 @@ public class KillTracker {
         // Qui a fait le dernier hit ?
         DamageSource src = event.getSource();
         if (src == null) return;
-        Object killer = src.getEntity();
-        if (!(killer instanceof ServerPlayer p)) return;
+        if (!(creditedKiller(dead, src) instanceof ServerPlayer p)) return;
 
         KILLS.merge(p.getUUID(), 1, Integer::sum);
         com.wavesurvivor.horde.stats.PlayerStats.add(p, "monsters_killed", 1); // 1.7 : statistiques
@@ -69,6 +68,19 @@ public class KillTracker {
             BOSS_KILLERS.add(p.getUUID());
             com.wavesurvivor.horde.stats.PlayerStats.add(p, "bosses_killed", 1);
         }
+    }
+
+    /**
+     * 2.1 — auteur d'une élimination : le joueur qui a porté le coup, le propriétaire de l'invocation / de l'animal,
+     * sinon le dernier joueur à avoir blessé le monstre (feu, chute, sorts à dégâts indirects…).
+     */
+    public static net.minecraft.world.entity.Entity creditedKiller(LivingEntity dead, DamageSource src) {
+        net.minecraft.world.entity.Entity e = src == null ? null : src.getEntity();
+        if (e instanceof ServerPlayer) return e;
+        if (e != null && e.getPersistentData().getBoolean("ws_kingdom_soldier")) return e;   // soldat du royaume : compté à part
+        if (e instanceof net.minecraft.world.entity.OwnableEntity o && o.getOwner() instanceof ServerPlayer owner) return owner;
+        if (e == null && dead.getKillCredit() instanceof ServerPlayer credit) return credit;   // sans auteur direct (feu, chute…)
+        return e;
     }
 
     public static Map<UUID, Integer> snapshotKills() {

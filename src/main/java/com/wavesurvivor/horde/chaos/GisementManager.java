@@ -56,6 +56,15 @@ public class GisementManager {
                 ev.hitDrops != null ? new ArrayList<>(ev.hitDrops) : List.of()));
     }
 
+    /**
+     * 2.1 — Gisement permanent (filons de l'île minière de la Faille) : ne disparaît jamais tout seul, pas de compte à rebours.
+     */
+    public static void registerPermanent(GisementEntity g, ChaosEvent ev, String label, double lootMult) {
+        DEPOSITS.put(g.getUUID(), new Deposit(g.getUUID(), Long.MAX_VALUE,
+                ev.drops != null ? new ArrayList<>(ev.drops) : List.of(), ev.hitDropItem, ev.hitDropChance, label, Math.max(0.1, lootMult),
+                ev.hitDrops != null ? new ArrayList<>(ev.hitDrops) : List.of()));
+    }
+
     /** Gisements vivants (effets de rôle : colonne de lumière et flèche du Mineur). */
     public static List<GisementEntity> deposits(MinecraftServer server) {
         List<GisementEntity> out = new ArrayList<>();
@@ -142,7 +151,7 @@ public class GisementManager {
             }
             if (now % 40 == 0) level.sendParticles(ParticleTypes.END_ROD, g.getX(), g.getY() + (tree ? 6.2 * g.scale() : 1.5), g.getZ(), 2, 0.2, 1.2, 0.2, 0.02);
             g.setCustomName(Component.literal((tree ? "§a🪓 " : "§e⛏ ") + d.label() + " §7" + Math.round(g.getHealth()) + "/" + Math.round(g.getMaxHealth())
-                    + " §8(" + Math.max(0, (d.expires() - now) / 20) + " s)"));
+                    + (d.expires() == Long.MAX_VALUE ? "" : " §8(" + Math.max(0, (d.expires() - now) / 20) + " s)")));
         }
     }
 
