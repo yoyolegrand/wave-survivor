@@ -67,6 +67,14 @@ dependencies {
     // (sans ça, ton mod tourne mais n'a pas accès aux classes des dépendances).
     // implementation fg.deobf("curse.maven:alexs-caves-547763:5309242")
     // implementation fg.deobf("curse.maven:dungeons-and-combat-892980:5000000")
+
+    // Tests unitaires (src/test, classes sans Minecraft : ex. HordeArchive)
+    testImplementation 'junit:junit:4.13.2'
+}
+
+// Tests lancés par la CI (GitHub Actions) ; sautés en --offline (build local) car JUnit n'est pas dans le cache Gradle local.
+tasks.matching { it.name in ['compileTestJava', 'test'] }.configureEach {
+    onlyIf { !gradle.startParameter.offline }
 }
 
 tasks.named('processResources', ProcessResources).configure {

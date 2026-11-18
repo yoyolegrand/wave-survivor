@@ -260,6 +260,9 @@ public class NetworkHandler {
                 VoidMerchantPackets.Open::encode, VoidMerchantPackets.Open::decode, VoidMerchantPackets.Open::handle);
         CHANNEL.registerMessage(id++, VoidMerchantPackets.Buy.class,
                 VoidMerchantPackets.Buy::encode, VoidMerchantPackets.Buy::decode, VoidMerchantPackets.Buy::handle);
+        // Export de horde terminé : lien vers le dossier (2.1)
+        CHANNEL.registerMessage(id++, HordeExchangePackets.Exported.class,
+                HordeExchangePackets.Exported::encode, HordeExchangePackets.Exported::decode, HordeExchangePackets.Exported::handle);
 
         WaveSurvivorMod.LOGGER.info("[Network] Channel 'main' enregistré (protocol v{}, {} packets)",
                 PROTOCOL_VERSION, id);

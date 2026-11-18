@@ -51,7 +51,17 @@ public class HordeImportScreen extends Screen {
     }
 
     private static String typeTag(HordeExchange.Entry e) {
-        return "kingdom".equals(e.type()) ? WSLang.t("exchange.type.kingdom") : WSLang.t("exchange.type.classic");
+        return switch (e.type()) {
+            case "kingdom" -> WSLang.t("exchange.type.kingdom");
+            case "invasion" -> WSLang.t("exchange.type.invasion");
+            case "rift" -> WSLang.t("exchange.type.rift");
+            case "classic" -> WSLang.t("exchange.type.classic");
+            default -> "§8[?]";
+        };
+    }
+
+    private static String msg(com.wavesurvivor.config.HordeArchive.Msg m) {
+        return WSLang.t(m.key(), m.args().toArray());
     }
 
     private void initList() {
@@ -60,11 +70,14 @@ public class HordeImportScreen extends Screen {
         int y = top + 40;
         for (int i = page * PER_PAGE; i < Math.min(entries.size(), (page + 1) * PER_PAGE); i++) {
             HordeExchange.Entry e = entries.get(i);
-            String label = typeTag(e) + " §f" + e.name() + (e.conflict() ? " §e●" : "") + (e.missingMods().isEmpty() ? "" : " §c⚠")
-                    + " §8— " + e.file();
+            // fichier refusé : grisé, avec la raison
+            String label = e.rejected() ? "§8✖ " + e.file() + " §c" + msg(e.reject())
+                    : typeTag(e) + " §f" + e.name() + (e.conflict() ? " §e●" : "") + (e.missingMods().isEmpty() ? "" : " §c⚠")
+                    + (e.warnings().isEmpty() ? "" : " §e!") + " §8— " + e.file();
+            if (font.width(label) > W - 30) label = font.plainSubstrByWidth(label, W - 36) + "…";
             addRenderableWidget(Button.builder(Component.literal(label), b -> { selected = e; init(); })
-                    .tooltip(Tooltip.create(Component.literal(e.description() == null || e.description().isBlank()
-                            ? WSLang.t("exchange.no_desc") : e.description())))
+                    .tooltip(Tooltip.create(Component.literal(e.rejected() ? "§c" + msg(e.reject())
+                            : e.description() == null || e.description().isBlank() ? WSLang.t("exchange.no_desc") : e.description())))
                     .bounds(left + 10, y, W - 20, 20).build());
             y += ROW;
         }
@@ -84,7 +97,10 @@ public class HordeImportScreen extends Screen {
     private void initConfirm() {
         HordeExchange.Entry e = selected;
         int by = top + H - 52;
-        if (e.conflict()) {
+        if (e.rejected()) {   // refusé : bouton Importer désactivé
+            addRenderableWidget(Button.builder(Component.literal(WSLang.t("exchange.import")), b -> {})
+                    .bounds(left + 10, by, 160, 20).build()).active = false;
+        } else if (e.conflict()) {
             addRenderableWidget(Button.builder(Component.literal(WSLang.t("exchange.replace")), b -> send(HordeExchange.MODE_REPLACE))
                     .tooltip(Tooltip.create(WSLang.c("exchange.replace.tip")))
                     .bounds(left + 10, by, 120, 20).build());
@@ -123,6 +139,21 @@ public class HordeImportScreen extends Screen {
         } else {
             HordeExchange.Entry e = selected;
             int x = left + 14, y = top + 30;
+            if (e.rejected()) {
+                g.drawString(font, "§f" + e.file(), x, y, 0xFFFFFFFF);
+                y += 16;
+                for (var line : font.split(Component.literal(WSLang.t("exchange.rejected_title")), W - 28)) {
+                    g.drawString(font, line, x, y, 0xFFFFFFFF);
+                    y += 10;
+                }
+                y += 2;
+                for (var line : font.split(Component.literal("§c" + msg(e.reject())), W - 28)) {
+                    g.drawString(font, line, x, y, 0xFFFFFFFF);
+                    y += 10;
+                }
+                super.render(g, mx, my, pt);
+                return;
+            }
             g.drawString(font, WSLang.t("exchange.confirm", typeTag(e), e.name()), x, y, 0xFFFFFFFF);
             y += 14;
             g.drawString(font, WSLang.t("exchange.details", e.waves(), e.bosses(), e.entities(), e.skills(), e.chests()), x, y, 0xFFFFFFFF);
@@ -142,6 +173,15 @@ public class HordeImportScreen extends Screen {
             if (!e.missingMods().isEmpty()) {
                 for (var line : font.split(Component.literal(WSLang.t("exchange.missing_mods", String.join(", ", e.missingMods()))), W - 28)) {
                     g.drawString(font, line, x, y, 0xFFFFFFFF);
+                    y += 10;
+                }
+                y += 2;
+            }
+            if (!e.warnings().isEmpty()) {   // garde-fous : valeurs extrêmes, import quand même possible
+                g.drawString(font, WSLang.t("exchange.warn.header"), x, y, 0xFFFFFFFF);
+                y += 10;
+                for (var w : e.warnings()) {
+                    g.drawString(font, "§e • " + msg(w), x, y, 0xFFFFFFFF);
                     y += 10;
                 }
                 y += 2;

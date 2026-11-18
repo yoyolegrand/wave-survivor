@@ -54,6 +54,10 @@ public final class HordeExchangePackets {
                 for (String m : e.missingMods()) buf.writeUtf(m);
                 buf.writeBoolean(e.conflict());
                 buf.writeUtf(e.author() == null ? "" : e.author());
+                buf.writeVarInt(e.warnings().size());
+                for (com.wavesurvivor.config.HordeArchive.Msg w : e.warnings()) writeMsg(buf, w);
+                buf.writeBoolean(e.reject() != null);
+                if (e.reject() != null) writeMsg(buf, e.reject());
             }
         }
 
@@ -68,9 +72,27 @@ public final class HordeExchangePackets {
                 for (int j = 0; j < m; j++) mods.add(buf.readUtf());
                 boolean conflict = buf.readBoolean();
                 String author = buf.readUtf();
-                l.add(new HordeExchange.Entry(file, name, type, desc, waves, bosses, ent, sk, ch, mods, conflict, author));
+                int nw = Math.min(buf.readVarInt(), 32);
+                List<com.wavesurvivor.config.HordeArchive.Msg> warns = new ArrayList<>(nw);
+                for (int j = 0; j < nw; j++) warns.add(readMsg(buf));
+                com.wavesurvivor.config.HordeArchive.Msg reject = buf.readBoolean() ? readMsg(buf) : null;
+                l.add(new HordeExchange.Entry(file, name, type, desc, waves, bosses, ent, sk, ch, mods, conflict, author, warns, reject));
             }
             return new OpenImport(l);
+        }
+
+        private static void writeMsg(FriendlyByteBuf buf, com.wavesurvivor.config.HordeArchive.Msg m) {
+            buf.writeUtf(m.key());
+            buf.writeVarInt(m.args().size());
+            for (String a : m.args()) buf.writeUtf(a, 256);
+        }
+
+        private static com.wavesurvivor.config.HordeArchive.Msg readMsg(FriendlyByteBuf buf) {
+            String key = buf.readUtf();
+            int n = Math.min(buf.readVarInt(), 8);
+            List<String> args = new ArrayList<>(n);
+            for (int i = 0; i < n; i++) args.add(buf.readUtf(256));
+            return new com.wavesurvivor.config.HordeArchive.Msg(key, args);
         }
 
         public static void handle(OpenImport pkt, Supplier<NetworkEvent.Context> ctx) {
@@ -78,6 +100,31 @@ public final class HordeExchangePackets {
                     () -> () -> com.wavesurvivor.client.HordeImportScreen.open(pkt.entries)));
             ctx.get().setPacketHandled(true);
         }
+    }
+
+    // ─── S→C : export terminé → lien cliquable « ouvrir le dossier » (construit côté client : le jeu refuse les liens
+    //     « ouvrir un fichier » venus du serveur). Seulement en solo / hôte LAN, quand le dossier est sur cette machine. ───
+
+    public static class Exported {
+        public final String folder;
+        public Exported(String folder) { this.folder = folder != null ? folder : ""; }
+        public void encode(FriendlyByteBuf buf) { buf.writeUtf(folder, 1024); }
+        public static Exported decode(FriendlyByteBuf buf) { return new Exported(buf.readUtf(1024)); }
+        public static void handle(Exported pkt, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> showFolderLink(pkt.folder)));
+            ctx.get().setPacketHandled(true);
+        }
+    }
+
+    @net.minecraftforge.api.distmarker.OnlyIn(Dist.CLIENT)
+    private static void showFolderLink(String folder) {
+        var mc = net.minecraft.client.Minecraft.getInstance();
+        if (mc.player == null || !mc.hasSingleplayerServer() || folder.isBlank() || !new java.io.File(folder).isDirectory()) return;
+        net.minecraft.network.chat.MutableComponent link = net.minecraft.network.chat.Component.literal("§e§n" + com.wavesurvivor.i18n.WSLang.t("exchange.export.open_folder"))
+                .withStyle(st -> st.withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.OPEN_FILE, folder))
+                        .withHoverEvent(new net.minecraft.network.chat.HoverEvent(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT,
+                                net.minecraft.network.chat.Component.literal("§7" + folder))));
+        mc.player.sendSystemMessage(net.minecraft.network.chat.Component.literal("§a📂 ").append(link));
     }
 
     /** Ouvre l'écran d'import chez le joueur (commande /ws import). */
