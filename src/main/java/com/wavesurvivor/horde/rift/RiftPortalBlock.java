@@ -37,6 +37,6 @@ public class RiftPortalBlock extends Block {
             RiftManager.portalTouch(p);   // fin de partie : retour chez soi ; sinon retour à l'île, devant le Monolithe
             return;
         }
-        RiftManager.enter(p);
+        RiftManager.enterLater(p);   // au tick suivant (sinon le mouvement du client écrase le téléport)
     }
 }

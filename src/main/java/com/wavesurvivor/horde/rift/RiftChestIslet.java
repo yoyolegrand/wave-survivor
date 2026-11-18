@@ -46,6 +46,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import com.wavesurvivor.horde.model.HordeEntity;
 import java.util.Set;
 import java.util.UUID;
 
@@ -117,9 +118,11 @@ public final class RiftChestIslet {
         HordeConfigMultiData.RiftSettings s = rs();
         calms++;
         if (done || present || !s.isletChest) return;
-        int lo = Math.max(1, s.chestCalmMin), hi = Math.max(lo, s.chestCalmMax);
-        if (targetCalm <= 0) targetCalm = lo + RNG.nextInt(hi - lo + 1);
-        if (calms >= targetCalm) arrive(l);
+        // le Siège n'a que (Assauts − 1) Calmes : on borne le tirage pour que l'île vienne toujours
+        int last = Math.max(1, s.siegeAssaults - 1);
+        int hi = Math.max(1, Math.min(last, s.chestCalmMax)), lo = Math.max(1, Math.min(hi, s.chestCalmMin));
+        if (targetCalm <= 0 || targetCalm > last) targetCalm = lo + RNG.nextInt(hi - lo + 1);
+        if (calms >= targetCalm || calms >= last) arrive(l);
     }
 
     /** Début d'un Assaut (ou fin du Siège) : l'île repart. */
@@ -151,7 +154,7 @@ public final class RiftChestIslet {
         FREE.clear();
         offset = RISE;
         place(l, offset, true);
-        nextRise = l.getGameTime() + 10;
+        nextRise = l.getServer().getTickCount() + 10;   // même horloge que tick() (avant : heure du monde → l'île ne montait jamais)
         EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.chest.arrive")), "minecraft:chest", EventFeedPacket.RESOURCE, true);
         l.playSound(null, new BlockPos(cx, top, cz), SoundEvents.BEACON_POWER_SELECT, SoundSource.AMBIENT, 4f, 0.5f);
     }
@@ -210,15 +213,7 @@ public final class RiftChestIslet {
                 ruin = Blocks.CRACKED_STONE_BRICKS.defaultBlockState(), chain = Blocks.CHAIN.defaultBlockState();
         // piédestal 7 × 7
         for (int px = -3; px <= 3; px++) for (int pz = -3; pz <= 3; pz++) put(px, 1, pz, polished);
-        // coffre géant 5 × 3 × 3 : caisse en bois, bandes et serrure dorées
-        for (int px = -2; px <= 2; px++) {
-            for (int pz = -1; pz <= 1; pz++) {
-                boolean band = px == -2 || px == 2;
-                for (int y = 2; y <= 3; y++) big(px, y, pz, band ? gold : wood);
-                big(px, 4, pz, pz == 0 || band ? gold : plank);
-            }
-        }
-        big(0, 3, 2, gold);   // serrure
+        // le coffre : un grand coffre roulette « Coffre des Ruines » (bois sombre et dorures) posé sur le piédestal une fois l'île montée
         // 4 piliers coiffés d'un cristal, chaînes vers le coffre
         for (int[] c : new int[][]{{-5, -4}, {5, -4}, {-5, 4}, {5, 4}}) {
             for (int k = 1; k <= 5; k++) put(c[0], k, c[1], pillar);
@@ -308,6 +303,7 @@ public final class RiftChestIslet {
             nextRise = now + 5;
             l.sendParticles(ParticleTypes.CLOUD, cx + 0.5, top - offset - 4, cz + 0.5, 30, R * 0.6, 1.5, R * 0.6, 0.02);
             if (offset == 0) {
+                placeChest(l);   // le grand coffre, enchaîné (fermé tant que les gardiens vivent)
                 BRIDGE_QUEUE.addAll(BRIDGE);
                 l.playSound(null, new BlockPos(cx, top, cz), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.AMBIENT, 4f, 0.8f);
             }
@@ -331,6 +327,7 @@ public final class RiftChestIslet {
             // gardiens morts, disparus ou tombés dans le vide : chacun compte une fois
             List<UUID> all = new ArrayList<>(GUARDS);
             if (boss != null) all.add(boss);
+            leash(l, all);
             for (UUID id : all) {
                 if (COUNTED.contains(id)) continue;
                 Entity e = l.getEntity(id);
@@ -360,24 +357,19 @@ public final class RiftChestIslet {
         HordeConfigMultiData.RiftSettings s = rs();
         int lo = Math.max(0, s.chestGuardMin), hi = Math.max(lo, s.chestGuardMax);
         int n = lo + RNG.nextInt(hi - lo + 1);
-        double hpMul = Math.max(0.1, s.chestGuardHpPct / 100.0);
+        n = Math.min(12, (int) Math.round(n * com.wavesurvivor.horde.difficulty.HordeDifficulty.countMultiplier()));   // 2.1 : nombre selon la difficulté
         int[][] pts = {{-6, -2}, {6, -2}, {-6, 3}, {6, 3}, {0, -6}, {0, 6}};
-        for (int k = 0; k < n && s.chestGuardMobs != null && !s.chestGuardMobs.isEmpty(); k++) {
+        // Gardiens d'élite et Gardien du trésor : fiches de monstres de la horde (stats, équipement, compétences, butin)
+        List<HordeEntity> elites = elites(s);
+        for (int k = 0; k < n && !elites.isEmpty(); k++) {
             int[] pt = pts[k % pts.length];
-            Mob m = spawn(l, s.chestGuardMobs.get(RNG.nextInt(s.chestGuardMobs.size())), pt[0], pt[1]);
-            if (m == null) continue;
-            var a = m.getAttribute(Attributes.MAX_HEALTH);
-            if (a != null) { a.setBaseValue(a.getBaseValue() * hpMul); m.setHealth(m.getMaxHealth()); }
-            m.setCustomName(Component.literal("§6" + WSLang.t("rift.chest.elite")));
-            GUARDS.add(m.getUUID());
+            Mob m = spawnUnit(l, elites.get(RNG.nextInt(elites.size())), pt[0], pt[1]);
+            if (m != null) GUARDS.add(m.getUUID());
         }
-        Mob b = spawn(l, s.chestBossMob, 3, 0);
+        Mob b = spawnUnit(l, guardian(s), 3, 0);
         if (b != null) {
-            var a = b.getAttribute(Attributes.MAX_HEALTH);
-            if (a != null) { a.setBaseValue(Math.max(20, Math.min(5000, s.chestBossHp))); b.setHealth(b.getMaxHealth()); }
-            b.setCustomName(Component.literal("§6§l" + WSLang.t("rift.chest.boss")));
             boss = b.getUUID();
-            bar = new ServerBossEvent(Component.literal(WSLang.t("rift.chest.boss")), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_10);
+            bar = new ServerBossEvent(b.getName(), BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_10);
             for (ServerPlayer p : l.players()) bar.addPlayer(p);
         }
         total = GUARDS.size() + (boss != null ? 1 : 0);
@@ -386,20 +378,71 @@ public final class RiftChestIslet {
         if (total == 0) open(l);
     }
 
-    private static Mob spawn(ServerLevel l, String type, int px, int pz) {
-        ResourceLocation id = ResourceLocation.tryParse(type == null ? "" : type);
-        if (id == null || !ForgeRegistries.ENTITY_TYPES.containsKey(id)) return null;
-        Entity e = ForgeRegistries.ENTITY_TYPES.getValue(id).create(l);
-        if (!(e instanceof Mob m)) { if (e != null) e.discard(); return null; }
+    private static final com.google.gson.Gson GSON = new com.google.gson.Gson();
+
+    /** Fiche du Gardien du trésor (celle de la horde, sinon le défaut). */
+    private static HordeEntity guardian(HordeConfigMultiData.RiftSettings s) {
+        if (s.chestGuardian != null && s.chestGuardian.entityType != null && !s.chestGuardian.entityType.isBlank()) return s.chestGuardian;
+        return GSON.fromJson(ChestIsletDefaults.GUARDIAN, HordeEntity.class);
+    }
+
+    /** Fiches des gardiens d'élite (celles de la horde, sinon les défauts). */
+    private static List<HordeEntity> elites(HordeConfigMultiData.RiftSettings s) {
+        List<HordeEntity> out = new ArrayList<>();
+        if (s.chestElites != null) {
+            for (HordeEntity e : s.chestElites) if (e != null && e.entityType != null && !e.entityType.isBlank()) out.add(e);
+            return out;
+        }
+        HordeEntity[] d = GSON.fromJson(ChestIsletDefaults.ELITES, HordeEntity[].class);
+        if (d != null) for (HordeEntity e : d) if (e != null) out.add(e);
+        return out;
+    }
+
+    /** Un gardien sur l'île, depuis une fiche de monstre de la horde. */
+    private static Mob spawnUnit(ServerLevel l, HordeEntity t, int px, int pz) {
+        if (t == null) return null;
         BlockPos p = at(px, 1, pz);
-        m.moveTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, RNG.nextFloat() * 360f, 0f);
-        m.finalizeSpawn(l, l.getCurrentDifficultyAt(p), MobSpawnType.EVENT, null, null);
+        int players = Math.max(1, l.players().size());
+        Entity e = com.wavesurvivor.horde.spawn.HordeSpawner.spawnOne(l, t, p, players);
+        if (!(e instanceof Mob m)) { if (e != null) e.discard(); return null; }
+        m.moveTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, m.getYRot(), 0f);   // sur l'île, pas à côté
         m.addTag(TAG);
         m.setPersistenceRequired();
         m.restrictTo(new BlockPos(cx, top + 1, cz), R - 1);
-        if (!l.addFreshEntity(m)) return null;
         l.sendParticles(ParticleTypes.REVERSE_PORTAL, m.getX(), m.getY() + 1, m.getZ(), 30, 0.4, 0.8, 0.4, 0.2);
         return m;
+    }
+
+    /**
+     * Les gardiens restent sur l'île et se battent : celui qui s'éloigne (pont, vol vers le Monolithe…) est ramené au centre,
+     * et chacun vise le joueur le plus proche de l'île. Un gardien qui tombe dans le vide compte toujours comme vaincu.
+     */
+    private static void leash(ServerLevel l, List<UUID> ids) {
+        double ox = cx + 0.5, oz = cz + 0.5;
+        for (UUID id : ids) {
+            if (COUNTED.contains(id) || !(l.getEntity(id) instanceof Mob m) || !m.isAlive()) continue;
+            if (m.getY() < top - 6) continue;   // en train de tomber : laissé au vide
+            if (Math.hypot(m.getX() - ox, m.getZ() - oz) > R + 1) {
+                BlockPos p = at(RNG.nextInt(7) - 3, 1, RNG.nextInt(7) - 3);
+                l.sendParticles(ParticleTypes.REVERSE_PORTAL, m.getX(), m.getY() + 1, m.getZ(), 20, 0.4, 0.8, 0.4, 0.1);
+                m.getNavigation().stop();
+                m.teleportTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5);
+                m.fallDistance = 0;
+                l.sendParticles(ParticleTypes.REVERSE_PORTAL, m.getX(), m.getY() + 1, m.getZ(), 20, 0.4, 0.8, 0.4, 0.1);
+            }
+            LivingEntity t = m.getTarget();
+            if (t instanceof ServerPlayer tp && tp.isAlive() && !tp.isSpectator() && !tp.isCreative()
+                    && Math.hypot(tp.getX() - ox, tp.getZ() - oz) <= R + 12) continue;
+            ServerPlayer best = null;
+            double bd = Double.MAX_VALUE;
+            for (ServerPlayer p : l.players()) {
+                if (!p.isAlive() || p.isSpectator() || p.isCreative()) continue;
+                if (Math.hypot(p.getX() - ox, p.getZ() - oz) > R + 12 || Math.abs(p.getY() - top) > 16) continue;
+                double d = p.distanceToSqr(m);
+                if (d < bd) { bd = d; best = p; }
+            }
+            if (best != null) m.setTarget(best);
+        }
     }
 
     private static void breakChain(ServerLevel l, int k) {
@@ -419,17 +462,29 @@ public final class RiftChestIslet {
         return RouletteChestRegistry.getByChestName(CHEST_NAME);
     }
 
-    /** Toutes les chaînes brisées : le coffre géant s'ouvre (coffre roulette à sa place), 1 tirage gratuit par joueur. */
+    /** Coffre enchaîné : visible dès que l'île est montée, mais fermé tant que les chaînes tiennent. */
+    public static boolean locked(BlockPos pos) {
+        return present && !opened && chestPos != null && chestPos.equals(pos);
+    }
+
+    /** Toutes les chaînes brisées : le grand coffre s'ouvre, 1 tirage gratuit par joueur. */
     private static void open(ServerLevel l) {
         opened = true;
         done = true;
         if (bar != null) { bar.removeAllPlayers(); bar = null; }
         while (broken < CHAINS.size()) breakChain(l, broken++);
-        for (BlockPos p : BIG_CHEST) {
-            BlockState st = l.getBlockState(p);
-            if (!st.isAir()) l.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, st), p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5, 6, 0.3, 0.3, 0.3, 0.05);
-            l.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
-        }
+        if (chestPos == null) placeChest(l);
+        BlockPos at = at(0, 2, 0);
+        for (ServerPlayer p : l.players()) FREE.put(p.getUUID(), 1);
+        l.playSound(null, at, SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 2f, 0.5f);
+        l.playSound(null, at, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 2f, 0.8f);
+        l.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, 60, 1, 1, 1, 0.3);
+        EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.chest.open")), "minecraft:chest", EventFeedPacket.RESOURCE, true);
+    }
+
+    /** Pose le grand coffre roulette sur le piédestal (avec sa zone cliquable à sa taille). */
+    private static void placeChest(ServerLevel l) {
+        if (chestPos != null) return;
         BlockPos at = at(0, 2, 0);
         RouletteChestConfig cfg = config();
         if (cfg != null) {
@@ -440,7 +495,7 @@ public final class RiftChestIslet {
                 be.setColor(RouletteChestManager.colorFor(cfg));
                 be.setStyle(RouletteChestManager.styleFor(cfg).toJson());
             }
-            RouletteChestManager.registerIdle(at, cfg);
+            RouletteChestManager.registerIdle(at, cfg, l);
             chestPos = at.immutable();
             double s = RouletteChestManager.styleFor(cfg).scale;
             Interaction hb = EntityType.INTERACTION.create(l);
@@ -457,11 +512,12 @@ public final class RiftChestIslet {
         } else {
             WaveSurvivorMod.LOGGER.warn("[Faille] « {} » introuvable dans les coffres roulette (supprimé ?).", CHEST_NAME);
         }
-        for (ServerPlayer p : l.players()) FREE.put(p.getUUID(), 1);
-        l.playSound(null, at, SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 2f, 0.5f);
-        l.playSound(null, at, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 2f, 0.8f);
-        l.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, 60, 1, 1, 1, 0.3);
-        EventFeedPacket.toAll(l.getServer(), Component.literal(WSLang.t("rift.chest.open")), "minecraft:chest", EventFeedPacket.RESOURCE, true);
+        l.sendParticles(ParticleTypes.REVERSE_PORTAL, at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, 40, 0.8, 0.8, 0.8, 0.1);
+    }
+
+    /** Le joueur a encore son tirage gratuit sur ce coffre (clic gauche = ouvrir au lieu de l'aperçu). */
+    public static boolean hasFreeDraw(ServerPlayer p, BlockPos pos) {
+        return opened && chestPos != null && pos != null && chestPos.equals(pos) && FREE.getOrDefault(p.getUUID(), 0) > 0;
     }
 
     /** Tirage gratuit (RouletteChestManager.tryOpenChest) : vrai s'il est consommé pour ce joueur sur ce coffre. */
@@ -594,7 +650,11 @@ public final class RiftChestIslet {
             if (!ours(e.getTarget())) return;
             e.setCanceled(true);
             RouletteChestConfig cfg = config();
-            if (e.getEntity() instanceof ServerPlayer sp && cfg != null) RouletteChestManager.showLoot(sp, cfg);
+            if (!(e.getEntity() instanceof ServerPlayer sp) || cfg == null) return;
+            // coffre ouvert et tirage gratuit pas encore pris : le clic gauche ouvre aussi (sinon : aperçu du contenu)
+            if (chestPos != null && hasFreeDraw(sp, chestPos) && sp.level() instanceof ServerLevel l)
+                RouletteChestManager.tryOpenChest(sp, l, chestPos, cfg, sp.getMainHandItem());
+            else RouletteChestManager.showLoot(sp, cfg);
         }
     }
 }

@@ -207,6 +207,7 @@
   "item.wavesurvivor.fiole_mirage": "Fiole de mirage",
   "item.wavesurvivor.tablette_reconnaissance": "Tablette de reconnaissance",
   "effect.wavesurvivor.desert_freshness": "Fraîcheur du désert",
+  "effect.wavesurvivor.rift_effect": "Effet de Faille",
   "effect.wavesurvivor.scorching_sun": "Soleil de plomb",
   "block.wavesurvivor.rift_portal": "Portail de la Faille",
   "block.wavesurvivor.rift_vein_teal": "Veine de faille (turquoise)",
@@ -243,5 +244,19 @@
   "item.wavesurvivor.lanterne_vigie": "Lanterne de vigie",
   "item.wavesurvivor.relance_benediction": "Relance de bénédiction",
   "entity.wavesurvivor.brise_pont": "Brise-pont",
-  "item.wavesurvivor.brise_pont_spawn_egg": "Œuf d'apparition de Brise-pont"
+  "item.wavesurvivor.brise_pont_spawn_egg": "Œuf d'apparition de Brise-pont",
+  "attribute.name.wavesurvivor.healing_received": "Soins reçus",
+  "effect.wavesurvivor.rift_effect.desc": "",
+  "item.wavesurvivor.rift_helmet": "Heaume de la Faille",
+  "item.wavesurvivor.rift_chestplate": "Plastron de la Faille",
+  "item.wavesurvivor.rift_leggings": "Jambières de la Faille",
+  "item.wavesurvivor.rift_boots": "Solerets de la Faille",
+  "item.wavesurvivor.rift_helmet.blessed": "Heaume béni de la Faille",
+  "item.wavesurvivor.rift_chestplate.blessed": "Plastron béni de la Faille",
+  "item.wavesurvivor.rift_leggings.blessed": "Jambières bénies de la Faille",
+  "item.wavesurvivor.rift_boots.blessed": "Solerets bénis de la Faille",
+  "item.wavesurvivor.rift_helmet.corrupted": "Heaume corrompu de la Faille",
+  "item.wavesurvivor.rift_chestplate.corrupted": "Plastron corrompu de la Faille",
+  "item.wavesurvivor.rift_leggings.corrupted": "Jambières corrompues de la Faille",
+  "item.wavesurvivor.rift_boots.corrupted": "Solerets corrompus de la Faille"
 }

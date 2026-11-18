@@ -1,6 +1,5 @@
 package com.wavesurvivor.entity;
 
-import net.minecraft.core.Rotations;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -34,7 +33,8 @@ import java.util.UUID;
  * États : 0 = PORTE (marche, ancre sur le dos), 1 = PLANTE (20 ticks : lève l'ancre puis l'abat, plantée à 55 %), 2 = TIENT.
  *  - ANCRE : cible à moins de 12 blocs, recharge 15 s. Il s'arrête et plante l'ancre ≈ 2,2 blocs devant lui ; elle enchaîne le joueur
  *    le plus proche dans 10 blocs : impossible de s'éloigner à plus de 6 blocs de l'ancre (tiré en arrière) pendant 8 s, ou jusqu'à ce que
- *    l'ancre soit brisée (petite cible frappable, 20 PV). Il reste en TIENT pendant ce temps.
+ *    la chaîne soit brisée : UN coup sur l'ancre ou sur la chaîne (3 cibles invisibles qui suivent la chaîne) suffit. Il reste en TIENT pendant ce temps.
+ *  - Le joueur enchaîné reçoit Lenteur V tant qu'il est tenu (on comprend tout de suite qu'il est pris).
  *  - La chaîne (laisse) est dessinée côté client par {@link com.wavesurvivor.client.AncreurChainFx} à partir de l'ancre et du joueur synchronisés.
  */
 public class Ancreur extends FailleMonster {
@@ -42,17 +42,27 @@ public class Ancreur extends FailleMonster {
     public static final int CARRY = 0, PLANT = 1, HOLD = 2;
     public static final int PLANT_TICKS = 20, HOLD_TICKS = 160, ANCHOR_COOLDOWN = 300;
     public static final double ANCHOR_RANGE = 12, CHAIN_PICK = 10, CHAIN_LEN = 6, ANCHOR_AHEAD = 2.2;
-    public static final float ANCHOR_HP = 20f;
     public static final String ANCHOR_TAG = "ws_ancreur_anchor";
     private static final DustParticleOptions TEAL = new DustParticleOptions(new Vector3f(0.25f, 0.95f, 0.85f), 1.0f);
 
-    /** Joueur enchaîné (id réseau, -1 = aucun) et position de l'ancre plantée (x, y, z rangés dans un « Rotations »). */
+    /**
+     * Joueur enchaîné (id réseau, -1 = aucun) et position de l'ancre plantée (3 flottants).
+     * (Avant : rangée dans un « Rotations », qui ramène chaque valeur modulo 360 → ancre « plantée » au mauvais endroit loin de 0,0,
+     * personne à portée, chaîne jamais posée.)
+     */
     private static final EntityDataAccessor<Integer> CHAINED = SynchedEntityData.defineId(Ancreur.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Rotations> ANCHOR = SynchedEntityData.defineId(Ancreur.class, EntityDataSerializers.ROTATIONS);
+    private static final EntityDataAccessor<Float> ANCHOR_X = SynchedEntityData.defineId(Ancreur.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> ANCHOR_Y = SynchedEntityData.defineId(Ancreur.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> ANCHOR_Z = SynchedEntityData.defineId(Ancreur.class, EntityDataSerializers.FLOAT);
+    /** Lenteur V (amplificateur 4) pendant que le joueur est enchaîné. */
+    private static final int SLOW_AMP = 4;
 
     private long anchorReadyAt = 0;
-    private float anchorHp;
+    private boolean planted;
     private UUID hitbox;
+    /** Cibles frappables le long de la chaîne (un coup brise la chaîne). */
+    private final java.util.List<UUID> links = new java.util.ArrayList<>();
+    private static final double[] LINK_AT = {0.3, 0.55, 0.8};
 
     public Ancreur(EntityType<? extends Monster> type, Level level) {
         super(type, level);
@@ -63,6 +73,7 @@ public class Ancreur extends FailleMonster {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 80.0)
                 .add(Attributes.ARMOR, 6.0)
+                .add(Attributes.ARMOR_TOUGHNESS, 2.0)
                 .add(Attributes.ATTACK_DAMAGE, 9.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.2)
                 .add(Attributes.FOLLOW_RANGE, 32.0)
@@ -73,7 +84,9 @@ public class Ancreur extends FailleMonster {
     protected void defineSynchedData() {
         super.defineSynchedData();
         entityData.define(CHAINED, -1);
-        entityData.define(ANCHOR, new Rotations(0, 0, 0));
+        entityData.define(ANCHOR_X, 0f);
+        entityData.define(ANCHOR_Y, 0f);
+        entityData.define(ANCHOR_Z, 0f);
     }
 
     @Override
@@ -89,8 +102,7 @@ public class Ancreur extends FailleMonster {
 
     /** Position de l'ancre plantée (valable en état TIENT). */
     public Vec3 anchorPos() {
-        Rotations r = entityData.get(ANCHOR);
-        return new Vec3(r.getX(), r.getY(), r.getZ());
+        return new Vec3(entityData.get(ANCHOR_X), entityData.get(ANCHOR_Y), entityData.get(ANCHOR_Z));
     }
 
     /** Plante l'ancre (aussi utilisé par la commande de test, sans condition de distance ni de recharge). */
@@ -104,6 +116,7 @@ public class Ancreur extends FailleMonster {
             setYRot((float) Math.toDegrees(Math.atan2(-(tg.getX() - getX()), tg.getZ() - getZ())));
             yBodyRot = getYRot();
         }
+        planted = false;
         setState(PLANT);
         playSound(SoundEvents.CHAIN_PLACE, 1.6f, 0.6f);
         return true;
@@ -124,8 +137,8 @@ public class Ancreur extends FailleMonster {
         setDeltaMovement(0, getDeltaMovement().y, 0);
         if (st == PLANT) {
             yBodyRot = getYRot();
-            if (t == 11) plant(sl);             // l'ancre touche le sol (55 % de l'animation)
-            if (t >= PLANT_TICKS) chain(sl);
+            if (t >= 11 && !planted) plant(sl);   // l'ancre touche le sol (55 % de l'animation)
+            if (t >= PLANT_TICKS) { if (!planted) plant(sl); chain(sl); }
         } else if (st == HOLD) {
             yBodyRot = getYRot();
             hold(sl, t);
@@ -136,23 +149,44 @@ public class Ancreur extends FailleMonster {
     private void plant(ServerLevel sl) {
         Vec3 fwd = Vec3.directionFromRotation(0, getYRot());
         Vec3 p = new Vec3(getX() + fwd.x * ANCHOR_AHEAD, getY(), getZ() + fwd.z * ANCHOR_AHEAD);
-        entityData.set(ANCHOR, new Rotations((float) p.x, (float) p.y, (float) p.z));
+        planted = true;
+        entityData.set(ANCHOR_X, (float) p.x);
+        entityData.set(ANCHOR_Y, (float) p.y);
+        entityData.set(ANCHOR_Z, (float) p.z);
         sl.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.OBSIDIAN.defaultBlockState()), p.x, p.y + 0.1, p.z, 24, 0.6, 0.1, 0.6, 0.15);
         sl.sendParticles(TEAL, p.x, p.y + 0.4, p.z, 12, 0.5, 0.3, 0.5, 0);
         sl.playSound(null, p.x, p.y, p.z, SoundEvents.ANVIL_LAND, net.minecraft.sounds.SoundSource.HOSTILE, 1.4f, 0.5f);
         removeHitbox(sl);
+        hitbox = spawnTarget(sl, p, 1.1f, 1.8f);
+    }
+
+    /** Cible invisible frappable (entité Interaction, sans collision), étiquetée pour être retirée au rechargement. */
+    private static UUID spawnTarget(ServerLevel sl, Vec3 p, float w, float h) {
         Interaction hb = EntityType.INTERACTION.create(sl);
-        if (hb != null) {
-            hb.moveTo(p.x, p.y, p.z, 0f, 0f);
-            CompoundTag tag = hb.saveWithoutId(new CompoundTag());
-            tag.putFloat("width", 1.1f);
-            tag.putFloat("height", 1.8f);
-            tag.putBoolean("response", false);
-            hb.load(tag);
-            hb.addTag(ANCHOR_TAG);
-            if (sl.addFreshEntity(hb)) hitbox = hb.getUUID();
+        if (hb == null) return null;
+        hb.moveTo(p.x, p.y, p.z, 0f, 0f);
+        CompoundTag tag = hb.saveWithoutId(new CompoundTag());
+        tag.putFloat("width", w);
+        tag.putFloat("height", h);
+        tag.putBoolean("response", false);
+        hb.load(tag);
+        hb.addTag(ANCHOR_TAG);
+        return sl.addFreshEntity(hb) ? hb.getUUID() : null;
+    }
+
+    /** Les cibles de la chaîne suivent la laisse entre l'anneau de l'ancre et le joueur. */
+    private void moveLinks(ServerLevel sl, Vec3 playerMid) {
+        Vec3 from = anchorPos().add(0, 1.1, 0);
+        for (int i = 0; i < LINK_AT.length; i++) {
+            Vec3 q = from.lerp(playerMid, LINK_AT[i]).subtract(0, 0.35, 0);
+            if (i >= links.size()) {
+                UUID id = spawnTarget(sl, q, 0.7f, 0.7f);
+                if (id != null) links.add(id);
+            } else {
+                Entity e = sl.getEntity(links.get(i));
+                if (e != null) e.moveTo(q.x, q.y, q.z);
+            }
         }
-        anchorHp = ANCHOR_HP;
     }
 
     /** Enchaîne le joueur le plus proche de l'ancre (10 blocs) ; personne : il reprend la marche. */
@@ -169,13 +203,23 @@ public class Ancreur extends FailleMonster {
         entityData.set(CHAINED, best.getId());
         setState(HOLD);
         sl.playSound(null, best.blockPosition(), SoundEvents.CHAIN_PLACE, net.minecraft.sounds.SoundSource.HOSTILE, 1.6f, 0.5f);
+        slow(best);
+        // maillons qui jaillissent de l'ancre vers le joueur : on voit d'où vient la prise
+        moveLinks(sl, best.position().add(0, best.getBbHeight() * 0.5, 0));
+        Vec3 from = a.add(0, 1.0, 0), to = best.position().add(0, 1.0, 0);
+        for (int i = 0; i <= 10; i++) {
+            Vec3 q = from.lerp(to, i / 10.0);
+            sl.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.CHAIN.defaultBlockState()), q.x, q.y, q.z, 3, 0.05, 0.05, 0.05, 0);
+        }
     }
 
     /** Tient la chaîne : le joueur ne peut pas s'éloigner à plus de 6 blocs de l'ancre. */
     private void hold(ServerLevel sl, long t) {
         Entity e = chained();
-        if (!(e instanceof ServerPlayer p) || !validTarget(p) || p.level() != sl || t >= HOLD_TICKS || anchorHp <= 0) { release(sl); return; }
+        if (!(e instanceof ServerPlayer p) || !validTarget(p) || p.level() != sl || t >= HOLD_TICKS) { release(sl); return; }
         getLookControl().setLookAt(p, 30f, 30f);
+        moveLinks(sl, p.position().add(0, p.getBbHeight() * 0.5, 0));
+        if (t % 10 == 0) slow(p);
         Vec3 a = anchorPos();
         Vec3 d = new Vec3(p.getX() - a.x, 0, p.getZ() - a.z);
         double dist = d.length();
@@ -194,8 +238,22 @@ public class Ancreur extends FailleMonster {
         if (t % 8 == 0) sl.sendParticles(TEAL, a.x, a.y + 1.0, a.z, 2, 0.2, 0.3, 0.2, 0);
     }
 
+    /** Lenteur V courte, renouvelée tant que la chaîne tient (s'arrête d'elle-même si l'Ancreur meurt). */
+    private static void slow(LivingEntity p) {
+        p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 25, SLOW_AMP, false, true, true));
+    }
+
+    /** Retire la Lenteur V de la chaîne (pas une lenteur venue d'ailleurs, plus longue ou d'un autre niveau). */
+    private static void unslow(Entity e) {
+        if (!(e instanceof LivingEntity le)) return;
+        var eff = le.getEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN);
+        if (eff != null && eff.getAmplifier() == SLOW_AMP && eff.getDuration() <= 25) le.removeEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN);
+    }
+
     /** Libère le joueur, retire l'ancre plantée et reprend la marche. */
     private void release(ServerLevel sl) {
+        Entity was = chained();
+        if (was != null) unslow(was);
         entityData.set(CHAINED, -1);
         removeHitbox(sl);
         if (failleState() != CARRY) setState(CARRY);
@@ -207,19 +265,27 @@ public class Ancreur extends FailleMonster {
             if (h != null) h.discard();
             hitbox = null;
         }
+        for (UUID id : links) {
+            Entity h = sl.getEntity(id);
+            if (h != null) h.discard();
+        }
+        links.clear();
     }
 
-    /** Coup porté sur l'ancre plantée. */
-    private void hitAnchor(ServerLevel sl, float dmg) {
-        anchorHp -= dmg;
-        Vec3 a = anchorPos();
-        sl.sendParticles(ParticleTypes.CRIT, a.x, a.y + 0.9, a.z, 8, 0.3, 0.4, 0.3, 0.1);
-        sl.playSound(null, a.x, a.y, a.z, SoundEvents.ANVIL_HIT, net.minecraft.sounds.SoundSource.HOSTILE, 1f, 1.2f);
-        if (anchorHp <= 0) {
-            sl.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.CHAIN.defaultBlockState()), a.x, a.y + 0.9, a.z, 30, 0.4, 0.6, 0.4, 0.2);
-            sl.playSound(null, a.x, a.y, a.z, SoundEvents.CHAIN_BREAK, net.minecraft.sounds.SoundSource.HOSTILE, 2f, 0.6f);
-            release(sl);
-        }
+    /** Coup porté sur l'ancre ou sur la chaîne : un seul suffit, la chaîne vole en éclats à l'endroit frappé. */
+    private void breakChain(ServerLevel sl, Vec3 at) {
+        sl.sendParticles(ParticleTypes.CRIT, at.x, at.y + 0.4, at.z, 10, 0.3, 0.3, 0.3, 0.1);
+        sl.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.CHAIN.defaultBlockState()), at.x, at.y + 0.4, at.z, 30, 0.4, 0.4, 0.4, 0.2);
+        sl.playSound(null, at.x, at.y, at.z, SoundEvents.CHAIN_BREAK, net.minecraft.sounds.SoundSource.HOSTILE, 2f, 0.6f);
+        sl.playSound(null, at.x, at.y, at.z, SoundEvents.ANVIL_HIT, net.minecraft.sounds.SoundSource.HOSTILE, 0.8f, 1.4f);
+        release(sl);
+    }
+
+    /** Ancré (ancre levée, plantée ou chaîne tenue) : aucun recul. */
+    @Override
+    public void knockback(double strength, double x, double z) {
+        if (failleState() != CARRY) return;
+        super.knockback(strength, x, z);
     }
 
     @Override
@@ -230,6 +296,8 @@ public class Ancreur extends FailleMonster {
     @Override
     public void remove(RemovalReason reason) {
         if (level() instanceof ServerLevel sl) {
+            Entity was = chained();
+            if (was != null) unslow(was);
             entityData.set(CHAINED, -1);
             removeHitbox(sl);
         }
@@ -254,10 +322,8 @@ public class Ancreur extends FailleMonster {
             if (!(t instanceof Interaction) || !t.getTags().contains(ANCHOR_TAG)) return;
             e.setCanceled(true);
             if (!(t.level() instanceof ServerLevel sl)) return;
-            Player pl = e.getEntity();
-            float dmg = (float) Math.max(1.0, pl.getAttributeValue(Attributes.ATTACK_DAMAGE));
-            for (Ancreur a : sl.getEntitiesOfClass(Ancreur.class, t.getBoundingBox().inflate(6))) {
-                if (t.getUUID().equals(a.hitbox)) { a.hitAnchor(sl, dmg); return; }
+            for (Ancreur a : sl.getEntitiesOfClass(Ancreur.class, t.getBoundingBox().inflate(16))) {
+                if (t.getUUID().equals(a.hitbox) || a.links.contains(t.getUUID())) { a.breakChain(sl, t.position()); return; }
             }
             t.discard();   // ancre orpheline (Ancreur disparu)
         }

@@ -16,8 +16,8 @@ public final class VoidMerchantPackets {
 
     private VoidMerchantPackets() {}
 
-    /** Un article : objet, prix en améthyste, restant (−1 = illimité). */
-    public record Entry(ItemStack stack, int price, int left) {}
+    /** Un article : son numéro chez le marchand, objet, prix en améthyste, restant (−1 = illimité), description (clé, vide = infobulle de l'objet). */
+    public record Entry(int index, ItemStack stack, int price, int left, String desc) {}
 
     public static class Open {
         public final List<Entry> entries;
@@ -28,9 +28,11 @@ public final class VoidMerchantPackets {
         public void encode(FriendlyByteBuf b) {
             b.writeVarInt(entries.size());
             for (Entry e : entries) {
+                b.writeVarInt(e.index());
                 b.writeItem(e.stack());
                 b.writeVarInt(e.price());
                 b.writeVarInt(e.left() + 1);
+                b.writeUtf(e.desc() == null ? "" : e.desc(), 128);
             }
             b.writeVarInt(amethyst);
         }
@@ -38,7 +40,12 @@ public final class VoidMerchantPackets {
         public static Open decode(FriendlyByteBuf b) {
             int n = Math.min(64, b.readVarInt());
             List<Entry> l = new ArrayList<>();
-            for (int i = 0; i < n; i++) l.add(new Entry(b.readItem(), b.readVarInt(), b.readVarInt() - 1));
+            for (int i = 0; i < n; i++) {
+                int idx = b.readVarInt();
+                ItemStack st = b.readItem();
+                int price = b.readVarInt(), left = b.readVarInt() - 1;
+                l.add(new Entry(idx, st, price, left, b.readUtf(128)));
+            }
             return new Open(l, b.readVarInt());
         }
 

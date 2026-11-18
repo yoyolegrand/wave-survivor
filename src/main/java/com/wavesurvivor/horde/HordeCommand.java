@@ -216,6 +216,15 @@ public class HordeCommand {
                                                     com.wavesurvivor.i18n.WSLang.t(h), p.getGameProfile().getName())), true);
                                             return 1;
                                         }))))
+                // 2.1 — Tuto du Kingdom : effacer « déjà fait » (et les astuces vues) pour rejouer avec l'accompagnement
+                .then(Commands.literal("tuto").requires(src -> src.hasPermission(2))
+                        .then(Commands.literal("reset")
+                                .executes(ctx -> tutoReset(ctx.getSource(), ctx.getSource().getPlayerOrException(), ""))
+                                .then(Commands.argument("player", net.minecraft.commands.arguments.EntityArgument.player())
+                                        .executes(ctx -> tutoReset(ctx.getSource(), net.minecraft.commands.arguments.EntityArgument.getPlayer(ctx, "player"), ""))
+                                        .then(Commands.argument("horde", com.mojang.brigadier.arguments.StringArgumentType.greedyString())
+                                                .executes(ctx -> tutoReset(ctx.getSource(), net.minecraft.commands.arguments.EntityArgument.getPlayer(ctx, "player"),
+                                                        com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "horde")))))))
                 .then(Commands.literal("progress").requires(src -> src.hasPermission(2))
                         .then(Commands.literal("reset")
                                 .then(Commands.argument("player", net.minecraft.commands.arguments.EntityArgument.player())
@@ -269,6 +278,8 @@ public class HordeCommand {
                 }))
                 .then(Commands.literal("riftabandon").executes(ctx -> {
                     com.wavesurvivor.horde.rift.RiftManager.abandonSaved(ctx.getSource().getServer());
+                    if (!com.wavesurvivor.horde.HordeManager.get().isRunning() && !HordeSession.get(ctx.getSource().getServer()).present())
+                        com.wavesurvivor.horde.benediction.RogueUpgradeManager.clearAllPlayers(ctx.getSource().getServer());   // Faille abandonnée
                     ctx.getSource().sendSuccess(() -> com.wavesurvivor.i18n.WSLang.c("rift.session.abandoned"), true);
                     return 1;
                 }))
@@ -511,6 +522,13 @@ public class HordeCommand {
      * /ws info : ouvre le WaveInspectionScreen côté client.
      * Accessible à tous les joueurs (permission 0). Doit être exécutée en jeu par un joueur.
      */
+    private static int tutoReset(CommandSourceStack src, net.minecraft.server.level.ServerPlayer p, String horde) {
+        int n = com.wavesurvivor.horde.kingdom.KingdomTuto.reset(p, horde);
+        src.sendSuccess(() -> Component.literal(com.wavesurvivor.i18n.WSLang.t("kingdom.tuto.reset_cmd", p.getGameProfile().getName(),
+                horde.isEmpty() ? com.wavesurvivor.i18n.WSLang.t("kingdom.tuto.reset_all") : horde, n)), true);
+        return 1;
+    }
+
     private static int info(CommandContext<CommandSourceStack> ctx) {
         try {
             ServerPlayer player = ctx.getSource().getPlayerOrException();

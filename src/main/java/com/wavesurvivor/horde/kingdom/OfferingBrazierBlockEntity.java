@@ -29,8 +29,9 @@ import java.util.Random;
  *  - Chaque fois que la jauge est pleine (64 / 48 / 32 points selon le niveau) : un tirage de récompense.
  *  - Niveau 2 à 1 000 objets sacrifiés au total, niveau 3 à 3 000 (choix d'une spécialisation).
  *  - Uniquement pendant le Calme, 1 500 points maximum par Calme.
- *  - Refusés (restent dans la grille) : objets enchantés, objets du mod (reliques, Reliquaires…), clés de coffre,
- *    et les ressources du trésor (bois, pierre, fer, monnaie) pour éviter les boucles.
+ *  - Refusés (restent dans la grille) : objets enchantés, objets du mod (reliques, Reliquaires…), clés de coffre.
+ *    Les ressources (bois, pierre, fer, monnaie) sont acceptées depuis la 2.1 : un tirage rend bien moins que les 64 objets
+ *    sacrifiés, il n'y a donc pas de boucle rentable.
  * Spécialisations : Abondance (ressources ×1,5), Reliques (Reliquaire et bénédiction ×2),
  * Guerre (débloque Vague de réparation et Ferveur du royaume, chances doublées).
  */
@@ -105,13 +106,8 @@ public class OfferingBrazierBlockEntity extends BlockEntity implements MenuProvi
     public static boolean accepts(ItemStack s) {
         if (s.isEmpty() || s.isEnchanted()) return false;
         var id = ForgeRegistries.ITEMS.getKey(s.getItem());
-        if (id != null && ("wavesurvivor".equals(id.getNamespace()) || "roulettechest".equals(id.getNamespace()))) return false;
-        if (com.wavesurvivor.altar.AltarDefense.isCurrency(s)) return false;
-        // Ressources du trésor : pas de boucle « ressource → offrande → ressource »
-        if (s.is(ItemTags.LOGS) || s.is(ItemTags.PLANKS)) return false;
-        return !(s.is(Items.COBBLESTONE) || s.is(Items.STONE) || s.is(Items.COBBLED_DEEPSLATE) || s.is(Items.DEEPSLATE)
-                || s.is(Items.IRON_INGOT) || s.is(Items.RAW_IRON) || s.is(Items.IRON_NUGGET) || s.is(Items.IRON_BLOCK)
-                || s.is(Items.RAW_IRON_BLOCK));
+        // Objets du mod et clés refusés ; les ressources (bois, pierre, fer, monnaie) sont acceptées
+        return id == null || !("wavesurvivor".equals(id.getNamespace()) || "roulettechest".equals(id.getNamespace()));
     }
 
     // ─── Sacrifice (bouton du menu) ───

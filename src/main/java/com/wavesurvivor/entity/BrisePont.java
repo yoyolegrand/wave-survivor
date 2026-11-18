@@ -169,10 +169,12 @@ public class BrisePont extends Monster {
                 climbTicks = -1;
                 setNoGravity(false);
                 noPhysics = false;
+                unstuck();
                 setGnawing(true);
             }
             return;
         }
+        if (tickCount % 10 == 0) unstuck();
         // tombé du pont : le vide l'avale (mort immédiate)
         if (deckY != Integer.MIN_VALUE && getY() < deckY - 4) {
             l.sendParticles(ParticleTypes.REVERSE_PORTAL, getX(), getY(), getZ(), 30, 0.4, 0.4, 0.4, 0.2);
@@ -212,9 +214,18 @@ public class BrisePont extends Monster {
         }
     }
 
+    /** Coincé dans des blocs (segment collé à l'île, rambarde, lanterne…) : remonte jusqu'à un endroit libre (6 blocs max). */
+    private void unstuck() {
+        if (level().noCollision(this)) return;
+        for (int k = 1; k <= 6; k++) {
+            if (level().noCollision(this, getBoundingBox().move(0, k, 0))) { setPos(getX(), getY() + k, getZ()); return; }
+        }
+    }
+
     /** Point faible du dos : coup porté de derrière ou d'au-dessus → dégâts ×2. */
     @Override
     public boolean hurt(DamageSource src, float amount) {
+        if (src.is(net.minecraft.world.damagesource.DamageTypes.IN_WALL)) { unstuck(); return false; }   // jamais étouffé
         Entity att = src.getEntity();
         if (att != null && !level().isClientSide && amount < Float.MAX_VALUE / 2) {
             Vec3 facing = Vec3.directionFromRotation(0, getYRot());

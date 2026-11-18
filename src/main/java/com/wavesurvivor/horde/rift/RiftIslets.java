@@ -624,6 +624,7 @@ public final class RiftIslets {
         int n = 0;
         for (int[] pt : pts) {
             int k = per <= 1 ? per : 1 + RNG.nextInt(per);
+            k = (int) Math.round(k * com.wavesurvivor.horde.difficulty.HordeDifficulty.countMultiplier());   // 2.1 : nombre selon la difficulté
             for (int j = 0; j < k; j++) {
                 ResourceLocation id = ResourceLocation.tryParse(s.mineGuardMobs.get(RNG.nextInt(s.mineGuardMobs.size())));
                 if (id == null || !ForgeRegistries.ENTITY_TYPES.containsKey(id)) continue;
@@ -634,6 +635,7 @@ public final class RiftIslets {
                 if (y == Integer.MIN_VALUE) { e.discard(); continue; }
                 mob.moveTo(p.getX() + 0.5, y + 1, p.getZ() + 0.5, RNG.nextFloat() * 360f, 0f);
                 mob.finalizeSpawn(l, l.getCurrentDifficultyAt(p), MobSpawnType.EVENT, null, null);
+                com.wavesurvivor.horde.difficulty.HordeDifficulty.applyToUnit(mob);   // 2.1 : PV et dégâts selon la difficulté
                 mob.addTag(GUARD_TAG);
                 mob.setPersistenceRequired();
                 mob.restrictTo(i.local(0, y, 0), i.r);   // restent sur leur île
@@ -1005,7 +1007,7 @@ public final class RiftIslets {
     public static void onAssault(MinecraftServer server) {
         ServerLevel cl = server.getLevel(RiftManager.RIFT_DIM);
         if (cl != null && active()) RiftChestIslet.onAssault(cl);   // l'île au coffre repart
-        if (cl != null && active() && RiftManager.phasePublic() == RiftManager.Phase.SIEGE) spawnBreakers(cl, cl.getGameTime());   // Brise-pont
+        if (cl != null && active() && RiftManager.phasePublic() == RiftManager.Phase.SIEGE) spawnBreakers(cl, server.getTickCount());   // Brise-pont (horloge du serveur, comme tick())
         Islet a = get(Kind.ALTAR);
         if (a == null || RiftManager.phasePublic() != RiftManager.Phase.SIEGE) return;
         ServerLevel l = server.getLevel(RiftManager.RIFT_DIM);
@@ -1703,7 +1705,7 @@ public final class RiftIslets {
             for (int k = 0; k < SEGMENTS; k++) if (!i.down[k] && deckCenter(i, k) != null) intact.add(k);
             if (intact.isEmpty()) return false;
             int seg = intact.get(RNG.nextInt(intact.size()));
-            PENDING.add(new Pending(i, seg, deckCenter(i, seg), l.getGameTime() + 60));
+            PENDING.add(new Pending(i, seg, deckCenter(i, seg), l.getServer().getTickCount() + 60));
             return true;
         }
         return false;

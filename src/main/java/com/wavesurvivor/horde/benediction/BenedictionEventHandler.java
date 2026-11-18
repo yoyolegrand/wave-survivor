@@ -24,8 +24,8 @@ public class BenedictionEventHandler {
             WaveSurvivorMod.LOGGER.info("[Benediction] Respawn de '{}' pendant horde → reapply",
                     sp.getName().getString());
         } else {
-            // Horde finie mais NBT encore là (edge case) → clean
-            RogueUpgradeManager.clearAll(sp);
+            // Horde finie mais NBT encore là (edge case) → clean ; sauf partie sauvegardée en attente de reprise
+            if (!RogueUpgradeManager.keptForResume(sp.getServer())) RogueUpgradeManager.clearAll(sp);
         }
     }
 
@@ -37,8 +37,8 @@ public class BenedictionEventHandler {
             WaveSurvivorMod.LOGGER.info("[Benediction] Login de '{}' pendant horde → reapply",
                     sp.getName().getString());
         } else {
-            // Cleanup si NBT résiduel d'une session précédente qui n'a pas fini proprement
-            RogueUpgradeManager.clearAll(sp);
+            // Cleanup si NBT résiduel d'une session précédente qui n'a pas fini proprement ; sauf partie sauvegardée à reprendre
+            if (!RogueUpgradeManager.keptForResume(sp.getServer())) RogueUpgradeManager.clearAll(sp);
         }
     }
 }

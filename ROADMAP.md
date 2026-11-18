@@ -29,6 +29,9 @@
 - ⏩ **Ready button, consolation prize and Heritage rework** (1.9)
 - 🌌 **The Rift** — the final mode: a portal onto a floating-island dimension, Horde → Siege → Counter-offensive → Titan, three Titans, siege engines, Rift relics and Rift Legacy (2.0)
 - 🖤 **Fallen Seraph Armor** and **Epic Fight compatibility** for our armors and weapons (2.0)
+- 🏝 **Rift islets** — Mining Islet, Altar Islet, Void Merchant and Chest Islet, bought bridges and Bridgebreakers (2.1)
+- 🛡 **Rift Armor** — an evolving armor, Blessed or Corrupted (2.1)
+- 🎓 **Kingdom tutorial** — new players are guided through their first Kingdom (2.1)
 
 ## 🔭 Later
 - 🧩 **Creator API** (KubeJS / datapacks) — add skills, hordes and relics without touching the code

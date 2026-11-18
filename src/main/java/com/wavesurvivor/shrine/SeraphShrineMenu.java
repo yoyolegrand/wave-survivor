@@ -135,9 +135,10 @@ public class SeraphShrineMenu extends AbstractContainerMenu {
             int n = id - BTN_CRAFT;
             if (!(player instanceof ServerPlayer csp) || n >= list.size()) return false;
             com.wavesurvivor.craft.CraftConfig.Craft c = list.get(n);
-            if (!com.wavesurvivor.craft.CraftRecipes.craft(csp, c)) { say(csp, "shrine.craft_need"); return false; }
+            String made = com.wavesurvivor.craft.CraftRecipes.preview(csp, c).getHoverName().getString();
+            if (!com.wavesurvivor.craft.CraftRecipes.craft(csp, c)) { say(csp, c.upgrade() && com.wavesurvivor.craft.CraftRecipes.target(csp, c).isEmpty() ? "rift_armor.no_target" : "shrine.craft_need"); return false; }
             csp.level().playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.7f, 1.3f);
-            say(csp, "shrine.craft_done", com.wavesurvivor.craft.CraftRecipes.result(c).getHoverName().getString());
+            say(csp, "shrine.craft_done", made);
             broadcastChanges();
             return true;
         }

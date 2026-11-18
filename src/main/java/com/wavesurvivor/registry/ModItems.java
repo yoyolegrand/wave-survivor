@@ -180,6 +180,15 @@ public class ModItems {
             () -> new com.wavesurvivor.item.FallenSeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final RegistryObject<Item> FALLEN_SERAPH_BOOTS = ITEMS.register("fallen_seraph_boots",
             () -> new com.wavesurvivor.item.FallenSeraphArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
+    // 2.1 — Armure de la Faille (évolutive : paliers I à III, puis Bénie ou Corrompue ; état dans le NBT « RiftArmor »)
+    public static final RegistryObject<Item> RIFT_HELMET = ITEMS.register("rift_helmet",
+            () -> new com.wavesurvivor.item.RiftArmorItem(net.minecraft.world.item.ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> RIFT_CHESTPLATE = ITEMS.register("rift_chestplate",
+            () -> new com.wavesurvivor.item.RiftArmorItem(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> RIFT_LEGGINGS = ITEMS.register("rift_leggings",
+            () -> new com.wavesurvivor.item.RiftArmorItem(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> RIFT_BOOTS = ITEMS.register("rift_boots",
+            () -> new com.wavesurvivor.item.RiftArmorItem(net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
 
     /** Kingdom : Boussole du Royaume (réglée depuis la carte de la Mairie). */
     /** 2.1 — Objets du Marchand du Néant (îlot de la Faille). */
@@ -583,6 +592,10 @@ public class ModItems {
                         output.accept(FALLEN_SERAPH_CHESTPLATE.get());
                         output.accept(FALLEN_SERAPH_LEGGINGS.get());
                         output.accept(FALLEN_SERAPH_BOOTS.get());
+                        output.accept(RIFT_HELMET.get());
+                        output.accept(RIFT_CHESTPLATE.get());
+                        output.accept(RIFT_LEGGINGS.get());
+                        output.accept(RIFT_BOOTS.get());
                         output.accept(KINGDOM_COMPASS.get());
                         output.accept(RELIQUAIRE_SCELLE.get());
                         output.accept(RIFT_SHARD.get());

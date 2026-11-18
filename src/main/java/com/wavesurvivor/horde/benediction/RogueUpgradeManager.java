@@ -184,6 +184,20 @@ public class RogueUpgradeManager {
     }
 
     /** Clear tous les joueurs connectés (appelé à la fin de la horde). */
+    /**
+     * Une partie sauvegardée attend sa reprise (horde, Kingdom ou Faille) : les bénédictions du joueur (et le « déjà choisi
+     * pour cette vague / ce Calme ») doivent survivre à la reconnexion. Effacées à l'abandon de la sauvegarde.
+     */
+    public static boolean keptForResume(MinecraftServer server) {
+        if (server == null) return false;
+        try {
+            return com.wavesurvivor.horde.HordeSession.get(server).present()
+                    || com.wavesurvivor.horde.rift.RiftSession.get(server).present();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static void clearAllPlayers(MinecraftServer server) {
         if (server == null) return;
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {

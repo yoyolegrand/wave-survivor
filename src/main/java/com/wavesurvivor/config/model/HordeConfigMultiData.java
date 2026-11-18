@@ -354,6 +354,18 @@ public class HordeConfigMultiData {
      * La Faille (2.0) : réglages d'une horde de mode « rift ». Le portail s'ouvre près de l'autel (animation d'ouverture la première fois),
      * les joueurs qui le franchissent arrivent sur une île flottante dans une dimension dédiée.
      */
+    /** Article du Marchand du Néant : objet (identifiant de config, clés de coffre comprises), quantité, prix en améthyste,
+     *  stock (0 = illimité avec limite par joueur et par Calme, n = n par Calme pour l'équipe, −n = n par partie). */
+    public static class MerchantItem {
+        @SerializedName("item") public String item = "";
+        @SerializedName("count") public int count = 1;
+        @SerializedName("price") public int price = 5;
+        @SerializedName("stock") public int stock = 0;
+
+        public MerchantItem() {}
+        public MerchantItem(String item, int count, int price, int stock) { this.item = item; this.count = count; this.price = price; this.stock = stock; }
+    }
+
     public static class RiftSettings {
         /** Multiplicateur de durée de l'animation d'ouverture (1 = 6,5 s ; 0,5 = deux fois plus rapide). */
         @SerializedName("openingSpeed") public double openingSpeed = 1.0;
@@ -516,14 +528,23 @@ public class HordeConfigMultiData {
         @SerializedName("chestGuardMax") public int chestGuardMax = 5;
         @SerializedName("chestGuardHpPct") public int chestGuardHpPct = 200;
         @SerializedName("chestGuardMobs") public java.util.List<String> chestGuardMobs = new java.util.ArrayList<>(java.util.List.of("minecraft:wither_skeleton", "minecraft:vindicator", "minecraft:stray", "minecraft:husk"));
-        @SerializedName("chestBossMob") public String chestBossMob = "minecraft:ravager";
+        @SerializedName("chestBossMob") public String chestBossMob = "rift_gardien_tresor";   // 2.1 : entité custom livrée (éditeur d'entités)
         @SerializedName("chestBossHp") public int chestBossHp = 200;
+        /** 2.1 — Gardien du trésor : fiche de monstre complète (éditeur › Faille › Îlots › Île au coffre). Absente = défaut. */
+        @SerializedName("chestGuardian") public HordeEntity chestGuardian = null;
+        /** 2.1 — Gardiens d'élite : fiches de monstres (un au hasard par place de garde). Absente = défauts. */
+        @SerializedName("chestElites") public java.util.List<HordeEntity> chestElites = null;
         @SerializedName("isletMerchant") public boolean isletMerchant = true;
         @SerializedName("isletMerchantSide") public String isletMerchantSide = "northwest";
         @SerializedName("merchantCalm") public int merchantCalm = 2;
         @SerializedName("merchantLimit") public int merchantLimit = 4;
         @SerializedName("merchantPrices") public java.util.List<Integer> merchantPrices = new java.util.ArrayList<>(java.util.List.of(3, 4, 5, 5, 4, 3, 6, 4, 24, 30, 12, 120));
         @SerializedName("merchantStock") public java.util.List<Integer> merchantStock = new java.util.ArrayList<>(java.util.List.of(0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, -1));
+        /**
+         * 2.1 — Articles du Marchand du Néant (liste libre, éditeur › Faille › Îlots › Marchand). Absente = les 12 articles de base
+         * (avec les anciens prix / stocks merchantPrices / merchantStock s'ils ont été réglés). « titan_key » = Clé du Titan.
+         */
+        @SerializedName("merchantItems") public java.util.List<MerchantItem> merchantItems = null;
         /** Pont : coût au Monolithe (bois + pierre du trésor), PV de chacun des 5 segments, pierre (objets en main) pour réparer un segment. */
         @SerializedName("bridgeWood") public int bridgeWood = 20;
         @SerializedName("bridgeStone") public int bridgeStone = 20;
@@ -777,6 +798,12 @@ public class HordeConfigMultiData {
         @SerializedName("breachPercent") public double breachPercent = 35;
         /** Boss final : la dernière Porte libère le boss final de la horde. */
         @SerializedName("finalBoss") public boolean finalBoss = true;
+        /** 2.1 — Tuto : un joueur qui lance ce Kingdom pour la première fois est accompagné (écran du cycle, bandeaux, liste « À faire »…). */
+        @SerializedName("tutorial") public boolean tutorial = true;
+        /** Tuto : premier Calme sans chrono (l'Assaut démarre quand tout le monde est Prêt). */
+        @SerializedName("tutorialGentleStart") public boolean tutorialGentleStart = true;
+        /** Tuto : sécurité du premier Calme sans chrono (secondes) : l'Assaut démarre quand même après ce délai. */
+        @SerializedName("tutorialGentleMaxSeconds") public int tutorialGentleMaxSeconds = 600;
         /** Thème visuel des Portes : auto, abyss, fire, bone, end, ocean, arcane. */
         @SerializedName("portalTheme") public String portalTheme = "auto";
         /** Style des Portes : "blocks" (structure en vrais blocs, solide) ou "visual" (ancienne Porte entièrement dessinée). */

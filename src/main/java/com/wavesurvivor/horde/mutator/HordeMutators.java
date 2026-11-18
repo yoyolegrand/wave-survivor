@@ -48,6 +48,14 @@ public final class HordeMutators {
     }
 
     /** Fin de horde : plus aucun mutateur actif (règles de jeu restaurées, spectateurs remis en Survie). */
+    /** Remet des mutateurs en place sans annonce (Faille : ils survivent aux changements de phase). */
+    public static synchronized void restoreQuiet(MinecraftServer server, Collection<Mutator> ms) {
+        ACTIVE.clear();
+        ACTIVE.addAll(ms);
+        SERVER = server;
+        if (!ACTIVE.isEmpty()) MutatorEffects.onBegin(server, false);
+    }
+
     public static synchronized void clear() {
         if (!ACTIVE.isEmpty()) MutatorEffects.onEnd(SERVER);
         ACTIVE.clear();

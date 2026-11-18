@@ -14,7 +14,7 @@ public class BenedictionEvents {
 
     private static void refresh(ServerPlayer p) {
         if (com.wavesurvivor.horde.HordeManager.get().isRunning()) RogueUpgradeManager.reapplyAll(p);
-        else RogueUpgradeManager.clearAll(p);
+        else if (!RogueUpgradeManager.keptForResume(p.getServer())) RogueUpgradeManager.clearAll(p);   // partie à reprendre : on garde
     }
 
     @SubscribeEvent

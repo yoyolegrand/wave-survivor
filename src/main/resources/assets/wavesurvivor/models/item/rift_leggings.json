@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wavesurvivor:item/rift_leggings_cracked"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "wavesurvivor:rift_look": 0.25
+      },
+      "model": "wavesurvivor:item/rift_leggings_awakened"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:rift_look": 0.5
+      },
+      "model": "wavesurvivor:item/rift_leggings_anchored"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:rift_look": 0.75
+      },
+      "model": "wavesurvivor:item/rift_leggings_blessed"
+    },
+    {
+      "predicate": {
+        "wavesurvivor:rift_look": 1.0
+      },
+      "model": "wavesurvivor:item/rift_leggings_corrupted"
+    }
+  ]
+}

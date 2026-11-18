@@ -884,6 +884,25 @@ public final class KingdomDefenses {
         p.sendSystemMessage(WSLang.c(broke ? "kingdom.repair_all_partial" : "kingdom.repair_all_done", fixed, hurt.size(), spent));
     }
 
+    /** 2.1 — Tuto : devis de « Tout réparer » sans rien faire : {défenses abîmées, coût total}. */
+    static int[] repairQuote(ServerPlayer p) {
+        int n = 0, chunks = 0;
+        for (Def d : DEFS.values()) {
+            float[] hp = KingdomClaim.hpOf(d.pos);
+            if (hp == null || hp[0] >= hp[1] - 0.5f) continue;
+            n++;
+            chunks += Math.min(4, (int) Math.ceil((hp[1] - hp[0]) / Math.max(1f, hp[1] * 0.25f)));
+        }
+        return new int[]{n, n == 0 ? 0 : chunks * repairCostFor(p)};
+    }
+
+    /** 2.1 — Tuto : prix de la défense la moins chère. */
+    static int cheapestBuy() {
+        int m = Integer.MAX_VALUE;
+        for (int b : BUY) m = Math.min(m, b);
+        return m;
+    }
+
     /** Coût d'une réparation de 25 % pour ce joueur (Bâtisseur, Pierre de Fondation). */
     static int repairCostFor(ServerPlayer p) {
         int c = KingdomRoles.present(KingdomRoles.Role.BUILDER) ? (int) Math.ceil(REPAIR_COST * 1.25 * (1.0 - Math.min(0.9, Voc.pct(KingdomRoles.Role.BUILDER, "builder.restorer.repair_discount")))) : REPAIR_COST;

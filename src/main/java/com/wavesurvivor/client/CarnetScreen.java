@@ -73,7 +73,11 @@ public class CarnetScreen extends Screen {
                 .bounds(left + panelW - 66, top + 5, 60, 16).build());
         // onglets : placés après le titre, largeur selon le texte (réduite proportionnellement si ça ne tient pas)
         int startX = left + 8 + font.width("§l" + WSLang.t("carnet.title")) + 12;
-        int avail = left + panelW - 72 - startX;
+        int avail = left + panelW - 72 - 52 - startX;
+        // 2.1 — écran « Le cycle du Royaume » (tuto du Kingdom)
+        addRenderableWidget(Button.builder(Component.literal(WSLang.t("kingdom.tuto.carnet_cycle")), b -> Minecraft.getInstance().setScreen(new KingdomCycleScreen(this)))
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal(WSLang.t("kingdom.cycle.title"))))
+                .bounds(left + panelW - 66 - 52, top + 5, 48, 16).build());
         int[] ws = new int[TABS.length];
         int total = 0;
         for (int i = 0; i < TABS.length; i++) { ws[i] = font.width(WSLang.t("carnet.tab." + TABS[i])) + 12; total += ws[i] + 2; }

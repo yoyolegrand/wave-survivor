@@ -31,6 +31,7 @@ public final class CraftRecipes {
     }
 
     public static boolean canAfford(Player p, CraftConfig.Craft c) {
+        if (c.upgrade() && target(p, c).isEmpty()) return false;   // amélioration : il faut une pièce éligible
         for (CraftConfig.Cost k : c.cost()) if (count(p, k.item()) < k.count()) return false;
         return !c.cost().isEmpty();
     }
@@ -50,6 +51,22 @@ public final class CraftRecipes {
         return it == null || id == null || !ForgeRegistries.ITEMS.containsKey(id) ? ItemStack.EMPTY : new ItemStack(it);
     }
 
+    // ─── 2.1 : entrées « amélioration » (Armure de la Faille) ───
+
+    /** Pièce que l'amélioration va faire évoluer (vide si aucune n'est éligible). */
+    public static ItemStack target(Player p, CraftConfig.Craft c) {
+        return com.wavesurvivor.item.RiftArmor.branchTarget(p, com.wavesurvivor.item.RiftArmor.Branch.of(c.branch()), c.level());
+    }
+
+    /** Aperçu pour l'écran : l'objet fabriqué, ou la pièce telle qu'elle sera après l'amélioration. */
+    public static ItemStack preview(Player p, CraftConfig.Craft c) {
+        if (!c.upgrade()) return result(c);
+        ItemStack t = target(p, c);
+        ItemStack out = t.isEmpty() ? result(c) : t.copy();
+        if (!out.isEmpty()) com.wavesurvivor.item.RiftArmor.setBranch(out, com.wavesurvivor.item.RiftArmor.Branch.of(c.branch()), c.level());
+        return out;
+    }
+
     public static ItemStack result(CraftConfig.Craft c) {
         ItemStack st = icon(c.result());
         if (!st.isEmpty()) st.setCount(c.count());
@@ -58,6 +75,14 @@ public final class CraftRecipes {
 
     /** Consomme les ingrédients et donne le résultat (au sol si l'inventaire est plein). Renvoie false si le joueur ne peut pas payer. */
     public static boolean craft(ServerPlayer sp, CraftConfig.Craft c) {
+        if (c.upgrade()) {   // la pièce garde son NBT (enchantements, durabilité, améliorations) ; le choix de branche est définitif
+            ItemStack t = target(sp, c);
+            if (t.isEmpty() || !canAfford(sp, c)) return false;
+            com.wavesurvivor.item.RiftArmor.pay(sp, c.cost());
+            com.wavesurvivor.item.RiftArmor.setBranch(t, com.wavesurvivor.item.RiftArmor.Branch.of(c.branch()), c.level());
+            sp.getInventory().setChanged();
+            return true;
+        }
         ItemStack out = result(c);
         if (out.isEmpty() || !canAfford(sp, c)) return false;
         for (CraftConfig.Cost k : c.cost()) {

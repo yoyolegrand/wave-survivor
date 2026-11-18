@@ -172,7 +172,7 @@ public class TitanChest {
             be.setColor(RouletteChestManager.colorFor(cfg));
             be.setStyle(RouletteChestManager.styleFor(cfg).toJson());
         }
-        RouletteChestManager.registerIdle(at, cfg);
+        RouletteChestManager.registerIdle(at, cfg, l);
         level = l;
         pos = at.immutable();
         implodeAt = -1;
@@ -456,10 +456,10 @@ public class TitanChest {
             l.playSound(null, at, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 4f, 0.6f);
             l.playSound(null, at, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 4f, 0.5f);
             l.playSound(null, at, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.5f, 0.5f);
-            List<ServerPlayer> present = new ArrayList<>();
-            for (ServerPlayer p : l.players()) {
-                if (p.isSpectator()) continue;
-                present.add(p);
+            // 2.1 — une Clé par participant de la Faille (même mort / en attente de retour), sinon les joueurs présents
+            List<ServerPlayer> present = new ArrayList<>(RiftManager.rewardPlayers(l));
+            if (present.isEmpty()) for (ServerPlayer p : l.players()) if (!p.isSpectator()) present.add(p);
+            for (ServerPlayer p : present) {
                 com.wavesurvivor.network.ShakePacket.send(p, 20, 0.6f);
                 p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(10, 70, 20));
                 p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(

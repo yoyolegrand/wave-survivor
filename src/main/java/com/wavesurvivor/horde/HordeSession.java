@@ -171,6 +171,8 @@ public class HordeSession extends SavedData {
         if (!s.present()) { src.sendFailure(Component.literal(WSLang.t("session.none"))); return 0; }
         String name = s.horde;
         discard(src.getServer());
+        if (!com.wavesurvivor.horde.rift.RiftSession.get(src.getServer()).present())
+            com.wavesurvivor.horde.benediction.RogueUpgradeManager.clearAllPlayers(src.getServer());   // partie abandonnée : bénédictions dissipées
         src.sendSuccess(() -> Component.literal(WSLang.t("session.abandoned", WSLang.t(name))), true);
         return 1;
     }

@@ -47,49 +47,78 @@ public final class VoidMerchant {
 
     private VoidMerchant() {}
 
-    public static final int N = 12;
+    /** Nombre maximal d'articles. */
+    public static final int MAX = 32;
     static final String TAG = "ws_void_merchant";
-    private static final int[] DEF_PRICE = {3, 4, 5, 5, 4, 3, 6, 4, 24, 30, 12, 120};
-    private static final int[] DEF_STOCK = {0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, -1};
+    /** Articles de base (liste par défaut d'un nouveau Marchand) : identifiant, quantité, prix, stock. « titan_key » = Clé du Titan. */
+    public static final String[] BASE_ITEM = {"wavesurvivor:fiole_neant", "minecraft:golden_apple", "wavesurvivor:elixir_resistance",
+            "wavesurvivor:elixir_force", "wavesurvivor:pierre_rappel", "wavesurvivor:kit_pont", "wavesurvivor:kit_engin",
+            "wavesurvivor:lanterne_vigie", "titan_key", "wavesurvivor:poussiere_faille", "wavesurvivor:relance_benediction", "wavesurvivor:rift_shard"};
+    public static final int[] BASE_COUNT = {1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1};
+    public static final int[] BASE_PRICE = {3, 4, 5, 5, 4, 3, 6, 4, 24, 30, 12, 120};
+    public static final int[] BASE_STOCK = {0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, -1};
+    public static final String TITAN_KEY = "titan_key";
 
     private static boolean arrived;
     private static int calms;                 // Calmes du Siège écoulés
     private static BlockPos spot;             // pied du marchand, derrière son comptoir
     private static float yaw;
     private static UUID entity;
-    private static final int[] stock = new int[N];      // restant ce Calme (−1 = illimité)
-    private static final int[] runBought = new int[N];  // achats de la partie (articles « par partie »)
+    private static final int[] stock = new int[MAX];      // restant ce Calme (−1 = illimité)
+    private static final int[] runBought = new int[MAX];  // achats de la partie (articles « par partie »)
     private static final Map<UUID, int[]> personal = new HashMap<>();
 
     private static HordeConfigMultiData.RiftSettings rs() { return RiftManager.settingsPublic(); }
 
+    /** Articles vendus : la liste de la horde, sinon les 12 de base (anciens prix / stocks repris s'ils existent). */
+    static List<HordeConfigMultiData.MerchantItem> items() {
+        HordeConfigMultiData.RiftSettings s = rs();
+        List<HordeConfigMultiData.MerchantItem> out = new ArrayList<>();
+        if (s.merchantItems != null) {
+            for (HordeConfigMultiData.MerchantItem m : s.merchantItems) {
+                if (m == null || m.item == null || m.item.isBlank()) continue;
+                out.add(m);
+                if (out.size() >= MAX) break;
+            }
+            return out;
+        }
+        for (int i = 0; i < BASE_ITEM.length; i++) {
+            int p = s.merchantPrices != null && i < s.merchantPrices.size() && s.merchantPrices.get(i) != null ? s.merchantPrices.get(i) : BASE_PRICE[i];
+            int st = s.merchantStock != null && i < s.merchantStock.size() && s.merchantStock.get(i) != null ? s.merchantStock.get(i) : BASE_STOCK[i];
+            out.add(new HordeConfigMultiData.MerchantItem(BASE_ITEM[i], BASE_COUNT[i], p, st));
+        }
+        return out;
+    }
+
+    static int count() { return items().size(); }
+
     static int price(int i) {
-        List<Integer> l = rs().merchantPrices;
-        int v = l != null && i < l.size() && l.get(i) != null ? l.get(i) : DEF_PRICE[i];
-        return Math.max(0, Math.min(999, v));
+        List<HordeConfigMultiData.MerchantItem> l = items();
+        return i < l.size() ? Math.max(0, Math.min(999, l.get(i).price)) : 0;
     }
 
     static int stockSetting(int i) {
-        List<Integer> l = rs().merchantStock;
-        return l != null && i < l.size() && l.get(i) != null ? l.get(i) : DEF_STOCK[i];
+        List<HordeConfigMultiData.MerchantItem> l = items();
+        return i < l.size() ? Math.max(-99, Math.min(99, l.get(i).stock)) : 0;
     }
 
-    /** L'objet vendu (Clé : celle du Coffre du Titan ; Poussière de Faille par 4). */
+    /** L'objet vendu (« titan_key » : clé du Coffre du Titan ; sinon identifiant de config, clés de coffre comprises). */
     static ItemStack stack(int i) {
-        return switch (i) {
-            case 0 -> new ItemStack(ModItems.FIOLE_NEANT.get());
-            case 1 -> new ItemStack(Items.GOLDEN_APPLE);
-            case 2 -> new ItemStack(ModItems.ELIXIR_RESISTANCE.get());
-            case 3 -> new ItemStack(ModItems.ELIXIR_FORCE.get());
-            case 4 -> new ItemStack(ModItems.PIERRE_RAPPEL.get());
-            case 5 -> new ItemStack(ModItems.KIT_PONT.get());
-            case 6 -> new ItemStack(ModItems.KIT_ENGIN.get());
-            case 7 -> new ItemStack(ModItems.LANTERNE_VIGIE.get());
-            case 8 -> TitanChest.key();
-            case 9 -> new ItemStack(ModItems.POUSSIERE_FAILLE.get(), 4);
-            case 10 -> new ItemStack(ModItems.RELANCE_BENEDICTION.get());
-            default -> new ItemStack(ModItems.RIFT_SHARD.get());
-        };
+        List<HordeConfigMultiData.MerchantItem> l = items();
+        if (i < 0 || i >= l.size()) return ItemStack.EMPTY;
+        HordeConfigMultiData.MerchantItem m = l.get(i);
+        int n = Math.max(1, Math.min(64, m.count));
+        ItemStack st = TITAN_KEY.equals(m.item) ? TitanChest.key() : com.wavesurvivor.horde.loot.LootItems.resolve(m.item, n);
+        if (!st.isEmpty()) st.setCount(Math.min(n, st.getMaxStackSize()));
+        return st;
+    }
+
+    /** Description d'un article de base (clé de langue), vide pour un article ajouté (l'infobulle de l'objet sert alors). */
+    static String desc(int i) {
+        List<HordeConfigMultiData.MerchantItem> l = items();
+        if (i < 0 || i >= l.size()) return "";
+        for (int k = 0; k < BASE_ITEM.length; k++) if (BASE_ITEM[k].equals(l.get(i).item)) return "rift.merchant.desc." + k;
+        return "";
     }
 
     // ─── Cycle ───
@@ -113,7 +142,8 @@ public final class VoidMerchant {
     }
 
     private static void restock() {
-        for (int i = 0; i < N; i++) {
+        java.util.Arrays.fill(stock, -1);
+        for (int i = 0; i < count(); i++) {
             int s = stockSetting(i);
             stock[i] = s > 0 ? s : -1;
         }
@@ -195,13 +225,16 @@ public final class VoidMerchant {
 
     static void openFor(ServerPlayer p) {
         List<VoidMerchantPackets.Entry> list = new ArrayList<>();
-        for (int i = 0; i < N; i++) list.add(new VoidMerchantPackets.Entry(stack(i), price(i), left(p, i)));
+        for (int i = 0; i < count(); i++) {
+            ItemStack st = stack(i);
+            if (!st.isEmpty()) list.add(new VoidMerchantPackets.Entry(i, st, price(i), left(p, i), desc(i)));
+        }
         NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), new VoidMerchantPackets.Open(list, amethyst(p)));
     }
 
     /** Achat (paquet du client). */
     public static void buy(ServerPlayer p, int i) {
-        if (i < 0 || i >= N || !RiftManager.isActive() || p.level().dimension() != RiftManager.RIFT_DIM) return;
+        if (i < 0 || i >= count() || !RiftManager.isActive() || p.level().dimension() != RiftManager.RIFT_DIM) return;
         if (!open()) { p.displayClientMessage(Component.literal(WSLang.t("rift.merchant.closed")), true); return; }
         if (spot == null || p.distanceToSqr(spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5) > 12 * 12) return;
         int left = left(p, i);
@@ -214,7 +247,7 @@ public final class VoidMerchant {
         int s = stockSetting(i);
         if (s < 0) runBought[i]++;
         else if (s > 0) stock[i] = Math.max(0, stock[i] - 1);
-        else personal.computeIfAbsent(p.getUUID(), k -> new int[N])[i]++;
+        else personal.computeIfAbsent(p.getUUID(), k -> new int[MAX])[i]++;
         if (!p.getInventory().add(st)) p.drop(st, false);
         p.level().playSound(null, p.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1f, 1.2f);
         openFor(p);
@@ -238,7 +271,7 @@ public final class VoidMerchant {
         arrived = t.getBoolean("arrived");
         calms = t.getInt("calms");
         int[] s = t.getIntArray("stock"), r = t.getIntArray("run");
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < MAX; i++) {
             stock[i] = i < s.length ? s[i] : -1;
             runBought[i] = i < r.length ? r[i] : 0;
         }
@@ -246,8 +279,8 @@ public final class VoidMerchant {
         CompoundTag per = t.getCompound("personal");
         for (String k : per.getAllKeys()) {
             try {
-                int[] v = per.getIntArray(k), w = new int[N];
-                System.arraycopy(v, 0, w, 0, Math.min(N, v.length));
+                int[] v = per.getIntArray(k), w = new int[MAX];
+                System.arraycopy(v, 0, w, 0, Math.min(MAX, v.length));
                 personal.put(UUID.fromString(k), w);
             } catch (IllegalArgumentException ignored) {}
         }

@@ -224,6 +224,7 @@ public class BrecheEntity extends Mob implements net.minecraft.world.entity.mons
             // Mode Kingdom : bouclier pendant l'Assaut (le portail ne peut être attaqué que pendant le Calme)
             if (source.getEntity() instanceof net.minecraft.server.level.ServerPlayer sp) {
                 sp.displayClientMessage(com.wavesurvivor.i18n.WSLang.c("kingdom.portal_shielded"), true);
+                com.wavesurvivor.horde.kingdom.KingdomTuto.tip(sp, "gate_shield");   // 2.1 — tuto
             }
             this.level().playSound(null, this.blockPosition(), SoundEvents.SHIELD_BLOCK, net.minecraft.sounds.SoundSource.HOSTILE, 1f, 0.6f);
             return false;

@@ -87,7 +87,8 @@ public class HordeLootHandler {
             qty = com.wavesurvivor.horde.mutator.MutatorEffects.scaleQty(qty); // bonus des mutateurs (ex. ×1,45)
             if (qty <= 0) continue;
 
-            ItemStack stack = LootItems.resolve(loot.item, qty);
+            // clé d'un coffre qui n'apparaît pas dans cette partie → clé d'un coffre posé aux pauses
+            ItemStack stack = LootItems.resolve(com.wavesurvivor.horde.roulette.GameChestKeys.remap(loot.item), qty);
             if (stack.isEmpty()) continue;
 
             ItemEntity drop = new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), stack);

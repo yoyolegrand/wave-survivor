@@ -559,6 +559,8 @@ public final class KingdomManager {
         // Premier Assaut dans 10 secondes
         phase = Phase.CALM;
         phaseEndTick = server.getTickCount() + 200;
+        // 2.1 — Tuto : joueurs nouveaux accompagnés ; premier Calme sans chrono (part au Prêt de tous)
+        phaseEndTick = KingdomTuto.onStart(server, h, server.getTickCount(), phaseEndTick);
         calmStartTick = server.getTickCount() - TWILIGHT; // pas d'aube au lancement : on part en plein jour
         nextSmallBreachTick = Long.MAX_VALUE;
         for (Portal p : PORTALS) { p.budget = 0; p.spawned = 0; }
@@ -668,6 +670,7 @@ public final class KingdomManager {
         // Assaut du boss final atteint sans Porte du Roi (aucune Porte détruite) : le Roi choisit la Porte la plus abîmée
         if (!rush && cfg.finalBoss && hasFinalBoss() && !finalMarked && cycle >= finalBossWave()) markFinalForced();
         phase = Phase.ASSAULT;
+        KingdomTuto.onAssault(CATS.size());   // 2.1 — tuto : bandeau, astuce, catalyseur laissé ouvert (avant clearCatalyst)
         KingdomReport.start(cycle); // bilan de fin d'Assaut : compteurs remis à zéro
         // 2.1 — Siège de la Faille : un groupe de monstres part reprendre l'île-autel
         if (!rush && com.wavesurvivor.horde.rift.RiftManager.kingdomSiege()) com.wavesurvivor.horde.rift.RiftIslets.onAssault(level.getServer());
@@ -697,6 +700,7 @@ public final class KingdomManager {
         // Fin du Calme : marchands et coffres repartent ; tirage d'un éventuel assaut spécial ; boss d'assaut
         HordeManager.get().kingdomCalmEnd(level.getServer());
         if (!rush) pickSpecial();
+        if (!rush) HordeManager.get().onAssaultStartTriggers(level.getServer(), cycle);   // 2.1 : événements du Chaos « par Assaut »
         spawnAssaultBosses();
         nextSpawnTick = now + 20;
         nextBloodBreachTick = now + 15 * 20L; // Lune de sang : première brèche 15 s après le début de l'Assaut
@@ -762,6 +766,7 @@ public final class KingdomManager {
         scoutReport();
         nextSpawnTick = now + 40;
         nextSmallBreachTick = cfg.smallBreachSeconds > 0 ? now + cfg.smallBreachSeconds * 20L : Long.MAX_VALUE;
+        if (!resuming) KingdomTuto.onCalm(now, phaseEndTick, (int) ((phaseEndTick - now) / 20));   // 2.1 — tuto : bandeau, « Prêt »
         com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), WSLang.c("kingdom.calm", cycle, com.wavesurvivor.horde.bossrush.BossRush.active() ? com.wavesurvivor.horde.bossrush.BossRush.pauseSeconds() : Math.max(10, cfg.calmSeconds)),
                 "minecraft:feather", com.wavesurvivor.network.EventFeedPacket.RESOURCE, false);
         for (ServerPlayer p : level.players()) {
@@ -801,6 +806,7 @@ public final class KingdomManager {
                     p.corruption = null;
                 }
                 broadcastImportant(WSLang.c("kingdom.portal_destroyed", WSLang.t("kingdom.dir." + p.dir)));
+                KingdomTuto.tipAll("gate_destroyed");
                 level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, p.pos.getX() + 0.5, p.pos.getY() + 2, p.pos.getZ() + 0.5, 3, 1, 1, 1, 0);
                 for (ServerPlayer pl : level.players()) level.playSound(null, pl.blockPosition(), SoundEvents.WITHER_DEATH, SoundSource.HOSTILE, 1f, 1.2f);
             } else {
@@ -907,6 +913,36 @@ public final class KingdomManager {
         if (now % 20 == 0) retarget();
         if (now % 10 == 0) updateBar(now, alive);
         if (now % 10 == 0) shieldParticles();
+        KingdomTuto.tick(server, now);   // 2.1 — tuto : liste « À faire »
+    }
+
+    /** 2.1 — « Prêt » de tous pendant un Calme (parties avec tuto) : l'Assaut démarre au tick suivant. */
+    public static void skipCalm() {
+        if (active && phase == Phase.CALM && level != null) phaseEndTick = Math.min(phaseEndTick, level.getServer().getTickCount());
+    }
+
+    /**
+     * 2.1 — Vue d'une Porte pour le tuto : position, direction, détruite, protégée, débréchée par un catalyseur,
+     * Gardiens encore en vie et position du plus proche d'entre eux (null s'il n'y en a plus).
+     */
+    public record GateView(BlockPos pos, String dir, boolean destroyed, boolean shielded, boolean breached, int guards, BlockPos guardPos) {}
+
+    public static List<GateView> gates() {
+        List<GateView> out = new ArrayList<>();
+        if (!active || level == null) return out;
+        for (Portal p : PORTALS) {
+            boolean sh = !(level.getEntity(p.id) instanceof BrecheEntity b) || b.isShielded();
+            int guards = 0;
+            BlockPos gp = null;
+            for (UUID id : p.guardians) {
+                Entity e = level.getEntity(id);
+                if (e == null || !e.isAlive()) continue;
+                guards++;
+                if (gp == null) gp = e.blockPosition();
+            }
+            out.add(new GateView(p.pos, p.dir, p.destroyed, p.destroyed || sh, p.breached, guards, gp));
+        }
+        return out;
     }
 
     // ─── Gardiens, Catalyseur, Porte du Roi ───
@@ -1299,6 +1335,7 @@ public final class KingdomManager {
         if (!level.addFreshEntity(c)) return false;
         CATS.add(c.getUUID());
         CAT_GATES.add(gi);
+        KingdomTuto.tipAll("catalyst");
         for (int i = 0; i < Math.max(0, cfg.catalystEscort); i++) {
             LivingEntity g = spawnDetached(pickTemplate(p.num), at, 4);
             if (g == null) break;
@@ -1649,6 +1686,7 @@ public final class KingdomManager {
         r.setSilent(true);
         if (!level.addFreshEntity(r)) return;
         RIFTS.add(new Rift(r.getUUID(), at, now, n));
+        KingdomTuto.tipAll("small_breach");
         level.playSound(null, at, SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 1.6f, 0.8f);
         com.wavesurvivor.network.EventFeedPacket.toAll(level.getServer(), WSLang.c("kingdom.small_breach", WSLang.t("kingdom.dir." + directionOf(a)), n),
                 "minecraft:ender_eye", com.wavesurvivor.network.EventFeedPacket.ARCANE, false);
@@ -1754,12 +1792,13 @@ public final class KingdomManager {
         } else {
             long secs = Math.max(0, (phaseEndTick - now) / 20);
             String time = String.format("%d:%02d", secs / 60, secs % 60);
-            bar.setName(Component.literal(cycle == 0
-                    ? WSLang.t("kingdom.bar_prepare", time)
-                    : WSLang.t("kingdom.bar_calm", cycle, time, portalsLeft)));
+            String ready = com.wavesurvivor.horde.ready.ReadyManager.hudSuffix(KingdomTuto.READY_KEY);
+            bar.setName(Component.literal((cycle == 0
+                    ? (KingdomTuto.gentle() ? WSLang.t("kingdom.tuto.bar_gentle") : WSLang.t("kingdom.bar_prepare", time))
+                    : WSLang.t("kingdom.bar_calm", cycle, time, portalsLeft)) + ready));
             bar.setColor(BossEvent.BossBarColor.GREEN);
             long full = cycle == 0 ? 200 : Math.max(10, cfg.calmSeconds) * 20L;
-            bar.setProgress(Math.max(0f, Math.min(1f, (phaseEndTick - now) / (float) full)));
+            bar.setProgress(KingdomTuto.gentle() && cycle == 0 ? 1f : Math.max(0f, Math.min(1f, (phaseEndTick - now) / (float) full)));
         }
     }
 
@@ -1817,6 +1856,7 @@ public final class KingdomManager {
 
     /** Arrêt complet (fin de partie, /ws stop, défaite) : portails retirés, barre masquée. */
     public static void stop(MinecraftServer server) {
+        KingdomTuto.onEnd(server, cycle);   // 2.1 — tuto : « déjà fait » posé après au moins un Assaut
         RaidManager.stop(); // joueurs de l'arène renvoyés chez eux avant de tout restaurer
         raidAwait = false;
         raidBoss = null;

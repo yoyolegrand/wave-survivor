@@ -182,7 +182,92 @@ public class CraftEquipEvents {
                         victim.getX(), victim.getY(0.6), victim.getZ(), 4, 0.25, 0.3, 0.25, 0);
             }
         }
+        // 2.1 — Armure de la Faille : Ancre (moins de dégâts des ennemis de la Faille) et Faim (vol de vie)
+        if (victim instanceof ServerPlayer rp && com.wavesurvivor.horde.rift.RiftEffect.isRiftEnemy(src.getEntity())) {
+            com.wavesurvivor.item.RiftArmor.SetInfo rs = com.wavesurvivor.item.RiftArmor.set(rp);
+            if (rs.full()) amt *= 1f - (float) com.wavesurvivor.item.RiftArmor.byTier("riftDamageReductionPercent", rs.tier(), rs.tier() == 3 ? 15 : rs.tier() == 2 ? 10 : 0) / 100f;
+        }
+        if (src.getEntity() instanceof ServerPlayer hp && victim != hp && amt > 0) {
+            com.wavesurvivor.item.RiftArmor.SetInfo rs = com.wavesurvivor.item.RiftArmor.set(hp);
+            if (rs.full() && rs.branch() == com.wavesurvivor.item.RiftArmor.Branch.CORRUPTED) {
+                double pct = com.wavesurvivor.item.RiftArmor.byLevel(rs.branch(), "lifestealPercent", rs.level(), 0);
+                if (pct > 0 && hp.getHealth() < hp.getMaxHealth()) hp.heal(amt * (float) pct / 100f);
+            }
+        }
         e.setAmount(amt);
+    }
+
+    // ─── 2.1 : Armure de la Faille — Onde de faille et Grâce ───
+
+    private static final Map<UUID, Long> RIFT_WAVE = new HashMap<>();
+
+    /** Un coup fait passer le porteur (ensemble au palier III) sous 35 % de vie : Onde de faille (si la recharge le permet). */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onRiftWave(LivingDamageEvent e) {
+        if (!(e.getEntity() instanceof ServerPlayer p) || e.getAmount() <= 0 || p.isSpectator()) return;
+        com.wavesurvivor.item.RiftArmor.SetInfo s = com.wavesurvivor.item.RiftArmor.set(p);
+        if (!s.full() || s.tier() < 3) return;
+        float thr = p.getMaxHealth() * (float) com.wavesurvivor.item.RiftArmor.num("waveBelowPercent", 35) / 100f;
+        float after = p.getHealth() - e.getAmount();
+        if (p.getHealth() < thr || after >= thr || after <= 0) return;
+        boolean hunger = s.branch() == com.wavesurvivor.item.RiftArmor.Branch.CORRUPTED;
+        double cd = hunger ? com.wavesurvivor.item.RiftArmor.branchNum(s.branch(), "waveCooldownSeconds", 30)
+                : com.wavesurvivor.item.RiftArmor.num("waveCooldownSeconds", 45);
+        long now = p.level().getGameTime();
+        Long last = RIFT_WAVE.get(p.getUUID());
+        if (last != null && now - last < cd * 20) return;
+        RIFT_WAVE.put(p.getUUID(), now);
+        riftWave(p, s);
+    }
+
+    private static void riftWave(ServerPlayer p, com.wavesurvivor.item.RiftArmor.SetInfo s) {
+        if (!(p.level() instanceof ServerLevel l)) return;
+        boolean grace = s.branch() == com.wavesurvivor.item.RiftArmor.Branch.BLESSED, hunger = s.branch() == com.wavesurvivor.item.RiftArmor.Branch.CORRUPTED;
+        double r = com.wavesurvivor.item.RiftArmor.num("waveRadius", 4), kb = com.wavesurvivor.item.RiftArmor.num("waveKnockback", 1.2);
+        int slow = (int) com.wavesurvivor.item.RiftArmor.num("waveSlownessSeconds", 3);
+        // Particules aux couleurs de l'armure : turquoise, or (Bénie) ou rose (Corrompue)
+        org.joml.Vector3f col = grace ? new org.joml.Vector3f(1f, 0.82f, 0.3f) : hunger ? new org.joml.Vector3f(0.95f, 0.35f, 0.75f) : new org.joml.Vector3f(0.25f, 0.9f, 0.85f);
+        var dust = new net.minecraft.core.particles.DustParticleOptions(col, 1.4f);
+        for (double rr = 1; rr <= r; rr += 1) {
+            for (int a = 0; a < 360; a += 12) {
+                double ang = Math.toRadians(a);
+                l.sendParticles(dust, p.getX() + Math.cos(ang) * rr, p.getY() + 0.3, p.getZ() + Math.sin(ang) * rr, 1, 0, 0.05, 0, 0);
+            }
+        }
+        l.playSound(null, p.blockPosition(), SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.PLAYERS, 1.2f, 0.8f);
+        l.playSound(null, p.blockPosition(), SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 1.0f, 1.3f);
+        for (LivingEntity t : l.getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(r), x -> x != p && x.isAlive() && x instanceof Enemy)) {
+            if (t.distanceTo(p) > r + 0.5) continue;
+            t.knockback(kb, p.getX() - t.getX(), p.getZ() - t.getZ());
+            t.hurtMarked = true;
+            if (slow > 0) t.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, slow * 20, 1));
+            if (hunger) {   // Faim de la Faille : dégâts et Flétrissement
+                float dmg = (float) com.wavesurvivor.item.RiftArmor.branchNum(s.branch(), "waveDamage", 4);
+                if (dmg > 0) t.hurt(l.damageSources().indirectMagic(p, p), dmg);
+                int w = (int) com.wavesurvivor.item.RiftArmor.branchNum(s.branch(), "waveWitherSeconds", 3);
+                if (w > 0) t.addEffect(new MobEffectInstance(MobEffects.WITHER, w * 20, 0));
+            }
+        }
+        if (grace) {   // Grâce de la Faille : l'Onde soigne aussi les alliés proches
+            double ar = com.wavesurvivor.item.RiftArmor.branchNum(s.branch(), "waveAllyRadius", 6);
+            float heal = (float) com.wavesurvivor.item.RiftArmor.branchNum(s.branch(), "waveAllyHeal", 4);
+            for (ServerPlayer o : l.players()) {
+                if (o == p || o.isSpectator() || !o.isAlive() || o.distanceTo(p) > ar) continue;
+                o.heal(heal);
+                l.sendParticles(net.minecraft.core.particles.ParticleTypes.HEART, o.getX(), o.getY() + 1.8, o.getZ(), 3, 0.3, 0.2, 0.3, 0);
+            }
+        }
+        p.displayClientMessage(Component.literal((grace ? "§e" : hunger ? "§d" : "§b") + WSLang.t("rift_armor.wave")), true);
+    }
+
+    /** Grâce de la Faille (4 pièces bénies) : soins reçus augmentés selon le niveau. */
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onRiftGraceHeal(net.minecraftforge.event.entity.living.LivingHealEvent e) {
+        if (!(e.getEntity() instanceof ServerPlayer p)) return;
+        com.wavesurvivor.item.RiftArmor.SetInfo s = com.wavesurvivor.item.RiftArmor.set(p);
+        if (!s.full() || s.branch() != com.wavesurvivor.item.RiftArmor.Branch.BLESSED) return;
+        double pct = com.wavesurvivor.item.RiftArmor.byLevel(s.branch(), "healingReceivedPercent", s.level(), 5 * s.level());
+        e.setAmount(e.getAmount() * (1f + (float) pct / 100f));
     }
 
     /** Lame de l'aube : tuer un mort-vivant (ou un Corrompu) au corps à corps donne Force I pendant quelques secondes. */

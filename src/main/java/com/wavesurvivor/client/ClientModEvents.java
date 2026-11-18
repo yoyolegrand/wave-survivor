@@ -32,6 +32,11 @@ public class ClientModEvents {
             net.minecraft.client.renderer.item.ItemProperties.register(com.wavesurvivor.registry.ModItems.ROULETTE_KEY.get(),
                     new net.minecraft.resources.ResourceLocation("wavesurvivor", "key_shape"),
                     (stack, level, entity, seed) -> com.wavesurvivor.horde.roulette.RouletteKeyItem.shapeIndex(stack));
+            // 2.1 — Armure de la Faille : icône selon le palier / la branche (0 / 0,25 / 0,5 / 0,75 bénie / 1 corrompue)
+            for (var ro : java.util.List.of(com.wavesurvivor.registry.ModItems.RIFT_HELMET, com.wavesurvivor.registry.ModItems.RIFT_CHESTPLATE,
+                    com.wavesurvivor.registry.ModItems.RIFT_LEGGINGS, com.wavesurvivor.registry.ModItems.RIFT_BOOTS))
+                net.minecraft.client.renderer.item.ItemProperties.register(ro.get(), new net.minecraft.resources.ResourceLocation("wavesurvivor", "rift_look"),
+                        (stack, level, entity, seed) -> com.wavesurvivor.item.RiftArmor.look(stack));
             // Boussole des Vestiges : même aiguille que la boussole vanilla (image 00 = cible droit devant), cible reçue du serveur
             net.minecraft.client.renderer.item.ItemProperties.register(com.wavesurvivor.registry.ModItems.VESTIGE_COMPASS.get(),
                     new net.minecraft.resources.ResourceLocation("angle"),
@@ -74,6 +79,7 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(com.wavesurvivor.client.armor.SeraphArmorModel.LAYER, com.wavesurvivor.client.armor.SeraphArmorModel::createBodyLayer); // Armure du Séraphin
+        event.registerLayerDefinition(com.wavesurvivor.client.armor.RiftArmorModel.LAYER, com.wavesurvivor.client.armor.RiftArmorModel::createBodyLayer); // 2.1 : Armure de la Faille
         event.registerLayerDefinition(DjinnModel.LAYER, DjinnModel::createBodyLayer); // Djinn : turban et queue de fumée
         event.registerLayerDefinition(ScarabModel.LAYER, ScarabModel::createBodyLayer); // Scarabée (modèle sur mesure)
         event.registerLayerDefinition(ScorpionModel.LAYER, ScorpionModel::createBodyLayer); // Scorpion (modèle sur mesure)

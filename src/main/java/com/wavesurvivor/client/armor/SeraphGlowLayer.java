@@ -51,6 +51,11 @@ public class SeraphGlowLayer<T extends LivingEntity, M extends HumanoidModel<T>>
             } else if (item instanceof SeraphArmorItem) {
                 model = SeraphArmorClient.model(slot, this.getParentModel());
                 tex = SERAPH_GLOW;
+            } else if (item instanceof com.wavesurvivor.item.RiftArmorItem) {   // 2.1 : Armure de la Faille (rien au palier I)
+                var st = entity.getItemBySlot(slot);
+                tex = RiftArmorClient.glow(st);
+                if (tex == null) continue;
+                model = RiftArmorClient.model(slot, this.getParentModel(), st);
             } else continue;
             model.renderToBuffer(ps, buffers.getBuffer(RenderType.eyes(tex)), 0xF000F0, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
         }

@@ -1028,8 +1028,8 @@
         },
         {
           "item": "wavesurvivor:poussiere_faille",
-          "minQty": 3,
-          "maxQty": 5,
+          "minQty": 10,
+          "maxQty": 14,
           "chance": 12.6,
           "tier": "COMMON"
         },
@@ -1056,8 +1056,8 @@
         },
         {
           "item": "wavesurvivor:poussiere_faille",
-          "minQty": 8,
-          "maxQty": 8,
+          "minQty": 20,
+          "maxQty": 24,
           "chance": 7.0,
           "tier": "RARE"
         },
@@ -1206,7 +1206,7 @@
     },
     {
       "name": "Coffre des Ruines",
-      "scale": 1.6,
+      "scale": 2.0,
       "particles": {
         "idle": {
           "a": "end_rod",
@@ -1303,41 +1303,115 @@
           "tier": "LEGENDARY"
         }
       ],
-      "accentColor": "#E8B04D",
-      "woodColor": "#5A3A22",
-      "ironColor": "#E8B04D",
-      "gemColor": "#B070FF",
+      "accentColor": "#F2C94C",
+      "woodColor": "#3A2414",
+      "ironColor": "#D9A93A",
+      "gemColor": "#E8B04D",
       "medallions": {
         "front": [
           {
-            "symbol": "custom:faille",
+            "symbol": "custom:serrure",
             "size": "large",
-            "color": "#E8B04D"
+            "color": "#F2C94C"
           }
         ],
         "top": [
           {
-            "symbol": "custom:faille",
+            "symbol": "custom:couronne",
             "size": "large",
-            "color": "#B070FF"
+            "color": "#F2C94C"
+          },
+          {
+            "symbol": "custom:joyau",
+            "size": "small",
+            "color": "#E8B04D"
+          }
+        ],
+        "left": [
+          {
+            "symbol": "custom:arche",
+            "size": "large",
+            "color": "#D9A93A"
+          }
+        ],
+        "right": [
+          {
+            "symbol": "custom:arche",
+            "size": "large",
+            "color": "#D9A93A"
+          }
+        ],
+        "back": [
+          {
+            "symbol": "custom:maillon",
+            "size": "large",
+            "color": "#D9A93A"
           }
         ]
       },
       "customSymbols": {
-        "faille": [
+        "serrure": [
           "...####...",
-          "..##..##..",
+          "..#....#..",
+          "..#....#..",
+          ".########.",
           ".##....##.",
           ".#..##..#.",
-          ".#.#..#.#.",
-          ".#.#..#.#.",
           ".#..##..#.",
+          ".#...#..#.",
           ".##....##.",
-          "..##..##..",
-          "...####..."
+          ".########."
+        ],
+        "couronne": [
+          "..........",
+          "#...##...#",
+          "##..##..##",
+          "##.####.##",
+          "##########",
+          ".########.",
+          ".#.#..#.#.",
+          ".########.",
+          "..........",
+          ".........."
+        ],
+        "joyau": [
+          "..........",
+          "..........",
+          "...####...",
+          "..#....#..",
+          ".#......#.",
+          "..#....#..",
+          "...#..#...",
+          "....##....",
+          "..........",
+          ".........."
+        ],
+        "arche": [
+          "..######..",
+          ".#......#.",
+          "#..####..#",
+          "#.#....#.#",
+          "#.#....#.#",
+          "#.#....#.#",
+          "#.#....#.#",
+          "#.#....#.#",
+          "###....###",
+          ".........."
+        ],
+        "maillon": [
+          "..........",
+          "...####...",
+          "..#....#..",
+          "..#....#..",
+          "...####...",
+          "...####...",
+          "..#....#..",
+          "..#....#..",
+          "...####...",
+          ".........."
         ]
       },
-      "keyHead": "ring",
+      "keyHead": "crown",
       "keyBit": "hook",
       "keyColor": "#E8B04D"
     }

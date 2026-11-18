@@ -517,7 +517,7 @@ final class RiftEngines {
             e.reloading = false;
         }
         if (e.ammo() <= 0) {
-            int n = p.isCreative() ? 16 : take(p, Items.ARROW, 16);
+            int n = 16;   // 2.1 : munitions gratuites (plus de flèches à fournir), seule la courte recharge reste
             if (n <= 0) {
                 say(p, "§c" + com.wavesurvivor.i18n.WSLang.t("rift.e.need_arrows"), now);
                 return;

@@ -114,11 +114,12 @@ public class TreasuryHud {
         // 2e flèche : objectif du Calme (trésor enfoui, foyers de l'Arcaniste)
         boolean tracked2 = renderTracker(g, mc, font, x, y2, panelW,
                 com.wavesurvivor.horde.kingdom.KingdomRoles.clientObjKind, com.wavesurvivor.horde.kingdom.KingdomRoles.clientObjTrack);
-        renderRoleLines(g, font, x, y2 + (tracked2 ? 30 : 0), panelW);
+        int yr = renderRoleLines(g, font, x, y2 + (tracked2 ? 30 : 0), panelW);
+        KingdomTutoClient.renderTodo(g, w, yr + 4);   // 2.1 — tuto : liste « À faire »
     }
 
     /** Ligne de rôle sous le trésor : présage en vigueur (tous), réactifs (Alchimiste). */
-    private static void renderRoleLines(GuiGraphics g, Font font, int x, int y, int w) {
+    private static int renderRoleLines(GuiGraphics g, Font font, int x, int y, int w) {
         java.util.List<String> lines = new java.util.ArrayList<>();
         String omen = com.wavesurvivor.horde.kingdom.KingdomRoleState.clientOmenActive;
         if (omen != null && !omen.isEmpty()) lines.add(WSLang.t("kingdom.omen.hud", WSLang.t("kingdom.omen." + omen)));
@@ -144,12 +145,13 @@ public class TreasuryHud {
             lines.add(pr >= tg ? WSLang.t("kingdom.bounty.hud_done")
                     : WSLang.t("kingdom.bounty.hud." + ct, pr, tg));
         }
-        if (lines.isEmpty()) return;
+        if (lines.isEmpty()) return y - 4;
         // Retour à la ligne : le panneau est étroit (contrat du Chasseur, présage, réactifs…) ; rien ne doit dépasser
         java.util.List<net.minecraft.util.FormattedCharSequence> wrapped = new java.util.ArrayList<>();
         for (String l : lines) wrapped.addAll(font.split(net.minecraft.network.chat.Component.literal(l), w - 8));
         g.fill(x, y, x + w, y + 3 + wrapped.size() * 10 + 1, 0x90000000);
         for (int i = 0; i < wrapped.size(); i++) g.drawString(font, wrapped.get(i), x + 4, y + 3 + i * 10, 0xFFFFFFFF, false);
+        return y + 3 + wrapped.size() * 10 + 1;
     }
 
     private static final String[] ARROWS = {"↑", "↗", "→", "↘", "↓", "↙", "←", "↖"};

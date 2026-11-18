@@ -39,6 +39,10 @@ public class RelicForgePacket {
             switch (pkt.action) {
                 case "upgrade" -> RenaissanceManager.forgeUpgrade(p, pkt.id);
                 case "fuse" -> RenaissanceManager.forgeFuse(p, pkt.id);
+                case "riftarmor" -> {   // 2.1 : Armure de la Faille, palier suivant (id = case : 0-35 inventaire, 100-103 armure)
+                    try { com.wavesurvivor.item.RiftArmor.forgeUpgrade(p, Integer.parseInt(pkt.id)); } catch (NumberFormatException ignored) {}
+                    com.wavesurvivor.horde.renaissance.RenaissanceManager.sendState(p, false, com.wavesurvivor.horde.renaissance.RenaissanceManager.TAB_FORGE, false);
+                }
                 case "dust" -> com.wavesurvivor.item.RelicForge.forgeShard(p);   // 2.0 : 48 Poussières de Faille → 1 Éclat
                 // Sans Curios : équiper (id = case de l'inventaire) / retirer (id = rang dans l'équipement)
                 case "equip" -> { try { com.wavesurvivor.item.RelicEquip.equip(p, Integer.parseInt(pkt.id)); } catch (NumberFormatException ignored) {} }

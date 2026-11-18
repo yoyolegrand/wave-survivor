@@ -207,6 +207,7 @@
   "item.wavesurvivor.fiole_mirage": "Mirage Vial",
   "item.wavesurvivor.tablette_reconnaissance": "Reconnaissance Tablet",
   "effect.wavesurvivor.desert_freshness": "Desert Freshness",
+  "effect.wavesurvivor.rift_effect": "Rift Effect",
   "effect.wavesurvivor.scorching_sun": "Scorching Sun",
   "block.wavesurvivor.rift_portal": "Rift Portal",
   "block.wavesurvivor.rift_vein_teal": "Rift Vein (Teal)",
@@ -243,5 +244,19 @@
   "item.wavesurvivor.lanterne_vigie": "Watch Lantern",
   "item.wavesurvivor.relance_benediction": "Blessing Reroll",
   "entity.wavesurvivor.brise_pont": "Bridgebreaker",
-  "item.wavesurvivor.brise_pont_spawn_egg": "Bridgebreaker Spawn Egg"
+  "item.wavesurvivor.brise_pont_spawn_egg": "Bridgebreaker Spawn Egg",
+  "attribute.name.wavesurvivor.healing_received": "Healing Received",
+  "effect.wavesurvivor.rift_effect.desc": "",
+  "item.wavesurvivor.rift_helmet": "Rift Helm",
+  "item.wavesurvivor.rift_chestplate": "Rift Chestplate",
+  "item.wavesurvivor.rift_leggings": "Rift Greaves",
+  "item.wavesurvivor.rift_boots": "Rift Sabatons",
+  "item.wavesurvivor.rift_helmet.blessed": "Blessed Rift Helm",
+  "item.wavesurvivor.rift_chestplate.blessed": "Blessed Rift Chestplate",
+  "item.wavesurvivor.rift_leggings.blessed": "Blessed Rift Greaves",
+  "item.wavesurvivor.rift_boots.blessed": "Blessed Rift Sabatons",
+  "item.wavesurvivor.rift_helmet.corrupted": "Corrupted Rift Helm",
+  "item.wavesurvivor.rift_chestplate.corrupted": "Corrupted Rift Chestplate",
+  "item.wavesurvivor.rift_leggings.corrupted": "Corrupted Rift Greaves",
+  "item.wavesurvivor.rift_boots.corrupted": "Corrupted Rift Sabatons"
 }

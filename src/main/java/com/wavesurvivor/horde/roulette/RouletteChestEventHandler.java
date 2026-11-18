@@ -36,7 +36,7 @@ public class RouletteChestEventHandler {
             RouletteChestConfig cfg = RouletteChestRegistry.getByChestName(name);
             if (cfg != null) {
                 // Match : registre (+ un coffre vanilla nommé devient un Coffre Roulette)
-                RouletteChestManager.registerIdle(pos, cfg);
+                RouletteChestManager.registerIdle(pos, cfg, level);
                 RouletteChestManager.convertIfVanilla(level, pos, cfg);
             }
         }, "roulette check chest name");
@@ -67,7 +67,7 @@ public class RouletteChestEventHandler {
             cfg = RouletteChestRegistry.getByChestName(name);
             if (cfg == null) return;
             // Re-register pour la prochaine fois (+ conversion d'un ancien coffre vanilla)
-            RouletteChestManager.registerIdle(pos, cfg);
+            RouletteChestManager.registerIdle(pos, cfg, level);
             RouletteChestManager.convertIfVanilla(level, pos, cfg);
         }
 
@@ -96,12 +96,14 @@ public class RouletteChestEventHandler {
             if (name == null) return;
             cfg = RouletteChestRegistry.getByChestName(name);
             if (cfg == null) return;
-            RouletteChestManager.registerIdle(pos, cfg);
+            RouletteChestManager.registerIdle(pos, cfg, level);
             RouletteChestManager.convertIfVanilla(level, pos, cfg);
         }
         event.setCanceled(true);
         if (event.getAction() == PlayerInteractEvent.LeftClickBlock.Action.START) {
-            RouletteChestManager.showLoot(sp, cfg);
+            // 2.1 — île au coffre : tirage gratuit pas encore pris, le clic gauche ouvre aussi
+            if (com.wavesurvivor.horde.rift.RiftChestIslet.hasFreeDraw(sp, pos)) RouletteChestManager.tryOpenChest(sp, level, pos, cfg, sp.getMainHandItem());
+            else RouletteChestManager.showLoot(sp, cfg);
         }
     }
 
