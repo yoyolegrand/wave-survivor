@@ -1,0 +1,11 @@
+{
+    "schema": "1",
+    "id": "wave-survivor",
+    "modid": "wavesurvivor",
+    "platforms": {
+        "curseforge": "wave-survivor"
+    },
+    "owners": [
+        "yoyolegrand"
+    ]
+}

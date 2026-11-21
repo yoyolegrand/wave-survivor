@@ -1,0 +1,41 @@
+# Sanctuaire du Séraphin
+
+## La statue
+
+- Des ruines de quartz abritent un **Sanctuaire du Séraphin** (statue à trois paires d'ailes, **incassable**). Clic droit : ouvre son écran.
+- Une seule jauge de **foi** (de **-600** à **+600**), partagée par tous les joueurs : **✦ Pure**, ✧ Apaisée, ◇ Neutre, **✕ Souillée**, **☠ Corrompue**. La statue change d'aspect avec son état.
+
+## Offrandes (onglet 1)
+
+- Dépose un objet dans la case, puis **Offrir**. **Grâce** : fleurs, baies lumineuses, miel, améthyste, bougie blanche, or, perle de l'Ender, pommes dorées, totem. **Souillure** : chair putréfiée, os, œil d'araignée, poudre à canon, sable des âmes, sculk, crânes, rose du Wither. Grâce et souillure se compensent.
+- Près de la statue (16 blocs) : monstre de horde tué **+1**, animal paisible tué par un joueur **-3**, **villageois tué par un joueur -50**.
+
+## Récolte et fusion (onglets 2 et 3)
+
+- Pure ou Apaisée : la statue produit des **Éclats de grâce** ; Souillée ou Corrompue : des **Éclats de souillure** (Neutre : rien). Les monstres de horde tués à proximité accélèrent la production. **Récolter** vide le stock (64 max).
+- **Fusion** : 9 Éclats → 1 Fragment, 9 Fragments → 1 Cœur (de grâce ou de souillure). Les Cœurs peuvent aussi tomber des boss.
+
+## Forge (onglet 4)
+
+- Pose une arme ou une armure et des fragments : **Insérer** tire une amélioration au sort. **3 emplacements** par objet, coûtant 1, 2 puis 3 fragments ; le niveau du fragment (Éclat, Fragment, Cœur) fixe la force.
+- **Consacré** (fragments de grâce) : que du positif. **Profané** (fragments de souillure) : bonus puissant mais **malus**. **Un seul alignement par objet.** Retirer une amélioration coûte des fragments (non rendus) et permet de la relancer.
+- Un même bonus ne dépasse pas **+30 %** cumulé sur tout l'équipement porté (sauf un seul objet plus fort). Les objets améliorés ont un **nom coloré**, un **cadre animé** et le détail dans l'info-bulle.
+
+## Artisanat (onglet 5)
+
+- Fabrique des blocs utilitaires et de l'équipement avec tes fragments : voir la page **Artisanat sacré et profane**.
+
+## Le prix de la corruption
+
+- Souillée : des **Rootlings** apparaissent autour de la statue ; Corrompue : plus souvent, avec parfois un **Stone Brute** — tant qu'un joueur est à moins de 32 blocs.
+
+## Réglages
+
+- **config/wavesurvivor/shrine\_offerings.json** (offrandes, paliers, événements, production, Corrompus) et **shrine\_upgrades.json** (améliorations, coûts, plafond) : ne mets que les champs à changer, puis `/ws reload`. Option d'affichage : **client\_options.json** › slotFx.
+
+## Le Stone Brute
+
+- Colosse de rochers moussus, lent mais insensible au recul. **Peau de pierre** : au-delà de 6 dégâts, le reste d'un coup est réduit de 40 %. **Frappe écrasante** : un coup de poing qui projette en l'air.
+- **Lancer de rocher** : arrache un rocher et le lance sur les ennemis éloignés (dégâts de zone, Lenteur). Il vise entre 7 et 20 blocs, toutes les 12 s : ne reculez pas en ligne droite.
+
+<Callout type="info">Cette page reprend le **Codex** du jeu (`/ws codex`). Les valeurs indiquées sont celles par défaut : la plupart se règlent dans la config ou l'éditeur en jeu.</Callout>

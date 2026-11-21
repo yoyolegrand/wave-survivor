@@ -1,0 +1,18 @@
+# Ready-made arenas
+
+Pre-built arenas appear in the world with their horde's **altar** already placed: **locked** (it cannot be unbound or broken) and ready to start.
+
+**Necropolis of the Fallen Kings**: a ruined graveyard lit by soul fire, with a gated crypt, 14 graves and 4 braziers. Horde: **The Necropolis**. Find it with `/locate structure wavesurvivor:arena_necropole`.
+**The Infernal Breach**: a netherrack crater around a giant ruined portal, with magma rifts and lava pools. Horde: **The Scorched Lands**. It replaces about **1 in 4 ruined portals** on the surface (never an underground, ocean, jungle, swamp or Nether portal).
+
+## During the game
+
+- Monsters appear at arena-specific spots (crypt, graves, rifts, portal) and the boss at its own spot.
+- Necropolis: the crypt gate opens, braziers go out as waves pass. Breach: the portal blazes during the boss, fires come back every wave, part of the magma cools on victory.
+- First victory: a **roulette chest** appears in the arena (only once).
+
+## Settings and testing
+
+- **config/wavesurvivor/arenas.json**: generation (enable, slope, rotation), portal graft, spawn weights, chest. `/ws arena list` and `/ws arena place <arena> [rotation]` (operators) place an arena in front of you to try it.
+
+<Callout type="info">This page mirrors the in-game **Codex** (`/ws codex`). Values are the defaults: most of them can be changed in the config or the in-game editor.</Callout>

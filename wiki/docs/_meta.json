@@ -1,0 +1,34 @@
+{
+    "getting_started.mdx": {
+        "name": "Getting started",
+        "icon": "Rocket"
+    },
+    "hordes": {
+        "name": "Hordes",
+        "icon": "Skull"
+    },
+    "modes": {
+        "name": "Game modes",
+        "icon": "Swords"
+    },
+    "progression": {
+        "name": "Progression",
+        "icon": "TrendingUp"
+    },
+    "world": {
+        "name": "World & items",
+        "icon": "Map"
+    },
+    "customization": {
+        "name": "Customization",
+        "icon": "Wrench"
+    },
+    "interface.mdx": {
+        "name": "Interface & commands",
+        "icon": "Terminal"
+    },
+    "compatibility.mdx": {
+        "name": "Compatibility",
+        "icon": "Puzzle"
+    }
+}

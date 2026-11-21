@@ -1,0 +1,40 @@
+# Artisanat sacré et profane
+
+Les fragments du Sanctuaire (**Éclats**, **Fragments** et **Cœurs** de grâce ou de souillure) servent aussi à fabriquer de la nourriture, des blocs et de l'équipement. **Consacré** (grâce) = effets positifs et modérés ; **Profané** (souillure) = effets forts, **avec un prix**. Le niveau du fragment fixe la puissance : Éclat pour les objets courants, Fragment pour les utiles, Cœur pour les rares.
+
+## Nourriture (table de fabrication)
+
+- **Consacré** : **Pain béni** (3 blé + Éclat), **Pomme sanctifiée** (pomme + 4 Éclats : Absorption, retire un effet négatif), **Hydromel céleste** (fiole de miel + Fragment : Résistance), **Festin de grâce** (Cœur + 3 pains béni + 3 pommes dorées) : un bloc à **6 parts** que toute l'équipe peut manger (8 faim et 4 cœurs chacune).
+- **Profané** : **Viande souillée** (Force, puis Faim), **Fruit du néant** (Vitesse II, un peu de Nausée), **Vin noir** (+20 % de dégâts mais -2 cœurs max), **Cœur cru** (+40 % de dégâts mais aucune régénération naturelle).
+- **Un seul effet de nourriture spéciale à la fois** : en manger une deuxième remplace la première.
+
+## Blocs de décoration (table de fabrication)
+
+- **Marbre béni** (8 calcite + Éclat de grâce) et **Pierre profanée** (8 ardoise des abîmes + Éclat de souillure) : escaliers, dalles, murets, colonnes, version polie et sculptée. Ils luisent faiblement. Aussi à la scie à pierre.
+
+## Onglet Artisanat du Sanctuaire
+
+- Cinquième onglet du Sanctuaire : choisis une fabrication, vérifie le coût (vert = tu as assez) et clique **Fabriquer**. Les ingrédients sont pris dans ton inventaire.
+- **Blocs utilitaires de grâce** : **Lanterne de grâce** (les morts-vivants et les Corrompus proches infligent moins de dégâts), **Fontaine sacrée** (Régénération autour d'elle, sauf pendant un combat de boss), **Bougie votive** (allumée : plus d'apparition naturelle de monstres alentour ; les vagues des hordes continuent).
+- **Blocs utilitaires de souillure** : **Totem d'appât** (clic droit : attire les monstres à moins de 64 blocs pendant 30 s, recharge 60 s, utile pour les pièges ; 25 % de chance d'invoquer une vague de zombies, squelettes, araignées et squelettes wither, hors partie), **Obélisque profane** (blesse les monstres à moins de 12 blocs, donne Faim aux joueurs), **Autel de sang** (clic droit : 4 cœurs contre de l'expérience).
+
+## Équipement
+
+- **Consacré** : **Lame de l'aube** (épée en diamant, +50 % contre morts-vivants et Corrompus, brille la nuit), **Flèches bénies** (embrasent et repoussent les morts-vivants), **Totem de grâce** (remplace la mort et soigne les alliés proches).
+- **Profané** : **Faux de la souillure** (balayage large, vol de vie, **coup manqué = -1 cœur**), **Flèches souillées** (Wither et Lenteur), **Totem de souillure** (te ramène à la vie : +50 % de dégâts 30 s, puis seulement 4 cœurs max pendant 2 min).
+- Tenus en main, les totems remplacent la mort. La Lame et la Faux passent par la **Forge** du Sanctuaire mais gardent leur alignement : une Lame ne reçoit que de la grâce, une Faux que de la souillure.
+- **Armure du Séraphin** (consacrée) : casque, plastron, jambières et bottes, fabriqués à partir d'une pièce de netherite et de Fragments de grâce (le plastron demande aussi un Cœur). Modèle 3D ailé et doré. Les 4 pièces portées ensemble donnent la **Bénédiction du Séraphin** : **-15 %** de dégâts subis des morts-vivants et des Corrompus et **+2 cœurs** de PV max. Protection et robustesse de la netherite, en plus durable ; avec Iron's Spells, chaque pièce donne aussi +6 % de puissance des sorts sacrés et +25 de mana max. Améliorable à la Forge du Sanctuaire (fragments de grâce seulement).
+- **Armure du Séraphin déchu** (profanée) : la même armure, corrompue (auréole brisée, ailes retombées). Fabriquée en alignement **Corrompu** à partir d'une pièce de netherite et de Fragments de souillure (heaume 4, plastron 6 + un Cœur de souillure, jambières 5, solerets 3). Mêmes protections que le Séraphin ; avec Iron's Spells, chaque pièce donne +6 % de puissance des sorts de **Sang** et +25 de mana max. Les 4 pièces donnent le **Pacte du Déchu** : **Soif de sang** (8 % des dégâts infligés rendus en vie), **Rage du déchu** (sous 40 % des PV : +15 % de dégâts et de puissance de Sang) mais **−10 % de soins reçus** des autres sources. Mélanger Séraphin et Séraphin déchu ne donne aucun des deux ensembles. Améliorable à la Forge du Sanctuaire (fragments de souillure seulement).
+
+## Réglages
+
+- **config/wavesurvivor/crafting\_fragments.json** : effets, durées, rayons, valeurs et liste des fabrications du Sanctuaire (ne mets que les champs à changer, puis `/ws reload`). Les recettes de la table de fabrication sont des recettes classiques (datapack).
+
+## Armure de la Faille
+
+- Armure **évolutive** : à l'établi, une pièce **en fer** + **8 Poussières de Faille** donne la pièce au **palier I (Fissurée)**, solide comme la netherite.
+- **Paliers II et III** à la **Forge** (écran Renaissance, section Armure) : Poussières, diamants, puis netherite (et un Éclat de Faille pour le plastron). Enchantements et durabilité sont gardés.
+- Au palier III, choix **définitif** ici, à l'**Artisanat** : **Bénie** (fragments et Cœur de grâce, plus d'armure et de vie) ou **Corrompue** (fragments et Cœur de souillure, plus de dégâts et de vitesse d'attaque, un peu moins de vie). Trois niveaux par branche.
+- **Ensemble** (4 pièces, palier le plus bas) : **Ancre de la Faille** (Effet de Faille limité, moins de dégâts des ennemis de la Faille, puis **Onde de faille** sous 35 % de vie) ; **Grâce** (immunité à l'Effet de Faille, plus de soins, l'Onde soigne les alliés) ; **Faim** (l'Onde blesse et flétrit, vol de vie).
+
+<Callout type="info">Cette page reprend le **Codex** du jeu (`/ws codex`). Les valeurs indiquées sont celles par défaut : la plupart se règlent dans la config ou l'éditeur en jeu.</Callout>

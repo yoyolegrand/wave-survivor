@@ -1,0 +1,30 @@
+# Ruins to explore
+
+Rare **ruins** are hidden across the world. They are not tied to a horde: you explore them, loot them, and sometimes pay for it with a fight. Each ruin can only be looted **once** (its chest never refills).
+
+## The Chapel
+
+- A large blessed-marble building: nave, transept, apse, bell tower with its bell, and a fenced graveyard. It appears in **plains, meadows and forests** on fairly flat ground and is **rare** (find it with `/locate structure wavesurvivor:chapelle` as an operator).
+- **Loot**: the chest at the foot of the altar holds **Grace Shards** (6 to 10), **Grace Fragments** (1 to 2) and, sometimes (15%), a **Grace Heart**. These are the Seraph Shrine fragments, used for the Forge and for Sacred & Profane Crafting.
+- **Guardians**: the first time a player enters the nave or the graveyard, the **bell tolls** and **4 to 6 undead** (helmeted zombies and skeletons) rise from the graveyard. They only appear once per chapel, and not on Peaceful.
+- Decor: hanging grace lanterns, lit votive candles, graves and steles. Feel free to take inspiration, or to break the blessed marble and lanterns for your own builds.
+
+## Settings
+
+- Frequency, biomes and loot are set in the mod's data files (**data/wavesurvivor/worldgen** and the **chests/chapelle** table) or by datapack; the **generation.disabled** key of **arenas.json** (e.g. **["chapelle"]**) turns generation off.
+- Operators: `/ws arena place chapelle [0|90|180|270]` places the chapel in front of you for a visit (no guardians).
+
+## The Tainted Altar
+
+- A circular platform of black stone and deepslate, six profane obelisks, and a blood altar on a dais guarded by two bait totems. It very rarely appears in **swamps, mangrove swamps and dark forests**, on fairly flat ground (`/locate structure wavesurvivor:autel_souille`).
+- **The ritual**: the first time a player comes close (16 blocks), the obelisks **light up** and a mini-wave of **Corrupted** (Rootlings, sometimes a Stone Brute) rises around the altar. Not in Peaceful.
+- **Loot**: a chest **hidden under the altar**: **Taint Shards** (6 to 10), **Taint Fragments** (1 to 2) and sometimes (10%) a **Taint Heart**. Once the wave is beaten, **the dais opens** onto the chest; otherwise you have to break the dais.
+- Settings (rules.json): **altarWaveSize** (wave size, scaled by difficulty) and **altarOpenOnVictory**.
+
+## The Sealed Reliquary
+
+- A quartz mausoleum perched in the **mountains** (meadows, slopes, peaks), the **rarest** ruin (`/locate structure wavesurvivor:reliquaire_scelle`). Its door is closed by an unbreakable **Seal**.
+- **The Sealed Key** opens it: right-click the seal with the key in hand or stored in your Key Pouch. The seal blocks vanish from the centre outwards. It rarely drops from horde bosses and rewards a horde cleared **without a single death**.
+- **Loot**: a **Sealed Reliquary** or a **Heart** (grace or taint), 4 to 8 **Shards** and a few valuables. No guardians: the seal is enough.
+
+<Callout type="info">This page mirrors the in-game **Codex** (`/ws codex`). Values are the defaults: most of them can be changed in the config or the in-game editor.</Callout>

@@ -1,0 +1,30 @@
+# Ruines à explorer
+
+Des **ruines** rares se cachent dans le monde. Elles ne sont pas liées à une horde : on les explore, on les pille, on les paie parfois d'un combat. Chaque ruine ne se pille qu'**une seule fois** (son coffre ne se remplit pas à nouveau).
+
+## La Chapelle
+
+- Un grand édifice en marbre béni : nef, transept, abside, tour-clocher avec sa cloche, cimetière clôturé. Elle apparaît en **plaines, prairies et forêts**, sur un terrain assez plat, et reste **rare** (retrouve-la avec `/locate structure wavesurvivor:chapelle` en tant qu'opérateur).
+- **Butin** : dans le coffre au pied de l'autel, des **Éclats de grâce** (6 à 10), des **Fragments de grâce** (1 à 2) et, parfois (15 %), un **Cœur de grâce**. Ce sont les fragments du Sanctuaire du Séraphin : ils servent à la Forge et à l'Artisanat sacré.
+- **Gardiens** : la première fois qu'un joueur entre dans la nef ou le cimetière, la **cloche sonne** et **4 à 6 morts-vivants** (zombies et squelettes casqués) surgissent du cimetière. Ils n'apparaissent qu'une fois par chapelle, et pas en mode Paisible.
+- Décor : lanternes de grâce suspendues, bougies votives allumées, tombes, stèles. Tu peux t'en inspirer ou casser le marbre béni et les lanternes pour t'en servir.
+
+## Réglages
+
+- Fréquence, biomes et butin se règlent dans les fichiers du mod (**data/wavesurvivor/worldgen** et la table **chests/chapelle**) ou par datapack ; la clé **generation.disabled** de **arenas.json** (ex. **["chapelle"]**) désactive la génération.
+- Opérateurs : `/ws arena place chapelle [0|90|180|270]` pose la chapelle devant toi pour la visiter (sans gardiens).
+
+## L'Autel souillé
+
+- Une plateforme circulaire de pierre noire et de deepslate, six obélisques profanes, un autel de sang sur une estrade gardée par deux totems d'appât. Il apparaît, très rarement, dans les **marais, mangroves et forêts sombres**, sur terrain assez plat (`/locate structure wavesurvivor:autel_souille`).
+- **Le rituel** : la première fois qu'un joueur s'approche (16 blocs), les obélisques **s'illuminent** et une mini-vague de **Corrompus** (Rootlings, parfois un Stone Brute) surgit autour de l'autel. Pas en mode Paisible.
+- **Butin** : un coffre **caché sous l'autel** : **Éclats de souillure** (6 à 10), **Fragments de souillure** (1 à 2) et parfois (10 %) un **Cœur de souillure**. Une fois la vague vaincue, **l'estrade s'ouvre** sur le coffre ; sinon, il faut casser l'estrade.
+- Réglages (rules.json) : **altarWaveSize** (taille de la vague, selon la difficulté) et **altarOpenOnVictory**.
+
+## Le Reliquaire scellé
+
+- Un mausolée de quartz perché en **montagne** (prairies d'altitude, pentes, pics), la ruine la **plus rare** (`/locate structure wavesurvivor:reliquaire_scelle`). Sa porte est fermée par un **Sceau** incassable.
+- **La Clé scellée** l'ouvre : clic droit sur le sceau, avec la clé en main ou rangée dans ta Bourse à clés. Les blocs du sceau disparaissent du centre vers l'extérieur. Elle tombe rarement des boss de horde et récompense une horde terminée **sans aucune mort**.
+- **Butin** : un **Reliquaire scellé** ou un **Cœur** (de grâce ou de souillure), 4 à 8 **Éclats** et quelques objets précieux. Pas de gardiens : le sceau suffit.
+
+<Callout type="info">Cette page reprend le **Codex** du jeu (`/ws codex`). Les valeurs indiquées sont celles par défaut : la plupart se règlent dans la config ou l'éditeur en jeu.</Callout>

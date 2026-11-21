@@ -1,0 +1,41 @@
+# Seraph Shrine
+
+## The statue
+
+- Ruins of quartz hold a **Seraph Shrine** (a statue with three pairs of wings, **unbreakable**). Right-click opens its screen.
+- A single **faith** gauge (from **-600** to **+600**), shared by every player: **✦ Pure**, ✧ Soothed, ◇ Neutral, **✕ Tainted**, **☠ Corrupted**. The statue changes appearance with its state.
+
+## Offerings (tab 1)
+
+- Drop an item in the slot, then **Offer**. **Grace**: flowers, glow berries, honey, amethyst, white candle, gold, ender pearl, golden apples, totem. **Taint**: rotten flesh, bones, spider eye, gunpowder, soul sand, sculk, skulls, wither rose. Grace and taint offset each other.
+- Near the statue (16 blocks): horde monster killed **+1**, peaceful animal killed by a player **-3**, **villager killed by a player -50**.
+
+## Harvest and fusion (tabs 2 and 3)
+
+- Pure or Soothed: the statue makes **Grace Shards**; Tainted or Corrupted: **Taint Shards** (Neutral: nothing). Horde monsters killed nearby speed it up. **Harvest** empties the stock (64 max).
+- **Fusion**: 9 Shards → 1 Fragment, 9 Fragments → 1 Heart (grace or taint). Hearts can also drop from bosses.
+
+## Forge (tab 4)
+
+- Place a weapon or armor and fragments: **Insert** draws a random upgrade. **3 slots** per item, costing 1, 2 then 3 fragments; the fragment level (Shard, Fragment, Heart) sets the strength.
+- **Consecrated** (grace fragments): purely positive. **Profaned** (taint fragments): powerful bonus but a **drawback**. **One alignment per item.** Removing an upgrade costs fragments (not refunded) and lets you reroll it.
+- A bonus never exceeds **+30%** combined over all worn gear (except one stronger single item). Upgraded items get a **colored name**, an **animated frame** and details in the tooltip.
+
+## Crafting (tab 5)
+
+- Craft utility blocks and gear from your fragments: see the **Sacred & Profane Crafting** page.
+
+## The price of corruption
+
+- Tainted: **Rootlings** appear around the statue; Corrupted: more often, sometimes with a **Stone Brute** — as long as a player is within 32 blocks.
+
+## Settings
+
+- **config/wavesurvivor/shrine\_offerings.json** (offerings, thresholds, events, production, Corrupted) and **shrine\_upgrades.json** (upgrades, costs, cap): only put the fields to change, then `/ws reload`. Display option: **client\_options.json** › slotFx.
+
+## The Stone Brute
+
+- A colossus of mossy rocks, slow but immune to knockback. **Stone Skin**: beyond 6 damage, the rest of a hit is reduced by 40%. **Crushing Blow**: a punch that launches you into the air.
+- **Boulder Toss**: rips a boulder from the ground and hurls it at distant enemies (area damage, Slowness). It aims between 7 and 20 blocks, every 12 s: don't back away in a straight line.
+
+<Callout type="info">This page mirrors the in-game **Codex** (`/ws codex`). Values are the defaults: most of them can be changed in the config or the in-game editor.</Callout>
